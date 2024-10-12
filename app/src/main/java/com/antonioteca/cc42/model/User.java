@@ -53,7 +53,7 @@ public class User {
             editor.putString("image_url_coalition", coalition.image_url.trim());
             editor.putString("color_coalition", coalition.color.trim());
         }
-        return commit(); // ou editor.apply() se preferir
+        return commit(); // ou editor.apply() se preferir.
     }
 
     public String getUid() {
