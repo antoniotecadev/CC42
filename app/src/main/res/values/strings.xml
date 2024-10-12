@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">CC 42</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="check_cadet">Check Cadet</string>
+    <string name="ok">OK</string>
+    <string name="net_err">NetworkError</string>
+    <string name="jso_err">JSONError</string>
+    <string name="err">Erro</string>
+    <string name="menu_home">Casa</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="action_logout">Sair</string>
+    <string name="no">Não</string>
+    <string name="yes">Sim</string>
+    <string name="msg_logout">Tem certeza que pretende sair do CC 42 ?</string>
+    <string name="msg_err_save_sess_user">Erro ao salvar sessão de usuário.</string>
+</resources>

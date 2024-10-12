@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment_nav">
+    <fragment
+        android:id="@+id/splashFragment_nav"
+        android:name="com.antonioteca.cc42.ui.splash.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash">
+        <action
+            android:id="@+id/action_splashFragment_to_loginFragment"
+            app:destination="@id/loginFragment_nav"
+            app:popUpTo="@id/splashFragment_nav"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment_nav"
+        android:name="com.antonioteca.cc42.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
+    <activity
+        android:id="@+id/navigationDrawerActivity"
+        android:name="com.antonioteca.cc42.NavigationDrawerActivity"
+        android:label="app_bar_navigation_drawer"
+        tools:layout="@layout/app_bar_navigation_drawer" />
+</navigation>
