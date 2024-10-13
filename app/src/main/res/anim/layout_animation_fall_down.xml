@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--     android:animation="@anim/slide_in_bottom" Especifica o arquivo de animação que será aplicado a cada item do layout-->
+<!--    android:animationOrder="normal" Define a ordem das animações dos itens (normal | reverse | random)-->
+<!--    android:delay="0.15" Define o tempo de atraso entre o início da animação de cada item no layout-->
+<layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
+    android:animation="@anim/slide_in_bottom"
+    android:animationOrder="normal"
+    android:delay="0.15" />

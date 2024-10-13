@@ -7,15 +7,19 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentHomeBinding;
 import com.antonioteca.cc42.factory.EventViewModelFactory;
 import com.antonioteca.cc42.model.Coalition;
@@ -24,6 +28,7 @@ import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.repository.EventRepository;
+import com.antonioteca.cc42.utility.EventAdapter;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.EventViewModel;
 import com.bumptech.glide.Glide;
@@ -31,8 +36,13 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
+import java.util.List;
+
 public class HomeFragment extends Fragment {
 
+    private Context context;
+
+    private EventAdapter eventAdapter;
     private EventViewModel eventViewModel;
 
     private FragmentHomeBinding binding;
@@ -40,7 +50,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Context context = requireContext();
+        context = requireContext();
         EventRepository eventRepository = new EventRepository(context);
         EventViewModelFactory eventViewModelFactory = new EventViewModelFactory(eventRepository);
         eventViewModel = new ViewModelProvider(this, eventViewModelFactory).get(EventViewModel.class);
@@ -48,9 +58,11 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        Context context = requireContext();
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        binding.recyclerviewEventsList.setHasFixedSize(true);
+        binding.recyclerviewEventsList.setLayoutManager(new LinearLayoutManager(context));
 
         User user = new User(context);
         user.coalition = new Coalition(context);
@@ -84,10 +96,15 @@ public class HomeFragment extends Fragment {
                     });
         }
         eventViewModel.getEvents(context);
-        eventViewModel.getEvents().observe(getViewLifecycleOwner(), new Observer<Event>() {
+        eventViewModel.getEvents().observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
             @Override
-            public void onChanged(Event event) {
-                Toast.makeText(context, "Eventos retornados", Toast.LENGTH_SHORT).show();
+            public void onChanged(List<Event> eventList) {
+                if (eventList.get(0) != null) {
+                    eventAdapter = new EventAdapter(eventList);
+                    binding.recyclerviewEventsList.setAdapter(eventAdapter);
+                    // Aplicar a animação de layout
+                    runLayoutAnimation(binding.recyclerviewEventsList, context);
+                }
             }
         });
         eventViewModel.getHttpSatus().observe(getViewLifecycleOwner(), new Observer<HttpStatus>() {
@@ -103,6 +120,13 @@ public class HomeFragment extends Fragment {
             }
         });
         return root;
+    }
+
+    private void runLayoutAnimation(RecyclerView recyclerView, Context context) {
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
+        recyclerView.setLayoutAnimation(animation);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
     }
 
     @Override

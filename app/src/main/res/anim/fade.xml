@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--    android:duration="300" Duração da animação em milissegundos-->
+<!--    android:fromAlpha="1.0" Opacidade inicial (totalmente visível)-->
+<!--    android:toAlpha="0.5" Opacidade final (50% visível)-->
+<!--    android:fillAfter="true" /> Manter a opacidade final após a animação-->
+<alpha xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="300"
+    android:fillAfter="false"
+    android:fromAlpha="1.0"
+    android:toAlpha="0.5" />

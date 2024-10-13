@@ -57,4 +57,12 @@
         android:textSize="12sp"
         android:textAlignment="center" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewEventsList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="200dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/item_recycleview_event" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

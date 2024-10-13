@@ -22,7 +22,7 @@ public class EventViewModel extends ViewModel {
 
     private final EventRepository eventRepository;
 
-    private MutableLiveData<Event> eventMutableLiveData;
+    private MutableLiveData<List<Event>> eventMutableLiveData;
     private MutableLiveData<HttpStatus> httpStatusMutableLiveData;
     private MutableLiveData<HttpException> httpExceptionMutableLiveData;
 
@@ -30,9 +30,9 @@ public class EventViewModel extends ViewModel {
         this.eventRepository = eventRepository;
     }
 
-    public LiveData<Event> getEvents() {
+    public LiveData<List<Event>> getEvents() {
         if (eventMutableLiveData == null)
-            eventMutableLiveData = new MutableLiveData<>();
+            eventMutableLiveData = new MutableLiveData<List<Event>>();
         return eventMutableLiveData;
     }
 
@@ -52,11 +52,9 @@ public class EventViewModel extends ViewModel {
         eventRepository.getEvents(new Callback<List<Event>>() {
             @Override
             public void onResponse(@NonNull Call<List<Event>> call, @NonNull Response<List<Event>> response) {
-                if (response.isSuccessful()) {
-                    List<Event> events = response.body();
-                    Event event = events.get(0);
-                    eventMutableLiveData.postValue(event);
-                } else {
+                if (response.isSuccessful())
+                    eventMutableLiveData.postValue(response.body());
+                else {
                     HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
                     httpStatusMutableLiveData.postValue(httpStatus);
                 }
