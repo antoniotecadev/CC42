@@ -12,6 +12,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
@@ -89,8 +91,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 Animation fadeAnimation = AnimationUtils.loadAnimation(v.getContext(), R.anim.fade);
                 // Aplica a animação ao item clicado
                 v.startAnimation(fadeAnimation);
-
-                // Aqui você pode fazer algo quando o item é clicado, como navegar para outra Activity
+                Navigation.findNavController(v).navigate(R.id.action_nav_home_to_detailsEventFragment);
             }
         });
     }

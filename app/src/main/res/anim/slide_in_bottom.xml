@@ -4,6 +4,6 @@
 <!--    android:fromYDelta="100%" Define o ponto inicial da translação vertical em relação à posição original do item.-->
 <!--    android:toYDelta="0%" Define o ponto final da translação vertical. 0% significa que o item será movido de volta para sua posição original (ou seja, voltará para sua posição dentro da tela).-->
 <translate xmlns:android="http://schemas.android.com/apk/res/android"
-    android:duration="2000"
+    android:duration="1000"
     android:fromYDelta="100%"
     android:toYDelta="0%" />

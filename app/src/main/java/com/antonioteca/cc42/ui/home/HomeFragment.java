@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -95,15 +96,14 @@ public class HomeFragment extends Fragment {
                         }
                     });
         }
-        eventViewModel.getEvents(context);
-        eventViewModel.getEvents().observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
+        eventViewModel.getEventsList(context).observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
             @Override
             public void onChanged(List<Event> eventList) {
                 if (eventList.get(0) != null) {
                     eventAdapter = new EventAdapter(eventList);
                     binding.recyclerviewEventsList.setAdapter(eventAdapter);
                     // Aplicar a animação de layout
-                    runLayoutAnimation(binding.recyclerviewEventsList, context);
+                    // runLayoutAnimation(binding.recyclerviewEventsList, context);
                 }
             }
         });

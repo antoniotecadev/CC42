@@ -3,11 +3,17 @@ package com.antonioteca.cc42.utility;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Build;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
 import com.antonioteca.cc42.R;
+
+import io.noties.markwon.Markwon;
 
 public class Util {
 
@@ -32,4 +38,28 @@ public class Util {
             }
         }
     }
+
+    public static void setFormattedText(TextView textView, String formattedText) {
+        Spanned result;
+
+        // Verifica a versão do Android para usar o método correto de Html.fromHtml
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            result = Html.fromHtml(formattedText, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            result = Html.fromHtml(formattedText);
+        }
+
+        // Define o texto formatado no TextView
+        textView.setText(result);
+    }
+
+    public static void setMarkdownText(TextView textView, String markdownText) {
+        // Inicializa o Markwon
+        Markwon markwon = Markwon.create(textView.getContext());
+
+        // Renderiza o Markdown e define no TextView
+        markwon.setMarkdown(textView, markdownText);
+    }
+
+
 }
