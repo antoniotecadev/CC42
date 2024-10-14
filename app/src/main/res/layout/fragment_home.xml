@@ -19,7 +19,6 @@
             android:layout_height="match_parent"
             android:background="@color/light_blue_900"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:title=""
             app:toolbarId="@+id/toolbar">
 
             <androidx.appcompat.widget.Toolbar
@@ -28,41 +27,45 @@
                 android:layout_height="?attr/actionBarSize">
             </androidx.appcompat.widget.Toolbar>
 
+        <TextView
+            android:id="@+id/textViewCoalition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginEnd="16dp"
+            android:background="@color/black_overlay"
+            android:text=""
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewFullName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="100dp"
+                android:layout_marginEnd="16dp"
+                android:background="@color/black_overlay"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textAlignment="center" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
-
-    <TextView
-        android:id="@+id/textViewCoalition"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="80dp"
-        android:layout_marginEnd="16dp"
-        android:background="@color/black_overlay"
-        android:text=""
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/textViewFullName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="16dp"
-        android:background="@color/black_overlay"
-        android:text=""
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        android:textAlignment="center" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerviewEventsList"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="200dp"
-        app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/item_recycleview_event" />
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerviewEventsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/item_recycleview_event" />
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
