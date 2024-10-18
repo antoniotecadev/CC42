@@ -21,26 +21,27 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linearLayoutCompatEventDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/light_blue_900"
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/textViewKind"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
-                    android:text="hackathon"
                     android:textAlignment="center"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
                 <TextView
+                    android:id="@+id/textViewName"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
-                    android:text="hackathon"
                     android:textAlignment="center"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
@@ -48,10 +49,10 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/textViewDate"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
-                    android:text="hackathon"
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     android:textSize="10sp" />
@@ -60,23 +61,36 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:background="@color/light_blue_600"
                     android:gravity="center_horizontal"
                     android:orientation="horizontal"
                     android:padding="10dp">
 
                     <ImageView
-                        android:id="@+id/imageViewDays"
+                        android:id="@+id/imageViewDuraction"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         app:srcCompat="@drawable/ic_baseline_access_time_24" />
+
+                    <TextView
+                        android:id="@+id/textViewDuraction"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:textColor="@color/white"
+                        android:textSize="10dp" />
+
+                    <ImageView
+                        android:id="@+id/imageViewDays"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_marginStart="10dp"
+                        app:srcCompat="@drawable/ic_baseline_calendar_today_24" />
 
                     <TextView
                         android:id="@+id/textViewDays"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
-                        android:text="4 days"
                         android:textColor="@color/white"
                         android:textSize="10dp" />
 
@@ -92,22 +106,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
-                        android:text="42 Lisboa"
                         android:textColor="@color/white"
                         android:textSize="10dp" />
 
                     <ImageView
-                        android:id="@+id/imageViewTimeBegin"
+                        android:id="@+id/imageViewPeople"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginStart="15dp"
                         app:srcCompat="@drawable/ic_baseline_people_outline_24" />
 
                     <TextView
+                        android:id="@+id/textViewPeople"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
-                        android:text="362 / 362"
                         android:textColor="@color/white"
                         android:textSize="10dp" />
                 </androidx.appcompat.widget.LinearLayoutCompat>

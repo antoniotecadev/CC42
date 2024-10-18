@@ -29,8 +29,7 @@ public class DateUtils {
 
     // Função para calcular os dias até a data
     public static String getDaysUntil(Date eventDate) {
-        Date currentDate = new Date(); // Pega a data atual
-
+        Date currentDate = new Date(); // Pega a data actual
         long diffInMillies = eventDate.getTime() - currentDate.getTime();
         long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
@@ -43,5 +42,12 @@ public class DateUtils {
         } else {
             return "finish"; // Caso a data já tenha passado
         }
+    }
+
+    // Função para calcular oduração do evento em hora
+    public static String getEventDuration(Date eventDateBegin, Date eventDateEnd) {
+        long diffInMillies = eventDateEnd.getTime() - eventDateBegin.getTime();
+        long diffInMinutes = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+        return diffInMinutes + " minutes";
     }
 }

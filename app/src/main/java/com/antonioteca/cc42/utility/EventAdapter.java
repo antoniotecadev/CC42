@@ -12,20 +12,19 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRecycleviewEventBinding;
 import com.antonioteca.cc42.model.Event;
+import com.antonioteca.cc42.ui.home.HomeFragmentDirections;
 
 import java.util.Date;
 import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
-    private String daysUntil = null;
     private final List<Event> eventList;
 
     public EventAdapter(List<Event> eventList) {
@@ -47,33 +46,29 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         Event event = eventList.get(position);
-        String dateString = event.getBegin_at();
-        Date eventDate = parseDate(dateString);
-        if (eventDate != null) {
-            String day = getFormattedDate(eventDate, "d");
-            String month = getFormattedDate(eventDate, "MMMM");
-            String time = getFormattedDate(eventDate, "hh:mm a");
-            daysUntil = getDaysUntil(eventDate);
+        Date eventDateBegin = parseDate(event.getBegin_at());
+        if (eventDateBegin != null) {
+            String day = getFormattedDate(eventDateBegin, "d");
+            String month = getFormattedDate(eventDateBegin, "MMMM");
+            String time = getFormattedDate(eventDateBegin, "hh:mm a");
+            String daysUntil = getDaysUntil(eventDateBegin);
             holder.binding.textViewDateDay.setText(day);
             holder.binding.textViewDateMonth.setText(month);
             holder.binding.textViewTimeBegin.setText(time);
             holder.binding.textViewDays.setText(daysUntil);
         }
-
         int color;
-        if (event.getKind().equalsIgnoreCase("Event"))
+        if (event.getKind().equalsIgnoreCase("event"))
             color = Color.parseColor("#FF039BE5"); // light_blue_600
-        else if (event.getKind().equalsIgnoreCase("Hackathon"))
+        else if (event.getKind().equalsIgnoreCase("hackathon"))
             color = Color.parseColor("#FF43A047");
         else
             color = Color.parseColor("#FF01579B"); // light_blue_900
-        int colorDays = daysUntil.equals("finish") ? Color.parseColor("#FFE53935") : color;
         holder.binding.textViewKind.setText(event.getKind());
         holder.binding.textViewName.setText(event.getName());
         holder.binding.textViewLocation.setText(event.getLocation());
         holder.binding.textViewKind.setTextColor(color);
         holder.binding.textViewTimeBegin.setTextColor(color);
-        holder.binding.textViewDays.setTextColor(colorDays);
         holder.binding.textViewLocation.setTextColor(color);
         holder.binding.dividerLeft.setBackgroundColor(color);
         holder.binding.dividerTop.setBackgroundColor(color);
@@ -82,7 +77,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.binding.dividerLeftMiddle.setBackgroundColor(color);
         holder.binding.imageViewTimeBegin.setColorFilter(color);
         holder.binding.imageViewLocation.setColorFilter(color);
-        holder.binding.imageViewDay.setColorFilter(colorDays);
+        holder.binding.imageViewDay.setColorFilter(color);
         // Definindo o efeito de clique
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,7 +86,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 Animation fadeAnimation = AnimationUtils.loadAnimation(v.getContext(), R.anim.fade);
                 // Aplica a animação ao item clicado
                 v.startAnimation(fadeAnimation);
-                Navigation.findNavController(v).navigate(R.id.action_nav_home_to_detailsEventFragment);
+                HomeFragmentDirections.ActionNavHomeToDetailsEventFragment actionNavHomeToDetailsEventFragment = HomeFragmentDirections.actionNavHomeToDetailsEventFragment(event);
+                Navigation.findNavController(v).navigate(actionNavHomeToDetailsEventFragment);
             }
         });
     }

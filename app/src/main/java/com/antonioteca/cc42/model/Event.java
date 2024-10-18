@@ -1,6 +1,11 @@
 package com.antonioteca.cc42.model;
 
-public class Event {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+public class Event implements Parcelable {
 
     private int id;
     private String name;
@@ -14,6 +19,30 @@ public class Event {
 
     public Event() {
     }
+
+    protected Event(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        description = in.readString();
+        location = in.readString();
+        kind = in.readString();
+        max_people = in.readInt();
+        nbr_subscribers = in.readInt();
+        begin_at = in.readString();
+        end_at = in.readString();
+    }
+
+    public static final Creator<Event> CREATOR = new Creator<Event>() {
+        @Override
+        public Event createFromParcel(Parcel in) {
+            return new Event(in);
+        }
+
+        @Override
+        public Event[] newArray(int size) {
+            return new Event[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -85,5 +114,23 @@ public class Event {
 
     public void setEnd_at(String end_at) {
         this.end_at = end_at;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(name);
+        parcel.writeString(description);
+        parcel.writeString(location);
+        parcel.writeString(kind);
+        parcel.writeInt(max_people);
+        parcel.writeInt(nbr_subscribers);
+        parcel.writeString(begin_at);
+        parcel.writeString(end_at);
     }
 }
