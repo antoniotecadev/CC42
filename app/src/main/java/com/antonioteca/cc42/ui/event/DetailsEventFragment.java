@@ -21,7 +21,6 @@ import com.antonioteca.cc42.databinding.FragmentDetailsEventBinding;
 import com.antonioteca.cc42.model.Event;
 
 import java.util.Date;
-import java.util.Objects;
 
 public class DetailsEventFragment extends Fragment {
 
@@ -36,12 +35,11 @@ public class DetailsEventFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         int color;
-        binding = FragmentDetailsEventBinding.inflate(inflater, container, false);
+        binding = FragmentDetailsEventBinding.inflate(inflater, container, false); // Inflate the layout for this fragment
         Event event = DetailsEventFragmentArgs.fromBundle(requireArguments()).getDetailsEvent();
         if (getActivity() != null)
-            Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setTitle(event.getKind().toUpperCase());
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(event.getKind().toUpperCase());
         if (event.getKind().equalsIgnoreCase("event"))
             color = Color.parseColor("#FF039BE5"); // light_blue_600
         else if (event.getKind().equalsIgnoreCase("hackathon"))
