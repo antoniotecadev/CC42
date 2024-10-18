@@ -40,7 +40,7 @@ public class DateUtils {
         } else if (diffInDays == 0) {
             return "today";
         } else {
-            return "finish"; // Caso a data já tenha passado
+            return "finished"; // Caso a data já tenha passado
         }
     }
 
