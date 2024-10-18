@@ -28,6 +28,7 @@ public class EventRepository {
     public void getEvents(Callback<List<Event>> callback) {
         Call<List<Event>> eventCall = daoEvent.getEvents(
                 user.getCampusId(),
+                user.getCursusId(),
                 "Bearer " + token.getAccessToken()
         );
         eventCall.enqueue(callback);

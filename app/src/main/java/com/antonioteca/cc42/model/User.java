@@ -16,7 +16,7 @@ import java.util.List;
 public class User {
 
     @SerializedName("id")
-    public String uid;
+    public int uid;
 
     public String email;
     public String login;
@@ -30,6 +30,9 @@ public class User {
 
     public List<Campus> campus;
 
+    @SerializedName("projects_users")
+    public List<ProjectUser> projectsUsers;
+
     public Coalition coalition;
 
     private final SharedPreferences preferences;
@@ -41,13 +44,14 @@ public class User {
     }
 
     public boolean saveUser(User user, Coalition coalition) {
-        editor.putString("uid", user.uid);
+        editor.putInt("uid", user.uid);
         editor.putString("email", user.email);
         editor.putString("login", user.login);
         editor.putString("display_name", user.displayName);
         editor.putString("url", user.url.trim());
         editor.putString("image_link", user.image.link.trim());
-        editor.putString("campus_id", user.campus.get(0).id);
+        editor.putInt("campus_id", user.campus.get(0).id);
+        editor.putInt("cursus_id", user.projectsUsers.get(0).cursusIds.get(0));
         if (coalition != null) {
             editor.putString("name_coalition", coalition.name);
             editor.putString("image_url_coalition", coalition.image_url.trim());
@@ -56,8 +60,8 @@ public class User {
         return commit(); // ou editor.apply() se preferir.
     }
 
-    public String getUid() {
-        return preferences.getString("uid", null);
+    public int getUid() {
+        return preferences.getInt("uid", 0);
     }
 
     public String getEmail() {
@@ -80,8 +84,12 @@ public class User {
         return preferences.getString("image_link", null);
     }
 
-    public String getCampusId() {
-        return preferences.getString("campus_id", null);
+    public int getCampusId() {
+        return preferences.getInt("campus_id", 0);
+    }
+
+    public int getCursusId() {
+        return preferences.getInt("cursus_id", 0);
     }
 
     public void setCoalition(Coalition coalition) {
@@ -103,5 +111,10 @@ class Image {
 }
 
 class Campus {
-    public String id;
+    public int id;
+}
+
+class ProjectUser {
+    @SerializedName("cursus_ids")
+    public List<Integer> cursusIds;
 }
