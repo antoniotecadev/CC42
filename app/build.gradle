@@ -51,9 +51,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     // Navigation Component
-    implementation "androidx.navigation:navigation-fragment:$nav_version"
-    implementation "androidx.navigation:navigation-ui:$nav_version"
-    implementation "androidx.navigation:navigation-runtime:$nav_version"
+    implementation "androidx.navigation:navigation-fragment:$nav_version" // Fornece suporte à navegação entre fragmentos (NavHostFragment e NavController)
+    implementation "androidx.navigation:navigation-ui:$nav_version" // Integração (Toolbar), BottomNavigationView, NavigationView e (Up button)
+    implementation "androidx.navigation:navigation-runtime:$nav_version" //  Contém o núcleo da API de navegação para permitir a navegação em tempo de execução.
 
     // Client HTTP for consumer API REST
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"

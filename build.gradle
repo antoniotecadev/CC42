@@ -1,8 +1,11 @@
-// Activar o Safe Args
 buildscript {
     repositories {
         google()
     }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.3.1' // Plugin gradle
+    }
+    // Activar o Safe Args
     dependencies {
         def nav_version = "2.8.0"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
