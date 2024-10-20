@@ -49,7 +49,7 @@ public class DetailsEventFragment extends Fragment {
         else if (event.getKind().equalsIgnoreCase("hackathon"))
             color = Color.parseColor("#FF43A047");
         else
-            color = Color.parseColor("#FF01579B"); // light_blue_900
+            color = Color.parseColor("#FFFFB300"); // orange
         binding.linearLayoutCompatEventDetails.setBackgroundColor(color);
         Date eventDateBegin = parseDate(event.getBegin_at());
         Date eventDateEnd = parseDate(event.getEnd_at());

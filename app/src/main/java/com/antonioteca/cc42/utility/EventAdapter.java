@@ -63,7 +63,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         else if (event.getKind().equalsIgnoreCase("hackathon"))
             color = Color.parseColor("#FF43A047");
         else
-            color = Color.parseColor("#FF01579B"); // light_blue_900
+            color = Color.parseColor("#FFFFB300"); // orange
         holder.binding.textViewKind.setText(event.getKind());
         holder.binding.textViewName.setText(event.getName());
         holder.binding.textViewLocation.setText(event.getLocation());
