@@ -23,31 +23,40 @@ public class DateUtils {
         // day = Extrair o dia (23, 24, etc)
         // month = Extrair o mês em inglês (January, February, etc)
         // time = Extrair a hora no formato 12 horas com AM/PM
-        SimpleDateFormat dayFormat = new SimpleDateFormat(pattern, Locale.ENGLISH);
-        return dayFormat.format(date);
+        if (date != null) {
+            SimpleDateFormat dayFormat = new SimpleDateFormat(pattern, Locale.ENGLISH);
+            return dayFormat.format(date);
+        } else
+            return null;
     }
 
     // Função para calcular os dias até a data
     public static String getDaysUntil(Date eventDate) {
-        Date currentDate = new Date(); // Pega a data actual
-        long diffInMillies = eventDate.getTime() - currentDate.getTime();
-        long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+        if (eventDate != null) {
+            Date currentDate = new Date(); // Pega a data actual
+            long diffInMillies = eventDate.getTime() - currentDate.getTime();
+            long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
-        if (diffInDays > 1) {
-            return diffInDays + " days";
-        } else if (diffInDays == 1) {
-            return "1 day";
-        } else if (diffInDays == 0) {
-            return "today";
-        } else {
-            return "finished"; // Caso a data já tenha passado
-        }
+            if (diffInDays > 1) {
+                return diffInDays + " days";
+            } else if (diffInDays == 1) {
+                return "1 day";
+            } else if (diffInDays == 0) {
+                return "today";
+            } else {
+                return "finished"; // Caso a data já tenha passado
+            }
+        } else
+            return null;
     }
 
     // Função para calcular oduração do evento em hora
     public static String getEventDuration(Date eventDateBegin, Date eventDateEnd) {
-        long diffInMillies = eventDateEnd.getTime() - eventDateBegin.getTime();
-        long diffInMinutes = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
-        return diffInMinutes + " minutes";
+        if (eventDateBegin != null && eventDateEnd != null) {
+            long diffInMillies = eventDateEnd.getTime() - eventDateBegin.getTime();
+            long diffInMinutes = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+            return diffInMinutes + " minutes";
+        } else
+            return null;
     }
 }

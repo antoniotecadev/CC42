@@ -53,9 +53,9 @@ public class User {
         editor.putInt("campus_id", user.campus.get(0).id);
         editor.putInt("cursus_id", user.projectsUsers.get(0).cursusIds.get(0));
         if (coalition != null) {
-            editor.putString("name_coalition", coalition.name);
+            /*editor.putString("name_coalition", coalition.name);
             editor.putString("image_url_coalition", coalition.image_url.trim());
-            editor.putString("color_coalition", coalition.color.trim());
+            editor.putString("color_coalition", coalition.color.trim());*/
         }
         return commit(); // ou editor.apply() se preferir.
     }

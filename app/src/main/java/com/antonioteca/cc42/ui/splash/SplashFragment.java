@@ -65,7 +65,6 @@ public class SplashFragment extends Fragment {
         UserViewModelFactory userViewModelFactory = new UserViewModelFactory(userRepository);
         tokenViewModel = new ViewModelProvider(this, tokenViewModelFactory).get(TokenViewModel.class);
         userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
-
     }
 
     @Override

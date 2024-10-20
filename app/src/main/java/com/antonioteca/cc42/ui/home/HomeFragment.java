@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -68,15 +66,15 @@ public class HomeFragment extends Fragment {
         User user = new User(context);
         user.coalition = new Coalition(context);
 
-        int colorTextview = Color.parseColor(user.coalition.getColor());
+        binding.textViewCoalition.setText(user.coalition.getName());
+        binding.textViewFullName.setText(user.getDisplayName());
 
-        TextView textViewCoalition = binding.textViewCoalition;
-        textViewCoalition.setText(user.coalition.getName());
-        textViewCoalition.setTextColor(colorTextview);
-
-        TextView textViewFullname = binding.textViewFullName;
-        textViewFullname.setText(user.getDisplayName());
-        textViewFullname.setTextColor(colorTextview);
+        String colorText = user.coalition.getColor();
+        if (colorText != null) {
+            int colorTextview = Color.parseColor(colorText);
+            binding.textViewCoalition.setTextColor(colorTextview);
+            binding.textViewFullName.setTextColor(colorTextview);
+        }
 
         CollapsingToolbarLayout collapsingToolbarLayout = binding.collapsingToolbarLayout;
         collapsingToolbarLayout.setTitle(user.getLogin());

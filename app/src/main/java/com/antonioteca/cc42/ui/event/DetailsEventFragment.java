@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -38,8 +39,11 @@ public class DetailsEventFragment extends Fragment {
         int color;
         binding = FragmentDetailsEventBinding.inflate(inflater, container, false); // Inflate the layout for this fragment
         Event event = DetailsEventFragmentArgs.fromBundle(requireArguments()).getDetailsEvent();
-        if (getActivity() != null)
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(event.getKind().toUpperCase());
+        if (getActivity() != null) {
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null)
+                actionBar.setTitle(event.getKind().toUpperCase());
+        }
         if (event.getKind().equalsIgnoreCase("event"))
             color = Color.parseColor("#FF039BE5"); // light_blue_600
         else if (event.getKind().equalsIgnoreCase("hackathon"))
@@ -53,12 +57,10 @@ public class DetailsEventFragment extends Fragment {
         String month = getFormattedDate(eventDateBegin, "MMMM");
         String time = getFormattedDate(eventDateBegin, "hh:mm a");
         String year = getFormattedDate(eventDateBegin, "yyyy");
-        assert eventDateBegin != null;
         String daysUntil = getDaysUntil(eventDateBegin);
         binding.textViewKind.setText(event.getKind());
         binding.textViewName.setText(event.getName());
         binding.textViewDate.setText(month + " " + day + ", " + year + " at " + time);
-        assert eventDateEnd != null;
         binding.textViewDuraction.setText(getEventDuration(eventDateBegin, eventDateEnd));
         binding.textViewDays.setText(daysUntil);
         binding.textViewLocation.setText(event.getLocation());

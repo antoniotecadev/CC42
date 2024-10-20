@@ -79,27 +79,28 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         Toolbar toolbar = binding.appBarNavigationDrawer.toolbar;
         String colorCoalition = user.coalition.getColor();
         setColorCoalition(toolbar, colorCoalition);
-
-        ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
-        navigationView.setItemTextColor(colorStateList);
-        navigationView.setItemIconTintList(colorStateList);
-
+        if (colorCoalition != null) {
+            ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
+            navigationView.setItemTextColor(colorStateList);
+            navigationView.setItemIconTintList(colorStateList);
+        }
         LinearLayout linearLayout = headerView.findViewById(R.id.linearLayoutNavHeaderNavigationDrawer);
         String imageUrlCoalition = user.coalition.getImageUrl();
-        Glide.with(this)
-                .load(imageUrlCoalition)
-                .into(new CustomTarget<Drawable>() {
-                    @Override
-                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        linearLayout.setBackground(resource);
-                    }
+        if (imageUrlCoalition != null) {
+            Glide.with(this)
+                    .load(imageUrlCoalition)
+                    .into(new CustomTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            linearLayout.setBackground(resource);
+                        }
 
-                    @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {
-                        // Definir background placeholder caso a imagem não carregue
-                    }
-                });
-
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            // Definir background placeholder caso a imagem não carregue
+                        }
+                    });
+        }
         ImageView imageViewUser = headerView.findViewById(R.id.imageViewUser);
         TextView textViewFullNameUser = headerView.findViewById(R.id.fullNameUser);
         TextView textViewEmailUser = headerView.findViewById(R.id.emailUser);
