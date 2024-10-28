@@ -12,6 +12,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -87,7 +88,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 // Aplica a animação ao item clicado
                 v.startAnimation(fadeAnimation);
                 HomeFragmentDirections.ActionNavHomeToDetailsEventFragment actionNavHomeToDetailsEventFragment = HomeFragmentDirections.actionNavHomeToDetailsEventFragment(event);
-                Navigation.findNavController(v).navigate(actionNavHomeToDetailsEventFragment);
+                Navigation.findNavController(v).navigate((NavDirections) actionNavHomeToDetailsEventFragment);
             }
         });
     }
