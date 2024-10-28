@@ -1,6 +1,8 @@
 package com.antonioteca.cc42.viewmodel;
 
 import android.content.Context;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,9 +33,10 @@ public class EventViewModel extends ViewModel {
         this.eventRepository = eventRepository;
     }
 
-    public LiveData<List<Event>> getEventsList(Context context) {
+    public LiveData<List<Event>> getEventsList(Context context, ProgressBar progressBar) {
         if (eventMutableLiveData == null) {
             eventMutableLiveData = new MutableLiveData<>();
+            progressBar.setVisibility(View.VISIBLE);
             getEvents(context);
         }
         return eventMutableLiveData;

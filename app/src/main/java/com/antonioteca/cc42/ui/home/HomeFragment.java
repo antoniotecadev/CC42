@@ -94,9 +94,10 @@ public class HomeFragment extends Fragment {
                         }
                     });
         }
-        eventViewModel.getEventsList(context).observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
+        eventViewModel.getEventsList(context, binding.progressBar).observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
             @Override
             public void onChanged(List<Event> eventList) {
+                binding.progressBar.setVisibility(View.GONE);
                 if (eventList.get(0) != null) {
                     eventAdapter = new EventAdapter(eventList);
                     binding.recyclerviewEventsList.setAdapter(eventAdapter);
@@ -108,12 +109,14 @@ public class HomeFragment extends Fragment {
         eventViewModel.getHttpSatus().observe(getViewLifecycleOwner(), new Observer<HttpStatus>() {
             @Override
             public void onChanged(HttpStatus httpStatus) {
+                binding.progressBar.setVisibility(View.GONE);
                 Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context);
             }
         });
         eventViewModel.getHttpException().observe(getViewLifecycleOwner(), new Observer<HttpException>() {
             @Override
             public void onChanged(HttpException httpException) {
+                binding.progressBar.setVisibility(View.GONE);
                 Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context);
             }
         });
