@@ -16,4 +16,6 @@
     <string name="msg_err_save_sess_user">Erro ao salvar sessão de usuário.</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="qr_code">Código QR</string>
+    <string name="close">Fechar</string>
 </resources>

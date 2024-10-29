@@ -3,11 +3,14 @@ package com.antonioteca.cc42.utility;
 import static com.antonioteca.cc42.utility.DateUtils.getDaysUntil;
 import static com.antonioteca.cc42.utility.DateUtils.getFormattedDate;
 import static com.antonioteca.cc42.utility.DateUtils.parseDate;
+import static com.antonioteca.cc42.utility.Util.generateQrCode;
+import static com.antonioteca.cc42.utility.Util.showAlertDialogQrCode;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -93,6 +96,22 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 Navigation.findNavController(v).navigate((NavDirections) actionNavHomeToDetailsEventFragment);
             }
         });
+
+        holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+            @Override
+            public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+                contextMenu.setHeaderTitle(event.getDescription());
+                MenuItem menuItem = contextMenu.add(view.getContext().getString(R.string.qr_code));
+                menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
+                        Bitmap bitmapQrCode = generateQrCode(view.getContext(), String.valueOf(event.getId()));
+                        showAlertDialogQrCode(view.getContext(), bitmapQrCode, event.getName());
+                        return true;
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -104,7 +123,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder)
      */
-    public static class EventViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
+    public static class EventViewHolder extends RecyclerView.ViewHolder {
 
         private final ItemRecycleviewEventBinding binding;
 
@@ -112,15 +131,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             super(binding.getRoot());
             // Define click listener for the ViewHolder's View
             this.binding = binding;
-            // Registra o item para o menu de contexto
-            binding.getRoot().setOnCreateContextMenuListener(this);
-        }
-
-        @Override
-        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-            // Inflar o menu de contexto
-            MenuInflater inflater = new MenuInflater(view.getContext());
-            inflater.inflate(R.menu.context_menu_event_list, contextMenu);
         }
     }
 }

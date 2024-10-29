@@ -4,9 +4,12 @@ import static com.antonioteca.cc42.utility.DateUtils.getDaysUntil;
 import static com.antonioteca.cc42.utility.DateUtils.getEventDuration;
 import static com.antonioteca.cc42.utility.DateUtils.getFormattedDate;
 import static com.antonioteca.cc42.utility.DateUtils.parseDate;
+import static com.antonioteca.cc42.utility.Util.generateQrCode;
 import static com.antonioteca.cc42.utility.Util.setMarkdownText;
+import static com.antonioteca.cc42.utility.Util.showAlertDialogQrCode;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -66,6 +69,13 @@ public class DetailsEventFragment extends Fragment {
         binding.textViewLocation.setText(event.getLocation());
         binding.textViewPeople.setText(event.getNbr_subscribers() + " / " + event.getMax_people());
         setMarkdownText(binding.textViewDescription, event.getDescription());
+        binding.buttonGenerateQrCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bitmap bitmapQrCode = generateQrCode(view.getContext(), String.valueOf(event.getId()));
+                showAlertDialogQrCode(view.getContext(), bitmapQrCode, event.getName());
+            }
+        });
         return binding.getRoot();
     }
 
