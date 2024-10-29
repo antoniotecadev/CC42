@@ -10,14 +10,12 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@color/teal_200"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/logo_42_luanda"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar">
 
