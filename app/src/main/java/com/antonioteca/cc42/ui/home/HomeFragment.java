@@ -1,6 +1,7 @@
 package com.antonioteca.cc42.ui.home;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -69,11 +70,13 @@ public class HomeFragment extends Fragment {
         binding.textViewCoalition.setText(user.coalition.getName());
         binding.textViewFullName.setText(user.getDisplayName());
 
-        String colorText = user.coalition.getColor();
-        if (colorText != null) {
-            int colorTextview = Color.parseColor(colorText);
-            binding.textViewCoalition.setTextColor(colorTextview);
-            binding.textViewFullName.setTextColor(colorTextview);
+        String colorCoalition = user.coalition.getColor();
+        if (colorCoalition != null) {
+            int color = Color.parseColor(colorCoalition);
+            ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
+            binding.progressBar.setIndeterminateTintList(colorStateList);
+            binding.textViewCoalition.setTextColor(color);
+            binding.textViewFullName.setTextColor(color);
         }
 
         CollapsingToolbarLayout collapsingToolbarLayout = binding.collapsingToolbarLayout;

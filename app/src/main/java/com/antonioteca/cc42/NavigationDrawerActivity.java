@@ -81,6 +81,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         setColorCoalition(toolbar, colorCoalition);
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
+            binding.appBarNavigationDrawer.fab.setBackgroundTintList(colorStateList);
             navigationView.setItemTextColor(colorStateList);
             navigationView.setItemIconTintList(colorStateList);
         }
