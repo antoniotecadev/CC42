@@ -6,10 +6,12 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -131,6 +133,18 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutAnimation(animation);
         recyclerView.getAdapter().notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        // Verifica qual item foi selecionado
+        switch (item.getItemId()) {
+            case R.id.action_show_qr_code:
+                Toast.makeText(context, "Qr code", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     @Override

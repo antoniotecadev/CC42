@@ -5,7 +5,9 @@ import static com.antonioteca.cc42.utility.DateUtils.getFormattedDate;
 import static com.antonioteca.cc42.utility.DateUtils.parseDate;
 
 import android.graphics.Color;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -37,7 +39,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public EventAdapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Create a new view, which defines the UI of the list item
         //View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recycleview_event, parent, false);
-        com.antonioteca.cc42.databinding.ItemRecycleviewEventBinding binding = ItemRecycleviewEventBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        ItemRecycleviewEventBinding binding = ItemRecycleviewEventBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new EventViewHolder(binding);
     }
 
@@ -102,7 +104,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder)
      */
-    public static class EventViewHolder extends RecyclerView.ViewHolder {
+    public static class EventViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
 
         private final ItemRecycleviewEventBinding binding;
 
@@ -110,7 +112,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             super(binding.getRoot());
             // Define click listener for the ViewHolder's View
             this.binding = binding;
+            // Registra o item para o menu de contexto
+            binding.getRoot().setOnCreateContextMenuListener(this);
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+            // Inflar o menu de contexto
+            MenuInflater inflater = new MenuInflater(view.getContext());
+            inflater.inflate(R.menu.context_menu_event_list, contextMenu);
         }
     }
-
 }
