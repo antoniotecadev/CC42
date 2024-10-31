@@ -102,7 +102,7 @@ public class HomeFragment extends Fragment {
             public void onChanged(List<Event> eventList) {
                 binding.progressBar.setVisibility(View.GONE);
                 if (eventList.get(0) != null) {
-                    eventAdapter = new EventAdapter(eventList);
+                    eventAdapter = new EventAdapter(eventList, requireView());
                     binding.recyclerviewEventsList.setAdapter(eventAdapter);
                     // Aplicar a animação de layout
                     // runLayoutAnimation(binding.recyclerviewEventsList, context);

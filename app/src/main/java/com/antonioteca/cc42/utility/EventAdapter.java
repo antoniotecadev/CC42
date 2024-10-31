@@ -31,10 +31,12 @@ import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
+    private final View view;
     private final List<Event> eventList;
 
-    public EventAdapter(List<Event> eventList) {
+    public EventAdapter(List<Event> eventList, View view) {
         this.eventList = eventList;
+        this.view = view;
     }
 
     @NonNull
@@ -93,7 +95,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 // Aplica a animação ao item clicado
                 v.startAnimation(fadeAnimation);
                 HomeFragmentDirections.ActionNavHomeToDetailsEventFragment actionNavHomeToDetailsEventFragment = HomeFragmentDirections.actionNavHomeToDetailsEventFragment(event);
-                Navigation.findNavController(v).navigate((NavDirections) actionNavHomeToDetailsEventFragment);
+                Navigation.findNavController(view).navigate((NavDirections) actionNavHomeToDetailsEventFragment);
             }
         });
 
