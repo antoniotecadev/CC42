@@ -2,9 +2,11 @@ package com.antonioteca.cc42;
 
 import static com.antonioteca.cc42.utility.Util.setColorCoalition;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -22,6 +24,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -34,13 +38,15 @@ import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.utility.GlideApp;
+import com.antonioteca.cc42.utility.Util;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
 public class NavigationDrawerActivity extends AppCompatActivity {
+
+    private static final int CAMERA_PERMISSION_CODE = 100;
 
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -52,11 +58,15 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarNavigationDrawer.toolbar);
-        binding.appBarNavigationDrawer.fab.setOnClickListener(new View.OnClickListener() {
+        binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                // Verificar se a permissão já foi concedida
+                if (ContextCompat.checkSelfPermission(view.getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                    // Solicitar a permissão
+                    ActivityCompat.requestPermissions(NavigationDrawerActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+                } else
+                    openCameraScannerQrCodeEvent();
             }
         });
         DrawerLayout drawer = binding.drawerLayout;
@@ -81,7 +91,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         setColorCoalition(toolbar, colorCoalition);
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
-            binding.appBarNavigationDrawer.fab.setBackgroundTintList(colorStateList);
+            binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setBackgroundTintList(colorStateList);
             navigationView.setItemTextColor(colorStateList);
             navigationView.setItemIconTintList(colorStateList);
         }
@@ -155,7 +165,20 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         finish();
     }
 
-   /* @Override
+    private void openCameraScannerQrCodeEvent() {
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_CODE)
+            openCameraScannerQrCodeEvent();
+        else
+            Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_camera_denied), this);
+    }
+
+    /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_settings_general, menu);
