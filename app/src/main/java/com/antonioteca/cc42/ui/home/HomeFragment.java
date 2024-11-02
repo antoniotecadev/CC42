@@ -113,14 +113,20 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(HttpStatus httpStatus) {
                 binding.progressBar.setVisibility(View.GONE);
-                Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context);
+                Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
+                    binding.progressBar.setVisibility(View.VISIBLE);
+                    eventViewModel.getEvents(context);
+                });
             }
         });
         eventViewModel.getHttpException().observe(getViewLifecycleOwner(), new Observer<HttpException>() {
             @Override
             public void onChanged(HttpException httpException) {
                 binding.progressBar.setVisibility(View.GONE);
-                Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context);
+                Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
+                    binding.progressBar.setVisibility(View.VISIBLE);
+                    eventViewModel.getEvents(context);
+                });
             }
         });
         return root;

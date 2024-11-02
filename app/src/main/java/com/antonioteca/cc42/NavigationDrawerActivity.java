@@ -175,7 +175,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         if (requestCode == CAMERA_PERMISSION_CODE)
             openCameraScannerQrCodeEvent();
         else
-            Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_camera_denied), this);
+            Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_camera_denied), this, null);
     }
 
     /* @Override

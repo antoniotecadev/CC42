@@ -89,7 +89,7 @@ public class SplashFragment extends Fragment {
             @Override
             public void onChanged(HttpException httpException) {
                 if (!isSplashActive) {
-                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context);
+                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, null);
                     redirectToLogin();
                 }
             }
@@ -114,7 +114,7 @@ public class SplashFragment extends Fragment {
             @Override
             public void onChanged(HttpStatus httpStatus) {
                 if (!isSplashActive) {
-                    Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context);
+                    Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, null);
                     redirectToLogin();
                 }
             }
@@ -124,7 +124,7 @@ public class SplashFragment extends Fragment {
             @Override
             public void onChanged(HttpException httpException) {
                 if (!isSplashActive) {
-                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context);
+                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, null);
                     redirectToLogin();
                 }
             }

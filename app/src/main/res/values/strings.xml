@@ -19,4 +19,6 @@
     <string name="qr_code">Código QR</string>
     <string name="close">Fechar</string>
     <string name="msg_permis_camera_denied">Permissão para usar a câmera negada</string>
+    <string name="try_again">Tentar novamente</string>
+    <string name="cancel">Cancelar</string>
 </resources>

@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                     if (httpStatus == HttpStatus.OK)
                         userViewModel.getUser(MainActivity.this);
                     else
-                        Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), MainActivity.this);
+                        Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), MainActivity.this, null);
                 }
             }
         });
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(HttpException httpException) {
                 if (initOnNewIntent)
-                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), MainActivity.this);
+                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), MainActivity.this, null);
             }
         });
 
@@ -71,9 +71,9 @@ public class MainActivity extends AppCompatActivity {
                         if (userViewModel.saveUser(user))
                             redirectToHome();
                         else
-                            Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_err_save_sess_user), MainActivity.this);
+                            Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_err_save_sess_user), MainActivity.this, null);
                     } else
-                        Util.showAlertDialogBuild(String.valueOf(HttpStatus.NOT_FOUND.getCode()), HttpStatus.NOT_FOUND.getDescription(), MainActivity.this);
+                        Util.showAlertDialogBuild(String.valueOf(HttpStatus.NOT_FOUND.getCode()), HttpStatus.NOT_FOUND.getDescription(), MainActivity.this, null);
                 }
             }
         });
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(HttpStatus httpStatus) {
                 if (initOnNewIntent)
-                    Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), MainActivity.this);
+                    Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), MainActivity.this, null);
             }
         });
 
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(HttpException httpException) {
                 if (initOnNewIntent)
-                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), MainActivity.this);
+                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), MainActivity.this, null);
             }
         });
     }

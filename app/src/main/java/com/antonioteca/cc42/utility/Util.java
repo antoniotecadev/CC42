@@ -1,7 +1,6 @@
 package com.antonioteca.cc42.utility;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
@@ -22,15 +21,16 @@ import io.noties.markwon.Markwon;
 
 public class Util {
 
-    public static void showAlertDialogBuild(String title, String message, Context context) {
+    public static void showAlertDialogBuild(String title, String message, Context context, Runnable runnableTryAgain) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         builder.setMessage(message);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-            }
-        });
+        if (runnableTryAgain == null)
+            builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
+        else {
+            builder.setPositiveButton(R.string.try_again, (dialogInterface, i) -> runnableTryAgain.run());
+            builder.setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
+        }
         builder.show();
     }
 
@@ -72,7 +72,7 @@ public class Util {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             bitmap = barcodeEncoder.encodeBitmap(content, BarcodeFormat.QR_CODE, 500, 500);
         } catch (Exception e) {
-            showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context);
+            showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null);
         }
         return bitmap;
     }
