@@ -61,6 +61,7 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> eventViewModel.getEvents(context));
         binding.recyclerviewEventsList.setHasFixedSize(true);
         binding.recyclerviewEventsList.setLayoutManager(new LinearLayoutManager(context));
 
@@ -101,6 +102,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(List<Event> eventList) {
                 binding.progressBar.setVisibility(View.GONE);
+                binding.swipeRefreshLayout.setRefreshing(false);
                 if (eventList.get(0) != null) {
                     eventAdapter = new EventAdapter(eventList, requireView());
                     binding.recyclerviewEventsList.setAdapter(eventAdapter);
@@ -113,6 +115,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(HttpStatus httpStatus) {
                 binding.progressBar.setVisibility(View.GONE);
+                binding.swipeRefreshLayout.setRefreshing(false);
+                binding.textViewEmptyData.setVisibility(View.VISIBLE);
+                binding.recyclerviewEventsList.setVisibility(View.GONE);
                 Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
                     binding.progressBar.setVisibility(View.VISIBLE);
                     eventViewModel.getEvents(context);
@@ -123,6 +128,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(HttpException httpException) {
                 binding.progressBar.setVisibility(View.GONE);
+                binding.swipeRefreshLayout.setRefreshing(false);
+                binding.textViewEmptyData.setVisibility(View.VISIBLE);
+                binding.recyclerviewEventsList.setVisibility(View.GONE);
                 Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
                     binding.progressBar.setVisibility(View.VISIBLE);
                     eventViewModel.getEvents(context);
