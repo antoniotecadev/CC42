@@ -137,15 +137,16 @@
                 android:textColor="@color/textColorPrimary"
                 android:textSize="12sp" />
 
-            <Button
-                android:id="@+id/buttonGenerateQrCode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:paddingVertical="20dp"
-                android:paddingStart="20dp"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabGenerateQrCode"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                app:fabCustomSize="100dp"
+                app:maxImageSize="50dp"
                 app:backgroundTint="@color/white"
-                app:icon="@drawable/ic_baseline_qr_code_2_100" />
+                app:srcCompat="@drawable/ic_baseline_qr_code_2_100" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

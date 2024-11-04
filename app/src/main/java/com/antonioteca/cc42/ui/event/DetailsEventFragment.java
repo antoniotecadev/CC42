@@ -69,7 +69,7 @@ public class DetailsEventFragment extends Fragment {
         binding.textViewLocation.setText(event.getLocation());
         binding.textViewPeople.setText(event.getNbr_subscribers() + " / " + event.getMax_people());
         setMarkdownText(binding.textViewDescription, event.getDescription());
-        binding.buttonGenerateQrCode.setOnClickListener(new View.OnClickListener() {
+        binding.fabGenerateQrCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bitmap bitmapQrCode = generateQrCode(view.getContext(), String.valueOf(event.getId()));
