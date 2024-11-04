@@ -94,7 +94,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         setColorCoalition(toolbar, colorCoalition);
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
-            binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setBackgroundTintList(colorStateList);
+            // binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setBackgroundTintList(colorStateList); // Opcional
             navigationView.setItemTextColor(colorStateList);
             navigationView.setItemIconTintList(colorStateList);
         }

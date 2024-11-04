@@ -24,10 +24,12 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabOpenCameraScannerQrCode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_gravity="bottom|center"
-        android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="16dp"
+        app:fabCustomSize="100dp"
+        app:maxImageSize="50dp"
+        app:backgroundTint="@color/white"
         app:srcCompat="@drawable/ic_baseline_qr_code_scanner_100" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
