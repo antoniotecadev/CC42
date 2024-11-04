@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CC42"
         android:usesCleartextTraffic="true"
-        tools:targetApi="33">
+        tools:targetApi="34">
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:configChanges="orientation"
