@@ -18,7 +18,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -43,6 +45,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.navigation.NavigationView;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 public class NavigationDrawerActivity extends AppCompatActivity {
 
@@ -56,7 +60,6 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
         ActivityNavigationDrawerBinding binding = ActivityNavigationDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         setSupportActionBar(binding.appBarNavigationDrawer.toolbar);
         binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +69,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     // Solicitar a permissão
                     ActivityCompat.requestPermissions(NavigationDrawerActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
                 } else
-                    openCameraScannerQrCodeEvent();
+                    openCameraScannerQrCodeEvent(new ScanOptions(), 0);
             }
         });
         DrawerLayout drawer = binding.drawerLayout;
@@ -165,18 +168,30 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         finish();
     }
 
-    private void openCameraScannerQrCodeEvent() {
-
+    private void openCameraScannerQrCodeEvent(ScanOptions scanOptions, int cameraId) {
+        scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
+        scanOptions.setPrompt(getString(R.string.align_camera_qr_code));
+        scanOptions.setOrientationLocked(false); // unlock orientation of camera
+        scanOptions.setCameraId(cameraId);
+        scanOptions.setBeepEnabled(true);
+        barScanOptionsActivityResultLauncher.launch(scanOptions);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PERMISSION_CODE)
-            openCameraScannerQrCodeEvent();
+            openCameraScannerQrCodeEvent(new ScanOptions(), 0);
         else
             Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_camera_denied), this, null);
     }
+
+    private final ActivityResultLauncher<ScanOptions> barScanOptionsActivityResultLauncher = registerForActivityResult(new ScanContract(), result -> {
+        if (result.getContents() == null)
+            Toast.makeText(this, R.string.cancelled, Toast.LENGTH_LONG).show();
+        else
+            Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+    });
 
     /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
