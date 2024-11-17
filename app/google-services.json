@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "740652323764",
+    "firebase_url": "https://cadet-check-cc42-default-rtdb.firebaseio.com",
+    "project_id": "cadet-check-cc42",
+    "storage_bucket": "cadet-check-cc42.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:740652323764:android:f9cb37d4749b500f4858e1",
+        "android_client_info": {
+          "package_name": "com.antonioteca.cc42"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIbWCDLg0BRUGY2ta64-FxNmC6n5wkMdg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
