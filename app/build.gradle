@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'androidx.navigation.safeargs' // Gerar código de linguagem Java adequado para módulo Java
+    id 'com.google.gms.google-services' // Para usar Firebase
 }
 
 android {
