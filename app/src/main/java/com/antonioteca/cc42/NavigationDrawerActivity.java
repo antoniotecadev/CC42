@@ -36,16 +36,19 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.antonioteca.cc42.dao.daoapi.DaoEventFirebase;
 import com.antonioteca.cc42.databinding.ActivityNavigationDrawerBinding;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
+import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.utility.GlideApp;
 import com.antonioteca.cc42.utility.Util;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.FirebaseDatabase;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -55,10 +58,24 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 
+    private User user;
+    private String campusId;
+    private int uid;
+    private String userLogin;
+    private String displayName;
+    private Context context;
+    private FirebaseDatabase firebaseDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        user = new User(NavigationDrawerActivity.this);
+        campusId = String.valueOf(user.getCampusId());
+        uid = user.getUid();
+        userLogin = user.getLogin();
+        displayName = user.getDisplayName();
+        context = NavigationDrawerActivity.this;
+        firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         ActivityNavigationDrawerBinding binding = ActivityNavigationDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarNavigationDrawer.toolbar);
@@ -96,7 +113,6 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         // Obter o NavigationView
         // Obter o header view dentro do NavigationView
         View headerView = navigationView.getHeaderView(0);
-        User user = new User(this);
         user.coalition = new Coalition(this);
 
         Toolbar toolbar = binding.appBarNavigationDrawer.toolbar;
@@ -197,10 +213,19 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     }
 
     private final ActivityResultLauncher<ScanOptions> barScanOptionsActivityResultLauncher = registerForActivityResult(new ScanContract(), result -> {
-        if (result.getContents() == null)
+        String eventId = result.getContents();
+        if (eventId == null)
             Toast.makeText(this, R.string.cancelled, Toast.LENGTH_LONG).show();
-        else
-            Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+        else {
+            DaoEventFirebase.markAttendance(
+                    firebaseDatabase,
+                    eventId,
+                    campusId,
+                    uid,
+                    userLogin,
+                    displayName,
+                    context);
+        }
     });
 
     /* @Override
