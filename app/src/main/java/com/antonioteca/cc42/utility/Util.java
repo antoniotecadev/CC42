@@ -70,7 +70,7 @@ public class Util {
         Bitmap bitmap = null;
         try {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            bitmap = barcodeEncoder.encodeBitmap(content, BarcodeFormat.QR_CODE, 500, 500);
+            bitmap = barcodeEncoder.encodeBitmap("cc42" + content, BarcodeFormat.QR_CODE, 500, 500);
         } catch (Exception e) {
             showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null);
         }

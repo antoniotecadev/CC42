@@ -47,7 +47,7 @@ public class DaoEventFirebase {
                 } else {
                     // Crie os dados do evento
                     Map<String, Object> eventUpdates = new HashMap<>();
-                    eventUpdates.put("status", "pendente");
+                    eventUpdates.put("status", "pendente"); // ou "iniciado" ou "finalizado"
 
                     // Registra a presença do cadete
                     Map<String, Object> participantData = new HashMap<>();

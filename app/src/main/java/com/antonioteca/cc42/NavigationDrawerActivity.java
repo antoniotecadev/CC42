@@ -215,17 +215,19 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private final ActivityResultLauncher<ScanOptions> barScanOptionsActivityResultLauncher = registerForActivityResult(new ScanContract(), result -> {
         String eventId = result.getContents();
         if (eventId == null)
-            Toast.makeText(this, R.string.cancelled, Toast.LENGTH_LONG).show();
-        else {
+            Toast.makeText(context, R.string.cancelled, Toast.LENGTH_LONG).show();
+        else if (eventId.startsWith("cc42")) {
             DaoEventFirebase.markAttendance(
                     firebaseDatabase,
-                    eventId,
+                    eventId.replace("cc42", ""),
                     campusId,
                     uid,
                     userLogin,
                     displayName,
                     context);
-        }
+        } else
+            Toast.makeText(context, R.string.msg_qr_code_invalid, Toast.LENGTH_LONG).show();
+
     });
 
     /* @Override
