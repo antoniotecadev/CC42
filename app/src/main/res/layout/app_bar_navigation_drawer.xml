@@ -32,4 +32,13 @@
         app:maxImageSize="50dp"
         app:backgroundTint="@color/white"
         app:srcCompat="@drawable/ic_baseline_qr_code_scanner_100" />
+
+    <ProgressBar
+        android:id="@+id/progressBarmarkAttendance"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="16dp"
+        android:indeterminate="true"
+        android:visibility="invisible" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -7,13 +7,17 @@ import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ImageQrCodeBinding;
+import com.antonioteca.cc42.viewmodel.SharedViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
@@ -87,5 +91,17 @@ public class Util {
         builder.setPositiveButton(R.string.close, (dialogInterface, i) -> dialogInterface.dismiss());
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public static void setVisibleProgressBar(ProgressBar progressBar, FloatingActionButton floatingActionButton, SharedViewModel sharedViewModel){
+        sharedViewModel.setDisabledRecyclerView(true);
+        progressBar.setVisibility(View.VISIBLE);
+        floatingActionButton.setVisibility(View.INVISIBLE);
+    }
+
+    public static void setInvisibleProgressBar(ProgressBar progressBar, FloatingActionButton floatingActionButton, SharedViewModel sharedViewModel){
+        progressBar.setVisibility(View.INVISIBLE);
+        floatingActionButton.setVisibility(View.VISIBLE);
+        sharedViewModel.setDisabledRecyclerView(false);
     }
 }

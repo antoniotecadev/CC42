@@ -2,6 +2,7 @@ package com.antonioteca.cc42.dao.daoapi;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -9,6 +10,8 @@ import androidx.annotation.NonNull;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.utility.Util;
+import com.antonioteca.cc42.viewmodel.SharedViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,7 +31,11 @@ public class DaoEventFirebase {
             int userId,
             String userLogin,
             String displayName,
-            Context context) {
+            Context context,
+            ProgressBar progressBarmarkAttendance,
+            FloatingActionButton fabOpenCameraScannerQrCode,
+            SharedViewModel sharedViewModel
+    ) {
 
         // Cria ou atualiza a lista de participantes do evento
         DatabaseReference campusRef = firebaseDatabase.getReference("campus")
@@ -42,6 +49,7 @@ public class DaoEventFirebase {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    Util.setInvisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                     String message = "Você já marcou presença neste evento, cadete " + displayName + "!";
                     Util.showAlertDialogBuild("EVENT", message, context, null);
                 } else {
@@ -67,11 +75,13 @@ public class DaoEventFirebase {
                     // Execute a operação atômica para armazenar o evento e os participantes
                     campusReference.updateChildren(eventUpdates)
                             .addOnSuccessListener(aVoid -> {
+                                Util.setInvisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = "Presença registrada com sucesso! Bem-vindo ao evento, cadete " + displayName + "!";
                                 Util.showAlertDialogBuild("EVENT", message, context, null);
                             })
                             .addOnFailureListener(e -> {
                                 // Falha: houve um erro ao tentar armazenar os dados
+                                Util.setInvisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 Util.showAlertDialogBuild(context.getString(R.string.err), "Erro ao armazenar evento e participante: " + e.getMessage(), context, null);
                             });
                 }
@@ -79,6 +89,7 @@ public class DaoEventFirebase {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Util.setInvisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                 Util.showAlertDialogBuild(context.getString(R.string.err), "Erro ao verificar presença" + error.toException(), context, null);
             }
         });

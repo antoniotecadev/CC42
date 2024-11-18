@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
@@ -44,9 +46,11 @@ import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.utility.GlideApp;
 import com.antonioteca.cc42.utility.Util;
+import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.FirebaseDatabase;
 import com.journeyapps.barcodescanner.ScanContract;
@@ -58,37 +62,39 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 
-    private User user;
     private String campusId;
     private int uid;
     private String userLogin;
     private String displayName;
     private Context context;
+    private FloatingActionButton fabOpenCameraScannerQrCode;
+    private ProgressBar progressBarmarkAttendance;
+    private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        user = new User(NavigationDrawerActivity.this);
+        ActivityNavigationDrawerBinding binding = ActivityNavigationDrawerBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setSupportActionBar(binding.appBarNavigationDrawer.toolbar);
+        User user = new User(NavigationDrawerActivity.this);
         campusId = String.valueOf(user.getCampusId());
         uid = user.getUid();
         userLogin = user.getLogin();
         displayName = user.getDisplayName();
         context = NavigationDrawerActivity.this;
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
-        ActivityNavigationDrawerBinding binding = ActivityNavigationDrawerBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        setSupportActionBar(binding.appBarNavigationDrawer.toolbar);
-        binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Verificar se a permissão já foi concedida
-                if (ContextCompat.checkSelfPermission(view.getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-                    // Solicitar a permissão
-                    ActivityCompat.requestPermissions(NavigationDrawerActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-                } else
-                    openCameraScannerQrCodeEvent(new ScanOptions(), 0);
-            }
+        sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
+        fabOpenCameraScannerQrCode = binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode;
+        progressBarmarkAttendance = binding.appBarNavigationDrawer.progressBarmarkAttendance;
+        fabOpenCameraScannerQrCode.setOnClickListener(view -> {
+            // Verificar se a permissão já foi concedida
+            if (ContextCompat.checkSelfPermission(view.getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                // Solicitar a permissão
+                ActivityCompat.requestPermissions(NavigationDrawerActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+            } else
+                openCameraScannerQrCodeEvent(new ScanOptions());
         });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
@@ -105,9 +111,9 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             @Override
             public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
                 if (navDestination.getId() == R.id.detailsEventFragment)
-                    binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
+                    fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
                 else
-                    binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setVisibility(View.VISIBLE);
+                    fabOpenCameraScannerQrCode.setVisibility(View.VISIBLE);
             }
         });
         // Obter o NavigationView
@@ -120,7 +126,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         setColorCoalition(toolbar, colorCoalition);
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
-            // binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setBackgroundTintList(colorStateList); // Opcional
+            // fabOpenCameraScannerQrCode.setBackgroundTintList(colorStateList); // Opcional
+            progressBarmarkAttendance.setIndeterminateTintList(colorStateList);
             navigationView.setItemTextColor(colorStateList);
             navigationView.setItemIconTintList(colorStateList);
         }
@@ -194,11 +201,11 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         finish();
     }
 
-    private void openCameraScannerQrCodeEvent(ScanOptions scanOptions, int cameraId) {
+    private void openCameraScannerQrCodeEvent(ScanOptions scanOptions) {
         scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
         scanOptions.setPrompt(getString(R.string.align_camera_qr_code));
         scanOptions.setOrientationLocked(false); // unlock orientation of camera
-        scanOptions.setCameraId(cameraId);
+        scanOptions.setCameraId(0);
         scanOptions.setBeepEnabled(true);
         barScanOptionsActivityResultLauncher.launch(scanOptions);
     }
@@ -207,7 +214,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PERMISSION_CODE)
-            openCameraScannerQrCodeEvent(new ScanOptions(), 0);
+            openCameraScannerQrCodeEvent(new ScanOptions());
         else
             Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_camera_denied), this, null);
     }
@@ -217,6 +224,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         if (eventId == null)
             Toast.makeText(context, R.string.cancelled, Toast.LENGTH_LONG).show();
         else if (eventId.startsWith("cc42")) {
+            Util.setVisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
             DaoEventFirebase.markAttendance(
                     firebaseDatabase,
                     eventId.replace("cc42", ""),
@@ -224,10 +232,13 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     uid,
                     userLogin,
                     displayName,
-                    context);
+                    context,
+                    progressBarmarkAttendance,
+                    fabOpenCameraScannerQrCode,
+                    sharedViewModel
+            );
         } else
             Toast.makeText(context, R.string.msg_qr_code_invalid, Toast.LENGTH_LONG).show();
-
     });
 
     /* @Override
