@@ -38,7 +38,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.antonioteca.cc42.dao.daoapi.DaoEventFirebase;
+import com.antonioteca.cc42.dao.daofarebase.DaoEventFirebase;
 import com.antonioteca.cc42.databinding.ActivityNavigationDrawerBinding;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Token;

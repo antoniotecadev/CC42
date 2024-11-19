@@ -1,4 +1,4 @@
-package com.antonioteca.cc42.dao.daoapi;
+package com.antonioteca.cc42.dao.daofarebase;
 
 import android.content.Context;
 import android.util.Log;
@@ -273,4 +273,74 @@ public class DaoEventFirebase {
             }
         });
     }
+
+   /* FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+    // Referência para o evento e participantes
+    DatabaseReference eventRef = database.getReference("campus")
+            .child(campusId)
+            .child("events")
+            .child(eventId)
+            .child("participants");
+
+// Adiciona o cadete à lista de participantes do evento
+eventRef.child(userId).
+
+    setValue(true);
+
+    // Referência para os dados do usuário (cadete)
+    DatabaseReference userRef = database.getReference("users")
+            .child(userId);
+
+    // Dados do cadete
+    Map<String, Object> userData = new HashMap<>();
+userData.put("name",userName);
+userData.put("profile_url",profileUrl);
+userData.put("profile_pic",profilePicUrl);
+
+// Armazenar os dados do cadete no nó de usuários
+userRef.updateChildren(userData);
+
+    DatabaseReference eventRef = database.getReference("campus")
+            .child(campusId)
+            .child("events")
+            .child(eventId)
+            .child("participants");*/
+
+/*// Obter todos os IDs dos participantes
+eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot snapshot) {
+            for (DataSnapshot participantSnapshot : snapshot.getChildren()) {
+                String userId = participantSnapshot.getKey();  // O ID do participante
+
+                // Agora você pode buscar os dados detalhados do usuário
+                DatabaseReference userRef = database.getReference("users")
+                        .child(userId);
+
+                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        String userName = snapshot.child("name").getValue(String.class);
+                        String profileUrl = snapshot.child("profile_url").getValue(String.class);
+                        String profilePicUrl = snapshot.child("profile_pic").getValue(String.class);
+
+                        // Aqui você tem os dados completos do participante
+                        System.out.println("Participante: " + userName);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        System.err.println("Erro ao buscar dados do participante: " + error.getMessage());
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError error) {
+            System.err.println("Erro ao buscar participantes: " + error.getMessage());
+        }
+    });*/
+
 }
