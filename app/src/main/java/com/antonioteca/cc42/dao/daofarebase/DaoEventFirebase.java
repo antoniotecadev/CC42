@@ -2,6 +2,7 @@ package com.antonioteca.cc42.dao.daofarebase;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ public class DaoEventFirebase {
             String cursusId,
             String campusId,
             Context context,
+            LayoutInflater layoutInflater,
             ProgressBar progressBarmarkAttendance,
             FloatingActionButton fabOpenCameraScannerQrCode,
             SharedViewModel sharedViewModel
@@ -53,10 +55,9 @@ public class DaoEventFirebase {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     Util.setInvisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
-                    String message = "Você já marcou presença neste evento, cadete " + displayName + "!";
-                    Util.showAlertDialogBuild("EVENT", message, context, null);
+                    String message = context.getString(R.string.msg_you_already_mark_attendance_event) + ", " + displayName + "!";
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835");
                 } else {
-
                     // Armazenamento de Dados de Participante
                     Map<String, Object> participantData = new HashMap<>();
                     participantData.put("uid", userId);
@@ -77,12 +78,13 @@ public class DaoEventFirebase {
                     campusReference.updateChildren(eventUpdates)
                             .addOnSuccessListener(aVoid -> {
                                 Util.setInvisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
-                                String message = "Presença registrada com sucesso! Bem-vindo ao evento, cadete " + displayName + "!";
-                                Util.showAlertDialogBuild("EVENT", message, context, null);
+                                String message = context.getString(R.string.msg_sucess_mark_attendance_event) + ", " + displayName + "!";
+                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50");
                             })
                             .addOnFailureListener(e -> {
                                 Util.setInvisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
-                                Util.showAlertDialogBuild(context.getString(R.string.err), "Erro ao armazenar evento e participante: " + e.getMessage(), context, null);
+                                String message = context.getString(R.string.msg_error_mark_attendance_event) + ": " + e.getMessage();
+                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935");
                             });
                 }
             }

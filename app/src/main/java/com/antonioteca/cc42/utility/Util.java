@@ -1,6 +1,7 @@
 package com.antonioteca.cc42.utility;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
@@ -9,6 +10,7 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -93,15 +95,35 @@ public class Util {
         dialog.show();
     }
 
-    public static void setVisibleProgressBar(ProgressBar progressBar, FloatingActionButton floatingActionButton, SharedViewModel sharedViewModel){
+    public static void setVisibleProgressBar(ProgressBar progressBar, FloatingActionButton floatingActionButton, SharedViewModel sharedViewModel) {
         sharedViewModel.setDisabledRecyclerView(true);
         progressBar.setVisibility(View.VISIBLE);
         floatingActionButton.setVisibility(View.INVISIBLE);
     }
 
-    public static void setInvisibleProgressBar(ProgressBar progressBar, FloatingActionButton floatingActionButton, SharedViewModel sharedViewModel){
+    public static void setInvisibleProgressBar(ProgressBar progressBar, FloatingActionButton floatingActionButton, SharedViewModel sharedViewModel) {
         progressBar.setVisibility(View.INVISIBLE);
         floatingActionButton.setVisibility(View.VISIBLE);
         sharedViewModel.setDisabledRecyclerView(false);
+    }
+
+    public static void showAlertDialogMessage(Context context, LayoutInflater layoutInflater, String title, String message, String colorString) {
+        View customView = layoutInflater.inflate(R.layout.modal_layout_event_message, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setView(customView)
+                .setCancelable(false);  // Impede que o modal seja fechado clicando fora
+        TextView modalMessage = customView.findViewById(R.id.modalMessage);
+        TextView modalTitle = customView.findViewById(R.id.modalTitle);
+        Button closeModalButton = customView.findViewById(R.id.closeModalButton);
+        int color = Color.parseColor(colorString);
+        ColorStateList colorStateList = ColorStateList.valueOf(color);
+        modalTitle.setText(title);
+        modalMessage.setText(message);
+        modalTitle.setTextColor(color);
+        closeModalButton.setBackgroundTintList(colorStateList);
+        AlertDialog dialog = builder.create();
+        closeModalButton.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 }

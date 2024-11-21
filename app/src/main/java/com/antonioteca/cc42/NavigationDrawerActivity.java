@@ -236,6 +236,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     cursusId,
                     campusId,
                     context,
+                    getLayoutInflater(),
                     progressBarmarkAttendance,
                     fabOpenCameraScannerQrCode,
                     sharedViewModel

@@ -25,4 +25,10 @@
     <string name="align_camera_qr_code">Alinha a câmera ao CÓDIGO QR</string>
     <string name="cancelled">Cancelado</string>
     <string name="msg_qr_code_invalid">Código QR inválido</string>
+    <string name="fechar">Fechar</string>
+    <string name="sucess">Sucesso!</string>
+    <string name="warning">Aviso!</string>
+    <string name="msg_you_already_mark_attendance_event">Você já marcou presença neste evento</string>
+    <string name="msg_sucess_mark_attendance_event">Presença registrada com sucesso! Bem-vindo ao evento</string>
+    <string name="msg_error_mark_attendance_event">Erro ao armazenar evento e participante</string>
 </resources>
