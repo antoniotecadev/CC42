@@ -62,10 +62,11 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 
-    private String campusId;
-    private int uid;
+    private String uid;
     private String userLogin;
     private String displayName;
+    private String campusId;
+    private String cursusId;
     private Context context;
     private FloatingActionButton fabOpenCameraScannerQrCode;
     private ProgressBar progressBarmarkAttendance;
@@ -79,10 +80,11 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarNavigationDrawer.toolbar);
         User user = new User(NavigationDrawerActivity.this);
-        campusId = String.valueOf(user.getCampusId());
-        uid = user.getUid();
+        uid = String.valueOf(user.getUid());
         userLogin = user.getLogin();
         displayName = user.getDisplayName();
+        cursusId = String.valueOf(user.getCursusId());
+        campusId = String.valueOf(user.getCampusId());
         context = NavigationDrawerActivity.this;
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
@@ -228,10 +230,11 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             DaoEventFirebase.markAttendance(
                     firebaseDatabase,
                     eventId.replace("cc42", ""),
-                    campusId,
                     uid,
                     userLogin,
                     displayName,
+                    cursusId,
+                    campusId,
                     context,
                     progressBarmarkAttendance,
                     fabOpenCameraScannerQrCode,

@@ -27,10 +27,11 @@ public class DaoEventFirebase {
     public static void markAttendance(
             FirebaseDatabase firebaseDatabase,
             String eventId,
-            String campusId,
-            int userId,
+            String userId,
             String userLogin,
             String displayName,
+            String cursusId,
+            String campusId,
             Context context,
             ProgressBar progressBarmarkAttendance,
             FloatingActionButton fabOpenCameraScannerQrCode,
@@ -40,6 +41,8 @@ public class DaoEventFirebase {
         // Cria ou atualiza a lista de participantes do evento
         DatabaseReference campusRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
+                .child("cursus")
+                .child(cursusId)
                 .child("events")
                 .child(eventId)
                 .child("participants");  // Referência para os participantes do evento
@@ -53,24 +56,22 @@ public class DaoEventFirebase {
                     String message = "Você já marcou presença neste evento, cadete " + displayName + "!";
                     Util.showAlertDialogBuild("EVENT", message, context, null);
                 } else {
-                    // Crie os dados do evento
-                    Map<String, Object> eventUpdates = new HashMap<>();
-                    eventUpdates.put("status", "pendente"); // ou "iniciado" ou "finalizado"
 
-                    // Registra a presença do cadete
+                    // Armazenamento de Dados de Participante
                     Map<String, Object> participantData = new HashMap<>();
                     participantData.put("uid", userId);
                     participantData.put("user", userLogin);
                     participantData.put("display_name", displayName);
 
+                    // Crie os dados do evento e usuários
+                    Map<String, Object> eventUpdates = new HashMap<>();
+                    eventUpdates.put("cursus/" + cursusId + "/users/" + userId, participantData);
+                    eventUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/participants/" + userId, true);
+                    eventUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/status", "pendente"); // ou "iniciado" ou "finalizado"
+
                     // Referência ao Firebase para adicionar o cadete
                     DatabaseReference campusReference = firebaseDatabase.getReference("campus")
-                            .child(campusId)
-                            .child("events")
-                            .child(eventId);
-
-                    // Adiciona o participante à lista de participantes
-                    eventUpdates.put("participants/" + userId, participantData);
+                            .child(campusId);
 
                     // Execute a operação atômica para armazenar o evento e os participantes
                     campusReference.updateChildren(eventUpdates)
@@ -80,7 +81,6 @@ public class DaoEventFirebase {
                                 Util.showAlertDialogBuild("EVENT", message, context, null);
                             })
                             .addOnFailureListener(e -> {
-                                // Falha: houve um erro ao tentar armazenar os dados
                                 Util.setInvisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 Util.showAlertDialogBuild(context.getString(R.string.err), "Erro ao armazenar evento e participante: " + e.getMessage(), context, null);
                             });
