@@ -66,8 +66,8 @@ public class DaoEventFirebase {
                     // Crie os dados do evento e usuários
                     Map<String, Object> eventUpdates = new HashMap<>();
                     eventUpdates.put("cursus/" + cursusId + "/users/" + userId, participantData);
-                    eventUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/participants/" + userId, true);
                     eventUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/status", "pendente"); // ou "iniciado" ou "finalizado"
+                    eventUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/participants/" + userId, true);
 
                     // Referência ao Firebase para adicionar o cadete
                     DatabaseReference campusReference = firebaseDatabase.getReference("campus")
