@@ -88,10 +88,10 @@ public class Util {
         binding.textViewEventTitle.setText(eventName);
         binding.imageViewQrCode.setImageBitmap(bitmapQrCode);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.qr_code);
         builder.setView(binding.getRoot());
-        builder.setPositiveButton(R.string.close, (dialogInterface, i) -> dialogInterface.dismiss());
+        builder.setCancelable(false);
         AlertDialog dialog = builder.create();
+        binding.closeModalButton.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
     }
 
