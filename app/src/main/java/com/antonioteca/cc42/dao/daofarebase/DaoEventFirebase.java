@@ -92,7 +92,8 @@ public class DaoEventFirebase {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Util.setInvisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
-                Util.showAlertDialogBuild(context.getString(R.string.err), "Erro ao verificar presença" + error.toException(), context, null);
+                String message = context.getString(R.string.msg_error_check_attendance_event) + ": " + error.toException();
+                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935");
             }
         });
     }
