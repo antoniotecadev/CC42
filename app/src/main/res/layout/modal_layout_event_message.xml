@@ -10,16 +10,13 @@
     android:orientation="vertical"
     android:padding="24dp">
 
-    <!-- Ícone de sucesso -->
     <ImageView
         android:id="@+id/successIcon"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginBottom="8dp"
-        android:contentDescription="Ícone de sucesso"
         android:src="@drawable/logo_42" />
 
-    <!-- Título do modal -->
     <TextView
         android:id="@+id/modalTitle"
         android:layout_width="wrap_content"
@@ -29,7 +26,6 @@
         android:textSize="34sp"
         android:textStyle="bold" />
 
-    <!-- Mensagem do modal -->
     <TextView
         android:id="@+id/modalMessage"
         android:layout_width="wrap_content"
@@ -39,7 +35,6 @@
         android:textColor="#555555"
         android:textSize="16sp" />
 
-    <!-- Botão para fechar o modal -->
     <Button
         android:id="@+id/closeModalButton"
         android:layout_width="match_parent"
