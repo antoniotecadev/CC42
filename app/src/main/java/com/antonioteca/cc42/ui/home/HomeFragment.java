@@ -70,7 +70,7 @@ public class HomeFragment extends Fragment {
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> eventViewModel.getEvents(context));
         binding.fabGenerateQrCodeUser.setOnClickListener(v -> {
-            Bitmap bitmapQrCode = generateQrCode(context, user.getUid() + "#" + user.getLogin() + "#" + user.getDisplayName());
+            Bitmap bitmapQrCode = generateQrCode(context, "user" + user.getUid() + "#" + user.getLogin() + "#" + user.getDisplayName());
             showModalQrCode(context, bitmapQrCode, user.getLogin() + "\n" + user.getDisplayName());
         });
 
