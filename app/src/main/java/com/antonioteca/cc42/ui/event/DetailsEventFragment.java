@@ -6,7 +6,7 @@ import static com.antonioteca.cc42.utility.DateUtils.getFormattedDate;
 import static com.antonioteca.cc42.utility.DateUtils.parseDate;
 import static com.antonioteca.cc42.utility.Util.generateQrCode;
 import static com.antonioteca.cc42.utility.Util.setMarkdownText;
-import static com.antonioteca.cc42.utility.Util.showAlertDialogQrCode;
+import static com.antonioteca.cc42.utility.Util.showModalQrCode;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -73,7 +73,7 @@ public class DetailsEventFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Bitmap bitmapQrCode = generateQrCode(view.getContext(), String.valueOf(event.getId()));
-                showAlertDialogQrCode(view.getContext(), bitmapQrCode, event.getName());
+                showModalQrCode(view.getContext(), bitmapQrCode, event.getName());
             }
         });
         return binding.getRoot();

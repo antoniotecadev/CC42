@@ -4,7 +4,7 @@ import static com.antonioteca.cc42.utility.DateUtils.getDaysUntil;
 import static com.antonioteca.cc42.utility.DateUtils.getFormattedDate;
 import static com.antonioteca.cc42.utility.DateUtils.parseDate;
 import static com.antonioteca.cc42.utility.Util.generateQrCode;
-import static com.antonioteca.cc42.utility.Util.showAlertDialogQrCode;
+import static com.antonioteca.cc42.utility.Util.showModalQrCode;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -109,7 +109,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
                         Bitmap bitmapQrCode = generateQrCode(view.getContext(), String.valueOf(event.getId()));
-                        showAlertDialogQrCode(view.getContext(), bitmapQrCode, event.getName());
+                        showModalQrCode(view.getContext(), bitmapQrCode, event.getName());
                         return true;
                     }
                 });

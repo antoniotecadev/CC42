@@ -1,7 +1,11 @@
 package com.antonioteca.cc42.ui.home;
 
+import static com.antonioteca.cc42.utility.Util.generateQrCode;
+import static com.antonioteca.cc42.utility.Util.showModalQrCode;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -58,12 +62,17 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        binding.swipeRefreshLayout.setOnRefreshListener(() -> eventViewModel.getEvents(context));
         binding.recyclerviewEventsList.setHasFixedSize(true);
         binding.recyclerviewEventsList.setLayoutManager(new LinearLayoutManager(context));
 
         User user = new User(context);
         user.coalition = new Coalition(context);
+
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> eventViewModel.getEvents(context));
+        binding.fabGenerateQrCodeUser.setOnClickListener(v -> {
+            Bitmap bitmapQrCode = generateQrCode(context, user.getUid() + "#" + user.getLogin() + "#" + user.getDisplayName());
+            showModalQrCode(context, bitmapQrCode, user.getLogin() + "\n" + user.getDisplayName());
+        });
 
         binding.textViewCoalition.setText(user.coalition.getName());
         binding.textViewFullName.setText(user.getDisplayName());
