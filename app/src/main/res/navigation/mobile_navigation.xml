@@ -16,23 +16,20 @@
     </fragment>
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.antonioteca.cc42.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
-
-    <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.antonioteca.cc42.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
-    <fragment
         android:id="@+id/detailsEventFragment"
         android:name="com.antonioteca.cc42.ui.event.DetailsEventFragment"
-        android:label="fragment_details_event"
+        android:label="@string/msg_details_event"
         tools:layout="@layout/fragment_details_event" >
         <argument
             android:name="detailsEvent"
             app:argType="com.antonioteca.cc42.model.Event" />
+        <action
+            android:id="@+id/action_detailsEventFragment_to_attendanceListFragment"
+            app:destination="@id/attendanceListFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/attendanceListFragment"
+        android:name="com.antonioteca.cc42.ui.event.AttendanceListFragment"
+        android:label="@string/msg_attendance_list"
+        tools:layout="@layout/fragment_attendance_list" />
 </navigation>

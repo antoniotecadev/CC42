@@ -137,16 +137,35 @@
                 android:textColor="@color/textColorPrimary"
                 android:textSize="12sp" />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabGenerateQrCode"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="16dp"
-                app:fabCustomSize="100dp"
-                app:maxImageSize="50dp"
-                app:backgroundTint="@color/white"
-                app:srcCompat="@drawable/ic_baseline_qr_code_2_100" />
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fabGenerateQrCode"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="8dp"
+                    app:backgroundTint="@color/white"
+                    app:fabCustomSize="100dp"
+                    app:maxImageSize="50dp"
+                    app:srcCompat="@drawable/ic_baseline_qr_code_2_100" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fabOpenAttendanceList"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="8dp"
+                    app:backgroundTint="@color/white"
+                    app:fabCustomSize="100dp"
+                    app:maxImageSize="50dp"
+                    app:srcCompat="@drawable/ic_baseline_app_registration_100" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

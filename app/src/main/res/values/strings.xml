@@ -32,4 +32,6 @@
     <string name="msg_sucess_mark_attendance_event">Presença registrada com sucesso! Bem-vindo ao evento</string>
     <string name="msg_error_mark_attendance_event">Erro ao armazenar evento e participante</string>
     <string name="msg_error_check_attendance_event">Erro ao verificar presença</string>
+    <string name="msg_details_event">Detalhes do evento</string>
+    <string name="msg_attendance_list">Lista de presença</string>
 </resources>

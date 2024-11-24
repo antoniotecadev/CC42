@@ -20,7 +20,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
+import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsEventBinding;
 import com.antonioteca.cc42.model.Event;
 
@@ -69,13 +71,11 @@ public class DetailsEventFragment extends Fragment {
         binding.textViewLocation.setText(event.getLocation());
         binding.textViewPeople.setText(event.getNbr_subscribers() + " / " + event.getMax_people());
         setMarkdownText(binding.textViewDescription, event.getDescription());
-        binding.fabGenerateQrCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Bitmap bitmapQrCode = generateQrCode(view.getContext(), String.valueOf(event.getId()));
-                showModalQrCode(view.getContext(), bitmapQrCode, event.getName());
-            }
+        binding.fabGenerateQrCode.setOnClickListener(view -> {
+            Bitmap bitmapQrCode = generateQrCode(view.getContext(), String.valueOf(event.getId()));
+            showModalQrCode(view.getContext(), bitmapQrCode, event.getName());
         });
+        binding.fabOpenAttendanceList.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_detailsEventFragment_to_attendanceListFragment));
         return binding.getRoot();
     }
 

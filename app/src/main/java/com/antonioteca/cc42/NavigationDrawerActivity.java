@@ -112,7 +112,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
             public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
-                if (navDestination.getId() == R.id.detailsEventFragment)
+                if (navDestination.getId() == R.id.detailsEventFragment || navDestination.getId() == R.id.attendanceListFragment)
                     fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
                 else
                     fabOpenCameraScannerQrCode.setVisibility(View.VISIBLE);
