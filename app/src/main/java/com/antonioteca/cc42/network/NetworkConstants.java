@@ -19,6 +19,7 @@ public class NetworkConstants {
 
     public static String CODE = "code";
     public static String SCHEME_HOST = "cc42://checkcadet42";
+    public static final int CAMERA_PERMISSION_CODE = 100;
 
     // Endpoints
     public static final String LOGIN_ENDPOINT = "/oauth/token";

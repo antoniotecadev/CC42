@@ -1,5 +1,6 @@
 package com.antonioteca.cc42;
 
+import static com.antonioteca.cc42.network.NetworkConstants.CAMERA_PERMISSION_CODE;
 import static com.antonioteca.cc42.utility.Util.setColorCoalition;
 
 import android.Manifest;
@@ -58,8 +59,6 @@ import com.journeyapps.barcodescanner.ScanOptions;
 
 public class NavigationDrawerActivity extends AppCompatActivity {
 
-    private static final int CAMERA_PERMISSION_CODE = 100;
-
     private AppBarConfiguration mAppBarConfiguration;
 
     private String uid;
@@ -69,7 +68,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private String cursusId;
     private Context context;
     private FloatingActionButton fabOpenCameraScannerQrCode;
-    private ProgressBar progressBarmarkAttendance;
+    private ProgressBar progressBarMarkAttendance;
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
 
@@ -89,7 +88,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         fabOpenCameraScannerQrCode = binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode;
-        progressBarmarkAttendance = binding.appBarNavigationDrawer.progressBarmarkAttendance;
+        progressBarMarkAttendance = binding.appBarNavigationDrawer.progressBarmarkAttendance;
         fabOpenCameraScannerQrCode.setOnClickListener(view -> {
             // Verificar se a permissão já foi concedida
             if (ContextCompat.checkSelfPermission(view.getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
@@ -129,7 +128,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
             // fabOpenCameraScannerQrCode.setBackgroundTintList(colorStateList); // Opcional
-            progressBarmarkAttendance.setIndeterminateTintList(colorStateList);
+            progressBarMarkAttendance.setIndeterminateTintList(colorStateList);
             navigationView.setItemTextColor(colorStateList);
             navigationView.setItemIconTintList(colorStateList);
         }
@@ -226,7 +225,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         if (eventId == null)
             Toast.makeText(context, R.string.cancelled, Toast.LENGTH_LONG).show();
         else if (eventId.startsWith("cc42")) {
-            Util.setVisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+            Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
             DaoEventFirebase.markAttendance(
                     firebaseDatabase,
                     eventId.replace("cc42", ""),
@@ -237,7 +236,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     campusId,
                     context,
                     getLayoutInflater(),
-                    progressBarmarkAttendance,
+                    progressBarMarkAttendance,
                     fabOpenCameraScannerQrCode,
                     sharedViewModel
             );

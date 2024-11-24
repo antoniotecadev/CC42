@@ -35,7 +35,7 @@ public class DaoEventFirebase {
             String campusId,
             Context context,
             LayoutInflater layoutInflater,
-            ProgressBar progressBarmarkAttendance,
+            ProgressBar progressBarMarkAttendance,
             FloatingActionButton fabOpenCameraScannerQrCode,
             SharedViewModel sharedViewModel
     ) {
@@ -54,7 +54,7 @@ public class DaoEventFirebase {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    Util.setInvisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                    Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                     String message = context.getString(R.string.msg_you_already_mark_attendance_event) + ", " + displayName + "!";
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835");
                 } else {
@@ -77,12 +77,12 @@ public class DaoEventFirebase {
                     // Execute a operação atômica para armazenar o evento e os participantes
                     campusReference.updateChildren(eventUpdates)
                             .addOnSuccessListener(aVoid -> {
-                                Util.setInvisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                                Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = context.getString(R.string.msg_sucess_mark_attendance_event) + ", " + displayName + "!";
                                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50");
                             })
                             .addOnFailureListener(e -> {
-                                Util.setInvisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                                Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = context.getString(R.string.msg_error_mark_attendance_event) + ": " + e.getMessage();
                                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935");
                             });
@@ -91,7 +91,7 @@ public class DaoEventFirebase {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Util.setInvisibleProgressBar(progressBarmarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                 String message = context.getString(R.string.msg_error_check_attendance_event) + ": " + error.toException();
                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935");
             }

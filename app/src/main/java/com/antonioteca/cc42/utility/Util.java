@@ -5,6 +5,8 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
@@ -125,5 +127,14 @@ public class Util {
         AlertDialog dialog = builder.create();
         closeModalButton.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
+    }
+
+    public static void startVibration(Context context) {
+        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator != null)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+            else
+                vibrator.vibrate(200);
     }
 }
