@@ -34,7 +34,7 @@
         app:srcCompat="@drawable/ic_baseline_qr_code_scanner_100" />
 
     <ProgressBar
-        android:id="@+id/progressBarmarkAttendance"
+        android:id="@+id/progressBarMarkAttendance"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="bottom|center"

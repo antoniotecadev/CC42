@@ -31,5 +31,8 @@
         android:id="@+id/attendanceListFragment"
         android:name="com.antonioteca.cc42.ui.event.AttendanceListFragment"
         android:label="@string/msg_attendance_list"
-        tools:layout="@layout/fragment_attendance_list" />
+        tools:layout="@layout/fragment_attendance_list" >
+        <argument android:name="eventId"
+            app:argType="long" />
+    </fragment>
 </navigation>

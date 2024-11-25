@@ -36,11 +36,11 @@
                     android:orientation="horizontal">
 
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/fabOpenCameraScannerQrCodeBack"
+                        android:id="@+id/fabOpenCameraScannerQrCodeFront"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:backgroundTint="@color/white"
-                        app:srcCompat="@drawable/ic_baseline_qr_code_100" />
+                        app:srcCompat="@drawable/ic_baseline_qr_code_scanner_100" />
 
                     <View
                         android:layout_width="1dp"
@@ -48,11 +48,11 @@
                         android:layout_marginHorizontal="100dp" />
 
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/fabOpenCameraScannerQrCodeFront"
+                        android:id="@+id/fabOpenCameraScannerQrCodeBack"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:backgroundTint="@color/white"
-                        app:srcCompat="@drawable/ic_baseline_qr_code_scanner_100" />
+                        app:srcCompat="@drawable/ic_baseline_qr_code_100" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
             </androidx.appcompat.widget.LinearLayoutCompat>

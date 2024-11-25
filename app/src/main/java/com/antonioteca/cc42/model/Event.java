@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 public class Event implements Parcelable {
 
-    private int id;
+    private long id;
     private String name;
     private String description;
     private String location;
@@ -21,7 +21,7 @@ public class Event implements Parcelable {
     }
 
     protected Event(Parcel in) {
-        id = in.readInt();
+        id = in.readLong();
         name = in.readString();
         description = in.readString();
         location = in.readString();
@@ -44,11 +44,11 @@ public class Event implements Parcelable {
         }
     };
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -123,7 +123,7 @@ public class Event implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeInt(id);
+        parcel.writeLong(id);
         parcel.writeString(name);
         parcel.writeString(description);
         parcel.writeString(location);

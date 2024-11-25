@@ -22,7 +22,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsEventBinding;
 import com.antonioteca.cc42.model.Event;
 
@@ -72,10 +71,13 @@ public class DetailsEventFragment extends Fragment {
         binding.textViewPeople.setText(event.getNbr_subscribers() + " / " + event.getMax_people());
         setMarkdownText(binding.textViewDescription, event.getDescription());
         binding.fabGenerateQrCode.setOnClickListener(view -> {
-            Bitmap bitmapQrCode = generateQrCode(view.getContext(), String.valueOf(event.getId()));
+            Bitmap bitmapQrCode = generateQrCode(view.getContext(), "event" + event.getId());
             showModalQrCode(view.getContext(), bitmapQrCode, event.getName());
         });
-        binding.fabOpenAttendanceList.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_detailsEventFragment_to_attendanceListFragment));
+        binding.fabOpenAttendanceList.setOnClickListener(v -> {
+            DetailsEventFragmentDirections.ActionDetailsEventFragmentToAttendanceListFragment actionDetailsEventFragmentToAttendanceListFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToAttendanceListFragment(event.getId());
+            Navigation.findNavController(v).navigate(actionDetailsEventFragmentToAttendanceListFragment);
+        });
         return binding.getRoot();
     }
 

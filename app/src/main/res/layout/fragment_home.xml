@@ -83,7 +83,6 @@
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_baseline_qr_code_2_100" />
 
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"

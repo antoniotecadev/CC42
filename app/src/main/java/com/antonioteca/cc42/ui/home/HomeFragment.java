@@ -39,8 +39,14 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 public class HomeFragment extends Fragment {
 
-    private Context context;
+    private User user;
+    private Integer uid;
+    private String userLogin;
+    private String displayName;
+    private Integer campusId;
+    private Integer cursusId;
 
+    private Context context;
     private EventAdapter eventAdapter;
     private EventViewModel eventViewModel;
     private SharedViewModel sharedViewModel;
@@ -55,22 +61,25 @@ public class HomeFragment extends Fragment {
         EventViewModelFactory eventViewModelFactory = new EventViewModelFactory(eventRepository);
         eventViewModel = new ViewModelProvider(this, eventViewModelFactory).get(EventViewModel.class);
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
+        user = new User(context);
+        user.coalition = new Coalition(context);
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
+        uid = user.getUid();
+        userLogin = user.getLogin();
+        displayName = user.getDisplayName();
+        cursusId = user.getCursusId();
+        campusId = user.getCampusId();
         binding.recyclerviewEventsList.setHasFixedSize(true);
         binding.recyclerviewEventsList.setLayoutManager(new LinearLayoutManager(context));
 
-        User user = new User(context);
-        user.coalition = new Coalition(context);
-
         binding.swipeRefreshLayout.setOnRefreshListener(() -> eventViewModel.getEvents(context));
         binding.fabGenerateQrCodeUser.setOnClickListener(v -> {
-            Bitmap bitmapQrCode = generateQrCode(context, "user" + user.getUid() + "#" + user.getLogin() + "#" + user.getDisplayName());
+            Bitmap bitmapQrCode = generateQrCode(context, "user" + uid + "#" + userLogin + "#" + displayName + "#" + cursusId + "#" + campusId);
             showModalQrCode(context, bitmapQrCode, user.getLogin() + "\n" + user.getDisplayName());
         });
 

@@ -88,7 +88,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         fabOpenCameraScannerQrCode = binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode;
-        progressBarMarkAttendance = binding.appBarNavigationDrawer.progressBarmarkAttendance;
+        progressBarMarkAttendance = binding.appBarNavigationDrawer.progressBarMarkAttendance;
         fabOpenCameraScannerQrCode.setOnClickListener(view -> {
             // Verificar se a permissão já foi concedida
             if (ContextCompat.checkSelfPermission(view.getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
@@ -224,11 +224,11 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         String eventId = result.getContents();
         if (eventId == null)
             Toast.makeText(context, R.string.cancelled, Toast.LENGTH_LONG).show();
-        else if (eventId.startsWith("cc42")) {
+        else if (eventId.startsWith("cc42event")) {
             Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
             DaoEventFirebase.markAttendance(
                     firebaseDatabase,
-                    eventId.replace("cc42", ""),
+                    eventId.replace("cc42event", ""),
                     uid,
                     userLogin,
                     displayName,

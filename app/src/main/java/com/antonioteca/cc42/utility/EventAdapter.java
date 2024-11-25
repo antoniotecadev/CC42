@@ -108,7 +108,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
-                        Bitmap bitmapQrCode = generateQrCode(view.getContext(), String.valueOf(event.getId()));
+                        Bitmap bitmapQrCode = generateQrCode(view.getContext(), "event" + event.getId());
                         showModalQrCode(view.getContext(), bitmapQrCode, event.getName());
                         return true;
                     }
