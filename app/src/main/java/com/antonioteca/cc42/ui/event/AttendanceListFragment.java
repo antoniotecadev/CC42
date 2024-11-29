@@ -17,11 +17,13 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.dao.daofarebase.DaoEventFirebase;
 import com.antonioteca.cc42.databinding.FragmentAttendanceListBinding;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
+import com.antonioteca.cc42.utility.AttendanceListAdapter;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.google.android.material.snackbar.Snackbar;
@@ -33,14 +35,15 @@ import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AttendanceListFragment extends Fragment {
 
     private Long eventId;
     private Context context;
-    private Activity activity;
     private Integer cameraId;
+    private Activity activity;
     private String resultQrCode;
     private View inflatedViewStub;
     private BeepManager beepManager;
@@ -51,11 +54,15 @@ public class AttendanceListFragment extends Fragment {
     private FragmentAttendanceListBinding binding;
     private DecoratedBarcodeView decoratedBarcodeView;
 
+    final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
+    final long[] lastClickTime = {0};
+    final boolean[] isFlashLightOn = {false};
+
     private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
             result -> {
                 if (result)
-                    openCamera();
+                    openCamera(this.cameraId);
                 else
                     Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_camera_denied), context, null);
             });
@@ -121,16 +128,26 @@ public class AttendanceListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentAttendanceListBinding.inflate(inflater, container, false);
+
+        binding.recyclerviewAttendanceList.setHasFixedSize(true);
+        binding.recyclerviewAttendanceList.setLayoutManager(new LinearLayoutManager(context));
+
         inflatedViewStub = binding.viewStub.inflate();
         decoratedBarcodeView = inflatedViewStub.findViewById(R.id.decoratedBarcodeView);
         progressBarMarkAttendance = activity.findViewById(R.id.progressBarMarkAttendance);
         inflatedViewStub.setVisibility(View.GONE);
+
         binding.fabOpenCameraScannerQrCodeFront.setOnClickListener(view -> openCameraScannerQrCodeEvent(0));
         binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(view -> openCameraScannerQrCodeEvent(1));
 
-        final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
-        final long[] lastClickTime = {0};
-        final boolean[] isFlashLightOn = {false};
+        List<String> stringList = new ArrayList<>();
+        for (int i = 0; i <= 50; i++) {
+            stringList.add("Ïtem " + i);
+        }
+
+        AttendanceListAdapter adapter = new AttendanceListAdapter(stringList);
+        binding.recyclerviewAttendanceList.setAdapter(adapter);
+
         inflatedViewStub.setOnLongClickListener(v -> {
             if (isFlashLightOn[0]) {
                 isFlashLightOn[0] = false;
@@ -141,10 +158,11 @@ public class AttendanceListFragment extends Fragment {
             }
             return true;
         });
+
         inflatedViewStub.setOnClickListener(v -> {
             long clickTime = System.currentTimeMillis();
             if (clickTime - lastClickTime[0] < DOUBLE_CLICK_TIME_DELTA) {
-                closeCamera(isFlashLightOn);
+                closeCamera();
             }
             lastClickTime[0] = clickTime;
         });
@@ -167,27 +185,31 @@ public class AttendanceListFragment extends Fragment {
         this.cameraId = cameraId;
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED)
             activityResultLauncher.launch(Manifest.permission.CAMERA);
-        else
-            openCamera();
+        else {
+            if (decoratedBarcodeView.isShown())
+                closeCamera();
+            else
+                openCamera(cameraId);
+        }
     }
 
-    private void openCamera() {
+    private void openCamera(int cameraId) {
         scanOptions.setCameraId(cameraId);
         inflatedViewStub.setVisibility(View.VISIBLE);
-        binding.linearLayoutButton.setVisibility(View.GONE);
         decoratedBarcodeView.initializeFromIntent(scanOptions.createScanIntent(context));
         decoratedBarcodeView.decodeContinuous(callback);
         decoratedBarcodeView.resume();
     }
 
-    private void closeCamera(boolean[] isFlashLightOn) {
-        binding.linearLayoutButton.setVisibility(View.VISIBLE);
+    private void closeCamera() {
         inflatedViewStub.setVisibility(View.GONE);
-        if (isFlashLightOn[0]) {
-            isFlashLightOn[0] = false;
-            decoratedBarcodeView.setTorchOff();
+        if (decoratedBarcodeView.isShown()) {
+            if (isFlashLightOn[0]) {
+                isFlashLightOn[0] = false;
+                decoratedBarcodeView.setTorchOff();
+            }
+            decoratedBarcodeView.pause();
         }
-        decoratedBarcodeView.pause();
     }
 
     @Override
@@ -205,11 +227,7 @@ public class AttendanceListFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        inflatedViewStub.setVisibility(View.GONE);
-        if (decoratedBarcodeView != null) {
-            decoratedBarcodeView.setTorchOff();
-            decoratedBarcodeView.pause();
-        }
+        closeCamera();
         binding = null;
     }
 }
