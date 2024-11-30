@@ -77,6 +77,7 @@ public class DaoEventFirebase {
                     // Execute a operação atômica para armazenar o evento e os participantes
                     campusReference.updateChildren(eventUpdates)
                             .addOnSuccessListener(aVoid -> {
+                                Util.startVibration(context);
                                 Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = context.getString(R.string.msg_sucess_mark_attendance_event) + ", " + displayName + "!";
                                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50");

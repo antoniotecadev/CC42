@@ -72,10 +72,10 @@ public class AttendanceListFragment extends Fragment {
         @Override
         public void barcodeResult(BarcodeResult result) {
             if (result.getText().equals(resultQrCode)) {
-                String message = context.getString(R.string.msg_you_already_mark_attendance_event) + ".";
-                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), message, "#FDD835");
+                resultQrCode = null;
             } else {
                 if (result.getText().startsWith("cc42user")) {
+                    resultQrCode = result.getText();
                     Util.setVisibleProgressBar(progressBarMarkAttendance, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
                     resultQrCode = result.getText();
                     resultQrCode = resultQrCode.replace("cc42user", "");
@@ -95,10 +95,9 @@ public class AttendanceListFragment extends Fragment {
                                 binding.fabOpenCameraScannerQrCodeBack,
                                 sharedViewModel
                         );
-                        resultQrCode = result.getText();
                         beepManager.playBeepSoundAndVibrate();
-                        Util.startVibration(context);
-                    }
+                    } else
+                        Toast.makeText(context, R.string.msg_qr_code_invalid, Toast.LENGTH_LONG).show();
                 } else
                     Toast.makeText(context, R.string.msg_qr_code_invalid, Toast.LENGTH_LONG).show();
             }
