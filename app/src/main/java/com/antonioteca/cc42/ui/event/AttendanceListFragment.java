@@ -34,6 +34,7 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.journeyapps.barcodescanner.ScanOptions;
+import com.journeyapps.barcodescanner.camera.CameraSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,10 +115,6 @@ public class AttendanceListFragment extends Fragment {
         context = requireContext();
         activity = requireActivity();
         scanOptions = new ScanOptions();
-        scanOptions.setBeepEnabled(true);
-        scanOptions.setOrientationLocked(false);
-        scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
-        scanOptions.setPrompt(getString(R.string.align_camera_qr_code));
         beepManager = new BeepManager(activity);
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
@@ -132,13 +129,23 @@ public class AttendanceListFragment extends Fragment {
         binding.recyclerviewAttendanceList.setHasFixedSize(true);
         binding.recyclerviewAttendanceList.setLayoutManager(new LinearLayoutManager(context));
 
+        scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
+        scanOptions.setPrompt(getString(R.string.align_camera_qr_code));
+        scanOptions.setOrientationLocked(false);
+        scanOptions.setCameraId(0);
+
         inflatedViewStub = binding.viewStub.inflate();
-        decoratedBarcodeView = inflatedViewStub.findViewById(R.id.decoratedBarcodeView);
-        progressBarMarkAttendance = activity.findViewById(R.id.progressBarMarkAttendance);
         inflatedViewStub.setVisibility(View.GONE);
 
-        binding.fabOpenCameraScannerQrCodeFront.setOnClickListener(view -> openCameraScannerQrCodeEvent(0));
-        binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(view -> openCameraScannerQrCodeEvent(1));
+        decoratedBarcodeView = inflatedViewStub.findViewById(R.id.decoratedBarcodeView);
+
+        decoratedBarcodeView.initializeFromIntent(scanOptions.createScanIntent(context));
+        decoratedBarcodeView.decodeContinuous(callback);
+
+        progressBarMarkAttendance = binding.progressBarMarkAttendance;
+
+        binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(view -> openCameraScannerQrCodeEvent(0));
+        binding.fabOpenCameraScannerQrCodeFront.setOnClickListener(view -> openCameraScannerQrCodeEvent(1));
 
         List<String> stringList = new ArrayList<>();
         for (int i = 0; i <= 50; i++) {
@@ -182,10 +189,10 @@ public class AttendanceListFragment extends Fragment {
     }
 
     private void openCameraScannerQrCodeEvent(int cameraId) {
-        this.cameraId = cameraId;
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED)
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+            this.cameraId = cameraId;
             activityResultLauncher.launch(Manifest.permission.CAMERA);
-        else {
+        } else {
             if (decoratedBarcodeView.isShown())
                 closeCamera();
             else
@@ -194,11 +201,16 @@ public class AttendanceListFragment extends Fragment {
     }
 
     private void openCamera(int cameraId) {
-        scanOptions.setCameraId(cameraId);
-        inflatedViewStub.setVisibility(View.VISIBLE);
-        decoratedBarcodeView.initializeFromIntent(scanOptions.createScanIntent(context));
-        decoratedBarcodeView.decodeContinuous(callback);
+        decoratedBarcodeView.pause();
+        decoratedBarcodeView.getBarcodeView().setCameraSettings(createCameraSettings(cameraId));
         decoratedBarcodeView.resume();
+        inflatedViewStub.setVisibility(View.VISIBLE);
+    }
+
+    private CameraSettings createCameraSettings(int cameraId) {
+        CameraSettings cameraSettings = new CameraSettings();
+        cameraSettings.setRequestedCameraId(cameraId);
+        return cameraSettings;
     }
 
     private void closeCamera() {
