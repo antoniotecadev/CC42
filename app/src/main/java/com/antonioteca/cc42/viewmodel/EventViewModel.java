@@ -3,7 +3,6 @@ package com.antonioteca.cc42.viewmodel;
 import android.content.Context;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -14,6 +13,7 @@ import com.antonioteca.cc42.model.Event;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.repository.EventRepository;
+import com.antonioteca.cc42.utility.EventObserver;
 
 import java.util.List;
 
@@ -26,8 +26,8 @@ public class EventViewModel extends ViewModel {
     private final EventRepository eventRepository;
 
     private MutableLiveData<List<Event>> eventMutableLiveData;
-    private MutableLiveData<HttpStatus> httpStatusMutableLiveData;
-    private MutableLiveData<HttpException> httpExceptionMutableLiveData;
+    private MutableLiveData<EventObserver<HttpStatus>> httpStatusMutableLiveData;
+    private MutableLiveData<EventObserver<HttpException>> httpExceptionMutableLiveData;
 
     public EventViewModel(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
@@ -42,13 +42,13 @@ public class EventViewModel extends ViewModel {
         return eventMutableLiveData;
     }
 
-    public LiveData<HttpStatus> getHttpSatus() {
+    public LiveData<EventObserver<HttpStatus>> getHttpSatus() {
         if (httpStatusMutableLiveData == null)
             httpStatusMutableLiveData = new MutableLiveData<>();
         return httpStatusMutableLiveData;
     }
 
-    public LiveData<HttpException> getHttpException() {
+    public LiveData<EventObserver<HttpException>> getHttpException() {
         if (httpExceptionMutableLiveData == null)
             httpExceptionMutableLiveData = new MutableLiveData<>();
         return httpExceptionMutableLiveData;
@@ -62,14 +62,14 @@ public class EventViewModel extends ViewModel {
                     eventMutableLiveData.postValue(response.body());
                 else {
                     HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
-                    httpStatusMutableLiveData.postValue(httpStatus);
+                    httpStatusMutableLiveData.postValue(new EventObserver<>(httpStatus));
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<Event>> call, @NonNull Throwable throwable) {
                 HttpException httpException = HttpException.handleException(throwable, context);
-                httpExceptionMutableLiveData.postValue(httpException);
+                httpExceptionMutableLiveData.postValue(new EventObserver<>(httpException));
             }
         });
     }

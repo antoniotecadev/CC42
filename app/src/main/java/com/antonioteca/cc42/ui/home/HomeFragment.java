@@ -27,6 +27,8 @@ import com.antonioteca.cc42.databinding.FragmentHomeBinding;
 import com.antonioteca.cc42.factory.EventViewModelFactory;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.User;
+import com.antonioteca.cc42.network.HttpException;
+import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.repository.EventRepository;
 import com.antonioteca.cc42.utility.EventAdapter;
 import com.antonioteca.cc42.utility.Util;
@@ -77,7 +79,10 @@ public class HomeFragment extends Fragment {
         binding.recyclerviewEventsList.setHasFixedSize(true);
         binding.recyclerviewEventsList.setLayoutManager(new LinearLayoutManager(context));
 
-        binding.swipeRefreshLayout.setOnRefreshListener(() -> eventViewModel.getEvents(context));
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> {
+            setupVisibility(binding, View.GONE, true, View.GONE, View.GONE);
+            eventViewModel.getEvents(context);
+        });
         binding.fabGenerateQrCodeUser.setOnClickListener(v -> {
             Bitmap bitmapQrCode = generateQrCode(context, "user" + uid + "#" + userLogin + "#" + displayName + "#" + cursusId + "#" + campusId);
             showModalQrCode(context, bitmapQrCode, user.getLogin() + "\n" + user.getDisplayName());
@@ -113,38 +118,52 @@ public class HomeFragment extends Fragment {
                         }
                     });
         }
+
         eventViewModel.getEventsList(context, binding.progressBar).observe(getViewLifecycleOwner(), eventList -> {
-            binding.progressBar.setVisibility(View.GONE);
-            binding.swipeRefreshLayout.setRefreshing(false);
             if (eventList.get(0) != null) {
+                setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 eventAdapter = new EventAdapter(eventList);
                 binding.recyclerviewEventsList.setAdapter(eventAdapter);
                 // Aplicar a animação de layout
                 // runLayoutAnimation(binding.recyclerviewEventsList, context);
+            } else
+                setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
+        });
+
+        eventViewModel.getHttpSatus().observe(getViewLifecycleOwner(), event -> {
+            if (event != null) {
+                HttpStatus httpStatus = event.getContentIfNotHandled();
+                if (httpStatus != null) {
+                    setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
+                    Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
+                        setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
+                        eventViewModel.getEvents(context);
+                    });
+                }
             }
         });
-        eventViewModel.getHttpSatus().observe(getViewLifecycleOwner(), httpStatus -> {
-            binding.progressBar.setVisibility(View.GONE);
-            binding.swipeRefreshLayout.setRefreshing(false);
-            binding.textViewEmptyData.setVisibility(View.VISIBLE);
-            binding.recyclerviewEventsList.setVisibility(View.GONE);
-            Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
-                binding.progressBar.setVisibility(View.VISIBLE);
-                eventViewModel.getEvents(context);
-            });
-        });
-        eventViewModel.getHttpException().observe(getViewLifecycleOwner(), httpException -> {
-            binding.progressBar.setVisibility(View.GONE);
-            binding.swipeRefreshLayout.setRefreshing(false);
-            binding.textViewEmptyData.setVisibility(View.VISIBLE);
-            binding.recyclerviewEventsList.setVisibility(View.GONE);
-            Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
-                binding.progressBar.setVisibility(View.VISIBLE);
-                eventViewModel.getEvents(context);
-            });
+
+        eventViewModel.getHttpException().observe(getViewLifecycleOwner(), event -> {
+            if (event != null) {
+                HttpException httpException = event.getContentIfNotHandled();
+                if (httpException != null) {
+                    setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
+                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
+                        setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
+                        eventViewModel.getEvents(context);
+                    });
+                }
+            }
         });
         sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> binding.recyclerviewEventsList.setOnTouchListener((v, event) -> disabled));
         return root;
+    }
+
+    private void setupVisibility(FragmentHomeBinding binding, int viewP, boolean refreshing, int viewT, int viewR) {
+        binding.progressBar.setVisibility(viewP);
+        binding.swipeRefreshLayout.setRefreshing(refreshing);
+        binding.textViewEmptyData.setVisibility(viewT);
+        binding.recyclerviewEventsList.setVisibility(viewR);
     }
 
     private void runLayoutAnimation(RecyclerView recyclerView, Context context) {
