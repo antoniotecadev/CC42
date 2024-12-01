@@ -39,4 +39,6 @@
     <string name="scanner">Scanear</string>
     <string name="off_flashlight">Flash desligado</string>
     <string name="on_flashlight">Flash ligado</string>
+    <string name="msg_sucess_mark_event_started">Evento iniciado.\nNão é mais possível registrar presença.</string>
+    <string name="msg_error_mark_event_started">Erro ao marcar evento como iniciado.</string>
 </resources>
