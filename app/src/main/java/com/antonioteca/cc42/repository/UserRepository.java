@@ -39,7 +39,7 @@ public class UserRepository {
         userCall.enqueue(callback);
     }
 
-    public void getCoalition(int userId, Callback<List<Coalition>> callback) {
+    public void getCoalition(long userId, Callback<List<Coalition>> callback) {
         Call<List<Coalition>> coalitionCall = daoApiUser.getCoalition(userId, "Bearer " + token.getAccessToken());
         coalitionCall.enqueue(callback);
     }

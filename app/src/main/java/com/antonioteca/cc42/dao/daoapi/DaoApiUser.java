@@ -17,7 +17,7 @@ public interface DaoApiUser {
 
     @GET("/v2/users/{user_id}/coalitions")
     Call<List<Coalition>> getCoalition(
-            @Path("user_id") int userId,
+            @Path("user_id") long userId,
             @Header("Authorization") String accessToken
     );
 }

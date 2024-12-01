@@ -16,7 +16,7 @@ import java.util.List;
 public class User {
 
     @SerializedName("id")
-    public int uid;
+    public long uid;
 
     public String email;
     public String login;
@@ -44,7 +44,7 @@ public class User {
     }
 
     public boolean saveUser(User user, Coalition coalition) {
-        editor.putInt("uid", user.uid);
+        editor.putLong("uid", user.uid);
         editor.putString("email", user.email);
         editor.putString("login", user.login);
         editor.putString("display_name", user.displayName);
