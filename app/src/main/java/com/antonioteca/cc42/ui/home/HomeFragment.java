@@ -133,26 +133,22 @@ public class HomeFragment extends Fragment {
         eventViewModel.getHttpSatus().observe(getViewLifecycleOwner(), event -> {
             if (event != null) {
                 HttpStatus httpStatus = event.getContentIfNotHandled();
-                if (httpStatus != null) {
-                    setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
-                    Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
-                        setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
-                        eventViewModel.getEvents(context);
-                    });
-                }
+                setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
+                Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
+                    setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
+                    eventViewModel.getEvents(context);
+                });
             }
         });
 
         eventViewModel.getHttpException().observe(getViewLifecycleOwner(), event -> {
             if (event != null) {
                 HttpException httpException = event.getContentIfNotHandled();
-                if (httpException != null) {
-                    setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
-                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
-                        setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
-                        eventViewModel.getEvents(context);
-                    });
-                }
+                setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
+                Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
+                    setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
+                    eventViewModel.getEvents(context);
+                });
             }
         });
         sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> binding.recyclerviewEventsList.setOnTouchListener((v, event) -> disabled));
