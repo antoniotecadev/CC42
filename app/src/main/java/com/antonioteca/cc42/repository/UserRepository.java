@@ -43,4 +43,9 @@ public class UserRepository {
         Call<List<Coalition>> coalitionCall = daoApiUser.getCoalition(userId, "Bearer " + token.getAccessToken());
         coalitionCall.enqueue(callback);
     }
+
+    public void getUsersEvent(long eventId, Callback<List<User>> callback) {
+        Call<List<User>> coalitionCall = daoApiUser.getUsersEvent(eventId, "Bearer " + token.getAccessToken());
+        coalitionCall.enqueue(callback);
+    }
 }

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -23,11 +24,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.dao.daofarebase.DaoEventFirebase;
 import com.antonioteca.cc42.databinding.FragmentAttendanceListBinding;
+import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
+import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.AttendanceListAdapter;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
+import com.antonioteca.cc42.viewmodel.UserViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.zxing.ResultPoint;
@@ -38,7 +42,6 @@ import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.journeyapps.barcodescanner.ScanOptions;
 import com.journeyapps.barcodescanner.camera.CameraSettings;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AttendanceListFragment extends Fragment {
@@ -52,6 +55,7 @@ public class AttendanceListFragment extends Fragment {
     private View inflatedViewStub;
     private BeepManager beepManager;
     private ScanOptions scanOptions;
+    private UserViewModel userViewModel;
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
     private ProgressBar progressBarMarkAttendance;
@@ -123,6 +127,9 @@ public class AttendanceListFragment extends Fragment {
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         eventId = AttendanceListFragmentArgs.fromBundle(requireArguments()).getEventId();
+        UserRepository userRepository = new UserRepository(context);
+        UserViewModelFactory userViewModelFactory = new UserViewModelFactory(userRepository);
+        userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
     }
 
     @Override
@@ -154,14 +161,6 @@ public class AttendanceListFragment extends Fragment {
         binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(view -> openCameraScannerQrCodeEvent(0));
         binding.fabOpenCameraScannerQrCodeFront.setOnClickListener(view -> openCameraScannerQrCodeEvent(1));
 
-        List<String> stringList = new ArrayList<>();
-        for (int i = 0; i <= 50; i++) {
-            stringList.add("Ïtem " + i);
-        }
-
-        AttendanceListAdapter adapter = new AttendanceListAdapter(stringList);
-        binding.recyclerviewAttendanceList.setAdapter(adapter);
-
         inflatedViewStub.setOnLongClickListener(v -> {
             if (isFlashLightOn[0]) {
                 isFlashLightOn[0] = false;
@@ -192,6 +191,28 @@ public class AttendanceListFragment extends Fragment {
                 Snackbar.make(requireView(), R.string.off_flashlight, Snackbar.LENGTH_LONG).show();
             }
         });
+
+        userViewModel.getUsersEventLiveData(eventId, context).observe(getViewLifecycleOwner(), users -> {
+            if (users.get(0) != null) {
+                AttendanceListAdapter adapter = new AttendanceListAdapter(users);
+                binding.recyclerviewAttendanceList.setAdapter(adapter);
+            } else {
+                Toast.makeText(context, "Lista de inscritos ao evento vazia", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        userViewModel.getHttpSatus().observe(getViewLifecycleOwner(), httpStatus -> {
+            Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
+                userViewModel.getUsersEvent(eventId, context);
+            });
+        });
+
+        userViewModel.getHttpException().observe(getViewLifecycleOwner(), httpException -> {
+            Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
+                userViewModel.getUsersEvent(eventId, context);
+            });
+        });
+
         return binding.getRoot();
     }
 

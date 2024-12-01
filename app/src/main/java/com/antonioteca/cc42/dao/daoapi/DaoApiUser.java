@@ -20,4 +20,10 @@ public interface DaoApiUser {
             @Path("user_id") long userId,
             @Header("Authorization") String accessToken
     );
+
+    @GET("/v2/events/{event_id}/users")
+    Call<List<User>> getUsersEvent(
+            @Path("event_id") long eventId,
+            @Header("Authorization") String accessToken
+    );
 }

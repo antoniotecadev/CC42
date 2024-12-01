@@ -30,6 +30,7 @@ public class UserViewModel extends ViewModel {
     private final UserRepository userRepository;
 
     private MutableLiveData<User> userMutableLiveData;
+    private MutableLiveData<List<User>> userListMutableLiveData;
     private MutableLiveData<HttpStatus> httpStatusMutableLiveData;
     private MutableLiveData<HttpException> httpExceptionMutableLiveData;
 
@@ -42,6 +43,14 @@ public class UserViewModel extends ViewModel {
         if (userMutableLiveData == null)
             userMutableLiveData = new MutableLiveData<>();
         return userMutableLiveData;
+    }
+
+    public LiveData<List<User>> getUsersEventLiveData(long eventId, Context context) {
+        if (userListMutableLiveData == null) {
+            userListMutableLiveData = new MutableLiveData<>();
+            getUsersEvent(eventId, context);
+        }
+        return userListMutableLiveData;
     }
 
     public LiveData<HttpStatus> getHttpSatus() {
@@ -90,6 +99,26 @@ public class UserViewModel extends ViewModel {
             @Override
             public void onFailure(@NonNull Call<User> call, @NonNull Throwable throwable) {
                 new Token(context).clear();
+                HttpException httpException = HttpException.handleException(throwable, context);
+                httpExceptionMutableLiveData.postValue(httpException);
+            }
+        });
+    }
+
+    public void getUsersEvent(long eventId, Context context) {
+        userRepository.getUsersEvent(eventId, new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if (response.isSuccessful())
+                    userListMutableLiveData.postValue(response.body());
+                else {
+                    HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
+                    httpStatusMutableLiveData.postValue(httpStatus);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable throwable) {
                 HttpException httpException = HttpException.handleException(throwable, context);
                 httpExceptionMutableLiveData.postValue(httpException);
             }

@@ -9,15 +9,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.model.User;
 
 import java.util.List;
 
 public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAdapter.AttendanceListViewHolder> {
 
-    List<String> data;
+    private final List<User> userList;
 
-    public AttendanceListAdapter(List<String> data) {
-        this.data = data;
+    public AttendanceListAdapter(List<User> userList) {
+        this.userList = userList;
     }
 
     @NonNull
@@ -29,12 +30,13 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
 
     @Override
     public void onBindViewHolder(@NonNull AttendanceListAdapter.AttendanceListViewHolder holder, int position) {
-        holder.textView.setText(data.get(position));
+        User user = userList.get(position);
+        holder.textView.setText(user.displayName);
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return userList.size();
     }
 
     public static class AttendanceListViewHolder extends RecyclerView.ViewHolder {
