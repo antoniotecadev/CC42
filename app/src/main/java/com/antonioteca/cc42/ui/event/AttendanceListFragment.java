@@ -4,12 +4,13 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.dao.daofarebase.DaoEventFirebase;
 import com.antonioteca.cc42.databinding.FragmentAttendanceListBinding;
+import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.utility.AttendanceListAdapter;
 import com.antonioteca.cc42.utility.Util;
@@ -46,6 +48,7 @@ public class AttendanceListFragment extends Fragment {
     private Integer cameraId;
     private Activity activity;
     private String resultQrCode;
+    private String colorCoalition;
     private View inflatedViewStub;
     private BeepManager beepManager;
     private ScanOptions scanOptions;
@@ -74,6 +77,8 @@ public class AttendanceListFragment extends Fragment {
             if (result.getText().equals(resultQrCode)) {
                 resultQrCode = null;
             } else {
+                Util.startVibration(context);
+                beepManager.playBeepSoundAndVibrate();
                 if (result.getText().startsWith("cc42user")) {
                     resultQrCode = result.getText();
                     Util.setVisibleProgressBar(progressBarMarkAttendance, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
@@ -95,11 +100,10 @@ public class AttendanceListFragment extends Fragment {
                                 binding.fabOpenCameraScannerQrCodeBack,
                                 sharedViewModel
                         );
-                        beepManager.playBeepSoundAndVibrate();
                     } else
-                        Toast.makeText(context, R.string.msg_qr_code_invalid, Toast.LENGTH_LONG).show();
+                        Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835");
                 } else
-                    Toast.makeText(context, R.string.msg_qr_code_invalid, Toast.LENGTH_LONG).show();
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835");
             }
         }
 
@@ -115,6 +119,7 @@ public class AttendanceListFragment extends Fragment {
         activity = requireActivity();
         scanOptions = new ScanOptions();
         beepManager = new BeepManager(activity);
+        colorCoalition = new Coalition(context).getColor();
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         eventId = AttendanceListFragmentArgs.fromBundle(requireArguments()).getEventId();
@@ -132,6 +137,7 @@ public class AttendanceListFragment extends Fragment {
         scanOptions.setPrompt(getString(R.string.align_camera_qr_code));
         scanOptions.setOrientationLocked(false);
         scanOptions.setCameraId(0);
+        scanOptions.setBeepEnabled(true);
 
         inflatedViewStub = binding.viewStub.inflate();
         inflatedViewStub.setVisibility(View.GONE);
@@ -142,6 +148,8 @@ public class AttendanceListFragment extends Fragment {
         decoratedBarcodeView.decodeContinuous(callback);
 
         progressBarMarkAttendance = binding.progressBarMarkAttendance;
+        if (colorCoalition != null)
+            progressBarMarkAttendance.setIndeterminateTintList(ColorStateList.valueOf(Color.parseColor(colorCoalition)));
 
         binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(view -> openCameraScannerQrCodeEvent(0));
         binding.fabOpenCameraScannerQrCodeFront.setOnClickListener(view -> openCameraScannerQrCodeEvent(1));
