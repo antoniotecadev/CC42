@@ -42,7 +42,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 public class HomeFragment extends Fragment {
 
     private User user;
-    private Integer uid;
+    private Long uid;
     private String userLogin;
     private String displayName;
     private Integer campusId;

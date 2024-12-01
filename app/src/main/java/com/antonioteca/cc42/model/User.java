@@ -60,8 +60,8 @@ public class User {
         return commit(); // ou editor.apply() se preferir.
     }
 
-    public int getUid() {
-        return preferences.getInt("uid", 0);
+    public long getUid() {
+        return preferences.getLong("uid", 0);
     }
 
     public String getEmail() {
