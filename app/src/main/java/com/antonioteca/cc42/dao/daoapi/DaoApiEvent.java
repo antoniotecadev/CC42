@@ -9,7 +9,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
 
-public interface DaoEvent {
+public interface DaoApiEvent {
 
     @GET("/v2/campus/{campus_id}/cursus/{cursus_id}/events")
     Call<List<Event>> getEvents(

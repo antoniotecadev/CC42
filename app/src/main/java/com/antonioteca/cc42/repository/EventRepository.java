@@ -2,7 +2,7 @@ package com.antonioteca.cc42.repository;
 
 import android.content.Context;
 
-import com.antonioteca.cc42.dao.daoapi.DaoEvent;
+import com.antonioteca.cc42.dao.daoapi.DaoApiEvent;
 import com.antonioteca.cc42.model.Event;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
@@ -17,12 +17,12 @@ public class EventRepository {
 
     private final User user;
     private final Token token;
-    private final DaoEvent daoEvent;
+    private final DaoApiEvent daoEvent;
 
     public EventRepository(Context context) {
         user = new User(context);
         token = new Token(context);
-        daoEvent = RetrofitClientApi.getApiService().create(DaoEvent.class);
+        daoEvent = RetrofitClientApi.getApiService().create(DaoApiEvent.class);
     }
 
     public void getEvents(Callback<List<Event>> callback) {
