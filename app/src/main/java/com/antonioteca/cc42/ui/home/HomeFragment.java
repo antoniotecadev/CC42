@@ -80,7 +80,7 @@ public class HomeFragment extends Fragment {
         binding.recyclerviewEventsList.setLayoutManager(new LinearLayoutManager(context));
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
-            setupVisibility(binding, View.GONE, true, View.GONE, View.GONE);
+            setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
             eventViewModel.getEvents(context);
         });
         binding.fabGenerateQrCodeUser.setOnClickListener(v -> {
