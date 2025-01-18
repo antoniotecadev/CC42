@@ -11,14 +11,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAdapter.AttendanceListViewHolder> {
 
     private final List<User> userList;
 
-    public AttendanceListAdapter(List<User> userList) {
-        this.userList = userList;
+    public AttendanceListAdapter() {
+        userList = new ArrayList<>();
+    }
+
+    public void updateUserList(List<User> newUserList) {
+        int positionStart = userList.size(); // Posição onde os novos itens começarão
+        this.userList.addAll(newUserList);  // Adiciona novos usuários à lista existente
+        notifyItemRangeChanged(positionStart, newUserList.size()); // Notificar apenas a faixa adicionada
     }
 
     @NonNull

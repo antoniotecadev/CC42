@@ -15,7 +15,7 @@ public class NetworkConstants {
 
     public static final String BASE_URL = "https://api.intra.42.fr";
     public static final String UID = "u-s4t2ud-4ce9a69013fc7817425995ce488c2f0e9d4c968de61e0f7e51f4d5facc50cc27";
-    public static final String SECRET = "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";
+    public static final String SECRET = "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";
 
     public static String CODE = "code";
     public static String SCHEME_HOST = "cc42://checkcadet42";

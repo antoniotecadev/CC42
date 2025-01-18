@@ -2,16 +2,24 @@ package com.antonioteca.cc42.repository;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.antonioteca.cc42.dao.daoapi.DaoApiUser;
+import com.antonioteca.cc42.dao.daoapi.PaginationLinks;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.RetrofitClientApi;
+import com.antonioteca.cc42.utility.Loading;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import okhttp3.Headers;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Classe que gerencia a lógica de negócios e a comunicação entre os dados (Model) e o ViewModel
@@ -44,8 +52,64 @@ public class UserRepository {
         coalitionCall.enqueue(callback);
     }
 
-    public void getUsersEvent(long eventId, Callback<List<User>> callback) {
-        Call<List<User>> coalitionCall = daoApiUser.getUsersEvent(eventId, "Bearer " + token.getAccessToken());
-        coalitionCall.enqueue(callback);
+    public void loadUsersEventPaginated(long eventId, Loading l, Callback<List<User>> callback) {
+
+        String accessToken = "Bearer " + token.getAccessToken();
+
+        daoApiUser.getUsersEvent(eventId, accessToken, l.currentPage, 30).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<List<User>> call, @NonNull Response<List<User>> response) {
+
+                if (response.isSuccessful()) {
+                    callback.onResponse(call, response);
+                    // Verificar se existe uma próxima página
+                    PaginationLinks links = extractPaginationLinks(response.headers());
+                    l.hasNextPage = links.getNext() != null;
+                    if (l.hasNextPage) {
+                        l.currentPage++;
+                    }
+                } else {
+                    l.hasNextPage = false;
+                    callback.onFailure(call, new Throwable());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<User>> call, @NonNull Throwable t) {
+                l.hasNextPage = false;
+                callback.onFailure(call, t);
+            }
+        });
+    }
+
+    // Link : <https://api.intra.42.fr/v2/messages?page=1>; rel="first", <https://api.intra.42.fr/v2/messages?page=1>; rel="prev", <https://api.intra.42.fr/v2/messages?page=586>; rel="last", <https://api.intra.42.fr/v2/messages?page=3>; rel="next"
+    public PaginationLinks extractPaginationLinks(Headers headers) {
+        PaginationLinks links = new PaginationLinks();
+        String linkHeader = headers.get("Link");
+
+        // Regex para extrair o link com o "rel" correto
+        Pattern pattern = Pattern.compile("<(.*?)>; rel=\"(.*?)\"");
+        Matcher matcher;
+        if (linkHeader != null) {
+            matcher = pattern.matcher(linkHeader);
+        } else
+            return null;
+
+        while (matcher.find()) {
+            String url = matcher.group(1); // Link
+            String rel = matcher.group(2); // Tipo de relação (next, prev, first, last)
+
+            // Identificar o link de acordo com o tipo de relação
+            if ("next".equals(rel)) {
+                links.setNext(url);
+            } else if ("prev".equals(rel)) {
+                links.setPrev(url);
+            } else if ("first".equals(rel)) {
+                links.setFirst(url);
+            } else if ("last".equals(rel)) {
+                links.setLast(url);
+            }
+        }
+        return links;
     }
 }

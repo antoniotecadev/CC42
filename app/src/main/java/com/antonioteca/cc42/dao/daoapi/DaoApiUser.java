@@ -9,6 +9,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface DaoApiUser {
 
@@ -21,9 +22,12 @@ public interface DaoApiUser {
             @Header("Authorization") String accessToken
     );
 
+    //GET /v2/events/{event_id}/users?page[number]=1&page[size]=30
     @GET("/v2/events/{event_id}/users")
     Call<List<User>> getUsersEvent(
             @Path("event_id") long eventId,
-            @Header("Authorization") String accessToken
+            @Header("Authorization") String accessToken,
+            @Query("page[number]") int pageNumber,  // Adiciona o número da página
+            @Query("page[size]") int pageSize       // Adiciona o tamanho da página
     );
 }

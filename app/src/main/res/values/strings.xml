@@ -22,6 +22,7 @@
     <string name="try_again">Tentar novamente</string>
     <string name="cancel">Cancelar</string>
     <string name="msg_nothing_event_available">! Sem eventos disponíveis\nPuxar para tentar carregar os eventos</string>
+    <string name="msg_registered_event_available">! Sem inscritos neste evento\nPuxar para tentar carregar inscritos</string>
     <string name="align_camera_qr_code">Alinha a câmera ao CÓDIGO QR</string>
     <string name="cancelled">Cancelado</string>
     <string name="msg_qr_code_invalid">Código QR inválido</string>
@@ -41,4 +42,5 @@
     <string name="on_flashlight">Flash ligado</string>
     <string name="msg_sucess_mark_event_started">Evento iniciado.\nNão é mais possível registrar presença.</string>
     <string name="msg_error_mark_event_started">Erro ao marcar evento como iniciado.</string>
+    <string name="msg_sucess_all_users_registered_event_loaded">Usuários registados carregados</string>
 </resources>

@@ -37,6 +37,26 @@
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <TextView
+        android:id="@+id/textViewEmptyData"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/msg_registered_event_available"
+        android:textAlignment="center"
+        android:textColor="@color/textColorPrimary"
+        android:visibility="gone"
+        tools:ignore="RtlCompat" />
+
+    <ProgressBar
+        android:id="@+id/progressBarMarkAttendance"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:indeterminate="true"
+        android:visibility="invisible" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabOpenCameraScannerQrCodeBack"
         android:layout_width="wrap_content"
@@ -55,12 +75,4 @@
         app:backgroundTint="@color/white"
         app:srcCompat="@drawable/ic_baseline_qr_code_100" />
 
-    <ProgressBar
-        android:id="@+id/progressBarMarkAttendance"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom|center"
-        android:layout_marginBottom="16dp"
-        android:indeterminate="true"
-        android:visibility="invisible" />
 </FrameLayout>
