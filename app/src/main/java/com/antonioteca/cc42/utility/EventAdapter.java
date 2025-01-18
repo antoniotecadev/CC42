@@ -21,7 +21,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
-import com.antonioteca.cc42.databinding.ItemRecycleviewEventBinding;
+import com.antonioteca.cc42.databinding.ItemRecyclerviewEventBinding;
 import com.antonioteca.cc42.model.Event;
 import com.antonioteca.cc42.ui.home.HomeFragmentDirections;
 
@@ -40,8 +40,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     @Override
     public EventAdapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Create a new view, which defines the UI of the list item
-        //View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recycleview_event, parent, false);
-        ItemRecycleviewEventBinding binding = ItemRecycleviewEventBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        //View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recyclerview_event, parent, false);
+        ItemRecyclerviewEventBinding binding = ItemRecyclerviewEventBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new EventViewHolder(binding);
     }
 
@@ -128,9 +128,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
      */
     public static class EventViewHolder extends RecyclerView.ViewHolder {
 
-        private final ItemRecycleviewEventBinding binding;
+        private final ItemRecyclerviewEventBinding binding;
 
-        public EventViewHolder(ItemRecycleviewEventBinding binding) {
+        public EventViewHolder(ItemRecyclerviewEventBinding binding) {
             super(binding.getRoot());
             // Define click listener for the ViewHolder's View
             this.binding = binding;
