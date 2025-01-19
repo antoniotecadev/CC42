@@ -84,6 +84,10 @@ public class User {
         return preferences.getString("image_link", null);
     }
 
+    public String getUrlImageUserRegisteredEvent() {
+        return image.link;
+    }
+
     public int getCampusId() {
         return preferences.getInt("campus_id", 0);
     }

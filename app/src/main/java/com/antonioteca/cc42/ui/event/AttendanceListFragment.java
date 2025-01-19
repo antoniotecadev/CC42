@@ -131,9 +131,8 @@ public class AttendanceListFragment extends Fragment {
         activity = requireActivity();
         scanOptions = new ScanOptions();
         beepManager = new BeepManager(activity);
-
         colorCoalition = new Coalition(context).getColor();
-        attendanceListAdapter = new AttendanceListAdapter();
+        attendanceListAdapter = new AttendanceListAdapter(colorCoalition);
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         UserRepository userRepository = new UserRepository(context);
@@ -215,7 +214,7 @@ public class AttendanceListFragment extends Fragment {
         userViewModel.getUsersEventLiveData(eventId, l, progressBarMarkAttendance, context).observe(getViewLifecycleOwner(), users -> {
             if (users.get(0) != null) {
                 setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
-                attendanceListAdapter.updateUserList(users);
+                attendanceListAdapter.updateUserList(users, context);
                 binding.recyclerviewAttendanceList.setAdapter(attendanceListAdapter);
             } else
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
