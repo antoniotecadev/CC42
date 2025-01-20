@@ -120,7 +120,7 @@ public class HomeFragment extends Fragment {
         }
 
         eventViewModel.getEventsList(context, binding.progressBar).observe(getViewLifecycleOwner(), eventList -> {
-            if (eventList.get(0) != null) {
+            if (!eventList.isEmpty() && eventList.get(0) != null) {
                 setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 eventAdapter = new EventAdapter(eventList);
                 binding.recyclerviewEventsList.setAdapter(eventAdapter);
