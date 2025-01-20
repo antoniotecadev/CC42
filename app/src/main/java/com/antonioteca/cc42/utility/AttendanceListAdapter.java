@@ -19,7 +19,7 @@ import java.util.List;
 public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAdapter.AttendanceListViewHolder> {
 
     private Context context;
-    private String colorCoalition;
+    private final String colorCoalition;
     private final List<User> userList;
 
     public AttendanceListAdapter(String colorCoalition) {
@@ -32,6 +32,15 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         int positionStart = userList.size(); // Posição onde os novos itens começarão
         this.userList.addAll(newUserList);  // Adiciona novos usuários à lista existente
         notifyItemRangeChanged(positionStart, newUserList.size()); // Notificar apenas a faixa adicionada
+    }
+
+    public void updateUserList(List<String> usersWhoMarkedPresence) {
+        for (int i = 0; i < getItemCount(); i++) {
+            if (usersWhoMarkedPresence.contains(String.valueOf(this.userList.get(i).uid))) {
+                this.userList.get(i).setPresent(true);
+                notifyItemChanged(i);
+            }
+        }
     }
 
     private void setImageUserRegistered(Context context, String imageUrl, ImageView imageViewUserRegistered) {
@@ -60,6 +69,11 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         setImageUserRegistered(context, user.getUrlImageUserRegisteredEvent(), holder.binding.imageViewUserRegistered);
         holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
+        if (user.isPresent()) {
+            holder.binding.textViewLogin.setTextColor(Color.GREEN);
+            holder.binding.textViewPresent.setTextColor(Color.GREEN);
+            holder.binding.textViewPresent.setText("🟢 " + context.getString(R.string.text_present));
+        }
     }
 
     @Override

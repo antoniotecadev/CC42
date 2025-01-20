@@ -43,4 +43,8 @@
     <string name="msg_sucess_mark_event_started">Evento iniciado.\nNão é mais possível registrar presença.</string>
     <string name="msg_error_mark_event_started">Erro ao marcar evento como iniciado.</string>
     <string name="msg_sucess_all_users_registered_event_loaded">Usuários registados carregados</string>
+    <string name="text_present">Presente</string>
+    <string name="text_absent">Ausente</string>
+    <string name="msg_loading_more_data">Carregando mais dados...</string>
+    <string name="msg_checking_attendance">Verificando presença...</string>
 </resources>

@@ -27,6 +27,7 @@ import com.antonioteca.cc42.dao.daofarebase.DaoEventFirebase;
 import com.antonioteca.cc42.databinding.FragmentAttendanceListBinding;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Coalition;
+import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
@@ -51,6 +52,7 @@ import java.util.List;
 
 public class AttendanceListFragment extends Fragment {
 
+    private User user;
     private Loading l;
     private Long eventId;
     private Context context;
@@ -62,6 +64,7 @@ public class AttendanceListFragment extends Fragment {
     private BeepManager beepManager;
     private ScanOptions scanOptions;
     private UserViewModel userViewModel;
+    private LayoutInflater layoutInflater;
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
     private ProgressBar progressBarMarkAttendance;
@@ -106,7 +109,7 @@ public class AttendanceListFragment extends Fragment {
                                 parts[3],
                                 parts[4],
                                 context,
-                                getLayoutInflater(),
+                                layoutInflater,
                                 progressBarMarkAttendance,
                                 binding.fabOpenCameraScannerQrCodeBack,
                                 sharedViewModel
@@ -128,8 +131,10 @@ public class AttendanceListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         l = new Loading();
         context = requireContext();
+        user = new User(context);
         activity = requireActivity();
         scanOptions = new ScanOptions();
+        layoutInflater = getLayoutInflater();
         beepManager = new BeepManager(activity);
         colorCoalition = new Coalition(context).getColor();
         attendanceListAdapter = new AttendanceListAdapter(colorCoalition);
@@ -212,12 +217,19 @@ public class AttendanceListFragment extends Fragment {
         });
 
         userViewModel.getUsersEventLiveData(eventId, l, progressBarMarkAttendance, context).observe(getViewLifecycleOwner(), users -> {
-            if (users.get(0) != null) {
-                setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
+            if (!users.isEmpty() && users.get(0) != null) {
+                //setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 attendanceListAdapter.updateUserList(users, context);
                 binding.recyclerviewAttendanceList.setAdapter(attendanceListAdapter);
             } else
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
+        });
+
+        userViewModel.getKeysUsersWhoMarkedPresence().observe(getViewLifecycleOwner(), keys -> {
+            Toast.makeText(context, R.string.msg_checking_attendance, Toast.LENGTH_LONG).show();
+            if (!keys.isEmpty() && keys.get(0) != null)
+                attendanceListAdapter.updateUserList(keys);
+            setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
         });
 
         userViewModel.getHttpSatusEvent().observe(getViewLifecycleOwner(), event -> {
@@ -247,12 +259,13 @@ public class AttendanceListFragment extends Fragment {
             @Override
             public void onLoadMore() {
                 if (!l.isLoading && l.hasNextPage) {
-                    Toast.makeText(context, "Carregando mais dados...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, R.string.msg_loading_more_data, Toast.LENGTH_LONG).show();
                     userViewModel.getUsersEvent(eventId, l, context);  // Carregar mais usuários
+                } else {
+                    userViewModel.getUsersWhoMarkedPresence(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(user.getCursusId()), String.valueOf(eventId), context, layoutInflater);
                 }
             }
         });
-        sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> binding.recyclerviewAttendanceList.setOnTouchListener((v, event) -> disabled));
     }
 
     private void openCameraScannerQrCodeEvent(int cameraId) {

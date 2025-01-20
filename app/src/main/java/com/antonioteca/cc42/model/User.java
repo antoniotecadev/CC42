@@ -35,6 +35,8 @@ public class User {
 
     public Coalition coalition;
 
+    public boolean present;
+
     private final SharedPreferences preferences;
     private final SharedPreferences.Editor editor;
 
@@ -107,6 +109,14 @@ public class User {
 
     public boolean commit() {
         return editor.commit(); // ou editor.apply() se preferir
+    }
+
+    public boolean isPresent() {
+        return present;
+    }
+
+    public void setPresent(boolean present) {
+        this.present = present;
     }
 }
 

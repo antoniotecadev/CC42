@@ -1,6 +1,7 @@
 package com.antonioteca.cc42.viewmodel;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -9,6 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
@@ -17,7 +19,14 @@ import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.EventObserver;
 import com.antonioteca.cc42.utility.Loading;
+import com.antonioteca.cc42.utility.Util;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -35,6 +44,7 @@ public class UserViewModel extends ViewModel {
 
     private MutableLiveData<User> userMutableLiveData;
     private MutableLiveData<List<User>> userListMutableLiveData;
+    private MutableLiveData<List<String>> usersWhoMarkedPresenceListMutableLiveData;
     private MutableLiveData<HttpStatus> httpStatusMutableLiveData;
     private MutableLiveData<HttpException> httpExceptionMutableLiveData;
     private MutableLiveData<EventObserver<HttpStatus>> httpStatusMutableLiveDataEvent;
@@ -58,6 +68,12 @@ public class UserViewModel extends ViewModel {
             getUsersEvent(eventId, l, context);
         }
         return userListMutableLiveData;
+    }
+
+    public LiveData<List<String>> getKeysUsersWhoMarkedPresence() {
+        if (usersWhoMarkedPresenceListMutableLiveData == null)
+            usersWhoMarkedPresenceListMutableLiveData = new MutableLiveData<>();
+        return usersWhoMarkedPresenceListMutableLiveData;
     }
 
     public LiveData<HttpStatus> getHttpSatus() {
@@ -94,10 +110,14 @@ public class UserViewModel extends ViewModel {
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if (response.isSuccessful()) {
                     User user = response.body();
+                    if (user == null)
+                        return;
                     userRepository.getCoalition(user.uid, new Callback<>() {
                         @Override
                         public void onResponse(@NonNull Call<List<Coalition>> call, @NonNull Response<List<Coalition>> response) {
                             List<Coalition> coalitions = response.body();
+                            if (coalitions == null)
+                                return;
                             Coalition coalition = coalitions.get(0);
                             user.setCoalition(coalition);
                             userMutableLiveData.postValue(user);
@@ -143,6 +163,41 @@ public class UserViewModel extends ViewModel {
                 HttpException httpException = HttpException.handleException(throwable, context);
                 httpExceptionMutableLiveDataEvent.postValue(new EventObserver<>(httpException));
                 l.isLoading = false;
+            }
+        });
+    }
+
+    public void getUsersWhoMarkedPresence(FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, Context context,
+                                          LayoutInflater layoutInflater) {
+        DatabaseReference participantsRef = firebaseDatabase.getReference("campus")
+                .child(campusId)
+                .child("cursus")
+                .child(cursusId)
+                .child("events")
+                .child(eventId)
+                .child("participants");  // Referência para os participantes do evento
+
+        List<String> usersWhoMarkedPresence = new ArrayList<>();
+        participantsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Boolean isParticipant = dataSnapshot.getValue(Boolean.class);
+                        if (Boolean.TRUE.equals(isParticipant)) {
+                            usersWhoMarkedPresence.add(dataSnapshot.getKey());
+                        }
+                    }
+                    usersWhoMarkedPresenceListMutableLiveData.postValue(usersWhoMarkedPresence);
+                } else
+                    usersWhoMarkedPresenceListMutableLiveData.postValue(usersWhoMarkedPresence);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                String message = context.getString(R.string.msg_error_check_attendance_event) + ": " + error.toException();
+                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935");
+                usersWhoMarkedPresenceListMutableLiveData.postValue(usersWhoMarkedPresence);
             }
         });
     }
