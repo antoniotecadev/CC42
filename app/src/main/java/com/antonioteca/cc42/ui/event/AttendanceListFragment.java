@@ -239,7 +239,7 @@ public class AttendanceListFragment extends Fragment {
                 HttpStatus httpStatus = event.getContentIfNotHandled();
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
                 Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
-                    setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
+                    setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
                     userViewModel.getUsersEvent(eventId, l, context);
                 });
             }
@@ -250,7 +250,7 @@ public class AttendanceListFragment extends Fragment {
                 HttpException httpException = event.getContentIfNotHandled();
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
                 Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
-                    setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
+                    setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
                     userViewModel.getUsersEvent(eventId, l, context);
                 });
             }
