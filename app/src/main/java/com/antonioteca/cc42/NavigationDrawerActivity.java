@@ -238,7 +238,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     getLayoutInflater(),
                     progressBarMarkAttendance,
                     fabOpenCameraScannerQrCode,
-                    sharedViewModel
+                    sharedViewModel,
+                    null
             );
         } else
             Toast.makeText(context, R.string.msg_qr_code_invalid, Toast.LENGTH_LONG).show();

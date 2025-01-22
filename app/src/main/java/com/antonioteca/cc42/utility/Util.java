@@ -110,7 +110,12 @@ public class Util {
         sharedViewModel.setDisabledRecyclerView(false);
     }
 
-    public static void showAlertDialogMessage(Context context, LayoutInflater layoutInflater, String title, String message, String colorString) {
+    public static void showAlertDialogMessage(Context context,
+                                              LayoutInflater layoutInflater,
+                                              String title,
+                                              String message,
+                                              String colorString,
+                                              Runnable runnableResumeCamera) {
         View customView = layoutInflater.inflate(R.layout.modal_layout_event_message, null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -126,7 +131,14 @@ public class Util {
         modalTitle.setTextColor(color);
         closeModalButton.setBackgroundTintList(colorStateList);
         AlertDialog dialog = builder.create();
-        closeModalButton.setOnClickListener(v -> dialog.dismiss());
+        if (runnableResumeCamera == null) {
+            closeModalButton.setOnClickListener(v -> dialog.dismiss());
+        } else {
+            closeModalButton.setOnClickListener(v -> {
+                runnableResumeCamera.run();
+                dialog.dismiss();
+            });
+        }
         dialog.show();
     }
 

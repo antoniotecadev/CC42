@@ -38,7 +38,8 @@ public class DaoEventFirebase {
             LayoutInflater layoutInflater,
             ProgressBar progressBarMarkAttendance,
             FloatingActionButton fabOpenCameraScannerQrCode,
-            SharedViewModel sharedViewModel
+            SharedViewModel sharedViewModel,
+            Runnable runnableResumeCamera
     ) {
 
         // Cria ou atualiza a lista de participantes do evento
@@ -57,7 +58,7 @@ public class DaoEventFirebase {
                 if (snapshot.exists()) {
                     Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                     String message = context.getString(R.string.msg_you_already_mark_attendance_event) + ", " + displayName + "!";
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835");
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", runnableResumeCamera);
                 } else {
                     // Armazenamento de Dados de Participante
                     Map<String, Object> participantData = new HashMap<>();
@@ -81,12 +82,12 @@ public class DaoEventFirebase {
                                 Util.startVibration(context);
                                 Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = context.getString(R.string.msg_sucess_mark_attendance_event) + ", " + displayName + "!";
-                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50");
+                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", runnableResumeCamera);
                             })
                             .addOnFailureListener(e -> {
                                 Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = context.getString(R.string.msg_error_mark_attendance_event) + ": " + e.getMessage();
-                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935");
+                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", runnableResumeCamera);
                             });
                 }
             }
@@ -95,7 +96,7 @@ public class DaoEventFirebase {
             public void onCancelled(@NonNull DatabaseError error) {
                 Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                 String message = context.getString(R.string.msg_error_check_attendance_event) + ": " + error.toException();
-                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935");
+                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", runnableResumeCamera);
             }
         });
     }
@@ -119,11 +120,11 @@ public class DaoEventFirebase {
         eventRef.child("status").setValue("iniciado").addOnSuccessListener(unused -> {
             progressBarMarkEventAsStarted.setVisibility(View.VISIBLE);
             String message = context.getString(R.string.msg_sucess_mark_event_started);
-            Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50");
+            //Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50");
         }).addOnFailureListener(e -> {
             progressBarMarkEventAsStarted.setVisibility(View.VISIBLE);
             String message = context.getString(R.string.msg_error_mark_event_started) + ": " + e.getMessage();
-            Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935");
+            //Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935");
         });
     }
 
