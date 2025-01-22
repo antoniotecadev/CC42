@@ -57,7 +57,7 @@ public class DaoEventFirebase {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
-                    String message = context.getString(R.string.msg_you_already_mark_attendance_event) + ", " + displayName + "!";
+                    String message = displayName + "\n" + context.getString(R.string.msg_you_already_mark_attendance_event);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", runnableResumeCamera);
                 } else {
                     // Armazenamento de Dados de Participante

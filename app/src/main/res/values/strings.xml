@@ -29,7 +29,7 @@
     <string name="fechar">Fechar</string>
     <string name="sucess">Sucesso!</string>
     <string name="warning">Aviso!</string>
-    <string name="msg_you_already_mark_attendance_event">Você já marcou presença neste evento</string>
+    <string name="msg_you_already_mark_attendance_event">A presença já está marcada</string>
     <string name="msg_sucess_mark_attendance_event">Presença registrada\n</string>
     <string name="msg_error_mark_attendance_event">Erro ao armazenar evento e participante</string>
     <string name="msg_error_check_attendance_event">Erro ao verificar presença</string>
