@@ -85,9 +85,10 @@ public class Util {
         return bitmap;
     }
 
-    public static void showModalQrCode(Context context, Bitmap bitmapQrCode, String titleName) {
+    public static void showModalQrCode(Context context, Bitmap bitmapQrCode, String title, String description) {
         ImageQrCodeBinding binding = ImageQrCodeBinding.inflate(LayoutInflater.from(context));
-        binding.textViewTitle.setText(titleName);
+        binding.textViewTitle.setText(title);
+        binding.textViewDescription.setText(description);
         binding.imageViewQrCode.setImageBitmap(bitmapQrCode);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(binding.getRoot());

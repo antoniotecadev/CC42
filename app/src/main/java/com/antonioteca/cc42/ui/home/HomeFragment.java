@@ -85,7 +85,7 @@ public class HomeFragment extends Fragment {
         });
         binding.fabGenerateQrCodeUser.setOnClickListener(v -> {
             Bitmap bitmapQrCode = generateQrCode(context, "user" + uid + "#" + userLogin + "#" + displayName + "#" + cursusId + "#" + campusId);
-            showModalQrCode(context, bitmapQrCode, user.getLogin() + "\n" + user.getDisplayName());
+            showModalQrCode(context, bitmapQrCode, user.getLogin(), user.getDisplayName());
         });
 
         binding.textViewCoalition.setText(user.coalition.getName());

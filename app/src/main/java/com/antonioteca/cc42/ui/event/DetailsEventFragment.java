@@ -72,7 +72,7 @@ public class DetailsEventFragment extends Fragment {
         setMarkdownText(binding.textViewDescription, event.getDescription());
         binding.fabGenerateQrCode.setOnClickListener(view -> {
             Bitmap bitmapQrCode = generateQrCode(view.getContext(), "event" + event.getId());
-            showModalQrCode(view.getContext(), bitmapQrCode, event.getName());
+            showModalQrCode(view.getContext(), bitmapQrCode, event.getKind(), event.getName());
         });
         binding.fabOpenAttendanceList.setOnClickListener(v -> {
             DetailsEventFragmentDirections.ActionDetailsEventFragmentToAttendanceListFragment actionDetailsEventFragmentToAttendanceListFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToAttendanceListFragment(event.getId());
