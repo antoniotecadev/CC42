@@ -78,6 +78,8 @@
         android:textColor="@color/white"
         android:textSize="10sp"
         android:textStyle="bold"
+        android:maxLines="1"
+        android:ellipsize="end"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewDateDay" />
 
@@ -134,7 +136,7 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@+id/dividerLeftMiddle"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewTimeBegin"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTimeBegin"
         app:srcCompat="@drawable/ic_baseline_location_on_24" />
 
     <TextView
