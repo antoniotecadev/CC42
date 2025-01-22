@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,20 +35,12 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
 
     public void updateUserList(List<String> usersWhoMarkedPresence) {
         for (int i = 0; i < getItemCount(); i++) {
-            if (usersWhoMarkedPresence.contains(String.valueOf(this.userList.get(i).uid))) {
+            if (usersWhoMarkedPresence.contains(String.valueOf(this.userList.get(i).uid)))
                 this.userList.get(i).setPresent(true);
-                notifyItemChanged(i);
-            }
+            else
+                this.userList.get(i).setPresent(false);
+            notifyItemChanged(i);
         }
-    }
-
-    private void setImageUserRegistered(Context context, String imageUrl, ImageView imageViewUserRegistered) {
-        GlideApp.with(context)
-                .load(imageUrl)
-                .circleCrop() // Recorta a imagem para ser circular
-                .placeholder(R.drawable.logo_42) // Imagem de substituição enquanto a imagem carrega
-                .error(R.drawable.logo_42) // Imagem a ser mostrada caso ocorra um erro
-                .into(imageViewUserRegistered);
     }
 
     @NonNull
@@ -66,14 +57,18 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
             int color = Color.parseColor(colorCoalition);
             holder.binding.dividerBottom.setBackgroundColor(color);
         }
-        setImageUserRegistered(context, user.getUrlImageUserRegisteredEvent(), holder.binding.imageViewUserRegistered);
+        Util.setImageUserRegistered(context, user.getUrlImageUserRegisteredEvent(), holder.binding.imageViewUserRegistered);
         holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
-        if (user.isPresent()) {
+        if (user.isPresent() != null && user.isPresent()) {
             holder.binding.textViewLogin.setTextColor(Color.GREEN);
             holder.binding.textViewPresent.setTextColor(Color.GREEN);
-            holder.binding.textViewPresent.setText("🟢 " + context.getString(R.string.text_present));
+            holder.binding.textViewPresent.setText(context.getString(R.string.text_present));
+        } else if (user.isPresent() != null && !user.isPresent()) {
+            holder.binding.textViewPresent.setTextColor(Color.RED);
+            holder.binding.textViewPresent.setText(context.getString(R.string.text_absent));
         }
+        holder.itemView.setOnClickListener(v -> Util.showModalUserDetails(context, user.login, user.displayName, user.getUrlImageUserRegisteredEvent(), user.isPresent()));
     }
 
     @Override

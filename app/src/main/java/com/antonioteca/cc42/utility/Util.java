@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -96,6 +97,29 @@ public class Util {
         AlertDialog dialog = builder.create();
         binding.closeModalButton.setOnClickListener(v -> dialog.dismiss());
         dialog.show();
+    }
+
+    public static void showModalUserDetails(Context context, String title, String description, String urlImageUserRegisteredEvent, boolean isPresent) {
+        ImageQrCodeBinding binding = ImageQrCodeBinding.inflate(LayoutInflater.from(context));
+        binding.textViewTitle.setText(title);
+        binding.textViewDescription.setText(description);
+        binding.closeModalButton.setBackgroundColor(isPresent ? Color.GREEN : Color.RED);
+        binding.closeModalButton.setText(isPresent ? R.string.text_present : R.string.text_absent);
+        Util.setImageUserRegistered(context, urlImageUserRegisteredEvent, binding.imageViewQrCode);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setView(binding.getRoot());
+        AlertDialog dialog = builder.create();
+        binding.closeModalButton.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
+    }
+
+    public static void setImageUserRegistered(Context context, String imageUrl, ImageView imageViewUserRegistered) {
+        GlideApp.with(context)
+                .load(imageUrl)
+                .circleCrop() // Recorta a imagem para ser circular
+                .placeholder(R.drawable.logo_42) // Imagem de substituição enquanto a imagem carrega
+                .error(R.drawable.logo_42) // Imagem a ser mostrada caso ocorra um erro
+                .into(imageViewUserRegistered);
     }
 
     public static void setVisibleProgressBar(ProgressBar progressBar, FloatingActionButton floatingActionButton, SharedViewModel sharedViewModel) {

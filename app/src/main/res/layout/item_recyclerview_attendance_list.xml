@@ -57,7 +57,6 @@
             android:textAlignment="textEnd"
             android:textColor="@color/textColorPrimary"
             android:textSize="10sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
             app:layout_constraintStart_toEndOf="@+id/textViewLogin"
             app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
