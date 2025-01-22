@@ -5,6 +5,7 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -35,9 +36,12 @@ public class User {
 
     public Coalition coalition;
 
+    @Expose(serialize = false, deserialize = false)
     public Boolean present = null;
 
+    @Expose(serialize = false, deserialize = false)
     private final SharedPreferences preferences;
+    @Expose(serialize = false, deserialize = false)
     private final SharedPreferences.Editor editor;
 
     public User(Context context) {
