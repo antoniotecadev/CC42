@@ -58,7 +58,6 @@ public class AttendanceListFragment extends Fragment {
     private Context context;
     private Integer cameraId;
     private Activity activity;
-    private String resultQrCode;
     private String colorCoalition;
     private View inflatedViewStub;
     private BeepManager beepManager;
@@ -95,20 +94,18 @@ public class AttendanceListFragment extends Fragment {
                 Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", () -> decoratedBarcodeView.resume());
             } else {
                 if (result.getText().startsWith("cc42user")) {
-                    resultQrCode = result.getText();
                     Util.setVisibleProgressBar(progressBarMarkAttendance, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
-                    resultQrCode = result.getText();
-                    resultQrCode = resultQrCode.replace("cc42user", "");
-                    String[] parts = resultQrCode.split("#", 5);
-                    if (parts.length == 5) {
+                    String resultQrCode = result.getText().replace("cc42user", "");
+                    String[] partsQrCode = resultQrCode.split("#", 5);
+                    if (partsQrCode.length == 5) {
                         DaoEventFirebase.markAttendance(
                                 firebaseDatabase,
                                 String.valueOf(eventId),
-                                parts[0],
-                                parts[1],
-                                parts[2],
-                                parts[3],
-                                parts[4],
+                                partsQrCode[0],
+                                partsQrCode[1],
+                                partsQrCode[2],
+                                partsQrCode[3],
+                                partsQrCode[4],
                                 context,
                                 layoutInflater,
                                 progressBarMarkAttendance,

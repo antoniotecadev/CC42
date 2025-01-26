@@ -35,10 +35,7 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
 
     public void updateUserList(List<String> usersWhoMarkedPresence) {
         for (int i = 0; i < getItemCount(); i++) {
-            if (usersWhoMarkedPresence.contains(String.valueOf(this.userList.get(i).uid)))
-                this.userList.get(i).setPresent(true);
-            else
-                this.userList.get(i).setPresent(false);
+            this.userList.get(i).setPresent(usersWhoMarkedPresence.contains(String.valueOf(this.userList.get(i).uid)));
             notifyItemChanged(i);
         }
     }
@@ -52,12 +49,16 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
 
     @Override
     public void onBindViewHolder(@NonNull AttendanceListAdapter.AttendanceListViewHolder holder, int position) {
+        String imageUrl;
         User user = userList.get(position);
         if (colorCoalition != null) {
             int color = Color.parseColor(colorCoalition);
             holder.binding.dividerBottom.setBackgroundColor(color);
         }
-        Util.setImageUserRegistered(context, user.getUrlImageUserRegisteredEvent(), holder.binding.imageViewUserRegistered);
+        if (user.image != null)
+            imageUrl = user.getUrlImageUserRegisteredEvent();
+        else
+            imageUrl = "";
         holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
         if (user.isPresent() != null && user.isPresent()) {
@@ -72,6 +73,7 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
             if (user.isPresent() != null)
                 Util.showModalUserDetails(context, user.login, user.displayName, user.getUrlImageUserRegisteredEvent(), user.isPresent());
         });
+        Util.setImageUserRegistered(context, imageUrl, holder.binding.imageViewUserRegistered);
     }
 
     @Override
