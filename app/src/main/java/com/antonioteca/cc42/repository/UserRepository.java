@@ -56,7 +56,7 @@ public class UserRepository {
 
         String accessToken = "Bearer " + token.getAccessToken();
 
-        daoApiUser.getUsersEvent(eventId, accessToken, l.currentPage, 30).enqueue(new Callback<>() {
+        daoApiUser.getUsersEvent(eventId, accessToken, l.currentPage, 100).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<User>> call, @NonNull Response<List<User>> response) {
 
