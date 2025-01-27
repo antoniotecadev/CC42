@@ -178,6 +178,7 @@ public class UserViewModel extends ViewModel {
                 .child("participants");  // Referência para os participantes do evento
 
         List<String> usersWhoMarkedPresence = new ArrayList<>();
+        usersWhoMarkedPresence.add("-1");
         participantsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
