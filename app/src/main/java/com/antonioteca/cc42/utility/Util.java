@@ -5,6 +5,8 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.Html;
@@ -25,6 +27,8 @@ import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import java.util.Objects;
 
 import io.noties.markwon.Markwon;
 
@@ -156,6 +160,7 @@ public class Util {
         modalTitle.setTextColor(color);
         closeModalButton.setBackgroundTintList(colorStateList);
         AlertDialog dialog = builder.create();
+        dialog.show();
         if (runnableResumeCamera == null) {
             closeModalButton.setOnClickListener(v -> dialog.dismiss());
         } else {
@@ -163,8 +168,13 @@ public class Util {
                 runnableResumeCamera.run();
                 dialog.dismiss();
             });
+            if (Objects.equals(title, context.getString(R.string.sucess))) {
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    runnableResumeCamera.run();
+                    dialog.dismiss();
+                }, 3000);
+            }
         }
-        dialog.show();
     }
 
     public static void startVibration(Context context) {
