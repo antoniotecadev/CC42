@@ -50,6 +50,8 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
     @Override
     public void onBindViewHolder(@NonNull AttendanceListAdapter.AttendanceListViewHolder holder, int position) {
         String imageUrl;
+        int redColor = Color.rgb(200, 0, 0);
+        int greenColor = Color.rgb(0, 200, 0);
         User user = userList.get(position);
         if (colorCoalition != null) {
             int color = Color.parseColor(colorCoalition);
@@ -62,11 +64,11 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
         if (user.isPresent() != null && user.isPresent()) {
-            holder.binding.textViewLogin.setTextColor(Color.GREEN);
-            holder.binding.textViewPresent.setTextColor(Color.GREEN);
+            holder.binding.textViewLogin.setTextColor(greenColor);
+            holder.binding.textViewPresent.setTextColor(greenColor);
             holder.binding.textViewPresent.setText(context.getString(R.string.text_present));
         } else if (user.isPresent() != null && !user.isPresent()) {
-            holder.binding.textViewPresent.setTextColor(Color.RED);
+            holder.binding.textViewPresent.setTextColor(redColor);
             holder.binding.textViewPresent.setText(context.getString(R.string.text_absent));
         }
         holder.itemView.setOnClickListener(v -> {

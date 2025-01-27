@@ -101,9 +101,10 @@ public class Util {
 
     public static void showModalUserDetails(Context context, String title, String description, String urlImageUserRegisteredEvent, boolean isPresent) {
         ImageQrCodeBinding binding = ImageQrCodeBinding.inflate(LayoutInflater.from(context));
+        int color = isPresent ? Color.rgb(0, 200, 0) : Color.rgb(200, 0, 0);
         binding.textViewTitle.setText(title);
         binding.textViewDescription.setText(description);
-        binding.closeModalButton.setBackgroundColor(isPresent ? Color.GREEN : Color.RED);
+        binding.closeModalButton.setBackgroundColor(color);
         binding.closeModalButton.setText(isPresent ? R.string.text_present : R.string.text_absent);
         Util.setImageUserRegistered(context, urlImageUserRegisteredEvent, binding.imageViewQrCode);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
