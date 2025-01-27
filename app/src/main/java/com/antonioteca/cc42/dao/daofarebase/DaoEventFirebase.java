@@ -60,16 +60,16 @@ public class DaoEventFirebase {
                     String message = displayName + "\n" + context.getString(R.string.msg_you_already_mark_attendance_event);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", runnableResumeCamera);
                 } else {
-                    // Armazenamento de Dados de Participante
-                    Map<String, Object> participantData = new HashMap<>();
-                    participantData.put("uid", userId);
-                    participantData.put("user", userLogin);
-                    participantData.put("display_name", displayName);
+//                    Armazenamento de Dados de Participante
+//                    Map<String, Object> participantData = new HashMap<>();
+//                    participantData.put("uid", userId);
+//                    participantData.put("user", userLogin);
+//                    participantData.put("display_name", displayName);
 
                     // Crie os dados do evento e usuários
                     Map<String, Object> eventUpdates = new HashMap<>();
-                    eventUpdates.put("cursus/" + cursusId + "/users/" + userId, participantData);
-                    eventUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/status", "pendente"); // ou "iniciado" ou "finalizado"
+//                    eventUpdates.put("cursus/" + cursusId + "/users/" + userId, participantData);
+//                    eventUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/status", "pendente"); // ou "iniciado" ou "finalizado"
                     eventUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/participants/" + userId, true);
 
                     // Referência ao Firebase para adicionar o cadete
@@ -81,7 +81,7 @@ public class DaoEventFirebase {
                             .addOnSuccessListener(aVoid -> {
                                 Util.startVibration(context);
                                 Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
-                                String message = context.getString(R.string.msg_sucess_mark_attendance_event) + ", " + displayName + "!";
+                                String message = displayName + "\n" + context.getString(R.string.msg_sucess_mark_attendance_event);
                                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", runnableResumeCamera);
                             })
                             .addOnFailureListener(e -> {
