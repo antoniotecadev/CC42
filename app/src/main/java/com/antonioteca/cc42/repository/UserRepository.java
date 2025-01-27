@@ -70,14 +70,14 @@ public class UserRepository {
                     }
                 } else {
                     l.hasNextPage = false;
-                    callback.onFailure(call, new Throwable());
+                    callback.onFailure(call, new Throwable("Not sucess response"));
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<User>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<User>> call, @NonNull Throwable throwable) {
                 l.hasNextPage = false;
-                callback.onFailure(call, t);
+                callback.onFailure(call, throwable);
             }
         });
     }

@@ -39,8 +39,9 @@ public class HttpException {
             Log.e(context.getString(R.string.jso_err), "Error parsing JSON response: " + e.getMessage());
             stringListException.add("Error parsing JSON response");
         } else {
-            Log.e(context.getString(R.string.err), "Unknown error occurred: " + e.getMessage());
-            stringListException.add("Unknown error occurred");
+            String message = e.getMessage() != null ? e.getMessage() : "";
+            Log.e(context.getString(R.string.err), "Unknown error occurred: " + message);
+            stringListException.add("Unknown error occurred: " + message);
         }
         return new HttpException(100, stringListException.get(0));
     }
