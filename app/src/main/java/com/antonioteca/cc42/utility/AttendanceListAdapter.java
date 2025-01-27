@@ -57,10 +57,7 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
             int color = Color.parseColor(colorCoalition);
             holder.binding.dividerBottom.setBackgroundColor(color);
         }
-        if (user.image != null)
-            imageUrl = user.getUrlImageUserRegisteredEvent();
-        else
-            imageUrl = "";
+        imageUrl = user.getUrlImageUserRegisteredEvent();
         holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
         if (user.isPresent() != null && user.isPresent()) {
@@ -73,7 +70,7 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         }
         holder.itemView.setOnClickListener(v -> {
             if (user.isPresent() != null)
-                Util.showModalUserDetails(context, user.login, user.displayName, user.getUrlImageUserRegisteredEvent(), user.isPresent());
+                Util.showModalUserDetails(context, user.login, user.displayName, imageUrl, user.isPresent());
         });
         Util.setImageUserRegistered(context, imageUrl, holder.binding.imageViewUserRegistered);
     }
