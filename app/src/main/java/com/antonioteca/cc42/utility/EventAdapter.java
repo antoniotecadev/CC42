@@ -13,8 +13,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
@@ -87,10 +85,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Carrega a animação de fade
-                Animation fadeAnimation = AnimationUtils.loadAnimation(v.getContext(), R.anim.fade);
-                // Aplica a animação ao item clicado
-                v.startAnimation(fadeAnimation);
+//                Carrega a animação de fade
+//                Animation fadeAnimation = AnimationUtils.loadAnimation(v.getContext(), R.anim.fade);
+//                Aplica a animação ao item clicado
+//                v.startAnimation(fadeAnimation);
                 HomeFragmentDirections.ActionNavHomeToDetailsEventFragment actionNavHomeToDetailsEventFragment = HomeFragmentDirections.actionNavHomeToDetailsEventFragment(event);
                 try {
                     Navigation.findNavController(v).navigate(actionNavHomeToDetailsEventFragment);
