@@ -224,11 +224,16 @@ public class AttendanceListFragment extends Fragment {
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
         });
 
-        userViewModel.getKeysUsersWhoMarkedPresence().observe(getViewLifecycleOwner(), keys -> {
+        userViewModel.getUserIdsWhoMarkedPresence().observe(getViewLifecycleOwner(), userIds -> {
             Toast.makeText(context, R.string.msg_checking_attendance, Toast.LENGTH_LONG).show();
-            if (!keys.isEmpty() && keys.get(0) != null)
-                attendanceListAdapter.updateUserList(keys);
+            if (!userIds.isEmpty() && userIds.get(0) != null)
+                attendanceListAdapter.updateAttendanceUser(userIds);
             setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
+        });
+
+        sharedViewModel.markedAttendanceUser().observe(getViewLifecycleOwner(), userId -> {
+            if (userId > 0)
+                attendanceListAdapter.updateAttendanceUser(userId);
         });
 
         userViewModel.getHttpSatusEvent().observe(getViewLifecycleOwner(), event -> {
@@ -261,7 +266,7 @@ public class AttendanceListFragment extends Fragment {
                     Toast.makeText(context, R.string.msg_loading_more_data, Toast.LENGTH_LONG).show();
                     userViewModel.getUsersEvent(eventId, l, context);  // Carregar mais usuários
                 } else {
-                    userViewModel.getUsersWhoMarkedPresence(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(user.getCursusId()), String.valueOf(eventId), context, layoutInflater);
+                    userViewModel.getUserIdsWhoMarkedAttendancee(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(user.getCursusId()), String.valueOf(eventId), context, layoutInflater);
                 }
             }
         });

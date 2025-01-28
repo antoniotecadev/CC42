@@ -44,7 +44,7 @@ public class UserViewModel extends ViewModel {
 
     private MutableLiveData<User> userMutableLiveData;
     private MutableLiveData<List<User>> userListMutableLiveData;
-    private MutableLiveData<List<String>> usersWhoMarkedPresenceListMutableLiveData;
+    private MutableLiveData<List<String>> userIdsWhoMarkedAttendanceMutableLiveData;
     private MutableLiveData<HttpStatus> httpStatusMutableLiveData;
     private MutableLiveData<HttpException> httpExceptionMutableLiveData;
     private MutableLiveData<EventObserver<HttpStatus>> httpStatusMutableLiveDataEvent;
@@ -70,10 +70,10 @@ public class UserViewModel extends ViewModel {
         return userListMutableLiveData;
     }
 
-    public LiveData<List<String>> getKeysUsersWhoMarkedPresence() {
-        if (usersWhoMarkedPresenceListMutableLiveData == null)
-            usersWhoMarkedPresenceListMutableLiveData = new MutableLiveData<>();
-        return usersWhoMarkedPresenceListMutableLiveData;
+    public LiveData<List<String>> getUserIdsWhoMarkedPresence() {
+        if (userIdsWhoMarkedAttendanceMutableLiveData == null)
+            userIdsWhoMarkedAttendanceMutableLiveData = new MutableLiveData<>();
+        return userIdsWhoMarkedAttendanceMutableLiveData;
     }
 
     public LiveData<HttpStatus> getHttpSatus() {
@@ -167,8 +167,8 @@ public class UserViewModel extends ViewModel {
         });
     }
 
-    public void getUsersWhoMarkedPresence(FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, Context context,
-                                          LayoutInflater layoutInflater) {
+    public void getUserIdsWhoMarkedAttendancee(FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, Context context,
+                                               LayoutInflater layoutInflater) {
         DatabaseReference participantsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
                 .child("cursus")
@@ -177,8 +177,8 @@ public class UserViewModel extends ViewModel {
                 .child(eventId)
                 .child("participants");  // Referência para os participantes do evento
 
-        List<String> usersWhoMarkedPresence = new ArrayList<>();
-        usersWhoMarkedPresence.add("-1");
+        List<String> userIdsWhoMarkedAttendance = new ArrayList<>();
+        userIdsWhoMarkedAttendance.add("-1");
         participantsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -186,19 +186,19 @@ public class UserViewModel extends ViewModel {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Boolean isParticipant = dataSnapshot.getValue(Boolean.class);
                         if (Boolean.TRUE.equals(isParticipant)) {
-                            usersWhoMarkedPresence.add(dataSnapshot.getKey());
+                            userIdsWhoMarkedAttendance.add(dataSnapshot.getKey());
                         }
                     }
-                    usersWhoMarkedPresenceListMutableLiveData.postValue(usersWhoMarkedPresence);
+                    userIdsWhoMarkedAttendanceMutableLiveData.postValue(userIdsWhoMarkedAttendance);
                 } else
-                    usersWhoMarkedPresenceListMutableLiveData.postValue(usersWhoMarkedPresence);
+                    userIdsWhoMarkedAttendanceMutableLiveData.postValue(userIdsWhoMarkedAttendance);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 String message = context.getString(R.string.msg_error_check_attendance_event) + ": " + error.toException();
                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
-                usersWhoMarkedPresenceListMutableLiveData.postValue(usersWhoMarkedPresence);
+                userIdsWhoMarkedAttendanceMutableLiveData.postValue(userIdsWhoMarkedAttendance);
             }
         });
     }

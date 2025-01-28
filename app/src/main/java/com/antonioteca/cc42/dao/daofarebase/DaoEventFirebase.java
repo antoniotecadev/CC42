@@ -80,6 +80,7 @@ public class DaoEventFirebase {
                     campusReference.updateChildren(eventUpdates)
                             .addOnSuccessListener(aVoid -> {
                                 Util.startVibration(context);
+                                sharedViewModel.setMarkAttendanceUser(Long.valueOf(userId));
                                 Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = displayName + "\n" + context.getString(R.string.msg_sucess_mark_attendance_event);
                                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", runnableResumeCamera);

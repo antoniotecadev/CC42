@@ -33,10 +33,20 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         notifyItemRangeChanged(positionStart, newUserList.size()); // Notificar apenas a faixa adicionada
     }
 
-    public void updateUserList(List<String> usersWhoMarkedPresence) {
+    public void updateAttendanceUser(List<String> usersIdsWhoMarkedPresence) {
         for (int i = 0; i < getItemCount(); i++) {
-            this.userList.get(i).setPresent(usersWhoMarkedPresence.contains(String.valueOf(this.userList.get(i).uid)));
+            this.userList.get(i).setPresent(usersIdsWhoMarkedPresence.contains(String.valueOf(this.userList.get(i).uid)));
             notifyItemChanged(i);
+        }
+    }
+
+    public void updateAttendanceUser(Long uid) {
+        for (int i = 0; i < getItemCount(); i++) {
+            if (this.userList.get(i).uid == uid) {
+                this.userList.get(i).setPresent(true);
+                notifyItemChanged(i);
+                break;
+            }
         }
     }
 
