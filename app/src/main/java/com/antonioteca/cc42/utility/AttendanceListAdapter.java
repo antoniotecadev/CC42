@@ -26,7 +26,7 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
 
     public void updateUserList(List<User> newUserList, Context context) {
         this.context = context;
-        int positionStart = userList.size(); // Posição onde os novos itens começarão
+        int positionStart = getItemCount(); // Posição onde os novos itens começarão
         this.userList.addAll(newUserList);  // Adiciona novos usuários à lista existente
         notifyItemRangeChanged(positionStart, newUserList.size()); // Notificar apenas a faixa adicionada
     }
@@ -46,6 +46,11 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
                 break;
             }
         }
+    }
+
+    public void clean() {
+        this.userList.clear();
+        notifyItemRangeRemoved(0, getItemCount());
     }
 
     @NonNull
