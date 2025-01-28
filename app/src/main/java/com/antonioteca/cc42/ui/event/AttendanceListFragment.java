@@ -136,7 +136,7 @@ public class AttendanceListFragment extends Fragment {
         layoutInflater = getLayoutInflater();
         beepManager = new BeepManager(activity);
         colorCoalition = new Coalition(context).getColor();
-        attendanceListAdapter = new AttendanceListAdapter(colorCoalition);
+        attendanceListAdapter = new AttendanceListAdapter();
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         UserRepository userRepository = new UserRepository(context);

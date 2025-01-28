@@ -18,12 +18,10 @@ import java.util.List;
 public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAdapter.AttendanceListViewHolder> {
 
     private Context context;
-    private final String colorCoalition;
     private final List<User> userList;
 
-    public AttendanceListAdapter(String colorCoalition) {
+    public AttendanceListAdapter() {
         this.userList = new ArrayList<>();
-        this.colorCoalition = colorCoalition;
     }
 
     public void updateUserList(List<User> newUserList, Context context) {
@@ -63,10 +61,6 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         int redColor = Color.rgb(200, 0, 0);
         int greenColor = Color.rgb(0, 200, 0);
         User user = userList.get(position);
-        if (colorCoalition != null) {
-            int color = Color.parseColor(colorCoalition);
-            holder.binding.dividerBottom.setBackgroundColor(color);
-        }
         imageUrl = user.getUrlImageUserRegisteredEvent();
         holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);

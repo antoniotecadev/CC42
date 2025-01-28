@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,21 +11,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.core.widget.NestedScrollView
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+            <ViewStub
+                android:id="@+id/viewStub"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="300dp"
+                android:layout_gravity="top"
+                android:layout="@layout/qrcode_scanner_stub" />
 
-                <ViewStub
-                    android:id="@+id/viewStub"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:layout_gravity="top"
-                    android:layout="@layout/qrcode_scanner_stub" />
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerviewAttendanceList"
@@ -33,8 +33,8 @@
                     android:layout_height="match_parent"
                     app:layoutManager="LinearLayoutManager"
                     tools:listitem="@layout/item_recyclerview_attendance_list" />
-            </androidx.appcompat.widget.LinearLayoutCompat>
-        </androidx.core.widget.NestedScrollView>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <TextView
@@ -75,4 +75,4 @@
         app:backgroundTint="@color/white"
         app:srcCompat="@drawable/ic_baseline_qr_code_100" />
 
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
