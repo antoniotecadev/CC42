@@ -6,16 +6,21 @@ import androidx.annotation.NonNull;
 
 import com.antonioteca.cc42.dao.daoapi.DaoApiUser;
 import com.antonioteca.cc42.dao.daoapi.PaginationLinks;
+import com.antonioteca.cc42.dao.daoroom.AppDataBase;
 import com.antonioteca.cc42.model.Coalition;
+import com.antonioteca.cc42.model.LocalAttendanceList;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.RetrofitClientApi;
 import com.antonioteca.cc42.utility.Loading;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 import okhttp3.Headers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,10 +37,26 @@ public class UserRepository {
     private final Token token;
     private final DaoApiUser daoApiUser;
 
+    private final AppDataBase appDataBase;
+
     public UserRepository(Context context) {
         user = new User(context);
         token = new Token(context);
+        WeakReference<Context> weakReference = new WeakReference<>(context);
+        appDataBase = AppDataBase.getInstance(weakReference.get());
         daoApiUser = RetrofitClientApi.getApiService().create(DaoApiUser.class);
+    }
+
+    public Completable insert(LocalAttendanceList user) {
+        return appDataBase.userDao().insert(user);
+    }
+
+    public Single<List<LocalAttendanceList>> userAlreadyLocalAttendanceList(
+            int campusId,
+            int cursusId,
+            long eventId,
+            long userId) {
+        return appDataBase.userDao().userAlreadyLocalAttendanceList(campusId, cursusId, eventId, userId);
     }
 
     public boolean saveUser(User user) {

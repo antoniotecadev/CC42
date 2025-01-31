@@ -27,6 +27,7 @@ import com.antonioteca.cc42.dao.daofarebase.DaoEventFirebase;
 import com.antonioteca.cc42.databinding.FragmentAttendanceListBinding;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Coalition;
+import com.antonioteca.cc42.model.LocalAttendanceList;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.network.HttpException;
@@ -94,25 +95,41 @@ public class AttendanceListFragment extends Fragment {
                 Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", () -> decoratedBarcodeView.resume());
             } else {
                 if (result.getText().startsWith("cc42user")) {
-                    Util.setVisibleProgressBar(progressBarMarkAttendance, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
                     String resultQrCode = result.getText().replace("cc42user", "");
                     String[] partsQrCode = resultQrCode.split("#", 5);
                     if (partsQrCode.length == 5) {
-                        DaoEventFirebase.markAttendance(
-                                firebaseDatabase,
-                                String.valueOf(eventId),
-                                partsQrCode[0],
-                                partsQrCode[1],
-                                partsQrCode[2],
-                                partsQrCode[3],
-                                partsQrCode[4],
-                                context,
-                                layoutInflater,
-                                progressBarMarkAttendance,
-                                binding.fabOpenCameraScannerQrCodeBack,
-                                sharedViewModel,
-                                () -> decoratedBarcodeView.resume()
-                        );
+                        if (true) {
+                            LocalAttendanceList user = new LocalAttendanceList();
+                            user.userId = Long.parseLong(partsQrCode[0]);
+                            user.displayName = partsQrCode[2];
+                            user.cursusId = Integer.parseInt(partsQrCode[3]);
+                            user.campusId = Integer.parseInt(partsQrCode[4]);
+                            user.eventId = eventId;
+                            userViewModel.addUserLocalAttendanceList(
+                                    user,
+                                    context,
+                                    layoutInflater,
+                                    sharedViewModel,
+                                    () -> decoratedBarcodeView.resume()
+                            );
+                        } else {
+                            Util.setVisibleProgressBar(progressBarMarkAttendance, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
+                            DaoEventFirebase.markAttendance(
+                                    firebaseDatabase,
+                                    String.valueOf(eventId),
+                                    partsQrCode[0],
+                                    partsQrCode[1],
+                                    partsQrCode[2],
+                                    partsQrCode[3],
+                                    partsQrCode[4],
+                                    context,
+                                    layoutInflater,
+                                    progressBarMarkAttendance,
+                                    binding.fabOpenCameraScannerQrCodeBack,
+                                    sharedViewModel,
+                                    () -> decoratedBarcodeView.resume()
+                            );
+                        }
                     } else
                         Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", () -> decoratedBarcodeView.resume());
                 } else

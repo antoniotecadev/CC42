@@ -38,6 +38,7 @@ android {
 
 dependencies {
 
+    def room_version = "2.6.1"
     def nav_version = "2.5.3"
     def retrofit_version = "2.11.0"
     def datastore_verdion = "1.1.1"
@@ -53,6 +54,19 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    // Room DataBase
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    // optional - Paging 3 Integration
+    implementation "androidx.room:room-paging:$room_version"
+    // optional - RxJava3 support for Room
+    implementation "androidx.room:room-rxjava3:$room_version"
+
+    // RxAndroid
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    // RxJava
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
 
     // Pull to Refresh
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'

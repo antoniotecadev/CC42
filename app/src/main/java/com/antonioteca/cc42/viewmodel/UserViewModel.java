@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.model.Coalition;
+import com.antonioteca.cc42.model.LocalAttendanceList;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.HttpException;
@@ -29,6 +30,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,6 +44,7 @@ import retrofit2.Response;
 
 public class UserViewModel extends ViewModel {
 
+    private final CompositeDisposable compositeDisposable;
     private final UserRepository userRepository;
 
     private MutableLiveData<User> userMutableLiveData;
@@ -51,6 +56,7 @@ public class UserViewModel extends ViewModel {
     private MutableLiveData<EventObserver<HttpException>> httpExceptionMutableLiveDataEvent;
 
     public UserViewModel(UserRepository userRepository) {
+        compositeDisposable = new CompositeDisposable();
         this.userRepository = userRepository;
     }
 
@@ -98,6 +104,40 @@ public class UserViewModel extends ViewModel {
         if (httpExceptionMutableLiveDataEvent == null)
             httpExceptionMutableLiveDataEvent = new MutableLiveData<>();
         return httpExceptionMutableLiveDataEvent;
+    }
+
+    public void addUserLocalAttendanceList(
+            LocalAttendanceList user,
+            Context context,
+            LayoutInflater layoutInflater,
+            SharedViewModel sharedViewModel,
+            Runnable runnableResumeCamera
+    ) {
+        compositeDisposable.add(userRepository.userAlreadyLocalAttendanceList(user.campusId, user.cursusId, user.eventId, user.eventId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(attendanceListList -> {
+                    if (attendanceListList.isEmpty()) {
+                        compositeDisposable.add(userRepository.insert(user)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(() -> {
+                                    Util.startVibration(context);
+                                    sharedViewModel.setMarkAttendanceUser(user.userId);
+                                    String message = user.displayName + "\n" + context.getString(R.string.msg_sucess_mark_attendance_event);
+                                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", runnableResumeCamera);
+                                }, throwable -> {
+                                    String message = context.getString(R.string.msg_error_mark_attendance_event) + ": " + throwable.getMessage();
+                                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", runnableResumeCamera);
+                                }));
+                    } else {
+                        String message = user.displayName + "\n" + context.getString(R.string.msg_you_already_mark_attendance_event);
+                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", runnableResumeCamera);
+                    }
+                }, throwable -> {
+                    String message = context.getString(R.string.msg_error_check_attendance_event) + ": " + throwable.getMessage();
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", runnableResumeCamera);
+                }));
     }
 
     public boolean saveUser(User user) {
@@ -201,5 +241,12 @@ public class UserViewModel extends ViewModel {
                 userIdsWhoMarkedAttendanceMutableLiveData.postValue(userIdsWhoMarkedAttendance);
             }
         });
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        if (compositeDisposable.isDisposed())
+            compositeDisposable.dispose();
     }
 }
