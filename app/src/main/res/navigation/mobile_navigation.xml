@@ -34,5 +34,8 @@
         tools:layout="@layout/fragment_attendance_list" >
         <argument android:name="eventId"
             app:argType="long" />
+        <argument
+            android:name="cursuId"
+            app:argType="integer" />
     </fragment>
 </navigation>

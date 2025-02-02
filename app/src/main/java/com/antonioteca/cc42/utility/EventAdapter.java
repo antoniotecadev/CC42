@@ -68,7 +68,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         else
             color = Color.parseColor("#FFFFB300"); // orange
         holder.binding.textViewKind.setText(event.getKind());
-        holder.binding.textViewName.setText(event.getName());
+        holder.binding.textViewName.setText(event.getName() + " " + event.getId() + " " + event.getCursus_ids().get(0));
         holder.binding.textViewLocation.setText(event.getLocation());
         holder.binding.textViewKind.setTextColor(color);
         holder.binding.textViewTimeBegin.setTextColor(color);

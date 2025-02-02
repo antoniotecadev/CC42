@@ -57,6 +57,7 @@ public class AttendanceListFragment extends Fragment {
     private User user;
     private Loading l;
     private Long eventId;
+    private Integer cursuId;
     private Context context;
     private Integer cameraId;
     private Activity activity;
@@ -174,6 +175,8 @@ public class AttendanceListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         eventId = AttendanceListFragmentArgs.fromBundle(requireArguments()).getEventId();
+        cursuId = AttendanceListFragmentArgs.fromBundle(requireArguments()).getCursuId();
+
         binding.recyclerviewAttendanceList.setHasFixedSize(true);
         binding.recyclerviewAttendanceList.setLayoutManager(new LinearLayoutManager(context));
 
@@ -291,7 +294,7 @@ public class AttendanceListFragment extends Fragment {
                     Toast.makeText(context, R.string.msg_loading_more_data, Toast.LENGTH_LONG).show();
                     userViewModel.getUsersEvent(eventId, l, context);  // Carregar mais usuários
                 } else {
-                    userViewModel.synchronizedAttendanceList(firebaseDatabase, user.getCampusId(), user.getCursusId(), eventId, binding.swipeRefreshLayout, context, layoutInflater);
+                    userViewModel.synchronizedAttendanceList(firebaseDatabase, user.getCampusId(), cursuId, eventId, binding.swipeRefreshLayout, context, layoutInflater);
                 }
             }
         });

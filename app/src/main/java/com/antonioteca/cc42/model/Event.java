@@ -5,6 +5,9 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Event implements Parcelable {
 
     private long id;
@@ -16,6 +19,7 @@ public class Event implements Parcelable {
     private int nbr_subscribers;
     private String begin_at;
     private String end_at;
+    private List<Integer> cursus_ids;
 
     public Event() {
     }
@@ -30,6 +34,11 @@ public class Event implements Parcelable {
         nbr_subscribers = in.readInt();
         begin_at = in.readString();
         end_at = in.readString();
+        int size = in.readInt();
+        cursus_ids = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            cursus_ids.add(in.readInt());
+        }
     }
 
     public static final Creator<Event> CREATOR = new Creator<Event>() {
@@ -116,6 +125,14 @@ public class Event implements Parcelable {
         this.end_at = end_at;
     }
 
+    public List<Integer> getCursus_ids() {
+        return cursus_ids;
+    }
+
+    public void setCursus_ids(List<Integer> cursus_ids) {
+        this.cursus_ids = cursus_ids;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -132,5 +149,11 @@ public class Event implements Parcelable {
         parcel.writeInt(nbr_subscribers);
         parcel.writeString(begin_at);
         parcel.writeString(end_at);
+        parcel.writeInt(cursus_ids != null ? cursus_ids.size() : 0);
+        if (cursus_ids != null) {
+            for (Integer id : cursus_ids) {
+                parcel.writeInt(id);
+            }
+        }
     }
 }
