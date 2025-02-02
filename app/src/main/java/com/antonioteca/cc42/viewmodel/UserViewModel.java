@@ -113,7 +113,7 @@ public class UserViewModel extends ViewModel {
             SharedViewModel sharedViewModel,
             Runnable runnableResumeCamera
     ) {
-        compositeDisposable.add(userRepository.userAlreadyLocalAttendanceList(user.campusId, user.cursusId, user.eventId, user.eventId)
+        compositeDisposable.add(userRepository.userAlreadyLocalAttendanceList(user.campusId, user.cursusId, user.eventId, user.userId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(attendanceListList -> {
