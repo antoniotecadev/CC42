@@ -8,6 +8,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
@@ -21,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DaoEventFirebase {
@@ -100,6 +103,43 @@ public class DaoEventFirebase {
                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", runnableResumeCamera);
             }
         });
+    }
+
+    public static void sinchronizationAttendanceList(
+            MutableLiveData<List<String>> userIdsWhoMarkedAttendanceMutableLiveData,
+            List<Long> userIdsWhoMarkedAttendanceLocal,
+            List<String> userIdsWhoMarkedAttendance,
+            FirebaseDatabase firebaseDatabase,
+            String campusId,
+            String cursusId,
+            String eventId,
+            SwipeRefreshLayout swipeRefreshLayout,
+            Context context,
+            LayoutInflater layoutInflater
+    ) {
+        Toast.makeText(context, R.string.synchronization, Toast.LENGTH_LONG).show();
+        swipeRefreshLayout.setRefreshing(true);
+        Map<String, Object> userUpdates = new HashMap<>();
+        for (Long userId : userIdsWhoMarkedAttendanceLocal) {
+            userIdsWhoMarkedAttendance.add(String.valueOf(userId));
+            userUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/participants/" + userId, true);
+        }
+        DatabaseReference campusReference = firebaseDatabase.getReference("campus")
+                .child(campusId);
+
+        campusReference.updateChildren(userUpdates)
+                .addOnSuccessListener(aVoid -> {
+                    Util.startVibration(context);
+                    swipeRefreshLayout.setRefreshing(false);
+                    String message = context.getString(R.string.msg_attendance_list_synchronized);
+                    userIdsWhoMarkedAttendanceMutableLiveData.postValue(userIdsWhoMarkedAttendance);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
+                })
+                .addOnFailureListener(e -> {
+                    swipeRefreshLayout.setRefreshing(false);
+                    String message = context.getString(R.string.error_msg_attendance_list_synchronized) + ": " + e.getMessage();
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                });
     }
 
     public static void markEventAsStarted(

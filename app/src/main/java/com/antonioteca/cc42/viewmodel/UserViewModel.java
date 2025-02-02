@@ -1,5 +1,7 @@
 package com.antonioteca.cc42.viewmodel;
 
+import static com.antonioteca.cc42.dao.daofarebase.DaoEventFirebase.sinchronizationAttendanceList;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.model.Coalition;
@@ -207,7 +210,25 @@ public class UserViewModel extends ViewModel {
         });
     }
 
-    public void getUserIdsWhoMarkedAttendancee(FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, Context context,
+    public void synchronizedAttendanceList(FirebaseDatabase firebaseDatabase, int campusId, int cursusId, long eventId, SwipeRefreshLayout swipeRefreshLayout, Context context,
+                                           LayoutInflater layoutInflater) {
+        compositeDisposable.add(userRepository.geIdsUserLocalAttendanceList(campusId, cursusId, eventId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(userIdsWhoMarkedAttendanceLocal -> getUserIdsWhoMarkedAttendance(
+                        userIdsWhoMarkedAttendanceLocal,
+                        firebaseDatabase,
+                        String.valueOf(campusId),
+                        String.valueOf(cursusId),
+                        String.valueOf(eventId),
+                        swipeRefreshLayout,
+                        context,
+                        layoutInflater), throwable -> {
+
+                }));
+    }
+
+    private void getUserIdsWhoMarkedAttendance(List<Long> userIdsWhoMarkedAttendanceLocal, FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, SwipeRefreshLayout swipeRefreshLayout, Context context,
                                                LayoutInflater layoutInflater) {
         DatabaseReference participantsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
@@ -224,14 +245,44 @@ public class UserViewModel extends ViewModel {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        Boolean isParticipant = dataSnapshot.getValue(Boolean.class);
-                        if (Boolean.TRUE.equals(isParticipant)) {
-                            userIdsWhoMarkedAttendance.add(dataSnapshot.getKey());
+                        userIdsWhoMarkedAttendance.add(dataSnapshot.getKey());
+//                        Boolean isParticipant = dataSnapshot.getValue(Boolean.class);
+//                        if (Boolean.TRUE.equals(isParticipant)) {
+//                            userIdsWhoMarkedAttendance.add(dataSnapshot.getKey());
+//                        }
+                    }
+                    for (Long userIdLocal : userIdsWhoMarkedAttendanceLocal) {
+                        if (!userIdsWhoMarkedAttendance.contains(String.valueOf(userIdLocal))) {
+                            Util.showAlertDialogSynchronized(context, () -> sinchronizationAttendanceList(
+                                    userIdsWhoMarkedAttendanceMutableLiveData,
+                                    userIdsWhoMarkedAttendanceLocal,
+                                    userIdsWhoMarkedAttendance,
+                                    firebaseDatabase,
+                                    campusId,
+                                    cursusId,
+                                    eventId,
+                                    swipeRefreshLayout,
+                                    context,
+                                    layoutInflater));
+                            break;
                         }
                     }
-                    userIdsWhoMarkedAttendanceMutableLiveData.postValue(userIdsWhoMarkedAttendance);
-                } else
-                    userIdsWhoMarkedAttendanceMutableLiveData.postValue(userIdsWhoMarkedAttendance);
+                } else {
+                    if (!userIdsWhoMarkedAttendanceLocal.isEmpty()) {
+                        Util.showAlertDialogSynchronized(context, () -> sinchronizationAttendanceList(
+                                userIdsWhoMarkedAttendanceMutableLiveData,
+                                userIdsWhoMarkedAttendanceLocal,
+                                userIdsWhoMarkedAttendance,
+                                firebaseDatabase,
+                                campusId,
+                                cursusId,
+                                eventId,
+                                swipeRefreshLayout,
+                                context,
+                                layoutInflater));
+                    }
+                }
+                userIdsWhoMarkedAttendanceMutableLiveData.postValue(userIdsWhoMarkedAttendance);
             }
 
             @Override

@@ -1,6 +1,7 @@
 package com.antonioteca.cc42.ui.event;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -86,6 +87,7 @@ public class AttendanceListFragment extends Fragment {
             });
 
     private final BarcodeCallback callback = new BarcodeCallback() {
+        @SuppressLint("ClickableViewAccessibility")
         @Override
         public void barcodeResult(BarcodeResult result) {
             decoratedBarcodeView.pause();
@@ -289,7 +291,7 @@ public class AttendanceListFragment extends Fragment {
                     Toast.makeText(context, R.string.msg_loading_more_data, Toast.LENGTH_LONG).show();
                     userViewModel.getUsersEvent(eventId, l, context);  // Carregar mais usuários
                 } else {
-                    userViewModel.getUserIdsWhoMarkedAttendancee(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(user.getCursusId()), String.valueOf(eventId), context, layoutInflater);
+                    userViewModel.synchronizedAttendanceList(firebaseDatabase, user.getCampusId(), user.getCursusId(), eventId, binding.swipeRefreshLayout, context, layoutInflater);
                 }
             }
         });

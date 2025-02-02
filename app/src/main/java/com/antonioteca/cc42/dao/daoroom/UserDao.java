@@ -24,4 +24,11 @@ public interface UserDao {
             int cursusId,
             long eventId,
             long userId);
+
+    @Query("SELECT uid FROM local_attendance_list " +
+            "WHERE campus_id =:campusId AND cursus_id =:cursusId AND event_id =:eventId")
+    Single<List<Long>> geIdsUserLocalAttendanceList(
+            int campusId,
+            int cursusId,
+            long eventId);
 }

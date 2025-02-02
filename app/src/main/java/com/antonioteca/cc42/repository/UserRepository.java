@@ -59,6 +59,13 @@ public class UserRepository {
         return appDataBase.userDao().userAlreadyLocalAttendanceList(campusId, cursusId, eventId, userId);
     }
 
+    public Single<List<Long>> geIdsUserLocalAttendanceList(
+            int campusId,
+            int cursusId,
+            long eventId) {
+        return appDataBase.userDao().geIdsUserLocalAttendanceList(campusId, cursusId, eventId);
+    }
+
     public boolean saveUser(User user) {
         return this.user.saveUser(user, user.coalition);
     }

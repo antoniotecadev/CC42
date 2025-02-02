@@ -47,6 +47,20 @@ public class Util {
         builder.show();
     }
 
+    public static void showAlertDialogSynchronized(Context context, Runnable runnableTryAgain) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.warning);
+        builder.setMessage(R.string.msg_synchronization);
+        builder.setIcon(R.drawable.logo_42);
+        if (runnableTryAgain == null)
+            builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
+        else {
+            builder.setPositiveButton(R.string.synchronize, (dialogInterface, i) -> runnableTryAgain.run());
+            builder.setNeutralButton(R.string.later, (dialogInterface, i) -> dialogInterface.dismiss());
+        }
+        builder.show();
+    }
+
     public static void setColorCoalition(ViewGroup viewGroup, String color) {
         if (color != null) {
             try {
