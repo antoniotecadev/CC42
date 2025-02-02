@@ -26,9 +26,24 @@ public class EventRepository {
     }
 
     public void getEvents(Callback<List<Event>> callback) {
-        Call<List<Event>> eventCall = daoEvent.getEvents(
+        if (user.isStaff())
+            getCampusEvents(callback);
+        else
+            getCursusEvents(callback);
+    }
+
+    private void getCursusEvents(Callback<List<Event>> callback) {
+        Call<List<Event>> eventCall = daoEvent.getCursusEvents(
                 user.getCampusId(),
                 user.getCursusId(),
+                "Bearer " + token.getAccessToken()
+        );
+        eventCall.enqueue(callback);
+    }
+
+    public void getCampusEvents(Callback<List<Event>> callback) {
+        Call<List<Event>> eventCall = daoEvent.getCampusEvents(
+                user.getCampusId(),
                 "Bearer " + token.getAccessToken()
         );
         eventCall.enqueue(callback);

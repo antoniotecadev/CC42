@@ -36,6 +36,9 @@ public class User {
 
     public Coalition coalition;
 
+    @SerializedName("staff?")
+    private boolean isStaff;
+
     @Expose(serialize = false, deserialize = false)
     public Boolean present = null;
 
@@ -63,6 +66,7 @@ public class User {
             editor.putString("image_url_coalition", coalition.image_url.trim());
             editor.putString("color_coalition", coalition.color.trim());
         }
+        editor.putBoolean("staff?", user.isStaff);
         return commit(); // ou editor.apply() se preferir.
     }
 
@@ -102,6 +106,10 @@ public class User {
         return preferences.getInt("cursus_id", 0);
     }
 
+    public boolean isStaff() {
+        return preferences.getBoolean("staff?", false);
+    }
+
     public void setCoalition(Coalition coalition) {
         this.coalition = coalition;
     }
@@ -122,6 +130,8 @@ public class User {
     public void setPresent(Boolean present) {
         this.present = present;
     }
+
+
 }
 
 class Image {

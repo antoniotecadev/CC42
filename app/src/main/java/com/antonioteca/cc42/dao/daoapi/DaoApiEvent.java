@@ -12,9 +12,15 @@ import retrofit2.http.Path;
 public interface DaoApiEvent {
 
     @GET("/v2/campus/{campus_id}/cursus/{cursus_id}/events")
-    Call<List<Event>> getEvents(
+    Call<List<Event>> getCursusEvents(
             @Path("campus_id") int campusId,
             @Path("cursus_id") int cursusId,
+            @Header("Authorization") String accessToken
+    );
+
+    @GET("/v2/campus/{campus_id}/events")
+    Call<List<Event>> getCampusEvents(
+            @Path("campus_id") int campusId,
             @Header("Authorization") String accessToken
     );
 }
