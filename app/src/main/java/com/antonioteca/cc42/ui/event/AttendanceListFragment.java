@@ -2,7 +2,6 @@ package com.antonioteca.cc42.ui.event;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -74,6 +73,7 @@ public class AttendanceListFragment extends Fragment {
     private View inflatedViewStub;
     private BeepManager beepManager;
     private ScanOptions scanOptions;
+    private MenuProvider menuProvider;
     private UserViewModel userViewModel;
     private LayoutInflater layoutInflater;
     private SharedViewModel sharedViewModel;
@@ -176,46 +176,6 @@ public class AttendanceListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentAttendanceListBinding.inflate(inflater, container, false);
-        requireActivity().addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.menu_attendance_list, menu);
-                SearchManager searchManager = (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
-                MenuItem menuItem = menu.findItem(R.id.action_search);
-                SearchView searchView = (SearchView) menuItem.getActionView();
-                searchView.setQueryHint(getString(R.string.name_login));
-                searchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
-                searchView.onActionViewExpanded();
-                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String query) {
-                        attendanceListAdapter.filter(query);
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onQueryTextChange(String newText) {
-                        attendanceListAdapter.filter(newText);
-                        return false;
-                    }
-                });
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_navigation_drawer);
-                int itemId = menuItem.getItemId();
-                if (itemId == R.id.action_list_reload) {
-                    setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
-                    l.currentPage = 1;
-                    activeScrollListener();
-                    attendanceListAdapter.clean();
-                    userViewModel.getUsersEvent(eventId, l, context);
-                }
-                return NavigationUI.onNavDestinationSelected(menuItem, navController);
-
-            }
-        });
         return binding.getRoot();
     }
 
@@ -336,6 +296,45 @@ public class AttendanceListFragment extends Fragment {
                 });
             }
         });
+
+        menuProvider = new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_attendance_list, menu);
+                MenuItem menuItem = menu.findItem(R.id.action_search);
+                SearchView searchView = (SearchView) menuItem.getActionView();
+                searchView.setQueryHint(context.getString(R.string.name_login));
+                searchView.onActionViewExpanded();
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        attendanceListAdapter.filter(query);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        attendanceListAdapter.filter(newText);
+                        return false;
+                    }
+                });
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                NavController navController = Navigation.findNavController(activity, R.id.nav_host_fragment_content_navigation_drawer);
+                int itemId = menuItem.getItemId();
+                if (itemId == R.id.action_list_reload) {
+                    setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
+                    l.currentPage = 1;
+                    activeScrollListener();
+                    attendanceListAdapter.clean();
+                    userViewModel.getUsersEvent(eventId, l, context);
+                }
+                return NavigationUI.onNavDestinationSelected(menuItem, navController);
+            }
+        };
+        requireActivity().addMenuProvider(menuProvider, getViewLifecycleOwner());
     }
 
     // ScrollListener para detectar quando carregar mais dados
@@ -421,5 +420,6 @@ public class AttendanceListFragment extends Fragment {
         super.onDestroyView();
         closeCamera();
         binding = null;
+        requireActivity().removeMenuProvider(menuProvider);
     }
 }
