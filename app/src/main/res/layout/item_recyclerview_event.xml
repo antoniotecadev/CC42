@@ -81,7 +81,7 @@
         android:maxLines="1"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="10sp"
+        android:textSize="8sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewDateDay" />
@@ -93,7 +93,7 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="10dp"
         android:textColor="@color/light_blue_900"
-        android:textSize="10sp"
+        android:textSize="8sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/dividerLeftMiddle"
         app:layout_constraintTop_toTopOf="parent" />
@@ -106,7 +106,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="5dp"
         android:textColor="@color/textColorPrimary"
-        android:textSize="10sp"
+        android:textSize="8sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textViewKind"
         app:layout_constraintTop_toTopOf="parent" />
@@ -116,7 +116,7 @@
         android:layout_width="10dp"
         android:layout_height="10dp"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="6dp"
         app:layout_constraintStart_toEndOf="@+id/dividerLeftMiddle"
         app:layout_constraintTop_toBottomOf="@+id/textViewKind"
         app:srcCompat="@drawable/ic_baseline_access_time_24" />
@@ -128,7 +128,7 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
         android:textColor="@color/light_blue_900"
-        android:textSize="10sp"
+        android:textSize="8sp"
         app:layout_constraintStart_toEndOf="@+id/imageViewTimeBegin"
         app:layout_constraintTop_toBottomOf="@+id/textViewKind" />
 
@@ -137,7 +137,7 @@
         android:layout_width="10dp"
         android:layout_height="10dp"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="6dp"
         app:layout_constraintStart_toEndOf="@+id/dividerLeftMiddle"
         app:layout_constraintTop_toBottomOf="@+id/textViewTimeBegin"
         app:srcCompat="@drawable/ic_baseline_location_on_24" />
@@ -149,15 +149,26 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
         android:textColor="@color/light_blue_900"
-        android:textSize="10sp"
+        android:textSize="8sp"
         app:layout_constraintStart_toEndOf="@+id/imageViewLocation"
         app:layout_constraintTop_toBottomOf="@+id/textViewTimeBegin" />
+
+    <TextView
+        android:id="@+id/textViewEventIdCursus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="3dp"
+        android:textColor="@color/light_blue_900"
+        android:textSize="6sp"
+        app:layout_constraintStart_toEndOf="@+id/imageViewLocation"
+        app:layout_constraintTop_toBottomOf="@+id/textViewLocation" />
 
     <ImageView
         android:id="@+id/imageViewDay"
         android:layout_width="10dp"
         android:layout_height="10dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewTimeBegin"
@@ -170,7 +181,7 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
         android:textColor="@color/light_blue_900"
-        android:textSize="10sp"
+        android:textSize="8sp"
         app:layout_constraintStart_toEndOf="@+id/imageViewDay"
         app:layout_constraintTop_toBottomOf="@+id/textViewTimeBegin" />
 </androidx.constraintlayout.widget.ConstraintLayout>
