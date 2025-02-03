@@ -56,4 +56,5 @@
     <string name="search">Pesquisar</string>
     <string name="name_login">Login | Nome</string>
     <string name="msg_error_get_ids_user_local">Erro ao obter ids dos usuários localmente.ø</string>
+    <string name="list_reload">Recarregar lista</string>
 </resources>

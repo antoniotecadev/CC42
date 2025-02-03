@@ -7,4 +7,10 @@
         android:title="@string/search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
+
+    <item
+        android:id="@+id/action_list_reload"
+        android:icon="@android:drawable/ic_popup_sync"
+        android:title="@string/list_reload"
+        app:showAsAction="ifRoom" />
 </menu>

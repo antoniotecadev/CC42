@@ -26,6 +26,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -200,7 +203,17 @@ public class AttendanceListFragment extends Fragment {
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                return false;
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_navigation_drawer);
+                int itemId = menuItem.getItemId();
+                if (itemId == R.id.action_list_reload) {
+                    setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
+                    l.currentPage = 1;
+                    activeScrollListener();
+                    attendanceListAdapter.clean();
+                    userViewModel.getUsersEvent(eventId, l, context);
+                }
+                return NavigationUI.onNavDestinationSelected(menuItem, navController);
+
             }
         });
         return binding.getRoot();
