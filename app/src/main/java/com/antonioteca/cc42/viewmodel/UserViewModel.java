@@ -224,7 +224,9 @@ public class UserViewModel extends ViewModel {
                         swipeRefreshLayout,
                         context,
                         layoutInflater), throwable -> {
-
+                    String message = context.getString(R.string.msg_error_get_ids_user_local) + ": " + throwable.getMessage();
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                    userIdsWhoMarkedAttendanceMutableLiveData.postValue(new ArrayList<>());
                 }));
     }
 
