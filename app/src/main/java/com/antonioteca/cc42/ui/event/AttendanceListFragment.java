@@ -2,15 +2,20 @@ package com.antonioteca.cc42.ui.event;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -18,9 +23,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.dao.daofarebase.DaoEventFirebase;
@@ -166,21 +173,52 @@ public class AttendanceListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentAttendanceListBinding.inflate(inflater, container, false);
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_attendance_list, menu);
+                SearchManager searchManager = (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
+                MenuItem menuItem = menu.findItem(R.id.action_search);
+                SearchView searchView = (SearchView) menuItem.getActionView();
+                searchView.setQueryHint(getString(R.string.name_login));
+                searchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().getComponentName()));
+                searchView.onActionViewExpanded();
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        attendanceListAdapter.filter(query);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        attendanceListAdapter.filter(newText);
+                        return false;
+                    }
+                });
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                return false;
+            }
+        });
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        activeScrollListener();
         eventId = AttendanceListFragmentArgs.fromBundle(requireArguments()).getEventId();
         cursuId = AttendanceListFragmentArgs.fromBundle(requireArguments()).getCursuId();
-
         binding.recyclerviewAttendanceList.setHasFixedSize(true);
         binding.recyclerviewAttendanceList.setLayoutManager(new LinearLayoutManager(context));
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
             l.currentPage = 1;
+            activeScrollListener();
             attendanceListAdapter.clean();
             userViewModel.getUsersEvent(eventId, l, context);
         });
@@ -265,6 +303,7 @@ public class AttendanceListFragment extends Fragment {
                 Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
                     setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
                     l.currentPage = 1;
+                    activeScrollListener();
                     attendanceListAdapter.clean();
                     userViewModel.getUsersEvent(eventId, l, context);
                 });
@@ -278,24 +317,35 @@ public class AttendanceListFragment extends Fragment {
                 Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
                     setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
                     l.currentPage = 1;
+                    activeScrollListener();
                     attendanceListAdapter.clean();
                     userViewModel.getUsersEvent(eventId, l, context);
                 });
             }
         });
+    }
 
-        // ScrollListener para detectar quando carregar mais dados
-        binding.recyclerviewAttendanceList.addOnScrollListener(new EndlessScrollListener() {
-            @Override
-            public void onLoadMore() {
-                if (!l.isLoading && l.hasNextPage) {
-                    Toast.makeText(context, R.string.msg_loading_more_data, Toast.LENGTH_LONG).show();
-                    userViewModel.getUsersEvent(eventId, l, context);  // Carregar mais usuários
-                } else {
-                    userViewModel.synchronizedAttendanceList(firebaseDatabase, user.getCampusId(), cursuId, eventId, binding.swipeRefreshLayout, context, layoutInflater);
-                }
+    // ScrollListener para detectar quando carregar mais dados
+    RecyclerView.OnScrollListener onScrollListener = new EndlessScrollListener() {
+        @Override
+        public void onLoadMore() {
+            if (!l.isLoading && l.hasNextPage) {
+                Toast.makeText(context, R.string.msg_loading_more_data, Toast.LENGTH_LONG).show();
+                userViewModel.getUsersEvent(eventId, l, context);  // Carregar mais usuários
+            } else {
+                userViewModel.synchronizedAttendanceList(firebaseDatabase, user.getCampusId(), cursuId, eventId, binding.swipeRefreshLayout, context, layoutInflater);
+                binding.recyclerviewAttendanceList.clearOnScrollListeners();
+                desactiveScrollListener();
             }
-        });
+        }
+    };
+
+    private void activeScrollListener() {
+        binding.recyclerviewAttendanceList.addOnScrollListener(onScrollListener);
+    }
+
+    private void desactiveScrollListener() {
+        binding.recyclerviewAttendanceList.removeOnScrollListener(onScrollListener);
     }
 
     private void openCameraScannerQrCodeEvent(int cameraId) {

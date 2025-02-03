@@ -53,4 +53,6 @@
     <string name="msg_attendance_list_synchronized">Lista de presença sincronizada.</string>
     <string name="error_msg_attendance_list_synchronized">Erro ao sincronizar lista de presença.</string>
     <string name="later">Depois</string>
+    <string name="search">Pesquisar</string>
+    <string name="name_login">Login | Nome</string>
 </resources>

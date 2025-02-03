@@ -19,6 +19,7 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
 
     private Context context;
     private final List<User> userList;
+    private List<User> userListFull;
 
     public AttendanceListAdapter() {
         this.userList = new ArrayList<>();
@@ -28,6 +29,7 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         this.context = context;
         int positionStart = getItemCount(); // Posição onde os novos itens começarão
         this.userList.addAll(newUserList);  // Adiciona novos usuários à lista existente
+        this.userListFull = new ArrayList<>(this.userList);
         notifyItemRangeChanged(positionStart, newUserList.size()); // Notificar apenas a faixa adicionada
     }
 
@@ -53,6 +55,21 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         notifyItemRangeRemoved(0, getItemCount());
     }
 
+    public void filter(String text) {
+        this.userList.clear();
+        if (text.isEmpty())
+            this.userList.addAll(userListFull);
+        else {
+            text = text.toLowerCase();
+            for (User user : userListFull) {
+                if (user.login.toLowerCase().contains(text) || user.displayName.toLowerCase().contains(text)) {
+                    userList.add(user);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public AttendanceListAdapter.AttendanceListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -70,7 +87,6 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
         if (user.isPresent() != null && user.isPresent()) {
-            holder.binding.textViewLogin.setTextColor(greenColor);
             holder.binding.textViewPresent.setTextColor(greenColor);
             holder.binding.textViewPresent.setText(context.getString(R.string.text_present));
         } else if (user.isPresent() != null && !user.isPresent()) {
