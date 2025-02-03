@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_search"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/ic_baseline_search_24"
         android:title="@string/search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
 
     <item
         android:id="@+id/action_list_reload"
-        android:icon="@android:drawable/ic_popup_sync"
+        android:icon="@drawable/ic_baseline_sync_24"
         android:title="@string/list_reload"
         app:showAsAction="ifRoom" />
 </menu>
