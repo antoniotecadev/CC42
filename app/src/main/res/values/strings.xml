@@ -56,5 +56,15 @@
     <string name="search">Pesquisar</string>
     <string name="name_login">Login | Nome</string>
     <string name="msg_error_get_ids_user_local">Erro ao obter ids dos usuários localmente.ø</string>
-    <string name="list_reload">Recarregar lista</string>
+    <string name="list_reload">Recarregar</string>
+    <string name="list_print">Imprimir</string>
+    <string name="permission">Permissão</string>
+    <string name="whithout_permission_cannot_print">Sem permissào não vai poder imprimir a lista de presença.</string>
+    <string name="msg_folder_not_created">Pasta não criada: </string>
+    <string name="pdf_created_sucessfully">PDF criado com sucesso: </string>
+    <string name="pdf_not_created">PDF não criado: </string>
+    <string name="msg_file_pdf_not_found">Arquivo PDF não encontrado.</string>
+    <string name="msg_no_pdf_viewing_applications_were_found">Nenhum aplicativo de visualização de PDF encontrado.</string>
+    <string name="list_share">Partilhar</string>
+    <string name="whithout_permission_cannot_share">Sem permissào não vai poder partilhar a lista de presença.</string>
 </resources>

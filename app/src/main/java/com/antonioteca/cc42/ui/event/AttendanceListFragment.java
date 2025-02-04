@@ -3,6 +3,7 @@ package com.antonioteca.cc42.ui.event;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -45,6 +46,9 @@ import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.AttendanceListAdapter;
 import com.antonioteca.cc42.utility.EndlessScrollListener;
 import com.antonioteca.cc42.utility.Loading;
+import com.antonioteca.cc42.utility.PdfCreator;
+import com.antonioteca.cc42.utility.PdfSharer;
+import com.antonioteca.cc42.utility.PdfViewer;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.antonioteca.cc42.viewmodel.UserViewModel;
@@ -58,6 +62,7 @@ import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.journeyapps.barcodescanner.ScanOptions;
 import com.journeyapps.barcodescanner.camera.CameraSettings;
 
+import java.io.File;
 import java.util.List;
 
 public class AttendanceListFragment extends Fragment {
@@ -152,6 +157,36 @@ public class AttendanceListFragment extends Fragment {
         public void possibleResultPoints(List<ResultPoint> resultPoints) {
         }
     };
+
+    private void activityResultContractsViewer(Boolean result) {
+        if (result) {
+            File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf");
+            if (filePdf != null)
+                PdfViewer.openPdf(context, filePdf);
+        } else
+            Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_print), context, null);
+    }
+
+    private void activityResultContractsSharer(Boolean result) {
+        if (result) {
+            File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf");
+            if (filePdf != null)
+                PdfSharer.sharePdf(context, filePdf);
+        } else
+            Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_share), context, null);
+    }
+
+    private final ActivityResultLauncher<Intent> requestIntentPermissionLauncherViewer = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> activityResultContractsViewer(result.getResultCode() == Activity.RESULT_OK));
+
+    private final ActivityResultLauncher<String> requestPermissionLauncherViewer = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(), this::activityResultContractsViewer);
+
+    private final ActivityResultLauncher<Intent> requestIntentPermissionLauncherSharer = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> activityResultContractsSharer(result.getResultCode() == Activity.RESULT_OK));
+
+    private final ActivityResultLauncher<String> requestPermissionLauncherSharer = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(), this::activityResultContractsSharer);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -330,11 +365,38 @@ public class AttendanceListFragment extends Fragment {
                     activeScrollListener();
                     attendanceListAdapter.clean();
                     userViewModel.getUsersEvent(eventId, l, context);
+                } else if (itemId == R.id.action_list_print) {
+                    boolean isExternalStorageManager = Util.launchPermissionDocument(
+                            context,
+                            requestIntentPermissionLauncherViewer,
+                            requestPermissionLauncherViewer,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    if (isExternalStorageManager) {
+                        File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf");
+                        if (filePdf != null)
+                            PdfViewer.openPdf(context, filePdf);
+                    }
+                } else if (itemId == R.id.action_list_share) {
+                    boolean isExternalStorageManager = Util.launchPermissionDocument(
+                            context,
+                            requestIntentPermissionLauncherSharer,
+                            requestPermissionLauncherSharer,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    if (isExternalStorageManager) {
+                        File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf");
+                        if (filePdf != null)
+                            PdfSharer.sharePdf(context, filePdf);
+                    }
                 }
                 return NavigationUI.onNavDestinationSelected(menuItem, navController);
             }
-        };
-        requireActivity().addMenuProvider(menuProvider, getViewLifecycleOwner());
+        }
+
+        ;
+
+        requireActivity().
+
+                addMenuProvider(menuProvider, getViewLifecycleOwner());
     }
 
     // ScrollListener para detectar quando carregar mais dados
@@ -396,7 +458,8 @@ public class AttendanceListFragment extends Fragment {
         }
     }
 
-    private void setupVisibility(FragmentAttendanceListBinding binding, int viewP, boolean refreshing, int viewT, int viewR) {
+    private void setupVisibility(FragmentAttendanceListBinding binding, int viewP,
+                                 boolean refreshing, int viewT, int viewR) {
         binding.progressBarMarkAttendance.setVisibility(viewP);
         binding.swipeRefreshLayout.setRefreshing(refreshing);
         binding.textViewEmptyData.setVisibility(viewT);

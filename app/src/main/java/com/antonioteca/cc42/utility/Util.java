@@ -1,14 +1,18 @@
 package com.antonioteca.cc42.utility;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
@@ -19,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
 
 import com.antonioteca.cc42.R;
@@ -198,5 +203,34 @@ public class Util {
                 vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
             else
                 vibrator.vibrate(200);
+    }
+
+    private static void launchIntentPermission(boolean containsUri, Context context, ActivityResultLauncher<Intent> intentActivityResultLauncher) {
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+        if (containsUri) {
+            Uri uri_ = Uri.fromParts("package", context.getPackageName(), null);
+            intent.setData(uri_);
+        }
+        intentActivityResultLauncher.launch(intent);
+    }
+
+    private static void launchIntentPermission(Context context, ActivityResultLauncher<Intent> requestIntentPermission) {
+        try {
+            launchIntentPermission(true, context, requestIntentPermission);
+        } catch (Exception e) {
+            launchIntentPermission(false, null, requestIntentPermission);
+        }
+    }
+
+    public static boolean launchPermissionDocument(Context context, ActivityResultLauncher<Intent> requestIntentPermission, ActivityResultLauncher<String> requestPermission, String permission) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (Environment.isExternalStorageManager())
+                return true;
+            else
+                launchIntentPermission(context, requestIntentPermission);
+        } else
+            requestPermission.launch(permission);
+        return false;
     }
 }

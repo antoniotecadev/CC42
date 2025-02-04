@@ -13,4 +13,16 @@
         android:icon="@drawable/ic_baseline_sync_24"
         android:title="@string/list_reload"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_list_print"
+        android:icon="@drawable/ic_baseline_print_24"
+        android:title="@string/list_print"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_list_share"
+        android:icon="@drawable/ic_baseline_share_24"
+        android:title="@string/list_share"
+        app:showAsAction="ifRoom" />
 </menu>
