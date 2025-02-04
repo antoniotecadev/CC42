@@ -31,4 +31,11 @@ public interface UserDao {
             int campusId,
             int cursusId,
             long eventId);
+
+    @Query("DELETE FROM local_attendance_list " +
+            "WHERE campus_id =:campusId AND cursus_id =:cursusId AND event_id =:eventId")
+    Completable deleteLocalAttendanceList(
+            int campusId,
+            int cursusId,
+            long eventId);
 }

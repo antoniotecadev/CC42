@@ -49,7 +49,7 @@
     <string name="msg_checking_attendance">Verificando presença...</string>
     <string name="synchronize">Sincronizar</string>
     <string name="synchronization">Sincronizando...</string>
-    <string name="msg_synchronization">Lista de presença não está sincronizada.</string>
+    <string name="msg_synchronization">Lista de presença não está sincronizada. Ao sincronizar, a lista será eliminada do armazenamento local</string>
     <string name="msg_attendance_list_synchronized">Lista de presença sincronizada.</string>
     <string name="error_msg_attendance_list_synchronized">Erro ao sincronizar lista de presença.</string>
     <string name="later">Depois</string>
@@ -75,4 +75,5 @@
     <string name="date">Data</string>
     <string name="page">Página </string>
     <string name="msg_attendance_list_empty">Lista de presença vazia.</string>
+    <string name="msg_error_delete_local_attendance_lis">Erro ao eliminar lista de presença local</string>
 </resources>

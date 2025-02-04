@@ -66,6 +66,13 @@ public class UserRepository {
         return appDataBase.userDao().geIdsUserLocalAttendanceList(campusId, cursusId, eventId);
     }
 
+    public Completable deleteLocalAttendanceList(
+            int campusId,
+            int cursusId,
+            long eventId) {
+        return appDataBase.userDao().deleteLocalAttendanceList(campusId, cursusId, eventId);
+    }
+
     public boolean saveUser(User user) {
         return this.user.saveUser(user, user.coalition);
     }

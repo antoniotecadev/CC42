@@ -444,7 +444,7 @@ public class AttendanceListFragment extends Fragment {
                 Toast.makeText(context, R.string.msg_loading_more_data, Toast.LENGTH_LONG).show();
                 userViewModel.getUsersEvent(eventId, l, context);  // Carregar mais usuários
             } else {
-                userViewModel.synchronizedAttendanceList(firebaseDatabase, user.getCampusId(), cursuId, eventId, binding.swipeRefreshLayout, context, layoutInflater);
+                userViewModel.synchronizedAttendanceList(userViewModel, firebaseDatabase, user.getCampusId(), cursuId, eventId, binding.swipeRefreshLayout, context, layoutInflater);
                 desactiveScrollListener();
             }
         }

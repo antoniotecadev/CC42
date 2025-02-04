@@ -143,6 +143,19 @@ public class UserViewModel extends ViewModel {
                 }));
     }
 
+    public void deleteLocalAttendanceList(int campusId,
+                                          int cursusId,
+                                          long eventId, Context context, LayoutInflater layoutInflater) {
+        compositeDisposable.add(userRepository.deleteLocalAttendanceList(campusId, cursusId, eventId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                }, throwable -> {
+                    String message = context.getString(R.string.msg_error_delete_local_attendance_lis) + ": " + throwable.getMessage();
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                }));
+    }
+
     public boolean saveUser(User user) {
         return userRepository.saveUser(user);
     }
@@ -210,12 +223,13 @@ public class UserViewModel extends ViewModel {
         });
     }
 
-    public void synchronizedAttendanceList(FirebaseDatabase firebaseDatabase, int campusId, int cursusId, long eventId, SwipeRefreshLayout swipeRefreshLayout, Context context,
+    public void synchronizedAttendanceList(UserViewModel userViewModel, FirebaseDatabase firebaseDatabase, int campusId, int cursusId, long eventId, SwipeRefreshLayout swipeRefreshLayout, Context context,
                                            LayoutInflater layoutInflater) {
         compositeDisposable.add(userRepository.geIdsUserLocalAttendanceList(campusId, cursusId, eventId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(userIdsWhoMarkedAttendanceLocal -> getUserIdsWhoMarkedAttendance(
+                        userViewModel,
                         userIdsWhoMarkedAttendanceLocal,
                         firebaseDatabase,
                         String.valueOf(campusId),
@@ -230,7 +244,7 @@ public class UserViewModel extends ViewModel {
                 }));
     }
 
-    private void getUserIdsWhoMarkedAttendance(List<Long> userIdsWhoMarkedAttendanceLocal, FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, SwipeRefreshLayout swipeRefreshLayout, Context context,
+    private void getUserIdsWhoMarkedAttendance(UserViewModel userViewModel, List<Long> userIdsWhoMarkedAttendanceLocal, FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, SwipeRefreshLayout swipeRefreshLayout, Context context,
                                                LayoutInflater layoutInflater) {
         DatabaseReference participantsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
@@ -256,7 +270,7 @@ public class UserViewModel extends ViewModel {
                     for (Long userIdLocal : userIdsWhoMarkedAttendanceLocal) {
                         if (!userIdsWhoMarkedAttendance.contains(String.valueOf(userIdLocal))) {
                             Util.showAlertDialogSynchronized(context, () -> sinchronizationAttendanceList(
-                                    userIdsWhoMarkedAttendanceMutableLiveData,
+                                    userViewModel, userIdsWhoMarkedAttendanceMutableLiveData,
                                     userIdsWhoMarkedAttendanceLocal,
                                     userIdsWhoMarkedAttendance,
                                     firebaseDatabase,
@@ -272,7 +286,7 @@ public class UserViewModel extends ViewModel {
                 } else {
                     if (!userIdsWhoMarkedAttendanceLocal.isEmpty()) {
                         Util.showAlertDialogSynchronized(context, () -> sinchronizationAttendanceList(
-                                userIdsWhoMarkedAttendanceMutableLiveData,
+                                userViewModel, userIdsWhoMarkedAttendanceMutableLiveData,
                                 userIdsWhoMarkedAttendanceLocal,
                                 userIdsWhoMarkedAttendance,
                                 firebaseDatabase,

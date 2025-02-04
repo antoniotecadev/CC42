@@ -15,6 +15,7 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
+import com.antonioteca.cc42.viewmodel.UserViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -106,9 +107,8 @@ public class DaoEventFirebase {
     }
 
     public static void sinchronizationAttendanceList(
-            MutableLiveData<List<String>> userIdsWhoMarkedAttendanceMutableLiveData,
-            List<Long> userIdsWhoMarkedAttendanceLocal,
-            List<String> userIdsWhoMarkedAttendance,
+            UserViewModel userViewModel, MutableLiveData<List<String>> userIdsWhoMarkedAttendanceMutableLiveData,
+            List<Long> userIdsWhoMarkedAttendanceLocal, List<String> userIdsWhoMarkedAttendance,
             FirebaseDatabase firebaseDatabase,
             String campusId,
             String cursusId,
@@ -129,11 +129,11 @@ public class DaoEventFirebase {
 
         campusReference.updateChildren(userUpdates)
                 .addOnSuccessListener(aVoid -> {
-                    Util.startVibration(context);
                     swipeRefreshLayout.setRefreshing(false);
                     String message = context.getString(R.string.msg_attendance_list_synchronized);
                     userIdsWhoMarkedAttendanceMutableLiveData.postValue(userIdsWhoMarkedAttendance);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
+                    userViewModel.deleteLocalAttendanceList(Integer.parseInt(campusId), Integer.parseInt(cursusId), Long.parseLong(eventId), context, layoutInflater);
                 })
                 .addOnFailureListener(e -> {
                     swipeRefreshLayout.setRefreshing(false);
