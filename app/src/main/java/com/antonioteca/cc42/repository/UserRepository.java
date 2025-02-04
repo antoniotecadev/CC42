@@ -92,9 +92,13 @@ public class UserRepository {
                     callback.onResponse(call, response);
                     // Verificar se existe uma próxima página
                     PaginationLinks links = extractPaginationLinks(response.headers());
-                    l.hasNextPage = links.getNext() != null;
-                    if (l.hasNextPage) {
-                        l.currentPage++;
+                    if (links == null) {
+                        l.hasNextPage = false;
+                    } else {
+                        l.hasNextPage = links.getNext() != null;
+                        if (l.hasNextPage) {
+                            l.currentPage++;
+                        }
                     }
                 } else {
                     l.hasNextPage = false;

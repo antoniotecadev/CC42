@@ -165,22 +165,32 @@ public class AttendanceListFragment extends Fragment {
 
     private void activityResultContractsViewer(Boolean result) {
         if (result) {
-            File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
-            if (filePdf != null)
-                PdfViewer.openPdf(context, filePdf);
+            List<User> userList = attendanceListAdapter.getUserList();
+            if (userList.isEmpty()) {
+                Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_attendance_list_empty), context, null);
+            } else {
+                File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
+                if (filePdf != null)
+                    PdfViewer.openPdf(context, filePdf);
+            }
         } else
             Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_print), context, null);
     }
 
     private void activityResultContractsSharer(Boolean result) {
         if (result) {
-            File filePdf = PdfCreator.createPdfAttendanceList(context,
-                    eventKind,
-                    eventName,
-                    eventDate,
-                    numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
-            if (filePdf != null)
-                PdfSharer.sharePdf(context, filePdf);
+            List<User> userList = attendanceListAdapter.getUserList();
+            if (userList.isEmpty()) {
+                Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_attendance_list_empty), context, null);
+            } else {
+                File filePdf = PdfCreator.createPdfAttendanceList(context,
+                        eventKind,
+                        eventName,
+                        eventDate,
+                        numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
+                if (filePdf != null)
+                    PdfSharer.sharePdf(context, filePdf);
+            }
         } else
             Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_share), context, null);
     }
@@ -389,9 +399,14 @@ public class AttendanceListFragment extends Fragment {
                             requestPermissionLauncherViewer,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     if (isExternalStorageManager) {
-                        File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
-                        if (filePdf != null)
-                            PdfViewer.openPdf(context, filePdf);
+                        List<User> userList = attendanceListAdapter.getUserList();
+                        if (userList.isEmpty()) {
+                            Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_attendance_list_empty), context, null);
+                        } else {
+                            File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, userList);
+                            if (filePdf != null)
+                                PdfViewer.openPdf(context, filePdf);
+                        }
                     }
                 } else if (itemId == R.id.action_list_share) {
                     boolean isExternalStorageManager = Util.launchPermissionDocument(
@@ -400,9 +415,14 @@ public class AttendanceListFragment extends Fragment {
                             requestPermissionLauncherSharer,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     if (isExternalStorageManager) {
-                        File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
-                        if (filePdf != null)
-                            PdfSharer.sharePdf(context, filePdf);
+                        List<User> userList = attendanceListAdapter.getUserList();
+                        if (userList.isEmpty()) {
+                            Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_attendance_list_empty), context, null);
+                        } else {
+                            File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, userList);
+                            if (filePdf != null)
+                                PdfSharer.sharePdf(context, filePdf);
+                        }
                     }
                 }
                 return NavigationUI.onNavDestinationSelected(menuItem, navController);

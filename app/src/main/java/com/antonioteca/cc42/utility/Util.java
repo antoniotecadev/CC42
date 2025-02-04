@@ -43,6 +43,7 @@ public class Util {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         builder.setMessage(message);
+        builder.setIcon(R.drawable.logo_42);
         if (runnableTryAgain == null)
             builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
         else {

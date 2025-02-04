@@ -74,4 +74,5 @@
     <string name="num">Nº</string>
     <string name="date">Data</string>
     <string name="page">Página </string>
+    <string name="msg_attendance_list_empty">Lista de presença vazia.</string>
 </resources>
