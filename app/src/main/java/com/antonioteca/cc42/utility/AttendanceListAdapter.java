@@ -102,7 +102,11 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
 
     @Override
     public int getItemCount() {
-        return userList.size();
+        return this.userList.size();
+    }
+
+    public List<User> getUserList() {
+        return this.userList;
     }
 
     public static class AttendanceListViewHolder extends RecyclerView.ViewHolder {

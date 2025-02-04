@@ -72,6 +72,9 @@ public class AttendanceListFragment extends Fragment {
     private Long eventId;
     private Integer cursuId;
     private Context context;
+    private String eventKind;
+    private String eventName;
+    private String eventDate;
     private Integer cameraId;
     private Activity activity;
     private String colorCoalition;
@@ -160,7 +163,7 @@ public class AttendanceListFragment extends Fragment {
 
     private void activityResultContractsViewer(Boolean result) {
         if (result) {
-            File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf");
+            File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf", eventKind, eventName, eventDate, attendanceListAdapter.getUserList());
             if (filePdf != null)
                 PdfViewer.openPdf(context, filePdf);
         } else
@@ -169,7 +172,12 @@ public class AttendanceListFragment extends Fragment {
 
     private void activityResultContractsSharer(Boolean result) {
         if (result) {
-            File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf");
+            File filePdf = PdfCreator.createPdfAttendanceList(context,
+                    "event_attendance_list.pdf",
+                    eventKind,
+                    eventName,
+                    eventDate,
+                    attendanceListAdapter.getUserList());
             if (filePdf != null)
                 PdfSharer.sharePdf(context, filePdf);
         } else
@@ -218,8 +226,12 @@ public class AttendanceListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         activeScrollListener();
-        eventId = AttendanceListFragmentArgs.fromBundle(requireArguments()).getEventId();
-        cursuId = AttendanceListFragmentArgs.fromBundle(requireArguments()).getCursuId();
+        AttendanceListFragmentArgs args = AttendanceListFragmentArgs.fromBundle(requireArguments());
+        eventId = args.getEventId();
+        cursuId = args.getCursuId();
+        eventKind = args.getKindEvent();
+        eventName = args.getNameEvent();
+        eventDate = args.getDataEvent();
         binding.recyclerviewAttendanceList.setHasFixedSize(true);
         binding.recyclerviewAttendanceList.setLayoutManager(new LinearLayoutManager(context));
 
@@ -372,7 +384,7 @@ public class AttendanceListFragment extends Fragment {
                             requestPermissionLauncherViewer,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     if (isExternalStorageManager) {
-                        File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf");
+                        File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf", eventKind, eventName, eventDate, attendanceListAdapter.getUserList());
                         if (filePdf != null)
                             PdfViewer.openPdf(context, filePdf);
                     }
@@ -383,7 +395,7 @@ public class AttendanceListFragment extends Fragment {
                             requestPermissionLauncherSharer,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     if (isExternalStorageManager) {
-                        File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf");
+                        File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf", eventKind, eventName, eventDate, attendanceListAdapter.getUserList());
                         if (filePdf != null)
                             PdfSharer.sharePdf(context, filePdf);
                     }

@@ -75,7 +75,7 @@ public class DetailsEventFragment extends Fragment {
             showModalQrCode(view.getContext(), bitmapQrCode, event.getKind(), event.getName());
         });
         binding.fabOpenAttendanceList.setOnClickListener(v -> {
-            DetailsEventFragmentDirections.ActionDetailsEventFragmentToAttendanceListFragment actionDetailsEventFragmentToAttendanceListFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToAttendanceListFragment(event.getId(), event.getCursus_ids().get(0));
+            DetailsEventFragmentDirections.ActionDetailsEventFragmentToAttendanceListFragment actionDetailsEventFragmentToAttendanceListFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToAttendanceListFragment(event.getId(), event.getCursus_ids().get(0), event.getKind(), event.getName(), String.valueOf(binding.textViewDate.getText()));
             Navigation.findNavController(v).navigate(actionDetailsEventFragmentToAttendanceListFragment);
         });
         return binding.getRoot();

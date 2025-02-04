@@ -1,17 +1,36 @@
 package com.antonioteca.cc42.utility;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.model.User;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
 
 public class PdfCreator {
 
@@ -27,7 +46,7 @@ public class PdfCreator {
         return folder;
     }
 
-    public static File createPdfAttendanceList(Context context, String fileName) {
+    public static File createPdfAttendanceList(Context context, String fileName, String eventKind, String eventName, String eventDate, List<User> userList) {
         File folder = createFolder(context, "AttendanceList");
         if (folder == null)
             return null;
@@ -37,8 +56,68 @@ public class PdfCreator {
             PdfWriter writer = new PdfWriter(new FileOutputStream(file));
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf, PageSize.A4);
-            document.add(new Paragraph("Ola!, este é um exemplo de PDF!"));
-            document.add(new Paragraph("Gerado com  iText 7."));
+            document.setMargins(20, 20, 20, 20);
+            // Rodapé
+            pdf.addEventHandler(PdfDocumentEvent.END_PAGE, event -> {
+                PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
+                PdfPage page = documentEvent.getPage();
+                PdfCanvas pdfCanvas = new PdfCanvas(page);
+                Rectangle pageSize = page.getPageSize(); // Área do rodapé onde o contúdo será renderizado
+                Rectangle footerArea = new Rectangle(pageSize.getLeft()/*X inicial*/, pageSize.getBottom()/*Y inicial*/, pageSize.getWidth(), 20);
+                Canvas canvas = new Canvas(pdfCanvas, footerArea, true);
+                canvas.showTextAligned(new Paragraph(eventName + "\n" + context.getString(R.string.page) + pdf.getPageNumber(page)), pageSize.getWidth() / 2, 20, TextAlignment.CENTER);
+                canvas.close();
+            });
+            Bitmap logoBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo_42);
+            if (logoBitmap != null) { // Converter bitmap para um array de bytes
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                logoBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] logoBytes = stream.toByteArray();
+
+                Image image = new Image(ImageDataFactory.create(logoBytes))
+                        .setWidth(UnitValue.createPointValue(30)) // Largura da imagem (30%) da página
+                        .setHorizontalAlignment(HorizontalAlignment.CENTER); // Centraliza a imagem
+                document.add(image);
+            } else {
+                Util.showAlertDialogBuild("PDF", context.getString(R.string.error_load_logo), context, null);
+                return null;
+            }
+            Paragraph title = new Paragraph("Lista de Presença")
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setFontSize(14)
+                    .setBold();
+            document.add(title);
+            Paragraph dateParagraph = new Paragraph()
+                    .add(new Text(context.getString(R.string.date).toUpperCase() + ": ").setBold())
+                    .add(new Text(eventDate))
+                    .setTextAlignment(TextAlignment.LEFT);
+            document.add(dateParagraph);
+            Paragraph kindParagraph = new Paragraph()
+                    .add(new Text(eventKind.toUpperCase() + ": ").setBold())
+                    .add(new Text(eventName))
+                    .setTextAlignment(TextAlignment.LEFT);
+            document.add(kindParagraph);
+            Table table = new Table(UnitValue.createPercentArray(new float[]{10, 50, 25, 15}))
+                    .useAllAvailableWidth();
+            table.setMarginTop(20);
+            table.addHeaderCell(new Paragraph(context.getString(R.string.num)).setBold());
+            table.addHeaderCell(new Paragraph(context.getString(R.string.full_name)).setBold());
+            table.addHeaderCell(new Paragraph(context.getString(R.string.login)).setBold());
+            table.addHeaderCell(new Paragraph(context.getString(R.string.attendance)).setBold());
+            Color red = new DeviceRgb(200, 0, 0);
+            Color green = new DeviceRgb(0, 200, 0);
+            for (int i = 0; i < userList.size(); i++) {
+                User user = userList.get(i);
+                table.addCell(new Paragraph(String.valueOf(i)));
+                table.addCell(new Paragraph(user.displayName));
+                table.addCell(new Paragraph(user.login));
+                if (user.isPresent() != null && user.isPresent()) {
+                    table.addCell(new Paragraph(context.getString(R.string.text_present)).setFontColor(green));
+                } else if (user.isPresent() != null && !user.isPresent()) {
+                    table.addCell(new Paragraph(context.getString(R.string.text_absent)).setFontColor(red));
+                }
+            }
+            document.add(table);
             document.close();
             return file;
         } catch (Exception e) {
