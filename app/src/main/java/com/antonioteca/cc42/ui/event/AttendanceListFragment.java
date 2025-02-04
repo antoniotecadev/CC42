@@ -427,13 +427,13 @@ public class AttendanceListFragment extends Fragment {
                 }
                 return NavigationUI.onNavDestinationSelected(menuItem, navController);
             }
-        }
-
-        ;
-
-        requireActivity().
-
-                addMenuProvider(menuProvider, getViewLifecycleOwner());
+        };
+        requireActivity().addMenuProvider(menuProvider, getViewLifecycleOwner());
+        sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> {
+            binding.fabOpenCameraScannerQrCodeBack.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
+            binding.fabOpenCameraScannerQrCodeFront.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
+            binding.recyclerviewAttendanceList.setOnTouchListener((v, event) -> disabled);
+        });
     }
 
     // ScrollListener para detectar quando carregar mais dados
@@ -451,10 +451,12 @@ public class AttendanceListFragment extends Fragment {
     };
 
     private void activeScrollListener() {
+        sharedViewModel.setDisabledRecyclerView(true);
         binding.recyclerviewAttendanceList.addOnScrollListener(onScrollListener);
     }
 
     private void desactiveScrollListener() {
+        sharedViewModel.setDisabledRecyclerView(false);
         binding.recyclerviewAttendanceList.removeOnScrollListener(onScrollListener);
     }
 
