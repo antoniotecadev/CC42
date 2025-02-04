@@ -109,6 +109,18 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         return this.userList;
     }
 
+    public int getNumberUser(boolean isPresent) {
+        int size = 0;
+        for (User user : getUserList()) {
+            if (user.isPresent() != null && user.isPresent() && isPresent) {
+                size += 1;
+            } else if (user.isPresent() != null && !user.isPresent() && !isPresent) {
+                size += 1;
+            }
+        }
+        return size;
+    }
+
     public static class AttendanceListViewHolder extends RecyclerView.ViewHolder {
         ItemRecyclerviewAttendanceListBinding binding;
 

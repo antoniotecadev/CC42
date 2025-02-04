@@ -46,12 +46,12 @@ public class PdfCreator {
         return folder;
     }
 
-    public static File createPdfAttendanceList(Context context, String fileName, String eventKind, String eventName, String eventDate, List<User> userList) {
+    public static File createPdfAttendanceList(Context context, String eventKind, String eventName, String eventDate, int numberUserAbsent, int numberUserPresent, List<User> userList) {
         File folder = createFolder(context, "AttendanceList");
         if (folder == null)
             return null;
 //        Caminho do arquivo PDF
-        File file = new File(folder, fileName);
+        File file = new File(folder, "event_attendance_list.pdf");
         try {
             PdfWriter writer = new PdfWriter(new FileOutputStream(file));
             PdfDocument pdf = new PdfDocument(writer);
@@ -65,7 +65,7 @@ public class PdfCreator {
                 Rectangle pageSize = page.getPageSize(); // Área do rodapé onde o contúdo será renderizado
                 Rectangle footerArea = new Rectangle(pageSize.getLeft()/*X inicial*/, pageSize.getBottom()/*Y inicial*/, pageSize.getWidth(), 20);
                 Canvas canvas = new Canvas(pdfCanvas, footerArea, true);
-                canvas.showTextAligned(new Paragraph(eventName + "\n" + context.getString(R.string.page) + pdf.getPageNumber(page)), pageSize.getWidth() / 2, 20, TextAlignment.CENTER);
+                canvas.showTextAligned(new Paragraph(eventName + "\n" + context.getString(R.string.page) + pdf.getPageNumber(page)).setFontSize(6f), pageSize.getWidth() / 2, 10, TextAlignment.CENTER);
                 canvas.close();
             });
             Bitmap logoBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo_42);
@@ -82,11 +82,21 @@ public class PdfCreator {
                 Util.showAlertDialogBuild("PDF", context.getString(R.string.error_load_logo), context, null);
                 return null;
             }
+            Color red = new DeviceRgb(200, 0, 0);
+            Color green = new DeviceRgb(0, 200, 0);
             Paragraph title = new Paragraph("Lista de Presença")
                     .setTextAlignment(TextAlignment.CENTER)
                     .setFontSize(14)
                     .setBold();
             document.add(title);
+            Paragraph attendanceParagraph = new Paragraph()
+                    .add(new Text(context.getString(R.string.text_present) + ": ").setFontColor(green))
+                    .add(new Text(String.valueOf(numberUserPresent)))
+                    .add(new Text(" | "))
+                    .add(new Text(context.getString(R.string.text_absent) + ": ").setFontColor(red))
+                    .add(new Text(String.valueOf(numberUserAbsent)))
+                    .setTextAlignment(TextAlignment.CENTER);
+            document.add(attendanceParagraph);
             Paragraph dateParagraph = new Paragraph()
                     .add(new Text(context.getString(R.string.date).toUpperCase() + ": ").setBold())
                     .add(new Text(eventDate))
@@ -104,11 +114,9 @@ public class PdfCreator {
             table.addHeaderCell(new Paragraph(context.getString(R.string.full_name)).setBold());
             table.addHeaderCell(new Paragraph(context.getString(R.string.login)).setBold());
             table.addHeaderCell(new Paragraph(context.getString(R.string.attendance)).setBold());
-            Color red = new DeviceRgb(200, 0, 0);
-            Color green = new DeviceRgb(0, 200, 0);
             for (int i = 0; i < userList.size(); i++) {
                 User user = userList.get(i);
-                table.addCell(new Paragraph(String.valueOf(i)));
+                table.addCell(new Paragraph(String.valueOf(i + 1)));
                 table.addCell(new Paragraph(user.displayName));
                 table.addCell(new Paragraph(user.login));
                 if (user.isPresent() != null && user.isPresent()) {

@@ -37,6 +37,28 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipPresent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|end"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="0"
+        android:textColor="@color/white"
+        app:chipBackgroundColor="#43A047" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipAbsent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|end"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="16dp"
+        android:text="0"
+        android:textColor="@color/white"
+        app:chipBackgroundColor="#E53935" />
+
     <TextView
         android:id="@+id/textViewEmptyData"
         android:layout_width="match_parent"

@@ -77,6 +77,8 @@ public class AttendanceListFragment extends Fragment {
     private String eventDate;
     private Integer cameraId;
     private Activity activity;
+    private int numberUserAbsent;
+    private int numberUserPresent;
     private String colorCoalition;
     private View inflatedViewStub;
     private BeepManager beepManager;
@@ -163,7 +165,7 @@ public class AttendanceListFragment extends Fragment {
 
     private void activityResultContractsViewer(Boolean result) {
         if (result) {
-            File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf", eventKind, eventName, eventDate, attendanceListAdapter.getUserList());
+            File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
             if (filePdf != null)
                 PdfViewer.openPdf(context, filePdf);
         } else
@@ -173,11 +175,10 @@ public class AttendanceListFragment extends Fragment {
     private void activityResultContractsSharer(Boolean result) {
         if (result) {
             File filePdf = PdfCreator.createPdfAttendanceList(context,
-                    "event_attendance_list.pdf",
                     eventKind,
                     eventName,
                     eventDate,
-                    attendanceListAdapter.getUserList());
+                    numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
             if (filePdf != null)
                 PdfSharer.sharePdf(context, filePdf);
         } else
@@ -308,6 +309,10 @@ public class AttendanceListFragment extends Fragment {
             Toast.makeText(context, R.string.msg_checking_attendance, Toast.LENGTH_LONG).show();
             if (!userIds.isEmpty() && userIds.get(0) != null)
                 attendanceListAdapter.updateAttendanceUser(userIds);
+            numberUserAbsent = attendanceListAdapter.getNumberUser(false);
+            numberUserPresent = attendanceListAdapter.getNumberUser(true);
+            binding.chipAbsent.setText(String.valueOf(numberUserAbsent));
+            binding.chipPresent.setText(String.valueOf(numberUserPresent));
             setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
         });
 
@@ -384,7 +389,7 @@ public class AttendanceListFragment extends Fragment {
                             requestPermissionLauncherViewer,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     if (isExternalStorageManager) {
-                        File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf", eventKind, eventName, eventDate, attendanceListAdapter.getUserList());
+                        File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
                         if (filePdf != null)
                             PdfViewer.openPdf(context, filePdf);
                     }
@@ -395,7 +400,7 @@ public class AttendanceListFragment extends Fragment {
                             requestPermissionLauncherSharer,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     if (isExternalStorageManager) {
-                        File filePdf = PdfCreator.createPdfAttendanceList(context, "event_attendance_list.pdf", eventKind, eventName, eventDate, attendanceListAdapter.getUserList());
+                        File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
                         if (filePdf != null)
                             PdfSharer.sharePdf(context, filePdf);
                     }
@@ -420,7 +425,6 @@ public class AttendanceListFragment extends Fragment {
                 userViewModel.getUsersEvent(eventId, l, context);  // Carregar mais usuários
             } else {
                 userViewModel.synchronizedAttendanceList(firebaseDatabase, user.getCampusId(), cursuId, eventId, binding.swipeRefreshLayout, context, layoutInflater);
-                binding.recyclerviewAttendanceList.clearOnScrollListeners();
                 desactiveScrollListener();
             }
         }
