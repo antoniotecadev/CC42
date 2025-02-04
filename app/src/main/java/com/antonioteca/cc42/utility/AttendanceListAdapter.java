@@ -59,7 +59,7 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         this.userList.clear();
         if (text.isEmpty())
             this.userList.addAll(userListFull);
-        else {
+        else if (userListFull != null && !userListFull.isEmpty()) {
             text = text.toLowerCase();
             for (User user : userListFull) {
                 if (user.login.toLowerCase().contains(text) || user.displayName.toLowerCase().contains(text)) {
