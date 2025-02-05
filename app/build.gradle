@@ -116,4 +116,7 @@ dependencies {
 
     //itext for genereted pdf
     implementation 'com.itextpdf:itext7-core:7.2.3'
+
+    // Cloudinary for storage Image
+    implementation 'com.cloudinary:cloudinary-android:3.0.2'
 }

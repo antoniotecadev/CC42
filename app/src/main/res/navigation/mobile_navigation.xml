@@ -9,7 +9,7 @@
         android:id="@+id/nav_home"
         android:name="com.antonioteca.cc42.ui.home.HomeFragment"
         android:label="CC42 | Check Cadet"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_nav_home_to_detailsEventFragment"
             app:destination="@id/detailsEventFragment" />
@@ -19,7 +19,7 @@
         android:id="@+id/detailsEventFragment"
         android:name="com.antonioteca.cc42.ui.event.DetailsEventFragment"
         android:label="@string/msg_details_event"
-        tools:layout="@layout/fragment_details_event" >
+        tools:layout="@layout/fragment_details_event">
         <argument
             android:name="detailsEvent"
             app:argType="com.antonioteca.cc42.model.Event" />
@@ -31,8 +31,9 @@
         android:id="@+id/attendanceListFragment"
         android:name="com.antonioteca.cc42.ui.event.AttendanceListFragment"
         android:label="@string/msg_attendance_list"
-        tools:layout="@layout/fragment_attendance_list" >
-        <argument android:name="eventId"
+        tools:layout="@layout/fragment_attendance_list">
+        <argument
+            android:name="eventId"
             app:argType="long" />
         <argument
             android:name="cursuId"
@@ -45,4 +46,18 @@
             app:argType="string" />
         <argument android:name="dataEvent" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_meal"
+        android:name="com.antonioteca.cc42.ui.meal.MealFragment"
+        android:label="@string/meals"
+        tools:layout="@layout/fragment_meal" >
+        <action
+            android:id="@+id/action_nav_meal_to_dialogFragmentCreateMeal"
+            app:destination="@id/dialogFragmentCreateMeal" />
+    </fragment>
+    <dialog
+        android:id="@+id/dialogFragmentCreateMeal"
+        android:name="com.antonioteca.cc42.ui.meal.DialogFragmentCreateMeal"
+        android:label="DialogFragmentCreateMeal"
+        tools:layout="@layout/fragment_dialog_create_meal" />
 </navigation>

@@ -3,4 +3,8 @@
     <external-files-path
         name="external_files"
         path="." />
+
+    <external-files-path
+        name="my_images"
+        path="Pictures" />
 </paths><!--Este arquivo define os caminhos que o FileProvider pode acessar.-->

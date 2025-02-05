@@ -45,10 +45,10 @@
     <string name="msg_sucess_all_users_registered_event_loaded">Usuários registados carregados</string>
     <string name="text_present">Presente</string>
     <string name="text_absent">Ausente</string>
-    <string name="msg_loading_more_data">Carregando mais dados...</string>
-    <string name="msg_checking_attendance">Verificando presença...</string>
+    <string name="msg_loading_more_data">Carregando mais dados…</string>
+    <string name="msg_checking_attendance">Verificando presença…</string>
     <string name="synchronize">Sincronizar</string>
-    <string name="synchronization">Sincronizando...</string>
+    <string name="synchronization">Sincronizando…</string>
     <string name="msg_synchronization">Lista de presença não está sincronizada. Ao sincronizar, a lista será eliminada do armazenamento local</string>
     <string name="msg_attendance_list_synchronized">Lista de presença sincronizada.</string>
     <string name="error_msg_attendance_list_synchronized">Erro ao sincronizar lista de presença.</string>
@@ -78,4 +78,18 @@
     <string name="msg_error_delete_local_attendance_lis">Erro ao eliminar lista de presença local</string>
     <string name="msg_user_unregistered">Não está registado neste evento</string>
     <string name="menu_meals">Refeições</string>
+    <string name="meals">Refeições</string>
+    <string name="create_meal">Criar</string>
+    <string name="meal_name">Nome da refeição</string>
+    <string name="meal_description">Descrição da refeição</string>
+    <string name="status">Estado</string>
+    <string name="block_status">Bloqueado</string>
+    <string name="msg_permis_image_denied">Permissão para selecionar imagem negada.</string>
+    <string name="quantity">Quantidade:</string>
+    <string name="msg_permis_open_camera_denied">Permissão para abrir camera negada.</string>
+    <string name="save_meal">Refeição salva com sucesso!</string>
+    <string name="error_save_meal">Erro ao salvar refeição</string>
+    <string name="invalid_name_meal">Nome inválido</string>
+    <string name="start_upload_image">Iniciando o upload de imagem…</string>
+    <string name="error_save_image">Erro ao salvar imagem</string>
 </resources>

@@ -59,4 +59,13 @@ public class DateUtils {
         } else
             return null;
     }
+
+    public static String getCurrentDate() {
+        Date currentDate = new Date();
+        String day = getFormattedDate(currentDate, "d");
+        String month = getFormattedDate(currentDate, "MMMM");
+        String time = getFormattedDate(currentDate, "hh:mm a");
+        String year = getFormattedDate(currentDate, "yyyy");
+        return month + " " + day + ", " + year + " at " + time;
+    }
 }
