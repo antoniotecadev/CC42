@@ -3,11 +3,9 @@ package com.antonioteca.cc42;
 import static com.antonioteca.cc42.network.NetworkConstants.CAMERA_PERMISSION_CODE;
 import static com.antonioteca.cc42.utility.Util.setColorCoalition;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -28,8 +26,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
@@ -87,16 +83,16 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         context = NavigationDrawerActivity.this;
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
-        fabOpenCameraScannerQrCode = binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode;
+        //fabOpenCameraScannerQrCode = binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode;
         progressBarMarkAttendance = binding.appBarNavigationDrawer.progressBarMarkAttendance;
-        fabOpenCameraScannerQrCode.setOnClickListener(view -> {
-            // Verificar se a permissão já foi concedida
-            if (ContextCompat.checkSelfPermission(view.getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-                // Solicitar a permissão
-                ActivityCompat.requestPermissions(NavigationDrawerActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-            } else
-                openCameraScannerQrCodeEvent(new ScanOptions());
-        });
+//        fabOpenCameraScannerQrCode.setOnClickListener(view -> {
+//            // Verificar se a permissão já foi concedida
+//            if (ContextCompat.checkSelfPermission(view.getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+//                // Solicitar a permissão
+//                ActivityCompat.requestPermissions(NavigationDrawerActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+//            } else
+//                openCameraScannerQrCodeEvent(new ScanOptions());
+//        });
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each.
@@ -111,10 +107,10 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
             public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
-                if (navDestination.getId() == R.id.detailsEventFragment || navDestination.getId() == R.id.attendanceListFragment)
+                /*if (navDestination.getId() == R.id.detailsEventFragment || navDestination.getId() == R.id.attendanceListFragment)
                     fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
                 else
-                    fabOpenCameraScannerQrCode.setVisibility(View.VISIBLE);
+                    fabOpenCameraScannerQrCode.setVisibility(View.VISIBLE);*/
             }
         });
         // Obter o NavigationView

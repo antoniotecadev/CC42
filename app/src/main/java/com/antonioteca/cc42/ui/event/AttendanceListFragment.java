@@ -33,7 +33,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
-import com.antonioteca.cc42.dao.daofarebase.DaoEventFirebase;
 import com.antonioteca.cc42.databinding.FragmentAttendanceListBinding;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Coalition;
@@ -135,7 +134,8 @@ public class AttendanceListFragment extends Fragment {
                                         () -> decoratedBarcodeView.resume()
                                 );
                             } else {
-                                Util.setVisibleProgressBar(progressBarMarkAttendance, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
+                                // Armazenamento directo para nuvem
+                                /*Util.setVisibleProgressBar(progressBarMarkAttendance, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
                                 DaoEventFirebase.markAttendance(
                                         firebaseDatabase,
                                         String.valueOf(eventId),
@@ -150,7 +150,7 @@ public class AttendanceListFragment extends Fragment {
                                         binding.fabOpenCameraScannerQrCodeBack,
                                         sharedViewModel,
                                         () -> decoratedBarcodeView.resume()
-                                );
+                                );*/
                             }
                         } else
                             Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), partsQrCode[2] + "\n" + getString(R.string.msg_user_unregistered), "#FDD835", null);
