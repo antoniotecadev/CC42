@@ -125,7 +125,6 @@ public class UserViewModel extends ViewModel {
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(() -> {
-                                    Util.startVibration(context);
                                     sharedViewModel.setMarkAttendanceUser(user.userId);
                                     String message = user.displayName + "\n" + context.getString(R.string.msg_sucess_mark_attendance_event);
                                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", runnableResumeCamera);
