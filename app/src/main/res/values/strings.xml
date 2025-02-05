@@ -76,4 +76,5 @@
     <string name="page">Página </string>
     <string name="msg_attendance_list_empty">Lista de presença vazia.</string>
     <string name="msg_error_delete_local_attendance_lis">Erro ao eliminar lista de presença local</string>
+    <string name="msg_user_unregistered">Não está registado neste evento</string>
 </resources>

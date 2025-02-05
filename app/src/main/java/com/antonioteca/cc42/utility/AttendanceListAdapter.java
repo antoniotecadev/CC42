@@ -70,6 +70,15 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         notifyDataSetChanged();
     }
 
+    public boolean containsUser(long userId) {
+        for (User user : getUserList()) {
+            if (user.uid == userId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @NonNull
     @Override
     public AttendanceListAdapter.AttendanceListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

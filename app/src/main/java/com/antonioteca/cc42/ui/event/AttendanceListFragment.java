@@ -119,38 +119,41 @@ public class AttendanceListFragment extends Fragment {
                     String resultQrCode = result.getText().replace("cc42user", "");
                     String[] partsQrCode = resultQrCode.split("#", 5);
                     if (partsQrCode.length == 5) {
-                        if (true) {
-                            LocalAttendanceList user = new LocalAttendanceList();
-                            user.userId = Long.parseLong(partsQrCode[0]);
-                            user.displayName = partsQrCode[2];
-                            user.cursusId = Integer.parseInt(partsQrCode[3]);
-                            user.campusId = Integer.parseInt(partsQrCode[4]);
-                            user.eventId = eventId;
-                            userViewModel.addUserLocalAttendanceList(
-                                    user,
-                                    context,
-                                    layoutInflater,
-                                    sharedViewModel,
-                                    () -> decoratedBarcodeView.resume()
-                            );
-                        } else {
-                            Util.setVisibleProgressBar(progressBarMarkAttendance, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
-                            DaoEventFirebase.markAttendance(
-                                    firebaseDatabase,
-                                    String.valueOf(eventId),
-                                    partsQrCode[0],
-                                    partsQrCode[1],
-                                    partsQrCode[2],
-                                    partsQrCode[3],
-                                    partsQrCode[4],
-                                    context,
-                                    layoutInflater,
-                                    progressBarMarkAttendance,
-                                    binding.fabOpenCameraScannerQrCodeBack,
-                                    sharedViewModel,
-                                    () -> decoratedBarcodeView.resume()
-                            );
-                        }
+                        if (attendanceListAdapter.containsUser(Long.parseLong(partsQrCode[0]))) {
+                            if (true) {
+                                LocalAttendanceList user = new LocalAttendanceList();
+                                user.userId = Long.parseLong(partsQrCode[0]);
+                                user.displayName = partsQrCode[2];
+                                user.cursusId = Integer.parseInt(partsQrCode[3]);
+                                user.campusId = Integer.parseInt(partsQrCode[4]);
+                                user.eventId = eventId;
+                                userViewModel.addUserLocalAttendanceList(
+                                        user,
+                                        context,
+                                        layoutInflater,
+                                        sharedViewModel,
+                                        () -> decoratedBarcodeView.resume()
+                                );
+                            } else {
+                                Util.setVisibleProgressBar(progressBarMarkAttendance, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
+                                DaoEventFirebase.markAttendance(
+                                        firebaseDatabase,
+                                        String.valueOf(eventId),
+                                        partsQrCode[0],
+                                        partsQrCode[1],
+                                        partsQrCode[2],
+                                        partsQrCode[3],
+                                        partsQrCode[4],
+                                        context,
+                                        layoutInflater,
+                                        progressBarMarkAttendance,
+                                        binding.fabOpenCameraScannerQrCodeBack,
+                                        sharedViewModel,
+                                        () -> decoratedBarcodeView.resume()
+                                );
+                            }
+                        } else
+                            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), partsQrCode[2] + "\n" + getString(R.string.msg_user_unregistered), "#FDD835", null);
                     } else
                         Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", () -> decoratedBarcodeView.resume());
                 } else
