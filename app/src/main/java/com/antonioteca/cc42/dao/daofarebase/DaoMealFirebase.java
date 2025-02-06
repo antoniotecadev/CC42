@@ -5,19 +5,27 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDialogCreateMealBinding;
 import com.antonioteca.cc42.model.Meal;
+import com.antonioteca.cc42.ui.meal.MealAdapter;
 import com.antonioteca.cc42.utility.DateUtils;
 import com.antonioteca.cc42.utility.Util;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
 import java.util.Map;
 
 public class DaoMealFirebase {
@@ -91,11 +99,11 @@ public class DaoMealFirebase {
         }
 
         // Cria ou atualiza a lista de participantes do evento
-        DatabaseReference campusRef = firebaseDatabase.getReference("campus")
+        DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
                 .child("meals");
         // Gerar um ID único para a refeição
-        String mealId = campusRef.push().getKey();
+        String mealId = mealsRef.push().getKey();
 
         String dateCreated = DateUtils.getCurrentDate();
 
@@ -110,7 +118,7 @@ public class DaoMealFirebase {
         );
 
         // Salvar os dados da refeição no Firebase Realtime Database
-        campusRef.child(mealId).setValue(meal)
+        mealsRef.child(mealId).setValue(meal)
                 .addOnSuccessListener(aVoid -> {
                     binding.buttonClose.setEnabled(true);
                     binding.buttonCreateMeal.setEnabled(true);
@@ -129,5 +137,43 @@ public class DaoMealFirebase {
                     String message = mealName + "\n" + context.getString(R.string.error_save_meal) + ": " + e.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                 });
+    }
+
+    public static void loadMeals(FirebaseDatabase firebaseDatabase,
+                                 LayoutInflater layoutInflater,
+                                 ProgressBar progressBarMeal, Context context,
+                                 String campusId,
+                                 List<Meal> mealList,
+                                 MealAdapter mealAdapter) {
+        progressBarMeal.setVisibility(View.VISIBLE);
+        DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
+                .child(campusId)
+                .child("meals");
+
+        mealsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    mealList.clear();
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Meal meal = dataSnapshot.getValue(Meal.class);
+                        mealList.add(meal);
+                    }
+                    mealAdapter.updateMealList(mealList); // Atualizar RecyclerView
+                    progressBarMeal.setVisibility(View.INVISIBLE);
+                } else {
+                    String message = context.getString(R.string.meals_not_found);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", null);
+                    progressBarMeal.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                String message = context.getString(R.string.error_load_data) + ": " + error.getMessage();
+                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                progressBarMeal.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 }

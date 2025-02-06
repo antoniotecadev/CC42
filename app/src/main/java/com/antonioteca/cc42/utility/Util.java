@@ -29,6 +29,8 @@ import androidx.appcompat.app.AlertDialog;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ImageQrCodeBinding;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
@@ -145,6 +147,14 @@ public class Util {
                 .placeholder(R.drawable.logo_42) // Imagem de substituição enquanto a imagem carrega
                 .error(R.drawable.logo_42) // Imagem a ser mostrada caso ocorra um erro
                 .into(imageViewUserRegistered);
+    }
+
+    public static void loadingImageMeal(Context context, String imageUrl, ImageView imageView) {
+        Glide.with(context)
+                .load(imageUrl)
+                .circleCrop()
+                .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_menu_60))
+                .into(imageView);
     }
 
     public static void setVisibleProgressBar(ProgressBar progressBar, FloatingActionButton floatingActionButton, SharedViewModel sharedViewModel) {

@@ -92,7 +92,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         builder.setView(binding.getRoot());
         dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
-        loadingImage(imageUri);
+        loadingImageMeal(imageUri);
         addNumberSpinner(binding.spinnerQuantity, context);
 
         String colorCoalition = user.coalition.getColor();
@@ -138,13 +138,13 @@ public class DialogFragmentCreateMeal extends DialogFragment {
             // Imagem selecionada da galeria
             if (imageUri != null) {
                 this.imageUri = imageUri;
-                loadingImage(imageUri);
+                loadingImageMeal(imageUri);
             }
         });
         // Registrar o contrato para a câmera
         takePictureLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
                     if (success && imageUri != null) {
-                        loadingImage(imageUri);
+                        loadingImageMeal(imageUri);
                     } else {
                         Toast.makeText(context, R.string.cancel, Toast.LENGTH_LONG).show();
                     }
@@ -221,7 +221,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         spinner.setAdapter(itemAdapter);
     }
 
-    private void loadingImage(Uri imageUri) {
+    private void loadingImageMeal(Uri imageUri) {
         Glide.with(this)
                 .load(imageUri)
                 .circleCrop()

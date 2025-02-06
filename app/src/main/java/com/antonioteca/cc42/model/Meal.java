@@ -8,6 +8,9 @@ public class Meal {
     private int quantity;
     private String pathImage;
 
+    public Meal() {
+    }
+
     public Meal(String id, String name, String description, String date, int quantity, String pathImage) {
         this.id = id;
         this.name = name;

@@ -102,3 +102,9 @@
 
 # Uncomment for DexGuard only
 #-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
+
+-keep class com.antonioteca.cc42.model.Meal {
+    public <init>();
+    public void set*(***);
+    public *** get*();
+}

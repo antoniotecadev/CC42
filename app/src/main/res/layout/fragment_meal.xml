@@ -29,4 +29,13 @@
         android:text="@string/create_meal"
         android:textColor="@color/white"
         app:backgroundTint="@color/light_blue_900" />
+
+    <ProgressBar
+        android:id="@+id/progressBarMeal"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/light_blue_900"
+        android:visibility="invisible" />
 </FrameLayout>
