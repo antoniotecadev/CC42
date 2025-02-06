@@ -93,6 +93,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         builder.setView(binding.getRoot());
         dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
+        loadingImage(imageUri);
         addNumberSpinner(binding.spinnerQuantity, context);
 
         String colorCoalition = user.coalition.getColor();
@@ -147,22 +148,13 @@ public class DialogFragmentCreateMeal extends DialogFragment {
             // Imagem selecionada da galeria
             if (imageUri != null) {
                 this.imageUri = imageUri;
-                Glide.with(this)
-                        .load(imageUri)
-                        .circleCrop() // Recorta a imagem para ser circular
-                        .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_menu_60))
-                        .into(binding.imageViewMeal);
+                loadingImage(imageUri);
             }
         });
         // Registrar o contrato para a câmera
         takePictureLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
                     if (success && imageUri != null) {
-                        // Foto tirada com sucesso, carregar na ImageView
-                        Glide.with(this)
-                                .load(imageUri)
-                                .circleCrop() // Recorta a imagem para ser circular
-                                .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_menu_60))
-                                .into(binding.imageViewMeal);
+                        loadingImage(imageUri);
                     } else {
                         Toast.makeText(context, R.string.cancel, Toast.LENGTH_LONG).show();
                     }
@@ -237,6 +229,14 @@ public class DialogFragmentCreateMeal extends DialogFragment {
 
         ArrayAdapter<Integer> itemAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, quantity);
         spinner.setAdapter(itemAdapter);
+    }
+
+    private void loadingImage(Uri imageUri) {
+        Glide.with(this)
+                .load(imageUri)
+                .circleCrop()
+                .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_menu_60))
+                .into(binding.imageViewMeal);
     }
 
     @Override
