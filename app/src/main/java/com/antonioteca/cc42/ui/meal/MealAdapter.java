@@ -2,12 +2,14 @@ package com.antonioteca.cc42.ui.meal;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewMealListBinding;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.utility.Util;
@@ -43,6 +45,16 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             MealFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment
                     = MealFragmentDirections.actionNavMealToDetailsMealFragment(meal);
             Navigation.findNavController(v).navigate(actionNavMealToDetailsMealFragment);
+        });
+        holder.itemView.setOnCreateContextMenuListener((contextMenu, view, contextMenuInfo) -> {
+            contextMenu.setHeaderTitle(meal.getName());
+            MenuItem menuItem = contextMenu.add(view.getContext().getString(R.string.edit_meal));
+            menuItem.setOnMenuItemClickListener(item -> {
+                MealFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal =
+                        MealFragmentDirections.actionNavMealToDialogFragmentCreateMeal(false).setMeal(meal);
+                Navigation.findNavController(view).navigate(actionNavMealToDialogFragmentCreateMeal);
+                return true;
+            });
         });
     }
 

@@ -11,7 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -29,6 +31,7 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase;
 import com.antonioteca.cc42.databinding.FragmentDialogCreateMealBinding;
 import com.antonioteca.cc42.model.Coalition;
+import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.utility.Util;
@@ -87,13 +90,28 @@ public class DialogFragmentCreateMeal extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
         binding = FragmentDialogCreateMealBinding.inflate(getLayoutInflater());
+        addNumberSpinner(binding.spinnerQuantity, context);
+        DialogFragmentCreateMealArgs args = DialogFragmentCreateMealArgs.fromBundle(getArguments());
+        Meal meal = args.getMeal();
+        boolean isCreate = args.getIsCreate();
+
+        if (!isCreate && meal != null) {
+            Uri imageUri = Uri.parse(meal.getPathImage());
+            this.imageUri = imageUri;
+            loadingImageMeal(imageUri);
+            binding.textInputEditTextName.setText(meal.getName());
+            binding.textInputEditTextDescription.setText(meal.getDescription());
+            binding.spinnerQuantity.setSelection(meal.getQuantity());
+            binding.buttonCreateMeal.setText(getText(R.string.ok));
+        } else {
+            loadingImageMeal(imageUri);
+            binding.buttonCreateMeal.setText(getText(R.string.create_meal));
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setIcon(R.drawable.logo_42);
         builder.setView(binding.getRoot());
         dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
-        loadingImageMeal(imageUri);
-        addNumberSpinner(binding.spinnerQuantity, context);
 
         String colorCoalition = user.coalition.getColor();
         if (colorCoalition != null) {
@@ -105,33 +123,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         }
 
         binding.buttonCreateMeal.setOnClickListener(v -> {
-            if (isEmptyField(binding.textInputEditTextName.getText().toString())) {
-                binding.textInputEditTextName.requestFocus();
-                binding.textInputEditTextName.setError(getString(R.string.invalid_name_meal));
-            } else {
-                binding.buttonClose.setEnabled(false);
-                binding.buttonCreateMeal.setEnabled(false);
-                binding.progressBarMeal.setVisibility(View.VISIBLE);
-                if (imageUri != null) {
-                    DaoMealFirebase.uploadImageToCloudinary(
-                            firebaseDatabase,
-                            getLayoutInflater(),
-                            binding,
-                            context,
-                            String.valueOf(user.getCampusId()),
-                            imageUri
-                    );
-                } else {
-                    DaoMealFirebase.saveMealToFirebase(
-                            firebaseDatabase,
-                            getLayoutInflater(),
-                            binding,
-                            context,
-                            String.valueOf(user.getCampusId()),
-                            ""
-                    );
-                }
-            }
+            createUpdateMeal(meal, isCreate);
         });
         binding.buttonClose.setOnClickListener(v -> dialog.dismiss());
         imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), imageUri -> {
@@ -154,6 +146,92 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                 showImagePickerDialog(v.getContext())
         );
         return dialog;
+    }
+
+    private boolean validateData(Meal meal, boolean isCreate, LayoutInflater layoutInflater) {
+        String mealName = binding.textInputEditTextName.getText().toString();
+        String mealDescription = binding.textInputEditTextDescription.getText().toString();
+        int mealsQauntity = 0;
+        int selectedPosition = binding.spinnerQuantity.getSelectedItemPosition();
+        if (selectedPosition != AdapterView.INVALID_POSITION) {
+            mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(selectedPosition);
+        }
+        if (isEmptyField(mealName)) {
+            binding.textInputEditTextName.requestFocus();
+            binding.textInputEditTextName.setError(getString(R.string.invalid_name_meal));
+            return false;
+        }
+        if (!isCreate && meal != null
+                && this.imageUri.equals(Uri.parse(meal.getPathImage())) && mealName.equals(meal.getName())
+                && mealDescription.equals(meal.getDescription()) && mealsQauntity == meal.getQuantity()) {
+            String message = context.getString(R.string.nothing_edit);
+            Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", null);
+            return false;
+        }
+        return true;
+    }
+
+    private void createUpdateMeal(Meal meal, boolean isCreate) {
+        if (validateData(meal, isCreate, getLayoutInflater())) {
+            binding.buttonClose.setEnabled(false);
+            binding.buttonCreateMeal.setEnabled(false);
+            binding.progressBarMeal.setVisibility(View.VISIBLE);
+            if (isCreate && meal == null) {
+                if (imageUri != null) {
+                    DaoMealFirebase.uploadImageToCloudinary(
+                            firebaseDatabase,
+                            getLayoutInflater(),
+                            binding,
+                            context,
+                            String.valueOf(user.getCampusId()),
+                            imageUri
+                    );
+                } else {
+                    DaoMealFirebase.saveMealToFirebase(
+                            firebaseDatabase,
+                            getLayoutInflater(),
+                            binding,
+                            context,
+                            String.valueOf(user.getCampusId()),
+                            ""
+                    );
+                }
+            } else {
+                if (!imageUri.equals(Uri.parse(meal.getPathImage()))) {
+                    int mealsQauntity = 0;
+                    int selectedPosition = binding.spinnerQuantity.getSelectedItemPosition();
+                    if (selectedPosition != AdapterView.INVALID_POSITION) {
+                        mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(selectedPosition);
+                    }
+                    if (binding.textInputEditTextName.getText().toString().equals(meal.getName())
+                            && binding.textInputEditTextDescription.getText().toString().equals(meal.getDescription())
+                            && mealsQauntity == meal.getQuantity()) {
+                        DaoMealFirebase.uploadNewImage(
+                                firebaseDatabase,
+                                getLayoutInflater(),
+                                binding,
+                                context,
+                                String.valueOf(user.getCampusId()),
+                                meal.getId(),
+                                imageUri,
+                                extractPublicIdFromUrl(meal.getPathImage()));
+                    } else {
+
+                    }
+                } else {
+
+                }
+            }
+        }
+    }
+
+    private String extractPublicIdFromUrl(String imageUrl) {
+        if (imageUrl.contains(".jpg")) {
+            String[] parts = imageUrl.split("/");
+            String publicId = parts[parts.length - 1].replace(".jpg", ""); // Remove a extensão do arquivo
+            return publicId; // Adiciona o prefixo da pasta (se houver)
+        }
+        return null;
     }
 
     private void showImagePickerDialog(Context context) {

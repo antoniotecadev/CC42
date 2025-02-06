@@ -117,7 +117,7 @@
                 <Button
                     android:id="@+id/buttonClose"
                     android:layout_width="wrap_content"
-                    android:layout_height="60dp"
+                    android:layout_height="50dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:text="@string/close"
@@ -133,7 +133,7 @@
                 <Button
                     android:id="@+id/buttonCreateMeal"
                     android:layout_width="100dp"
-                    android:layout_height="60dp"
+                    android:layout_height="50dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:text="@string/create_meal"

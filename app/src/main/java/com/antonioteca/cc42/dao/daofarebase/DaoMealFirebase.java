@@ -39,7 +39,7 @@ public class DaoMealFirebase {
                                                Uri imageUri) {
 
         MediaManager.get().upload(imageUri)
-                .option("asset_folder", "meals") // Pasta no Cloudinary (opcional)
+                .option("asset_folder", "campus/" + campusId + "/meals") // Pasta no Cloudinary (opcional)
                 .callback(new UploadCallback() {
                     @Override
                     public void onStart(String requestId) {
@@ -84,6 +84,87 @@ public class DaoMealFirebase {
                 }).dispatch();
     }
 
+    public static void uploadNewImage(FirebaseDatabase firebaseDatabase,
+                                      LayoutInflater layoutInflater,
+                                      FragmentDialogCreateMealBinding binding,
+                                      Context context,
+                                      String campusId,
+                                      String mealId,
+                                      Uri newImageUri,
+                                      String publicId) {
+
+        MediaManager.get().upload(newImageUri)
+                .option("public_id", publicId) // Usar o mesmo public ID para substituir a imagem
+                .option("overwrite", publicId != null) // Substituir a imagem existente
+                .option("asset_folder", "campus/" + campusId + "/meals") // Pasta no Cloudinary (opcional)
+                .callback(new UploadCallback() {
+                    @Override
+                    public void onStart(String requestId) {
+                        Toast.makeText(context, context.getString(R.string.start_upload_image), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onProgress(String requestId, long bytes, long totalBytes) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(String requestId, Map resultData) {
+                        String newImageUrl = (String) resultData.get("url");
+                        updateImageUrlInFirebase(firebaseDatabase,
+                                layoutInflater,
+                                binding,
+                                context,
+                                campusId,
+                                mealId,
+                                newImageUrl); // Atualizar URL no Firebase
+                    }
+
+                    @Override
+                    public void onError(String requestId, ErrorInfo error) {
+                        binding.buttonClose.setEnabled(true);
+                        binding.buttonCreateMeal.setEnabled(true);
+                        binding.progressBarMeal.setVisibility(View.GONE);
+                        String message = context.getString(R.string.error_update_image) + error.getDescription();
+                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                    }
+
+                    @Override
+                    public void onReschedule(String requestId, ErrorInfo error) {
+                        // Tentar novamente em caso de falha
+                    }
+                }).dispatch();
+    }
+
+    private static void updateImageUrlInFirebase(FirebaseDatabase firebaseDatabase,
+                                                 LayoutInflater layoutInflater,
+                                                 FragmentDialogCreateMealBinding binding,
+                                                 Context context,
+                                                 String campusId,
+                                                 String mealId,
+                                                 String newImageUrl) {
+        DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
+                .child(campusId)
+                .child("meals")
+                .child(mealId);
+        // Atualizar apenas o campo pathImage
+        mealsRef.child("pathImage").setValue(newImageUrl)
+                .addOnSuccessListener(aVoid -> {
+                    binding.buttonClose.setEnabled(true);
+                    binding.buttonCreateMeal.setEnabled(true);
+                    binding.progressBarMeal.setVisibility(View.GONE);
+                    String message = context.getString(R.string.sucess_image_update);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
+                })
+                .addOnFailureListener(e -> {
+                    binding.buttonClose.setEnabled(true);
+                    binding.buttonCreateMeal.setEnabled(true);
+                    binding.progressBarMeal.setVisibility(View.GONE);
+                    String message = context.getString(R.string.error_update_image_url) + e.getMessage();
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                });
+    }
+
     public static void saveMealToFirebase(FirebaseDatabase firebaseDatabase,
                                           LayoutInflater layoutInflater,
                                           FragmentDialogCreateMealBinding binding,
@@ -99,7 +180,6 @@ public class DaoMealFirebase {
             mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(selectedPosition);
         }
 
-        // Cria ou atualiza a lista de participantes do evento
         DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
                 .child("meals");

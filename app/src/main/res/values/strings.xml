@@ -94,4 +94,10 @@
     <string name="error_save_image">Erro ao salvar imagem</string>
     <string name="error_load_data">"Erro ao carregar dados: "</string>
     <string name="meals_not_found">Refeições não encontradas.</string>
+    <string name="edit_meal">Editar</string>
+    <string name="update_meal">Actualizar</string>
+    <string name="nothing_edit">Não é possível actualizar a refeição, nenhuma alteração foi feita.</string>
+    <string name="error_update_image">"Erro ao actualizar imagem: "</string>
+    <string name="sucess_image_update">Imagem actualizada com sucesso!</string>
+    <string name="error_update_image_url">Erro ao actualizar URL da imagem: </string>
 </resources>

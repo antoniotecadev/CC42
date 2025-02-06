@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.User;
@@ -70,9 +69,11 @@ public class MealFragment extends Fragment {
             binding.btnCreateMeal.setBackgroundColor(color);
             binding.progressBarMeal.setIndeterminateTintList(colorStateList);
         }
-        binding.btnCreateMeal.setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.action_nav_meal_to_dialogFragmentCreateMeal)
-        );
+        binding.btnCreateMeal.setOnClickListener(v -> {
+            MealFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal =
+                    MealFragmentDirections.actionNavMealToDialogFragmentCreateMeal(true);
+            Navigation.findNavController(v).navigate(actionNavMealToDialogFragmentCreateMeal);
+        });
         mealViewModel.getMealList().observe(getViewLifecycleOwner(), meals -> mealAdapter.updateMealList(meals));
         loadMeals(mealViewModel, firebaseDatabase, getLayoutInflater(), binding.progressBarMeal, context, String.valueOf(user.getCampusId()));
     }
