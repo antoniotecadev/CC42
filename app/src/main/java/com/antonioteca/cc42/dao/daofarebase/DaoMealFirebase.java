@@ -121,7 +121,7 @@ public class DaoMealFirebase {
                 })
                 .addOnFailureListener(e -> {
                     progressBar.setVisibility(View.GONE);
-                    String message = context.getString(R.string.error_save_meal) + ": " + e.getMessage();
+                    String message = mealName + "\n" + context.getString(R.string.error_save_meal) + ": " + e.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                 });
     }
