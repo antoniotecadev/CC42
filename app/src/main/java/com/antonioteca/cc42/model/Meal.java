@@ -1,6 +1,9 @@
 package com.antonioteca.cc42.model;
 
-public class Meal {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Meal implements Parcelable {
     private String id;
     private String name;
     private String description;
@@ -19,6 +22,42 @@ public class Meal {
         this.quantity = quantity;
         this.pathImage = pathImage;
     }
+
+    protected Meal(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        description = in.readString();
+        date = in.readString();
+        quantity = in.readInt();
+        pathImage = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeString(date);
+        dest.writeInt(quantity);
+        dest.writeString(pathImage);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Meal> CREATOR = new Creator<Meal>() {
+        @Override
+        public Meal createFromParcel(Parcel in) {
+            return new Meal(in);
+        }
+
+        @Override
+        public Meal[] newArray(int size) {
+            return new Meal[size];
+        }
+    };
 
     public String getId() {
         return id;

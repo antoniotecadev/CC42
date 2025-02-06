@@ -13,9 +13,9 @@ import androidx.annotation.NonNull;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDialogCreateMealBinding;
 import com.antonioteca.cc42.model.Meal;
-import com.antonioteca.cc42.ui.meal.MealAdapter;
 import com.antonioteca.cc42.utility.DateUtils;
 import com.antonioteca.cc42.utility.Util;
+import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -139,41 +140,41 @@ public class DaoMealFirebase {
                 });
     }
 
-    public static void loadMeals(FirebaseDatabase firebaseDatabase,
+    public static void loadMeals(MealViewModel mealViewModel, FirebaseDatabase firebaseDatabase,
                                  LayoutInflater layoutInflater,
                                  ProgressBar progressBarMeal, Context context,
-                                 String campusId,
-                                 List<Meal> mealList,
-                                 MealAdapter mealAdapter) {
-        progressBarMeal.setVisibility(View.VISIBLE);
-        DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
-                .child(campusId)
-                .child("meals");
+                                 String campusId) {
+        if (mealViewModel.getMealList().getValue() == null || mealViewModel.getMealList().getValue().isEmpty()) {
+            progressBarMeal.setVisibility(View.VISIBLE);
+            DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
+                    .child(campusId)
+                    .child("meals");
 
-        mealsRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    mealList.clear();
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        Meal meal = dataSnapshot.getValue(Meal.class);
-                        mealList.add(meal);
+            mealsRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        List<Meal> mealList = new ArrayList<>();
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            Meal meal = dataSnapshot.getValue(Meal.class);
+                            mealList.add(meal);
+                        }
+                        mealViewModel.setMealList(mealList); // Atualizar RecyclerView
+                        progressBarMeal.setVisibility(View.INVISIBLE);
+                    } else {
+                        String message = context.getString(R.string.meals_not_found);
+                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", null);
+                        progressBarMeal.setVisibility(View.INVISIBLE);
                     }
-                    mealAdapter.updateMealList(mealList); // Atualizar RecyclerView
-                    progressBarMeal.setVisibility(View.INVISIBLE);
-                } else {
-                    String message = context.getString(R.string.meals_not_found);
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", null);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    String message = context.getString(R.string.error_load_data) + ": " + error.getMessage();
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                     progressBarMeal.setVisibility(View.INVISIBLE);
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                String message = context.getString(R.string.error_load_data) + ": " + error.getMessage();
-                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
-                progressBarMeal.setVisibility(View.INVISIBLE);
-            }
-        });
+            });
+        }
     }
 }

@@ -54,10 +54,22 @@
         <action
             android:id="@+id/action_nav_meal_to_dialogFragmentCreateMeal"
             app:destination="@id/dialogFragmentCreateMeal" />
+        <action
+            android:id="@+id/action_nav_meal_to_detailsMealFragment"
+            app:destination="@id/detailsMealFragment" />
     </fragment>
     <dialog
         android:id="@+id/dialogFragmentCreateMeal"
         android:name="com.antonioteca.cc42.ui.meal.DialogFragmentCreateMeal"
         android:label="DialogFragmentCreateMeal"
         tools:layout="@layout/fragment_dialog_create_meal" />
+    <fragment
+        android:id="@+id/detailsMealFragment"
+        android:name="com.antonioteca.cc42.ui.meal.DetailsMealFragment"
+        android:label="fragment_details_meal"
+        tools:layout="@layout/fragment_details_meal" >
+        <argument
+            android:name="detailsMeal"
+            app:argType="com.antonioteca.cc42.model.Meal" />
+    </fragment>
 </navigation>

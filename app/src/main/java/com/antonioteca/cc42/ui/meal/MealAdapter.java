@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.databinding.ItemRecyclerviewMealListBinding;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterViewHolder> {
 
-    private Context context;
+    private final Context context;
     private List<Meal> mealList;
 
     public MealAdapter(Context context, List<Meal> mealList) {
@@ -38,6 +39,11 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         holder.binding.txtQuantidadeProduto.setText(String.valueOf(meal.getQuantity()));
         holder.binding.textViewDateCreated.setText(meal.getDate());
         Util.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal);
+        holder.itemView.setOnClickListener(v -> {
+            MealFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment
+                    = MealFragmentDirections.actionNavMealToDetailsMealFragment(meal);
+            Navigation.findNavController(v).navigate(actionNavMealToDetailsMealFragment);
+        });
     }
 
     @Override
