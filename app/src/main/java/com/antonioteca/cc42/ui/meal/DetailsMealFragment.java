@@ -1,6 +1,10 @@
 package com.antonioteca.cc42.ui.meal;
 
+import static com.antonioteca.cc42.utility.Util.generateQrCode;
+import static com.antonioteca.cc42.utility.Util.showModalQrCode;
+
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -66,6 +70,10 @@ public class DetailsMealFragment extends Fragment {
         binding.textViewDescription.setText(meal.getDescription());
         binding.textViewDate.setText(meal.getDate());
         Util.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal);
+        binding.fabGenerateQrCode.setOnClickListener(v -> {
+            Bitmap bitmapQrCode = generateQrCode(view.getContext(), "meal" + meal.getId());
+            showModalQrCode(context, bitmapQrCode, meal.getName(), meal.getDescription());
+        });
     }
 
     @Override
