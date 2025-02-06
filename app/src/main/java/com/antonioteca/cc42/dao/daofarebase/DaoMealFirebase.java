@@ -116,7 +116,7 @@ public class DaoMealFirebase {
         campusRef.child(mealId).setValue(meal)
                 .addOnSuccessListener(aVoid -> {
                     progressBar.setVisibility(View.GONE);
-                    String message = context.getString(R.string.save_meal);
+                    String message = mealName + "\n" + context.getString(R.string.save_meal);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
                 })
                 .addOnFailureListener(e -> {
