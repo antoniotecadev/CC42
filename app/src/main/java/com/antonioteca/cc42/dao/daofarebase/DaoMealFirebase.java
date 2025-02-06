@@ -4,11 +4,11 @@ import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.databinding.FragmentDialogCreateMealBinding;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.utility.DateUtils;
 import com.antonioteca.cc42.utility.Util;
@@ -24,12 +24,9 @@ public class DaoMealFirebase {
 
     public static void uploadImageToCloudinary(FirebaseDatabase firebaseDatabase,
                                                LayoutInflater layoutInflater,
-                                               Button buttonClose, Button buttonCreateMeal, ProgressBar progressBar,
+                                               FragmentDialogCreateMealBinding binding,
                                                Context context,
                                                String campusId,
-                                               String mealName,
-                                               String mealDescription,
-                                               int mealsQauntity,
                                                Uri imageUri) {
 
         MediaManager.get().upload(imageUri)
@@ -53,12 +50,9 @@ public class DaoMealFirebase {
                         String imageUrl = (String) resultData.get("url");
                         saveMealToFirebase(firebaseDatabase,
                                 layoutInflater,
-                                buttonClose, buttonCreateMeal, progressBar,
+                                binding,
                                 context,
                                 campusId,
-                                mealName,
-                                mealDescription,
-                                mealsQauntity,
                                 imageUrl);
                     }
 
@@ -68,12 +62,9 @@ public class DaoMealFirebase {
                         Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                         saveMealToFirebase(firebaseDatabase,
                                 layoutInflater,
-                                buttonClose, buttonCreateMeal, progressBar,
+                                binding,
                                 context,
                                 campusId,
-                                mealName,
-                                mealDescription,
-                                mealsQauntity,
                                 "");
                     }
 
@@ -86,13 +77,18 @@ public class DaoMealFirebase {
 
     public static void saveMealToFirebase(FirebaseDatabase firebaseDatabase,
                                           LayoutInflater layoutInflater,
-                                          Button buttonClose, Button buttonCreateMeal, ProgressBar progressBar,
+                                          FragmentDialogCreateMealBinding binding,
                                           Context context,
                                           String campusId,
-                                          String mealName,
-                                          String mealDescription,
-                                          int mealsQauntity,
                                           String imageUrl) {
+
+        String mealName = binding.textInputEditTextName.getText().toString();
+        String mealDescription = binding.textInputEditTextDescription.getText().toString();
+        int mealsQauntity = 0;
+        int selectedPosition = binding.spinnerQuantity.getSelectedItemPosition();
+        if (selectedPosition != AdapterView.INVALID_POSITION) {
+            mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(selectedPosition);
+        }
 
         // Cria ou atualiza a lista de participantes do evento
         DatabaseReference campusRef = firebaseDatabase.getReference("campus")
@@ -116,16 +112,20 @@ public class DaoMealFirebase {
         // Salvar os dados da refeição no Firebase Realtime Database
         campusRef.child(mealId).setValue(meal)
                 .addOnSuccessListener(aVoid -> {
-                    buttonClose.setEnabled(true);
-                    buttonCreateMeal.setEnabled(true);
-                    progressBar.setVisibility(View.GONE);
+                    binding.buttonClose.setEnabled(true);
+                    binding.buttonCreateMeal.setEnabled(true);
+                    binding.spinnerQuantity.setSelection(0);
+                    binding.textInputEditTextName.setText("");
+                    binding.textInputEditTextDescription.setText("");
+                    binding.textInputEditTextName.requestFocus();
+                    binding.progressBarMeal.setVisibility(View.GONE);
                     String message = mealName + "\n" + context.getString(R.string.save_meal);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
                 })
                 .addOnFailureListener(e -> {
-                    buttonClose.setEnabled(true);
-                    buttonCreateMeal.setEnabled(true);
-                    progressBar.setVisibility(View.GONE);
+                    binding.buttonClose.setEnabled(true);
+                    binding.buttonCreateMeal.setEnabled(true);
+                    binding.progressBarMeal.setVisibility(View.GONE);
                     String message = mealName + "\n" + context.getString(R.string.error_save_meal) + ": " + e.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                 });
