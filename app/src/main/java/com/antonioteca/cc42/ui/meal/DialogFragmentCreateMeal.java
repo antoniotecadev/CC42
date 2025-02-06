@@ -106,38 +106,44 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         }
 
         binding.buttonCreateMeal.setOnClickListener(v -> {
-            int selectedValue = 0;
+            int selectedValuequantity = 0;
             int selectedPosition = binding.spinnerQuantity.getSelectedItemPosition();
             if (selectedPosition != AdapterView.INVALID_POSITION) {
-                selectedValue = (int) binding.spinnerQuantity.getItemAtPosition(selectedPosition);
+                selectedValuequantity = (int) binding.spinnerQuantity.getItemAtPosition(selectedPosition);
             }
             if (isEmptyField(binding.textInputEditTextName.getText().toString())) {
                 binding.textInputEditTextName.requestFocus();
                 binding.textInputEditTextName.setError(getString(R.string.invalid_name_meal));
             } else {
+                binding.buttonClose.setEnabled(false);
+                binding.buttonCreateMeal.setEnabled(false);
                 binding.progressBarMeal.setVisibility(View.VISIBLE);
                 if (imageUri != null) {
                     DaoMealFirebase.uploadImageToCloudinary(
                             firebaseDatabase,
                             getLayoutInflater(),
+                            binding.buttonClose,
+                            binding.buttonCreateMeal,
                             binding.progressBarMeal,
                             context,
                             String.valueOf(user.getCampusId()),
                             binding.textInputEditTextName.getText().toString(),
                             binding.textInputEditTextDescription.getText().toString(),
-                            selectedValue,
+                            selectedValuequantity,
                             imageUri
                     );
                 } else {
                     DaoMealFirebase.saveMealToFirebase(
                             firebaseDatabase,
                             getLayoutInflater(),
+                            binding.buttonClose,
+                            binding.buttonCreateMeal,
                             binding.progressBarMeal,
                             context,
                             String.valueOf(user.getCampusId()),
                             binding.textInputEditTextName.getText().toString(),
                             binding.textInputEditTextDescription.getText().toString(),
-                            selectedValue,
+                            selectedValuequantity,
                             ""
                     );
                 }

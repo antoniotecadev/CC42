@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ public class DaoMealFirebase {
 
     public static void uploadImageToCloudinary(FirebaseDatabase firebaseDatabase,
                                                LayoutInflater layoutInflater,
-                                               ProgressBar progressBar,
+                                               Button buttonClose, Button buttonCreateMeal, ProgressBar progressBar,
                                                Context context,
                                                String campusId,
                                                String mealName,
@@ -52,7 +53,7 @@ public class DaoMealFirebase {
                         String imageUrl = (String) resultData.get("url");
                         saveMealToFirebase(firebaseDatabase,
                                 layoutInflater,
-                                progressBar,
+                                buttonClose, buttonCreateMeal, progressBar,
                                 context,
                                 campusId,
                                 mealName,
@@ -67,7 +68,7 @@ public class DaoMealFirebase {
                         Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                         saveMealToFirebase(firebaseDatabase,
                                 layoutInflater,
-                                progressBar,
+                                buttonClose, buttonCreateMeal, progressBar,
                                 context,
                                 campusId,
                                 mealName,
@@ -85,7 +86,7 @@ public class DaoMealFirebase {
 
     public static void saveMealToFirebase(FirebaseDatabase firebaseDatabase,
                                           LayoutInflater layoutInflater,
-                                          ProgressBar progressBar,
+                                          Button buttonClose, Button buttonCreateMeal, ProgressBar progressBar,
                                           Context context,
                                           String campusId,
                                           String mealName,
@@ -115,11 +116,15 @@ public class DaoMealFirebase {
         // Salvar os dados da refeição no Firebase Realtime Database
         campusRef.child(mealId).setValue(meal)
                 .addOnSuccessListener(aVoid -> {
+                    buttonClose.setEnabled(true);
+                    buttonCreateMeal.setEnabled(true);
                     progressBar.setVisibility(View.GONE);
                     String message = mealName + "\n" + context.getString(R.string.save_meal);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
                 })
                 .addOnFailureListener(e -> {
+                    buttonClose.setEnabled(true);
+                    buttonCreateMeal.setEnabled(true);
                     progressBar.setVisibility(View.GONE);
                     String message = mealName + "\n" + context.getString(R.string.error_save_meal) + ": " + e.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
