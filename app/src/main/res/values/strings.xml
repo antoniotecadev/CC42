@@ -100,4 +100,6 @@
     <string name="error_update_image">"Erro ao actualizar imagem: "</string>
     <string name="sucess_image_update">Imagem actualizada com sucesso!</string>
     <string name="error_update_image_url">Erro ao actualizar URL da imagem: </string>
+    <string name="sucess_meal_update">Refeição atualizada com sucesso!</string>
+    <string name="error_meal_update">"Erro ao atualizar refeição: "</string>
 </resources>

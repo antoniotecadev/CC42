@@ -214,9 +214,19 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                                 String.valueOf(user.getCampusId()),
                                 meal.getId(),
                                 imageUri,
-                                extractPublicIdFromUrl(meal.getPathImage()));
+                                extractPublicIdFromUrl(meal.getPathImage()),
+                                true);
                     } else {
-
+                        DaoMealFirebase.uploadNewImage(
+                                firebaseDatabase,
+                                getLayoutInflater(),
+                                binding,
+                                context,
+                                String.valueOf(user.getCampusId()),
+                                meal.getId(),
+                                imageUri,
+                                extractPublicIdFromUrl(meal.getPathImage()),
+                                false);
                     }
                 } else {
 

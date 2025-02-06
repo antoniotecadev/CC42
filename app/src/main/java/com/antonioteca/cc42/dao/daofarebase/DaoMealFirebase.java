@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,7 +92,8 @@ public class DaoMealFirebase {
                                       String campusId,
                                       String mealId,
                                       Uri newImageUri,
-                                      String publicId) {
+                                      String publicId,
+                                      boolean onlyImage) {
 
         MediaManager.get().upload(newImageUri)
                 .option("public_id", publicId) // Usar o mesmo public ID para substituir a imagem
@@ -111,13 +113,23 @@ public class DaoMealFirebase {
                     @Override
                     public void onSuccess(String requestId, Map resultData) {
                         String newImageUrl = (String) resultData.get("url");
-                        updateImageUrlInFirebase(firebaseDatabase,
-                                layoutInflater,
-                                binding,
-                                context,
-                                campusId,
-                                mealId,
-                                newImageUrl); // Atualizar URL no Firebase
+                        if (onlyImage) {
+                            updateImageUrlInFirebase(firebaseDatabase,
+                                    layoutInflater,
+                                    binding,
+                                    context,
+                                    campusId,
+                                    mealId,
+                                    newImageUrl); // Actualizar URL no Firebase
+                        } else {
+                            updateMealDataInFirebase(firebaseDatabase,
+                                    layoutInflater,
+                                    binding,
+                                    context,
+                                    campusId,
+                                    mealId,
+                                    newImageUrl); // Actualizar todos os dados no Firebase
+                        }
                     }
 
                     @Override
@@ -161,6 +173,52 @@ public class DaoMealFirebase {
                     binding.buttonCreateMeal.setEnabled(true);
                     binding.progressBarMeal.setVisibility(View.GONE);
                     String message = context.getString(R.string.error_update_image_url) + e.getMessage();
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                });
+    }
+
+    private static void updateMealDataInFirebase(FirebaseDatabase firebaseDatabase,
+                                                 LayoutInflater layoutInflater,
+                                                 FragmentDialogCreateMealBinding binding,
+                                                 Context context,
+                                                 String campusId,
+                                                 String mealId,
+                                                 String newImageUrl) {
+
+        String mealName = binding.textInputEditTextName.getText().toString();
+        String mealDescription = binding.textInputEditTextDescription.getText().toString();
+        int mealsQauntity = 0;
+        int selectedPosition = binding.spinnerQuantity.getSelectedItemPosition();
+        if (selectedPosition != AdapterView.INVALID_POSITION) {
+            mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(selectedPosition);
+        }
+
+        DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
+                .child(campusId)
+                .child("meals")
+                .child(mealId);
+
+        // Criar um mapa com os novos valores
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("name", mealName);
+        updates.put("description", mealDescription);
+        updates.put("quantity", mealsQauntity);
+        updates.put("pathImage", newImageUrl);
+
+        // Atualizar os dados
+        mealsRef.updateChildren(updates)
+                .addOnSuccessListener(aVoid -> {
+                    binding.buttonClose.setEnabled(true);
+                    binding.buttonCreateMeal.setEnabled(true);
+                    binding.progressBarMeal.setVisibility(View.GONE);
+                    String message = context.getString(R.string.sucess_meal_update);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
+                })
+                .addOnFailureListener(e -> {
+                    binding.buttonClose.setEnabled(true);
+                    binding.buttonCreateMeal.setEnabled(true);
+                    binding.progressBarMeal.setVisibility(View.GONE);
+                    String message = context.getString(R.string.error_meal_update) + e.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                 });
     }
