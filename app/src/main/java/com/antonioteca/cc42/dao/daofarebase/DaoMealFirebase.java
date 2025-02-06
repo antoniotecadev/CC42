@@ -134,9 +134,7 @@ public class DaoMealFirebase {
 
                     @Override
                     public void onError(String requestId, ErrorInfo error) {
-                        binding.buttonClose.setEnabled(true);
-                        binding.buttonCreateMeal.setEnabled(true);
-                        binding.progressBarMeal.setVisibility(View.GONE);
+                        restaureViews(binding);
                         String message = context.getString(R.string.error_update_image) + error.getDescription();
                         Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                     }
@@ -162,16 +160,12 @@ public class DaoMealFirebase {
         // Atualizar apenas o campo pathImage
         mealsRef.child("pathImage").setValue(newImageUrl)
                 .addOnSuccessListener(aVoid -> {
-                    binding.buttonClose.setEnabled(true);
-                    binding.buttonCreateMeal.setEnabled(true);
-                    binding.progressBarMeal.setVisibility(View.GONE);
+                    restaureViews(binding);
                     String message = context.getString(R.string.sucess_image_update);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
                 })
                 .addOnFailureListener(e -> {
-                    binding.buttonClose.setEnabled(true);
-                    binding.buttonCreateMeal.setEnabled(true);
-                    binding.progressBarMeal.setVisibility(View.GONE);
+                    restaureViews(binding);
                     String message = context.getString(R.string.error_update_image_url) + e.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                 });
@@ -209,16 +203,12 @@ public class DaoMealFirebase {
         // Atualizar os dados
         mealsRef.updateChildren(updates)
                 .addOnSuccessListener(aVoid -> {
-                    binding.buttonClose.setEnabled(true);
-                    binding.buttonCreateMeal.setEnabled(true);
-                    binding.progressBarMeal.setVisibility(View.GONE);
+                    restaureViews(binding);
                     String message = context.getString(R.string.sucess_meal_update);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
                 })
                 .addOnFailureListener(e -> {
-                    binding.buttonClose.setEnabled(true);
-                    binding.buttonCreateMeal.setEnabled(true);
-                    binding.progressBarMeal.setVisibility(View.GONE);
+                    restaureViews(binding);
                     String message = context.getString(R.string.error_meal_update) + e.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                 });
@@ -260,20 +250,16 @@ public class DaoMealFirebase {
         // Salvar os dados da refeição no Firebase Realtime Database
         mealsRef.child(mealId).setValue(meal)
                 .addOnSuccessListener(aVoid -> {
-                    binding.buttonClose.setEnabled(true);
-                    binding.buttonCreateMeal.setEnabled(true);
                     binding.spinnerQuantity.setSelection(0);
                     binding.textInputEditTextName.setText("");
                     binding.textInputEditTextDescription.setText("");
                     binding.textInputEditTextName.requestFocus();
-                    binding.progressBarMeal.setVisibility(View.GONE);
+                    restaureViews(binding);
                     String message = mealName + "\n" + context.getString(R.string.save_meal);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
                 })
                 .addOnFailureListener(e -> {
-                    binding.buttonClose.setEnabled(true);
-                    binding.buttonCreateMeal.setEnabled(true);
-                    binding.progressBarMeal.setVisibility(View.GONE);
+                    restaureViews(binding);
                     String message = mealName + "\n" + context.getString(R.string.error_save_meal) + ": " + e.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                 });
@@ -315,5 +301,11 @@ public class DaoMealFirebase {
                 }
             });
         }
+    }
+
+    private static void restaureViews(FragmentDialogCreateMealBinding binding) {
+        binding.buttonClose.setEnabled(true);
+        binding.buttonCreateMeal.setEnabled(true);
+        binding.progressBarMeal.setVisibility(View.GONE);
     }
 }
