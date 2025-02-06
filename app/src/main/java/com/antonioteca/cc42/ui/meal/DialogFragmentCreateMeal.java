@@ -203,31 +203,18 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                     if (selectedPosition != AdapterView.INVALID_POSITION) {
                         mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(selectedPosition);
                     }
-                    if (binding.textInputEditTextName.getText().toString().equals(meal.getName())
-                            && binding.textInputEditTextDescription.getText().toString().equals(meal.getDescription())
-                            && mealsQauntity == meal.getQuantity()) {
-                        DaoMealFirebase.uploadNewImage(
-                                firebaseDatabase,
-                                getLayoutInflater(),
-                                binding,
-                                context,
-                                String.valueOf(user.getCampusId()),
-                                meal.getId(),
-                                imageUri,
-                                extractPublicIdFromUrl(meal.getPathImage()),
-                                true);
-                    } else {
-                        DaoMealFirebase.uploadNewImage(
-                                firebaseDatabase,
-                                getLayoutInflater(),
-                                binding,
-                                context,
-                                String.valueOf(user.getCampusId()),
-                                meal.getId(),
-                                imageUri,
-                                extractPublicIdFromUrl(meal.getPathImage()),
-                                false);
-                    }
+                    DaoMealFirebase.uploadNewImage(
+                            firebaseDatabase,
+                            getLayoutInflater(),
+                            binding,
+                            context,
+                            String.valueOf(user.getCampusId()),
+                            meal.getId(),
+                            imageUri,
+                            extractPublicIdFromUrl(meal.getPathImage()),
+                            binding.textInputEditTextName.getText().toString().equals(meal.getName())
+                                    && binding.textInputEditTextDescription.getText().toString().equals(meal.getDescription())
+                                    && mealsQauntity == meal.getQuantity());
                 } else {
                     updateMealDataInFirebase(
                             firebaseDatabase,
