@@ -177,13 +177,13 @@ public class DaoMealFirebase {
                 });
     }
 
-    private static void updateMealDataInFirebase(FirebaseDatabase firebaseDatabase,
-                                                 LayoutInflater layoutInflater,
-                                                 FragmentDialogCreateMealBinding binding,
-                                                 Context context,
-                                                 String campusId,
-                                                 String mealId,
-                                                 String newImageUrl) {
+    public static void updateMealDataInFirebase(FirebaseDatabase firebaseDatabase,
+                                                LayoutInflater layoutInflater,
+                                                FragmentDialogCreateMealBinding binding,
+                                                Context context,
+                                                String campusId,
+                                                String mealId,
+                                                String newImageUrl) {
 
         String mealName = binding.textInputEditTextName.getText().toString();
         String mealDescription = binding.textInputEditTextDescription.getText().toString();
@@ -203,7 +203,8 @@ public class DaoMealFirebase {
         updates.put("name", mealName);
         updates.put("description", mealDescription);
         updates.put("quantity", mealsQauntity);
-        updates.put("pathImage", newImageUrl);
+        if (newImageUrl != null)
+            updates.put("pathImage", newImageUrl);
 
         // Atualizar os dados
         mealsRef.updateChildren(updates)

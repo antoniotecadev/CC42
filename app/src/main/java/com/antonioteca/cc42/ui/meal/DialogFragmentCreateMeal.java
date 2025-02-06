@@ -1,6 +1,8 @@
 package com.antonioteca.cc42.ui.meal;
 
 
+import static com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase.updateMealDataInFirebase;
+
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
@@ -122,9 +124,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
             binding.buttonCreateMeal.setBackgroundColor(color);
         }
 
-        binding.buttonCreateMeal.setOnClickListener(v -> {
-            createUpdateMeal(meal, isCreate);
-        });
+        binding.buttonCreateMeal.setOnClickListener(v -> createUpdateMeal(meal, isCreate));
         binding.buttonClose.setOnClickListener(v -> dialog.dismiss());
         imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), imageUri -> {
             // Imagem selecionada da galeria
@@ -229,7 +229,14 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                                 false);
                     }
                 } else {
-
+                    updateMealDataInFirebase(
+                            firebaseDatabase,
+                            getLayoutInflater(),
+                            binding,
+                            context,
+                            String.valueOf(user.getCampusId()),
+                            meal.getId(),
+                            null); // Actualizar todos os dados no Firebase
                 }
             }
         }
@@ -238,8 +245,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
     private String extractPublicIdFromUrl(String imageUrl) {
         if (imageUrl.contains(".jpg")) {
             String[] parts = imageUrl.split("/");
-            String publicId = parts[parts.length - 1].replace(".jpg", ""); // Remove a extensão do arquivo
-            return publicId; // Adiciona o prefixo da pasta (se houver)
+            return parts[parts.length - 1].replace(".jpg", ""); // Adiciona o prefixo da pasta (se houver)
         }
         return null;
     }
