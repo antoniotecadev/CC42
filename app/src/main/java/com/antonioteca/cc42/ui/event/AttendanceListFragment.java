@@ -42,7 +42,6 @@ import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.repository.UserRepository;
-import com.antonioteca.cc42.utility.AttendanceListAdapter;
 import com.antonioteca.cc42.utility.EndlessScrollListener;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.PdfCreator;

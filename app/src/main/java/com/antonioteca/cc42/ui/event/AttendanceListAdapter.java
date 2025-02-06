@@ -1,4 +1,4 @@
-package com.antonioteca.cc42.utility;
+package com.antonioteca.cc42.ui.event;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewAttendanceListBinding;
 import com.antonioteca.cc42.model.User;
+import com.antonioteca.cc42.utility.Util;
 
 import java.util.ArrayList;
 import java.util.List;

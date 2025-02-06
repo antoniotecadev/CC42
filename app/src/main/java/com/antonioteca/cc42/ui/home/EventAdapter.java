@@ -1,4 +1,4 @@
-package com.antonioteca.cc42.utility;
+package com.antonioteca.cc42.ui.home;
 
 import static com.antonioteca.cc42.utility.DateUtils.getDaysUntil;
 import static com.antonioteca.cc42.utility.DateUtils.getFormattedDate;
@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewEventBinding;
 import com.antonioteca.cc42.model.Event;
-import com.antonioteca.cc42.ui.home.HomeFragmentDirections;
 
 import java.util.Date;
 import java.util.List;

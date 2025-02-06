@@ -30,7 +30,6 @@ import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.repository.EventRepository;
-import com.antonioteca.cc42.utility.EventAdapter;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.EventViewModel;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
