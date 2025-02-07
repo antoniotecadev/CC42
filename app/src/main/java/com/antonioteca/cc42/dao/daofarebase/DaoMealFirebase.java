@@ -2,6 +2,8 @@ package com.antonioteca.cc42.dao.daofarebase;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,16 +21,20 @@ import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
+import com.cloudinary.utils.ObjectUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DaoMealFirebase {
 
@@ -308,4 +314,68 @@ public class DaoMealFirebase {
         binding.buttonCreateMeal.setEnabled(true);
         binding.progressBarMeal.setVisibility(View.GONE);
     }
+
+    public static void deleteMealFromFirebase(FirebaseDatabase firebaseDatabase,
+                                              LayoutInflater layoutInflater,
+                                              Context context,
+                                              String campusId,
+                                              String mealId,
+                                              String imageUrl) {
+
+        DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
+                .child(campusId)
+                .child("meals")
+                .child(mealId);
+
+        mealsRef.removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    deleteImageFromCloudinary(imageUrl, layoutInflater, context);
+                    String message = context.getString(R.string.sucess_meal_delete);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
+                })
+                .addOnFailureListener(e -> {
+                    String message = context.getString(R.string.error_meal_delete) + e.getMessage();
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                });
+    }
+
+    private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private static final Handler hendler = new Handler(Looper.getMainLooper());
+
+    private static void deleteImageFromCloudinary(String imageUrl, LayoutInflater layoutInflater, Context context) {
+        String publicId = extractPublicIdFromUrl(imageUrl);
+        if (publicId == null) return;
+        executorService.execute(() -> {
+            try {
+                Map result = MediaManager.get().getCloudinary()
+                        .uploader()
+                        .destroy(publicId, ObjectUtils.asMap("invalidate", true));
+                hendler.post(() -> {
+                    if (!"ok".equals(result.get("result"))) {
+                        String message = context.getString(R.string.error_delete_image);
+                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public static String extractPublicIdFromUrl(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty())
+            return null;
+
+        String[] parts = imageUrl.split("/");
+        String lastPart = parts[parts.length - 1];
+        return lastPart.replaceAll("\\.[a-zA-Z0-9]+$", "");
+    }
+
+//    public static String extractPublicIdFromUrlJPG(String imageUrl) {
+//        if (imageUrl.contains(".jpg")) {
+//            String[] parts = imageUrl.split("/");
+//            return parts[parts.length - 1].replace(".jpg", ""); // Adiciona o prefixo da pasta (se houver)
+//        }
+//        return null;
+//    }
 }

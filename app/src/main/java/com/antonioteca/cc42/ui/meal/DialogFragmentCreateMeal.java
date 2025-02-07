@@ -1,6 +1,7 @@
 package com.antonioteca.cc42.ui.meal;
 
 
+import static com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase.extractPublicIdFromUrl;
 import static com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase.updateMealDataInFirebase;
 
 import android.Manifest;
@@ -227,14 +228,6 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                 }
             }
         }
-    }
-
-    private String extractPublicIdFromUrl(String imageUrl) {
-        if (imageUrl.contains(".jpg")) {
-            String[] parts = imageUrl.split("/");
-            return parts[parts.length - 1].replace(".jpg", ""); // Adiciona o prefixo da pasta (se houver)
-        }
-        return null;
     }
 
     private void showImagePickerDialog(Context context) {

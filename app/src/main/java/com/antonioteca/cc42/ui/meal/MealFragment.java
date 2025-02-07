@@ -59,7 +59,11 @@ public class MealFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         binding.recyclerViewMeal.setHasFixedSize(true);
         binding.recyclerViewMeal.setLayoutManager(new LinearLayoutManager(context));
-        mealAdapter = new MealAdapter(context, new ArrayList<>());
+        mealAdapter = new MealAdapter(context,
+                new ArrayList<>(),
+                firebaseDatabase,
+                getLayoutInflater(),
+                new User(context).getCampusId());
         binding.recyclerViewMeal.setAdapter(mealAdapter);
 
         String colorCoalition = user.coalition.getColor();

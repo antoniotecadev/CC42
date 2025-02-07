@@ -102,4 +102,8 @@
     <string name="error_update_image_url">Erro ao actualizar URL da imagem: </string>
     <string name="sucess_meal_update">Refeição atualizada com sucesso!</string>
     <string name="error_meal_update">"Erro ao atualizar refeição: "</string>
+    <string name="sucess_meal_delete">Refeição excluída com sucesso!</string>
+    <string name="error_meal_delete">"Erro ao excluir refeição: "</string>
+    <string name="delete_meal">Eliminar</string>
+    <string name="error_delete_image">Erro ao eliminar a imagem!</string>
 </resources>
