@@ -81,4 +81,9 @@
             android:name="detailsMeal"
             app:argType="com.antonioteca.cc42.model.Meal" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_cursu_list_meal"
+        android:name="com.antonioteca.cc42.ui.meal.CursuListMealFragment"
+        android:label="@string/title_cursus"
+        tools:layout="@layout/fragment_cursu_list_meal" />
 </navigation>

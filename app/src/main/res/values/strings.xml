@@ -106,4 +106,8 @@
     <string name="error_meal_delete">"Erro ao excluir refeição: "</string>
     <string name="delete_meal">Eliminar</string>
     <string name="error_delete_image">Erro ao eliminar a imagem!</string>
+    <string name="msg_not_found_cursus">Cursos não encontrados 😥\nPuxar para tentar carregar novamente.</string>
+    <string name="title_cursus">Cursos</string>
+    <string name="_0">0</string>
+    <string name="cursu">Curso</string>
 </resources>
