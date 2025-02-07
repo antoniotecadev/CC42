@@ -174,6 +174,7 @@ public class DaoMealFirebase {
                     restaureViews(binding);
                     String message = context.getString(R.string.error_update_image_url) + e.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                    deleteImageFromCloudinary(newImageUrl, layoutInflater, context);
                 });
     }
 
@@ -217,6 +218,7 @@ public class DaoMealFirebase {
                     restaureViews(binding);
                     String message = context.getString(R.string.error_meal_update) + e.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                    deleteImageFromCloudinary(newImageUrl, layoutInflater, context);
                 });
     }
 
@@ -268,6 +270,7 @@ public class DaoMealFirebase {
                     restaureViews(binding);
                     String message = mealName + "\n" + context.getString(R.string.error_save_meal) + ": " + e.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                    deleteImageFromCloudinary(imageUrl, layoutInflater, context);
                 });
     }
 
