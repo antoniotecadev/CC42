@@ -30,7 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class MealFragment extends Fragment {
+public class MealListFragment extends Fragment {
 
 
     private User user;
@@ -61,7 +61,7 @@ public class MealFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        MealFragmentArgs args = MealFragmentArgs.fromBundle(getArguments());
+        MealListFragmentArgs args = MealListFragmentArgs.fromBundle(getArguments());
         Cursu cursu = args.getCursu();
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
@@ -92,8 +92,8 @@ public class MealFragment extends Fragment {
             binding.progressBarMeal.setIndeterminateTintList(colorStateList);
         }
         binding.btnCreateMeal.setOnClickListener(v -> {
-            MealFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal =
-                    MealFragmentDirections.actionNavMealToDialogFragmentCreateMeal(true);
+            MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal =
+                    MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(true);
             Navigation.findNavController(v).navigate(actionNavMealToDialogFragmentCreateMeal);
         });
         loadMeals(mealViewModel, firebaseDatabase, binding, context, String.valueOf(user.getCampusId()), String.valueOf(cursu.getId()));

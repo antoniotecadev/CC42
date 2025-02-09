@@ -53,8 +53,8 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         holder.binding.textViewDateCreated.setText(meal.getDate());
         Util.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal);
         holder.itemView.setOnClickListener(v -> {
-            MealFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment
-                    = MealFragmentDirections.actionNavMealToDetailsMealFragment(meal);
+            MealListFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment
+                    = MealListFragmentDirections.actionNavMealToDetailsMealFragment(meal);
             Navigation.findNavController(v).navigate(actionNavMealToDetailsMealFragment);
         });
         holder.itemView.setOnCreateContextMenuListener((contextMenu, view, contextMenuInfo) -> {
@@ -62,8 +62,8 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             MenuItem menuItemEdit = contextMenu.add(view.getContext().getString(R.string.edit_meal));
             MenuItem menuItemDelete = contextMenu.add(view.getContext().getString(R.string.delete_meal));
             menuItemEdit.setOnMenuItemClickListener(item -> {
-                MealFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal =
-                        MealFragmentDirections.actionNavMealToDialogFragmentCreateMeal(false).setMeal(meal);
+                MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal =
+                        MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(false).setMeal(meal);
                 Navigation.findNavController(view).navigate(actionNavMealToDialogFragmentCreateMeal);
                 return true;
             });
