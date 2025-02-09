@@ -30,6 +30,8 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ImageQrCodeBinding;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.BarcodeFormat;
@@ -149,11 +151,11 @@ public class Util {
                 .into(imageViewUserRegistered);
     }
 
-    public static void loadingImageMeal(Context context, String imageUrl, ImageView imageView) {
+    public static void loadingImageMeal(Context context, String imageUrl, ImageView imageView, boolean isDetails) {
         Glide.with(context)
                 .load(imageUrl)
-                .circleCrop()
-                .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_menu_60))
+                .transform(isDetails ? new RoundedCorners(30) : new CircleCrop())
+                .apply(new RequestOptions().placeholder(android.R.drawable.screen_background_dark_transparent))
                 .into(imageView);
     }
 

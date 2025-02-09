@@ -53,7 +53,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         holder.binding.textViewDescription.setText(meal.getDescription());
         holder.binding.txtQuantidadeProduto.setText(String.valueOf(meal.getQuantity()));
         holder.binding.textViewDateCreated.setText(meal.getDate());
-        Util.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal);
+        Util.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal, false);
         holder.itemView.setOnClickListener(v -> {
             MealListFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment
                     = MealListFragmentDirections.actionNavMealToDetailsMealFragment(meal, cursusId);

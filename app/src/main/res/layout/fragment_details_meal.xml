@@ -27,8 +27,8 @@
 
                 <ImageView
                     android:id="@+id/imageViewMeal"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="400dp"
+                    android:layout_height="400dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"
                     android:src="@drawable/ic_baseline_restaurant_menu_60" />
@@ -62,6 +62,7 @@
                 android:fontFamily="sans-serif-light"
                 android:inputType="textMultiLine"
                 android:lineSpacingExtra="8sp"
+                android:textAlignment="center"
                 android:padding="10dp"
                 android:textColor="@color/textColorPrimary"
                 android:textSize="12sp" />
@@ -95,11 +96,6 @@
                     app:maxImageSize="50dp"
                     app:srcCompat="@drawable/ic_baseline_app_registration_100" />
             </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/linearLayoutCompatMeailDetails"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

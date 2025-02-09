@@ -5,7 +5,6 @@ import static com.antonioteca.cc42.utility.Util.showModalQrCode;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +16,12 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsMealBinding;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.utility.Util;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
+import com.bumptech.glide.request.RequestOptions;
 
 
 public class DetailsMealFragment extends Fragment {
@@ -53,27 +52,16 @@ public class DetailsMealFragment extends Fragment {
             if (actionBar != null)
                 actionBar.setTitle(String.valueOf(meal.getQuantity()));
         }
-        Glide.with(this)
-                .load(meal.getPathImage())
-                .into(new CustomTarget<Drawable>() {
-                    @Override
-                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        binding.linearLayoutCompatMeailDetails.setBackground(resource);
-                    }
 
-                    @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {
-                        // Definir background placeholder caso a imagem não carregue
-                    }
-                });
         binding.textViewName.setText(meal.getName());
         binding.textViewDescription.setText(meal.getDescription());
         binding.textViewDate.setText(meal.getDate());
-        Util.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal);
+        Util.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, true);
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             Bitmap bitmapQrCode = generateQrCode(view.getContext(), "meal" + meal.getId());
             showModalQrCode(context, bitmapQrCode, meal.getName(), meal.getDescription());
         });
+        binding.imageViewMeal.setOnClickListener(v -> {});
     }
 
     @Override
