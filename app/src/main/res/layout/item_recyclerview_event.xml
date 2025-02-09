@@ -181,7 +181,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginTop="2dp"
-        android:text="gggggaessa"
         android:textColor="@color/light_blue_900"
         android:textSize="6sp"
         app:layout_constraintStart_toEndOf="@+id/textViewDays"
