@@ -292,8 +292,10 @@ public class DaoMealFirebase {
     public static void loadMeals(MealViewModel mealViewModel, FirebaseDatabase firebaseDatabase,
                                  FragmentMealBinding binding, Context context,
                                  String campusId, String cursusId) {
-        if (mealViewModel.getMealList().getValue() == null || mealViewModel.getMealList().getValue().isEmpty()) {
-            binding.progressBarMeal.setVisibility(View.VISIBLE);
+        if (mealViewModel.getMealList().getValue() == null || mealViewModel.getMealList().getValue().isEmpty()
+                || binding.swipeRefreshLayout.isRefreshing()) {
+            if (!binding.swipeRefreshLayout.isRefreshing())
+                binding.progressBarMeal.setVisibility(View.VISIBLE);
             DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                     .child(campusId)
                     .child("cursus")
@@ -315,7 +317,7 @@ public class DaoMealFirebase {
                         setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
                         String message = context.getString(R.string.meals_not_found);
                         Util.showAlertDialogBuild(context.getString(R.string.warning), message, context, () -> {
-                            setupVisibility(binding, View.VISIBLE, false, View.INVISIBLE, View.INVISIBLE);
+                            setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.INVISIBLE);
                             loadMeals(mealViewModel, firebaseDatabase, binding, context, campusId, cursusId);
                         });
                     }
@@ -326,13 +328,12 @@ public class DaoMealFirebase {
                     setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
                     String message = context.getString(R.string.error_load_data) + ": " + error.getMessage();
                     Util.showAlertDialogBuild(context.getString(R.string.err), message, context, () -> {
-                        setupVisibility(binding, View.VISIBLE, false, View.INVISIBLE, View.INVISIBLE);
+                        setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.INVISIBLE);
                         loadMeals(mealViewModel, firebaseDatabase, binding, context, campusId, cursusId);
                     });
                 }
             });
-        } else
-            setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
+        }
     }
 
     public static void setupVisibility(FragmentMealBinding binding, int viewP, boolean refreshing, int viewT, int viewR) {
