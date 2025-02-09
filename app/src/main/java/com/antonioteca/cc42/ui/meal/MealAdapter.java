@@ -25,14 +25,16 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
     private final FirebaseDatabase firebaseDatabase;
     private final LayoutInflater layoutInflater;
     private final int campusId;
+    private final int cursusId;
 
     private final Context context;
     private List<Meal> mealList;
 
-    public MealAdapter(Context context, List<Meal> mealList, FirebaseDatabase firebaseDatabase, LayoutInflater layoutInflater, int campusId) {
+    public MealAdapter(Context context, List<Meal> mealList, FirebaseDatabase firebaseDatabase, LayoutInflater layoutInflater, int campusId, int cursusId) {
         this.context = context;
         this.mealList = mealList;
         this.campusId = campusId;
+        this.cursusId = cursusId;
         this.layoutInflater = layoutInflater;
         this.firebaseDatabase = firebaseDatabase;
     }
@@ -54,7 +56,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         Util.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal);
         holder.itemView.setOnClickListener(v -> {
             MealListFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment
-                    = MealListFragmentDirections.actionNavMealToDetailsMealFragment(meal);
+                    = MealListFragmentDirections.actionNavMealToDetailsMealFragment(meal, cursusId);
             Navigation.findNavController(v).navigate(actionNavMealToDetailsMealFragment);
         });
         holder.itemView.setOnCreateContextMenuListener((contextMenu, view, contextMenuInfo) -> {
@@ -63,12 +65,12 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             MenuItem menuItemDelete = contextMenu.add(view.getContext().getString(R.string.delete_meal));
             menuItemEdit.setOnMenuItemClickListener(item -> {
                 MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal =
-                        MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(false).setMeal(meal);
+                        MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(false, cursusId).setMeal(meal);
                 Navigation.findNavController(view).navigate(actionNavMealToDialogFragmentCreateMeal);
                 return true;
             });
             menuItemDelete.setOnMenuItemClickListener(item -> {
-                deleteMeal(firebaseDatabase, context, meal, layoutInflater, campusId);
+                deleteMeal(firebaseDatabase, context, meal, layoutInflater, campusId, cursusId);
                 return true;
             });
         });
@@ -84,7 +86,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         notifyDataSetChanged();
     }
 
-    private void deleteMeal(FirebaseDatabase firebaseDatabase, Context context, Meal meal, LayoutInflater layoutInflater, int campusId) {
+    private void deleteMeal(FirebaseDatabase firebaseDatabase, Context context, Meal meal, LayoutInflater layoutInflater, int campusId, int cursusId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.delete_meal);
         builder.setMessage(meal.getName());
@@ -94,6 +96,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                 layoutInflater,
                 context,
                 String.valueOf(campusId),
+                String.valueOf(cursusId),
                 meal.getId(),
                 meal.getPathImage()));
         builder.show();

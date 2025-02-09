@@ -81,7 +81,8 @@ public class MealListFragment extends Fragment {
                 new ArrayList<>(),
                 firebaseDatabase,
                 getLayoutInflater(),
-                user.getCampusId());
+                user.getCampusId(),
+                cursu.getId());
         binding.recyclerViewMeal.setAdapter(mealAdapter);
 
         String colorCoalition = user.coalition.getColor();
@@ -93,7 +94,7 @@ public class MealListFragment extends Fragment {
         }
         binding.btnCreateMeal.setOnClickListener(v -> {
             MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal =
-                    MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(true);
+                    MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(true, cursu.getId());
             Navigation.findNavController(v).navigate(actionNavMealToDialogFragmentCreateMeal);
         });
         loadMeals(mealViewModel, firebaseDatabase, binding, context, String.valueOf(user.getCampusId()), String.valueOf(cursu.getId()));

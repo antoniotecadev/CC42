@@ -96,6 +96,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         addNumberSpinner(binding.spinnerQuantity, context);
         DialogFragmentCreateMealArgs args = DialogFragmentCreateMealArgs.fromBundle(getArguments());
         Meal meal = args.getMeal();
+        int cursusId = args.getCursusId();
         boolean isCreate = args.getIsCreate();
 
         if (!isCreate && meal != null) {
@@ -125,7 +126,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
             binding.buttonCreateMeal.setBackgroundColor(color);
         }
 
-        binding.buttonCreateMeal.setOnClickListener(v -> createUpdateMeal(meal, isCreate));
+        binding.buttonCreateMeal.setOnClickListener(v -> createUpdateMeal(meal, isCreate, cursusId));
         binding.buttonClose.setOnClickListener(v -> dialog.dismiss());
         imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), imageUri -> {
             // Imagem selecionada da galeria
@@ -172,7 +173,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         return true;
     }
 
-    private void createUpdateMeal(Meal meal, boolean isCreate) {
+    private void createUpdateMeal(Meal meal, boolean isCreate, int cursusId) {
         if (validateData(meal, isCreate, getLayoutInflater())) {
             binding.buttonClose.setEnabled(false);
             binding.buttonCreateMeal.setEnabled(false);
@@ -185,6 +186,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             binding,
                             context,
                             String.valueOf(user.getCampusId()),
+                            String.valueOf(cursusId),
                             imageUri
                     );
                 } else {
@@ -194,6 +196,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             binding,
                             context,
                             String.valueOf(user.getCampusId()),
+                            String.valueOf(cursusId),
                             ""
                     );
                 }
@@ -210,6 +213,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             binding,
                             context,
                             String.valueOf(user.getCampusId()),
+                            String.valueOf(cursusId),
                             meal.getId(),
                             imageUri,
                             extractPublicIdFromUrl(meal.getPathImage()),
@@ -223,6 +227,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             binding,
                             context,
                             String.valueOf(user.getCampusId()),
+                            String.valueOf(cursusId),
                             meal.getId(),
                             null); // Actualizar todos os dados no Firebase
                 }

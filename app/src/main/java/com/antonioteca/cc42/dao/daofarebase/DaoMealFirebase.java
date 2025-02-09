@@ -43,6 +43,7 @@ public class DaoMealFirebase {
                                                FragmentDialogCreateMealBinding binding,
                                                Context context,
                                                String campusId,
+                                               String cursusId,
                                                Uri imageUri) {
 
         MediaManager.get().upload(imageUri)
@@ -69,6 +70,7 @@ public class DaoMealFirebase {
                                 binding,
                                 context,
                                 campusId,
+                                cursusId,
                                 imageUrl);
                     }
 
@@ -81,6 +83,7 @@ public class DaoMealFirebase {
                                 binding,
                                 context,
                                 campusId,
+                                cursusId,
                                 "");
                     }
 
@@ -96,6 +99,7 @@ public class DaoMealFirebase {
                                       FragmentDialogCreateMealBinding binding,
                                       Context context,
                                       String campusId,
+                                      String cursusId,
                                       String mealId,
                                       Uri newImageUri,
                                       String publicId,
@@ -125,6 +129,7 @@ public class DaoMealFirebase {
                                     binding,
                                     context,
                                     campusId,
+                                    cursusId,
                                     mealId,
                                     newImageUrl); // Actualizar URL no Firebase
                         } else {
@@ -133,6 +138,7 @@ public class DaoMealFirebase {
                                     binding,
                                     context,
                                     campusId,
+                                    cursusId,
                                     mealId,
                                     newImageUrl); // Actualizar todos os dados no Firebase
                         }
@@ -157,10 +163,13 @@ public class DaoMealFirebase {
                                                  FragmentDialogCreateMealBinding binding,
                                                  Context context,
                                                  String campusId,
+                                                 String cursusId,
                                                  String mealId,
                                                  String newImageUrl) {
         DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
+                .child("cursus")
+                .child(cursusId)
                 .child("meals")
                 .child(mealId);
         // Atualizar apenas o campo pathImage
@@ -183,6 +192,7 @@ public class DaoMealFirebase {
                                                 FragmentDialogCreateMealBinding binding,
                                                 Context context,
                                                 String campusId,
+                                                String cursusId,
                                                 String mealId,
                                                 String newImageUrl) {
 
@@ -196,6 +206,8 @@ public class DaoMealFirebase {
 
         DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
+                .child("cursus")
+                .child(cursusId)
                 .child("meals")
                 .child(mealId);
 
@@ -227,6 +239,7 @@ public class DaoMealFirebase {
                                           FragmentDialogCreateMealBinding binding,
                                           Context context,
                                           String campusId,
+                                          String cursusId,
                                           String imageUrl) {
 
         String mealName = binding.textInputEditTextName.getText().toString();
@@ -239,6 +252,8 @@ public class DaoMealFirebase {
 
         DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
+                .child("cursus")
+                .child(cursusId)
                 .child("meals");
         // Gerar um ID único para a refeição
         String mealId = mealsRef.push().getKey();
@@ -337,11 +352,14 @@ public class DaoMealFirebase {
                                               LayoutInflater layoutInflater,
                                               Context context,
                                               String campusId,
+                                              String cursusId,
                                               String mealId,
                                               String imageUrl) {
 
         DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
+                .child("cursus")
+                .child(cursusId)
                 .child("meals")
                 .child(mealId);
 

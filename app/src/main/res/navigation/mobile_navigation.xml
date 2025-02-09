@@ -74,6 +74,9 @@
             app:argType="com.antonioteca.cc42.model.Meal"
             app:nullable="true"
             android:defaultValue="@null" />
+        <argument
+            android:name="cursusId"
+            app:argType="integer" />
     </dialog>
     <fragment
         android:id="@+id/detailsMealFragment"
@@ -83,6 +86,9 @@
         <argument
             android:name="detailsMeal"
             app:argType="com.antonioteca.cc42.model.Meal" />
+        <argument
+            android:name="cursusId"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/nav_cursu_list_meal"
