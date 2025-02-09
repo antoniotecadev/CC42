@@ -7,13 +7,13 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDialogCreateMealBinding;
+import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.utility.DateUtils;
 import com.antonioteca.cc42.utility.Util;
@@ -275,13 +275,14 @@ public class DaoMealFirebase {
     }
 
     public static void loadMeals(MealViewModel mealViewModel, FirebaseDatabase firebaseDatabase,
-                                 LayoutInflater layoutInflater,
-                                 ProgressBar progressBarMeal, Context context,
-                                 String campusId) {
+                                 FragmentMealBinding binding, Context context,
+                                 String campusId, String cursusId) {
         if (mealViewModel.getMealList().getValue() == null || mealViewModel.getMealList().getValue().isEmpty()) {
-            progressBarMeal.setVisibility(View.VISIBLE);
+            binding.progressBarMeal.setVisibility(View.VISIBLE);
             DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                     .child(campusId)
+                    .child("cursus")
+                    .child(cursusId)
                     .child("meals");
 
             mealsRef.addValueEventListener(new ValueEventListener() {
@@ -293,23 +294,37 @@ public class DaoMealFirebase {
                             Meal meal = dataSnapshot.getValue(Meal.class);
                             mealList.add(meal);
                         }
+                        setupVisibility(binding, View.INVISIBLE, false, View.INVISIBLE, View.VISIBLE);
                         mealViewModel.setMealList(mealList); // Atualizar RecyclerView
-                        progressBarMeal.setVisibility(View.INVISIBLE);
                     } else {
+                        setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
                         String message = context.getString(R.string.meals_not_found);
-                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", null);
-                        progressBarMeal.setVisibility(View.INVISIBLE);
+                        Util.showAlertDialogBuild(context.getString(R.string.warning), message, context, () -> {
+                            setupVisibility(binding, View.VISIBLE, false, View.INVISIBLE, View.INVISIBLE);
+                            loadMeals(mealViewModel, firebaseDatabase, binding, context, campusId, cursusId);
+                        });
                     }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
+                    setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
                     String message = context.getString(R.string.error_load_data) + ": " + error.getMessage();
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
-                    progressBarMeal.setVisibility(View.INVISIBLE);
+                    Util.showAlertDialogBuild(context.getString(R.string.err), message, context, () -> {
+                        setupVisibility(binding, View.VISIBLE, false, View.INVISIBLE, View.INVISIBLE);
+                        loadMeals(mealViewModel, firebaseDatabase, binding, context, campusId, cursusId);
+                    });
                 }
             });
-        }
+        } else
+            setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
+    }
+
+    public static void setupVisibility(FragmentMealBinding binding, int viewP, boolean refreshing, int viewT, int viewR) {
+        binding.progressBarMeal.setVisibility(viewP);
+        binding.swipeRefreshLayout.setRefreshing(refreshing);
+        binding.textViewNotFoundMeals.setVisibility(viewT);
+        binding.recyclerViewMeal.setVisibility(viewR);
     }
 
     private static void restaureViews(FragmentDialogCreateMealBinding binding) {

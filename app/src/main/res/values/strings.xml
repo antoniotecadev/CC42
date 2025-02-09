@@ -110,4 +110,5 @@
     <string name="title_cursus">Cursos</string>
     <string name="_0">0</string>
     <string name="cursu">Curso</string>
+    <string name="msg_meals_not_found">Refeições não encontradas 😥\nPuxar para tentar carregar novamente.</string>
 </resources>

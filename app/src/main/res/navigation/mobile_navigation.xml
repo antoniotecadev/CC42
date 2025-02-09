@@ -57,6 +57,9 @@
         <action
             android:id="@+id/action_nav_meal_to_detailsMealFragment"
             app:destination="@id/detailsMealFragment" />
+        <argument
+            android:name="cursu"
+            app:argType="com.antonioteca.cc42.model.Cursu" />
     </fragment>
     <dialog
         android:id="@+id/dialogFragmentCreateMeal"
@@ -85,5 +88,9 @@
         android:id="@+id/nav_cursu_list_meal"
         android:name="com.antonioteca.cc42.ui.meal.CursuListMealFragment"
         android:label="@string/title_cursus"
-        tools:layout="@layout/fragment_cursu_list_meal" />
+        tools:layout="@layout/fragment_cursu_list_meal" >
+        <action
+            android:id="@+id/action_nav_cursu_list_meal_to_nav_meal"
+            app:destination="@id/nav_meal" />
+    </fragment>
 </navigation>

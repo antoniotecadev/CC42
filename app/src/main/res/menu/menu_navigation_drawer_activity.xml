@@ -8,10 +8,6 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_baseline_home_24"
             android:title="@string/menu_home" />
-        <item
-            android:id="@+id/nav_meal"
-            android:icon="@drawable/ic_baseline_food_bank_24"
-            android:title="@string/menu_meals" />
 
         <item
             android:id="@+id/nav_cursu_list_meal"

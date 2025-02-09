@@ -1,6 +1,7 @@
 package com.antonioteca.cc42.ui.meal;
 
 import static com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase.loadMeals;
+import static com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase.setupVisibility;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -12,6 +13,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -19,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.model.Coalition;
+import com.antonioteca.cc42.model.Cursu;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
@@ -57,13 +61,27 @@ public class MealFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        MealFragmentArgs args = MealFragmentArgs.fromBundle(getArguments());
+        Cursu cursu = args.getCursu();
+        if (getActivity() != null) {
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null)
+                actionBar.setTitle(String.valueOf(cursu.getName()));
+        }
+
         binding.recyclerViewMeal.setHasFixedSize(true);
         binding.recyclerViewMeal.setLayoutManager(new LinearLayoutManager(context));
+
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> {
+            setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
+            loadMeals(mealViewModel, firebaseDatabase, binding, context, String.valueOf(user.getCampusId()), String.valueOf(cursu.getId()));
+        });
+
         mealAdapter = new MealAdapter(context,
                 new ArrayList<>(),
                 firebaseDatabase,
                 getLayoutInflater(),
-                new User(context).getCampusId());
+                user.getCampusId());
         binding.recyclerViewMeal.setAdapter(mealAdapter);
 
         String colorCoalition = user.coalition.getColor();
@@ -78,8 +96,8 @@ public class MealFragment extends Fragment {
                     MealFragmentDirections.actionNavMealToDialogFragmentCreateMeal(true);
             Navigation.findNavController(v).navigate(actionNavMealToDialogFragmentCreateMeal);
         });
+        loadMeals(mealViewModel, firebaseDatabase, binding, context, String.valueOf(user.getCampusId()), String.valueOf(cursu.getId()));
         mealViewModel.getMealList().observe(getViewLifecycleOwner(), meals -> mealAdapter.updateMealList(meals));
-        loadMeals(mealViewModel, firebaseDatabase, getLayoutInflater(), binding.progressBarMeal, context, String.valueOf(user.getCampusId()));
     }
 
     @Override

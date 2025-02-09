@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
@@ -47,6 +48,11 @@ public class CursuAdapter extends RecyclerView.Adapter<CursuAdapter.CursuViewHol
             holder.binding.imageViewCursu.setColorFilter(colorIcon);
         holder.binding.textViewName.setText(cursu.getName());
         holder.binding.textViewId.setText(String.valueOf(cursu.getId()));
+        holder.itemView.setOnClickListener(v -> {
+            CursuListMealFragmentDirections.ActionNavCursuListMealToNavMeal actionNavCursuListMealToNavMeal =
+                    CursuListMealFragmentDirections.actionNavCursuListMealToNavMeal(cursu);
+            Navigation.findNavController(v).navigate(actionNavCursuListMealToNavMeal);
+        });
     }
 
     @Override
