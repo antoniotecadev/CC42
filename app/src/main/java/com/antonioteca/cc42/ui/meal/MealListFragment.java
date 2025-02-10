@@ -1,6 +1,5 @@
 package com.antonioteca.cc42.ui.meal;
 
-import static com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase.loadMeals;
 import static com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase.setupVisibility;
 
 import android.content.Context;
@@ -26,6 +25,7 @@ import com.antonioteca.cc42.model.Cursu;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
@@ -35,11 +35,12 @@ public class MealListFragment extends Fragment {
 
     private User user;
     private Context context;
+    private MealAdapter mealAdapter;
     private MealViewModel mealViewModel;
     private FragmentMealBinding binding;
-
-    private MealAdapter mealAdapter;
     private FirebaseDatabase firebaseDatabase;
+
+    private DatabaseReference mealsRef;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,12 +70,17 @@ public class MealListFragment extends Fragment {
                 actionBar.setTitle(String.valueOf(cursu.getName()));
         }
 
+        mealsRef = firebaseDatabase.getReference("campus").child(String.valueOf(user.getCampusId()))
+                .child("cursus")
+                .child(String.valueOf(cursu.getId()))
+                .child("meals");
+
         binding.recyclerViewMeal.setHasFixedSize(true);
         binding.recyclerViewMeal.setLayoutManager(new LinearLayoutManager(context));
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
-            loadMeals(mealViewModel, firebaseDatabase, binding, context, String.valueOf(user.getCampusId()), String.valueOf(cursu.getId()));
+            mealViewModel.loadMeals(mealsRef, binding, context);
         });
 
         mealAdapter = new MealAdapter(context,
@@ -97,8 +103,7 @@ public class MealListFragment extends Fragment {
                     MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(true, cursu.getId());
             Navigation.findNavController(v).navigate(actionNavMealToDialogFragmentCreateMeal);
         });
-        loadMeals(mealViewModel, firebaseDatabase, binding, context, String.valueOf(user.getCampusId()), String.valueOf(cursu.getId()));
-        mealViewModel.getMealList().observe(getViewLifecycleOwner(), meals -> mealAdapter.updateMealList(meals));
+        mealViewModel.getMealList(mealsRef, binding, context).observe(getViewLifecycleOwner(), meals -> mealAdapter.updateMealList(meals));
     }
 
     @Override

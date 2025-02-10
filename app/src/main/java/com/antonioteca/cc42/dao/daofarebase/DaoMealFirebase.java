@@ -9,29 +9,21 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDialogCreateMealBinding;
 import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.utility.DateUtils;
 import com.antonioteca.cc42.utility.Util;
-import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.cloudinary.utils.ObjectUtils;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -287,53 +279,6 @@ public class DaoMealFirebase {
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                     deleteImageFromCloudinary(imageUrl, layoutInflater, context);
                 });
-    }
-
-    public static void loadMeals(MealViewModel mealViewModel, FirebaseDatabase firebaseDatabase,
-                                 FragmentMealBinding binding, Context context,
-                                 String campusId, String cursusId) {
-        if (mealViewModel.getMealList().getValue() == null || mealViewModel.getMealList().getValue().isEmpty()
-                || binding.swipeRefreshLayout.isRefreshing()) {
-            if (!binding.swipeRefreshLayout.isRefreshing())
-                binding.progressBarMeal.setVisibility(View.VISIBLE);
-            DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
-                    .child(campusId)
-                    .child("cursus")
-                    .child(cursusId)
-                    .child("meals");
-
-            mealsRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()) {
-                        List<Meal> mealList = new ArrayList<>();
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            Meal meal = dataSnapshot.getValue(Meal.class);
-                            mealList.add(meal);
-                        }
-                        setupVisibility(binding, View.INVISIBLE, false, View.INVISIBLE, View.VISIBLE);
-                        mealViewModel.setMealList(mealList); // Atualizar RecyclerView
-                    } else {
-                        setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
-                        String message = context.getString(R.string.meals_not_found);
-                        Util.showAlertDialogBuild(context.getString(R.string.warning), message, context, () -> {
-                            setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.INVISIBLE);
-                            loadMeals(mealViewModel, firebaseDatabase, binding, context, campusId, cursusId);
-                        });
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
-                    String message = context.getString(R.string.error_load_data) + ": " + error.getMessage();
-                    Util.showAlertDialogBuild(context.getString(R.string.err), message, context, () -> {
-                        setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.INVISIBLE);
-                        loadMeals(mealViewModel, firebaseDatabase, binding, context, campusId, cursusId);
-                    });
-                }
-            });
-        }
     }
 
     public static void setupVisibility(FragmentMealBinding binding, int viewP, boolean refreshing, int viewT, int viewR) {
