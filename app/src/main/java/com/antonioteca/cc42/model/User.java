@@ -27,6 +27,8 @@ public class User {
 
     public String url;
 
+    private String kind;
+
     public Image image;
 
     public List<Campus> campus;
@@ -41,6 +43,9 @@ public class User {
 
     @Expose(serialize = false, deserialize = false)
     public Boolean present = null;
+
+    @Expose(serialize = false, deserialize = false)
+    public Boolean subscription = null;
 
     @Expose(serialize = false, deserialize = false)
     private final SharedPreferences preferences;
@@ -90,11 +95,15 @@ public class User {
         return preferences.getString("url", null);
     }
 
+    public String getKind() {
+        return kind;
+    }
+
     public String getImage() {
         return preferences.getString("image_link", null);
     }
 
-    public String getUrlImageUserRegisteredEvent() {
+    public String getUrlImageUser() {
         return image.link;
     }
 
@@ -132,6 +141,13 @@ public class User {
     }
 
 
+    public Boolean isSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Boolean subscription) {
+        this.subscription = subscription;
+    }
 }
 
 class Image {

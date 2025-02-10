@@ -15,13 +15,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
-import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsMealBinding;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.utility.Util;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 
 
 public class DetailsMealFragment extends Fragment {
@@ -46,13 +44,14 @@ public class DetailsMealFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Meal meal = DetailsMealFragmentArgs.fromBundle(requireArguments()).getDetailsMeal();
+        DetailsMealFragmentArgs args = DetailsMealFragmentArgs.fromBundle(requireArguments());
+        Meal meal = args.getDetailsMeal();
+        int cursusId = args.getCursusId();
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             if (actionBar != null)
                 actionBar.setTitle(String.valueOf(meal.getQuantity()));
         }
-
         binding.textViewName.setText(meal.getName());
         binding.textViewDescription.setText(meal.getDescription());
         binding.textViewDate.setText(meal.getDate());
@@ -61,7 +60,11 @@ public class DetailsMealFragment extends Fragment {
             Bitmap bitmapQrCode = generateQrCode(view.getContext(), "meal" + meal.getId());
             showModalQrCode(context, bitmapQrCode, meal.getName(), meal.getDescription());
         });
-        binding.imageViewMeal.setOnClickListener(v -> {});
+        binding.fabOpenSubscriptionList.setOnClickListener(v -> {
+            DetailsMealFragmentDirections.ActionDetailsMealFragmentToSubscriptionListFragment actionDetailsMealFragmentToSubscriptionListFragment =
+                    DetailsMealFragmentDirections.actionDetailsMealFragmentToSubscriptionListFragment(meal, cursusId);
+            Navigation.findNavController(v).navigate(actionDetailsMealFragmentToSubscriptionListFragment);
+        });
     }
 
     @Override

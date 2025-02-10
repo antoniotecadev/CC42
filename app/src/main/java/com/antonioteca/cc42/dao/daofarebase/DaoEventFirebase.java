@@ -83,7 +83,7 @@ public class DaoEventFirebase {
                     // Execute a operação atômica para armazenar o evento e os participantes
                     campusReference.updateChildren(eventUpdates)
                             .addOnSuccessListener(aVoid -> {
-                                sharedViewModel.setMarkAttendanceUser(Long.valueOf(userId));
+                                sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
                                 Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = displayName + "\n" + context.getString(R.string.msg_sucess_mark_attendance_event);
                                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", runnableResumeCamera);
@@ -200,7 +200,7 @@ public class DaoEventFirebase {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("Firebase", "Erro ao verificar presença", error.toException());
             }
         });

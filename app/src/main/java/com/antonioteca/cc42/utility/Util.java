@@ -51,8 +51,8 @@ public class Util {
         if (runnableTryAgain == null)
             builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
         else {
-            builder.setPositiveButton(R.string.try_again, (dialogInterface, i) -> runnableTryAgain.run());
-            builder.setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
+            builder.setNeutralButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
+            builder.setPositiveButton(R.string.list_reload, (dialogInterface, i) -> runnableTryAgain.run());
         }
         builder.show();
     }
@@ -127,13 +127,13 @@ public class Util {
         dialog.show();
     }
 
-    public static void showModalUserDetails(Context context, String title, String description, String urlImageUserRegisteredEvent, boolean isPresent) {
+    public static void showModalUserDetails(Context context, String title, String description, String urlImageUserRegisteredEvent, String textButtom, boolean isPresent) {
         ImageQrCodeBinding binding = ImageQrCodeBinding.inflate(LayoutInflater.from(context));
-        int color = isPresent ? Color.rgb(0, 200, 0) : Color.rgb(200, 0, 0);
+        int color = isPresent ? Color.parseColor("#43A047") : Color.rgb(200, 0, 0);
         binding.textViewTitle.setText(title);
         binding.textViewDescription.setText(description);
         binding.closeModalButton.setBackgroundColor(color);
-        binding.closeModalButton.setText(isPresent ? R.string.text_present : R.string.text_absent);
+        binding.closeModalButton.setText(textButtom);
         Util.setImageUserRegistered(context, urlImageUserRegisteredEvent, binding.imageViewQrCode);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(binding.getRoot());
@@ -146,8 +146,8 @@ public class Util {
         GlideApp.with(context)
                 .load(imageUrl)
                 .circleCrop() // Recorta a imagem para ser circular
-                .placeholder(R.drawable.logo_42) // Imagem de substituição enquanto a imagem carrega
-                .error(R.drawable.logo_42) // Imagem a ser mostrada caso ocorra um erro
+                .placeholder(R.drawable.ic_baseline_account_circle_300) // Imagem de substituição enquanto a imagem carrega
+                .error(R.drawable.ic_baseline_account_circle_300) // Imagem a ser mostrada caso ocorra um erro
                 .into(imageViewUserRegistered);
     }
 

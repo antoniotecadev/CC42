@@ -1,4 +1,4 @@
-package com.antonioteca.cc42.ui.event;
+package com.antonioteca.cc42.ui.meal;
 
 import android.Manifest;
 import android.app.Activity;
@@ -22,6 +22,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -33,10 +35,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
-import com.antonioteca.cc42.databinding.FragmentAttendanceListBinding;
+import com.antonioteca.cc42.dao.daofarebase.DaoSusbscriptionFirebase;
+import com.antonioteca.cc42.databinding.FragmentSubscriptionListBinding;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Coalition;
-import com.antonioteca.cc42.model.LocalAttendanceList;
+import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.network.HttpException;
@@ -63,32 +66,33 @@ import com.journeyapps.barcodescanner.camera.CameraSettings;
 import java.io.File;
 import java.util.List;
 
-public class AttendanceListFragment extends Fragment {
+public class SubscriptionListFragment extends Fragment {
 
     private User user;
+    private Meal meal;
     private Loading l;
-    private Long eventId;
-    private Integer cursuId;
     private Context context;
+    private Integer cursusId;
     private String eventKind;
     private String eventName;
     private String eventDate;
     private Integer cameraId;
     private Activity activity;
-    private int numberUserAbsent;
-    private int numberUserPresent;
     private String colorCoalition;
     private View inflatedViewStub;
     private BeepManager beepManager;
     private ScanOptions scanOptions;
     private MenuProvider menuProvider;
     private UserViewModel userViewModel;
+    private int numberUserSubscription;
+    private int numberUserUnsubscription;
     private LayoutInflater layoutInflater;
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
-    private FragmentAttendanceListBinding binding;
+    private ProgressBar progressBarSubscription;
+    private FragmentSubscriptionListBinding binding;
     private DecoratedBarcodeView decoratedBarcodeView;
-    private AttendanceListAdapter attendanceListAdapter;
+    private SubscriptionListAdapter subscriptionListAdapter;
 
     final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
     final long[] lastClickTime = {0};
@@ -116,42 +120,25 @@ public class AttendanceListFragment extends Fragment {
                     String resultQrCode = result.getText().replace("cc42user", "");
                     String[] partsQrCode = resultQrCode.split("#", 5);
                     if (partsQrCode.length == 5) {
-                        if (attendanceListAdapter.containsUser(Long.parseLong(partsQrCode[0]))) {
-                            if (true) {
-                                LocalAttendanceList user = new LocalAttendanceList();
-                                user.userId = Long.parseLong(partsQrCode[0]);
-                                user.displayName = partsQrCode[2];
-                                user.cursusId = Integer.parseInt(partsQrCode[3]);
-                                user.campusId = Integer.parseInt(partsQrCode[4]);
-                                user.eventId = eventId;
-                                userViewModel.addUserLocalAttendanceList(
-                                        user,
-                                        context,
-                                        layoutInflater,
-                                        sharedViewModel,
-                                        () -> decoratedBarcodeView.resume()
-                                );
-                            } else {
-                                // Armazenamento directo para nuvem
-                                /*Util.setVisibleProgressBar(progressBarMarkAttendance, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
-                                DaoEventFirebase.markAttendance(
-                                        firebaseDatabase,
-                                        String.valueOf(eventId),
-                                        partsQrCode[0],
-                                        partsQrCode[1],
-                                        partsQrCode[2],
-                                        partsQrCode[3],
-                                        partsQrCode[4],
-                                        context,
-                                        layoutInflater,
-                                        progressBarMarkAttendance,
-                                        binding.fabOpenCameraScannerQrCodeBack,
-                                        sharedViewModel,
-                                        () -> decoratedBarcodeView.resume()
-                                );*/
-                            }
+                        if (subscriptionListAdapter.containsUser(Long.parseLong(partsQrCode[0]))) {
+                            Util.setVisibleProgressBar(progressBarSubscription, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
+                            DaoSusbscriptionFirebase.subscription(
+                                    firebaseDatabase,
+                                    String.valueOf(meal.getId()),
+                                    partsQrCode[0], /* id */
+                                    partsQrCode[1], /* login */
+                                    partsQrCode[2], /* displayName */
+                                    String.valueOf(cursusId),
+                                    partsQrCode[4], /* campusId */
+                                    context,
+                                    layoutInflater,
+                                    progressBarSubscription,
+                                    binding.fabOpenCameraScannerQrCodeBack,
+                                    sharedViewModel,
+                                    () -> decoratedBarcodeView.resume()
+                            );
                         } else
-                            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), partsQrCode[2] + "\n" + getString(R.string.msg_user_unregistered), "#FDD835", null);
+                            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), partsQrCode[2] + "\n" + getString(R.string.msg_user_not_fount_list), "#FDD835", null);
                     } else
                         Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", () -> decoratedBarcodeView.resume());
                 } else
@@ -166,11 +153,11 @@ public class AttendanceListFragment extends Fragment {
 
     private void activityResultContractsViewer(Boolean result) {
         if (result) {
-            List<User> userList = attendanceListAdapter.getUserList();
+            List<User> userList = subscriptionListAdapter.getUserList();
             if (userList.isEmpty()) {
-                Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_attendance_list_empty), context, null);
+                Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
             } else {
-                File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
+                File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList());
                 if (filePdf != null)
                     PdfViewer.openPdf(context, filePdf);
             }
@@ -180,15 +167,15 @@ public class AttendanceListFragment extends Fragment {
 
     private void activityResultContractsSharer(Boolean result) {
         if (result) {
-            List<User> userList = attendanceListAdapter.getUserList();
+            List<User> userList = subscriptionListAdapter.getUserList();
             if (userList.isEmpty()) {
-                Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_attendance_list_empty), context, null);
+                Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
             } else {
                 File filePdf = PdfCreator.createPdfAttendanceList(context,
                         eventKind,
                         eventName,
                         eventDate,
-                        numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
+                        numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList());
                 if (filePdf != null)
                     PdfSharer.sharePdf(context, filePdf);
             }
@@ -219,7 +206,7 @@ public class AttendanceListFragment extends Fragment {
         layoutInflater = getLayoutInflater();
         beepManager = new BeepManager(activity);
         colorCoalition = new Coalition(context).getColor();
-        attendanceListAdapter = new AttendanceListAdapter();
+        subscriptionListAdapter = new SubscriptionListAdapter();
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         UserRepository userRepository = new UserRepository(context);
@@ -230,7 +217,7 @@ public class AttendanceListFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentAttendanceListBinding.inflate(inflater, container, false);
+        binding = FragmentSubscriptionListBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -238,21 +225,22 @@ public class AttendanceListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         activeScrollListener();
-        AttendanceListFragmentArgs args = AttendanceListFragmentArgs.fromBundle(requireArguments());
-        eventId = args.getEventId();
-        cursuId = args.getCursuId();
-        eventKind = args.getKindEvent();
-        eventName = args.getNameEvent();
-        eventDate = args.getDataEvent();
-        binding.recyclerviewAttendanceList.setHasFixedSize(true);
-        binding.recyclerviewAttendanceList.setLayoutManager(new LinearLayoutManager(context));
-
+        SubscriptionListFragmentArgs args = SubscriptionListFragmentArgs.fromBundle(requireArguments());
+        meal = args.getMeal();
+        cursusId = args.getCursusId();
+        if (getActivity() != null) {
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null)
+                actionBar.setTitle(String.valueOf(meal.getName()));
+        }
+        binding.recyclerviewSubscriptionList.setHasFixedSize(true);
+        binding.recyclerviewSubscriptionList.setLayoutManager(new LinearLayoutManager(context));
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
             l.currentPage = 1;
             activeScrollListener();
-            attendanceListAdapter.clean();
-            userViewModel.getUsersEvent(eventId, l, context);
+            subscriptionListAdapter.clean();
+            userViewModel.getUsersSubscription(cursusId, l, context);
         });
 
         scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
@@ -269,12 +257,12 @@ public class AttendanceListFragment extends Fragment {
         decoratedBarcodeView.initializeFromIntent(scanOptions.createScanIntent(context));
         decoratedBarcodeView.decodeContinuous(callback);
 
-        ProgressBar progressBarMarkAttendance = binding.progressBarMarkAttendance;
+        progressBarSubscription = binding.progressBarSubscription;
         if (colorCoalition != null)
-            progressBarMarkAttendance.setIndeterminateTintList(ColorStateList.valueOf(Color.parseColor(colorCoalition)));
+            progressBarSubscription.setIndeterminateTintList(ColorStateList.valueOf(Color.parseColor(colorCoalition)));
 
-        binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(v -> openCameraScannerQrCodeEvent(0));
-        binding.fabOpenCameraScannerQrCodeFront.setOnClickListener(v -> openCameraScannerQrCodeEvent(1));
+        binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(v -> openCameraScannerQrCodeSubscriptio(0));
+        binding.fabOpenCameraScannerQrCodeFront.setOnClickListener(v -> openCameraScannerQrCodeSubscriptio(1));
 
         inflatedViewStub.setOnLongClickListener(v -> {
             if (isFlashLightOn[0]) {
@@ -307,34 +295,33 @@ public class AttendanceListFragment extends Fragment {
             }
         });
 
-        userViewModel.getUsersEventLiveData(eventId, l, progressBarMarkAttendance, context).observe(getViewLifecycleOwner(), users -> {
+        userViewModel.getUsersSubscriptionLiveData(cursusId, l, context, progressBarSubscription).observe(getViewLifecycleOwner(), users -> {
             if (!users.isEmpty() && users.get(0) != null) {
-                //setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
-                attendanceListAdapter.updateUserList(users, context);
-                binding.recyclerviewAttendanceList.setAdapter(attendanceListAdapter);
+                subscriptionListAdapter.updateUserList(users, context);
+                binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
             } else
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
         });
 
         userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
-            Toast.makeText(context, R.string.msg_checking_attendance, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.msg_checking_subscription, Toast.LENGTH_LONG).show();
             if (!userIds.isEmpty() && userIds.get(0) != null)
-                attendanceListAdapter.updateAttendanceUser(userIds);
+                subscriptionListAdapter.updateSubscriptionUser(userIds);
             setNumberUserChip();
             setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
         });
 
         sharedViewModel.getUserIdLiveData().observe(getViewLifecycleOwner(), userId -> {
             if (userId > 0) {
-                attendanceListAdapter.updateAttendanceUserSingle(userId);
-                binding.chipPresent.setText(String.valueOf(numberUserPresent + 1));
+                subscriptionListAdapter.updateSubscriptionUserSingle(userId);
+                binding.chipSubscription.setText(String.valueOf(numberUserSubscription + 1));
             }
         });
 
         userViewModel.getHttpSatusEvent().observe(getViewLifecycleOwner(), event -> {
             if (event != null) {
                 desactiveScrollListener();
-                int count = attendanceListAdapter.getItemCount();
+                int count = subscriptionListAdapter.getItemCount();
                 if (count > 0) setNumberUserChip();
                 String message = (count > 0 ? getString(R.string.msg_users_not_reload) : "");
                 setupVisibility(binding, View.GONE, false, count > 0 ? View.GONE : View.VISIBLE, count > 0 ? View.VISIBLE : View.GONE);
@@ -343,8 +330,8 @@ public class AttendanceListFragment extends Fragment {
                     setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
                     l.currentPage = 1;
                     activeScrollListener();
-                    attendanceListAdapter.clean();
-                    userViewModel.getUsersEvent(eventId, l, context);
+                    subscriptionListAdapter.clean();
+                    userViewModel.getUsersSubscription(cursusId, l, context);
                 });
             }
         });
@@ -352,7 +339,7 @@ public class AttendanceListFragment extends Fragment {
         userViewModel.getHttpExceptionEvent().observe(getViewLifecycleOwner(), event -> {
             if (event != null) {
                 desactiveScrollListener();
-                int count = attendanceListAdapter.getItemCount();
+                int count = subscriptionListAdapter.getItemCount();
                 if (count > 0) setNumberUserChip();
                 String message = (count > 0 ? getString(R.string.msg_users_not_reload) : "");
                 setupVisibility(binding, View.GONE, false, count > 0 ? View.GONE : View.VISIBLE, count > 0 ? View.VISIBLE : View.GONE);
@@ -361,8 +348,8 @@ public class AttendanceListFragment extends Fragment {
                     setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
                     l.currentPage = 1;
                     activeScrollListener();
-                    attendanceListAdapter.clean();
-                    userViewModel.getUsersEvent(eventId, l, context);
+                    subscriptionListAdapter.clean();
+                    userViewModel.getUsersSubscription(cursusId, l, context);
                 });
             }
         });
@@ -371,6 +358,7 @@ public class AttendanceListFragment extends Fragment {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_attendance_list, menu);
+                menu.findItem(R.id.action_list_reload).setVisible(false);
                 MenuItem menuItem = menu.findItem(R.id.action_search);
                 SearchView searchView = (SearchView) menuItem.getActionView();
                 searchView.setQueryHint(context.getString(R.string.name_login));
@@ -378,13 +366,13 @@ public class AttendanceListFragment extends Fragment {
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
-                        attendanceListAdapter.filter(query);
+                        subscriptionListAdapter.filter(query);
                         return false;
                     }
 
                     @Override
                     public boolean onQueryTextChange(String newText) {
-                        attendanceListAdapter.filter(newText);
+                        subscriptionListAdapter.filter(newText);
                         return false;
                     }
                 });
@@ -394,24 +382,18 @@ public class AttendanceListFragment extends Fragment {
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 NavController navController = Navigation.findNavController(activity, R.id.nav_host_fragment_content_navigation_drawer);
                 int itemId = menuItem.getItemId();
-                if (itemId == R.id.action_list_reload) {
-                    setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
-                    l.currentPage = 1;
-                    activeScrollListener();
-                    attendanceListAdapter.clean();
-                    userViewModel.getUsersEvent(eventId, l, context);
-                } else if (itemId == R.id.action_list_print) {
+                if (itemId == R.id.action_list_print) {
                     boolean isExternalStorageManager = Util.launchPermissionDocument(
                             context,
                             requestIntentPermissionLauncherViewer,
                             requestPermissionLauncherViewer,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     if (isExternalStorageManager) {
-                        List<User> userList = attendanceListAdapter.getUserList();
+                        List<User> userList = subscriptionListAdapter.getUserList();
                         if (userList.isEmpty()) {
-                            Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_attendance_list_empty), context, null);
+                            Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
                         } else {
-                            File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, userList);
+                            File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserUnsubscription, numberUserSubscription, userList);
                             if (filePdf != null)
                                 PdfViewer.openPdf(context, filePdf);
                         }
@@ -423,11 +405,11 @@ public class AttendanceListFragment extends Fragment {
                             requestPermissionLauncherSharer,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     if (isExternalStorageManager) {
-                        List<User> userList = attendanceListAdapter.getUserList();
+                        List<User> userList = subscriptionListAdapter.getUserList();
                         if (userList.isEmpty()) {
-                            Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_attendance_list_empty), context, null);
+                            Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
                         } else {
-                            File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, userList);
+                            File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserUnsubscription, numberUserSubscription, userList);
                             if (filePdf != null)
                                 PdfSharer.sharePdf(context, filePdf);
                         }
@@ -440,7 +422,7 @@ public class AttendanceListFragment extends Fragment {
         sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> {
             binding.fabOpenCameraScannerQrCodeBack.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
             binding.fabOpenCameraScannerQrCodeFront.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
-            binding.recyclerviewAttendanceList.setOnTouchListener((v, event) -> disabled);
+            binding.recyclerviewSubscriptionList.setOnTouchListener((v, event) -> disabled);
         });
     }
 
@@ -450,32 +432,33 @@ public class AttendanceListFragment extends Fragment {
         public void onLoadMore() {
             if (!l.isLoading && l.hasNextPage) {
                 Toast.makeText(context, R.string.msg_loading_more_data, Toast.LENGTH_LONG).show();
-                userViewModel.getUsersEvent(eventId, l, context);  // Carregar mais usuários
+                userViewModel.getUsersSubscription(cursusId, l, context);
             } else {
-                userViewModel.synchronizedAttendanceList(userViewModel, firebaseDatabase, user.getCampusId(), cursuId, eventId, binding.swipeRefreshLayout, context, layoutInflater);
+                Toast.makeText(context, R.string.synchronization, Toast.LENGTH_LONG).show();
+                userViewModel.synchronizedSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
                 desactiveScrollListener();
             }
         }
     };
 
     private void setNumberUserChip() {
-        numberUserAbsent = attendanceListAdapter.getNumberUser(false);
-        numberUserPresent = attendanceListAdapter.getNumberUser(true);
-        binding.chipAbsent.setText(String.valueOf(numberUserAbsent));
-        binding.chipPresent.setText(String.valueOf(numberUserPresent));
+        numberUserUnsubscription = subscriptionListAdapter.getNumberUser(false);
+        numberUserSubscription = subscriptionListAdapter.getNumberUser(true);
+        binding.chipUnsubscription.setText(String.valueOf(numberUserUnsubscription));
+        binding.chipSubscription.setText(String.valueOf(numberUserSubscription));
     }
 
     private void activeScrollListener() {
         sharedViewModel.setDisabledRecyclerView(true);
-        binding.recyclerviewAttendanceList.addOnScrollListener(onScrollListener);
+        binding.recyclerviewSubscriptionList.addOnScrollListener(onScrollListener);
     }
 
     private void desactiveScrollListener() {
         sharedViewModel.setDisabledRecyclerView(false);
-        binding.recyclerviewAttendanceList.removeOnScrollListener(onScrollListener);
+        binding.recyclerviewSubscriptionList.removeOnScrollListener(onScrollListener);
     }
 
-    private void openCameraScannerQrCodeEvent(int cameraId) {
+    private void openCameraScannerQrCodeSubscriptio(int cameraId) {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
             this.cameraId = cameraId;
             activityResultLauncher.launch(Manifest.permission.CAMERA);
@@ -511,12 +494,12 @@ public class AttendanceListFragment extends Fragment {
         }
     }
 
-    private void setupVisibility(FragmentAttendanceListBinding binding, int viewP,
+    private void setupVisibility(FragmentSubscriptionListBinding binding, int viewP,
                                  boolean refreshing, int viewT, int viewR) {
-        binding.progressBarMarkAttendance.setVisibility(viewP);
+        binding.progressBarSubscription.setVisibility(viewP);
         binding.swipeRefreshLayout.setRefreshing(refreshing);
         binding.textViewEmptyData.setVisibility(viewT);
-        binding.recyclerviewAttendanceList.setVisibility(viewR);
+        binding.recyclerviewSubscriptionList.setVisibility(viewR);
     }
 
     @Override

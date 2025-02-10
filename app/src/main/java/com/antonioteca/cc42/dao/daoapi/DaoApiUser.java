@@ -1,6 +1,7 @@
 package com.antonioteca.cc42.dao.daoapi;
 
 import com.antonioteca.cc42.model.Coalition;
+import com.antonioteca.cc42.model.Subscription;
 import com.antonioteca.cc42.model.User;
 
 import java.util.List;
@@ -27,6 +28,16 @@ public interface DaoApiUser {
     Call<List<User>> getUsersEvent(
             @Path("event_id") long eventId,
             @Header("Authorization") String accessToken,
+            @Query("page[number]") int pageNumber,  // Adiciona o número da página
+            @Query("page[size]") int pageSize       // Adiciona o tamanho da página
+    );
+
+    @GET("/v2/cursus_users")
+    Call<List<Subscription>> getUsersSubscription(
+            @Header("Authorization") String accessToken,
+            @Query("filter[cursus_id]") int cursus_id,
+            @Query("filter[campus_id]") int campus_id,
+            @Query("filter[active]") boolean active,
             @Query("page[number]") int pageNumber,  // Adiciona o número da página
             @Query("page[size]") int pageSize       // Adiciona o tamanho da página
     );

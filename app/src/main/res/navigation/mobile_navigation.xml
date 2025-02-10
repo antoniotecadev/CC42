@@ -89,6 +89,9 @@
         <argument
             android:name="cursusId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_detailsMealFragment_to_subscriptionListFragment"
+            app:destination="@id/subscriptionListFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_cursu_list_meal"
@@ -98,5 +101,17 @@
         <action
             android:id="@+id/action_nav_cursu_list_meal_to_nav_meal"
             app:destination="@id/nav_meal" />
+    </fragment>
+    <fragment
+        android:id="@+id/subscriptionListFragment"
+        android:name="com.antonioteca.cc42.ui.meal.SubscriptionListFragment"
+        android:label="@string/subscriptions_list"
+        tools:layout="@layout/fragment_subscription_list" >
+        <argument
+            android:name="meal"
+            app:argType="com.antonioteca.cc42.model.Meal" />
+        <argument
+            android:name="cursusId"
+            app:argType="integer" />
     </fragment>
 </navigation>

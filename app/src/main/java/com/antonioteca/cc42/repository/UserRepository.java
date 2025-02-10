@@ -9,6 +9,7 @@ import com.antonioteca.cc42.dao.daoapi.PaginationLinks;
 import com.antonioteca.cc42.dao.daoroom.AppDataBase;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.LocalAttendanceList;
+import com.antonioteca.cc42.model.Subscription;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.RetrofitClientApi;
@@ -109,12 +110,46 @@ public class UserRepository {
                     }
                 } else {
                     l.hasNextPage = false;
-                    callback.onFailure(call, new Throwable("Not sucess response"));
+                    callback.onResponse(call, response);
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<User>> call, @NonNull Throwable throwable) {
+                l.hasNextPage = false;
+                callback.onFailure(call, throwable);
+            }
+        });
+    }
+
+    public void loadUserSubscriptionPaginated(int cursusId, Loading l, Callback<List<Subscription>> callback) {
+
+        String accessToken = "Bearer " + token.getAccessToken();
+
+        daoApiUser.getUsersSubscription(accessToken, cursusId, user.getCampusId(), true, l.currentPage, 50).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Subscription>> call, @NonNull Response<List<Subscription>> response) {
+
+                if (response.isSuccessful()) {
+                    callback.onResponse(call, response);
+                    // Verificar se existe uma próxima página
+                    PaginationLinks links = extractPaginationLinks(response.headers());
+                    if (links == null) {
+                        l.hasNextPage = false;
+                    } else {
+                        l.hasNextPage = links.getNext() != null;
+                        if (l.hasNextPage) {
+                            l.currentPage++;
+                        }
+                    }
+                } else {
+                    l.hasNextPage = false;
+                    callback.onResponse(call, response);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Subscription>> call, @NonNull Throwable throwable) {
                 l.hasNextPage = false;
                 callback.onFailure(call, throwable);
             }
