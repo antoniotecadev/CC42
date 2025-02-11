@@ -71,21 +71,23 @@ public class UserViewModel extends ViewModel {
         return userMutableLiveData;
     }
 
-    public LiveData<List<User>> getUsersEventLiveData(long eventId, Loading l, ProgressBar progressBar, Context context) {
-        if (userListMutableLiveData == null) {
+    public LiveData<List<User>> getUsersEventLiveData(long eventId, Loading l, @NonNull ProgressBar progressBar, Context context) {
+        progressBar.setVisibility(View.VISIBLE);
+        if (userListMutableLiveData == null)
             userListMutableLiveData = new MutableLiveData<>();
-            progressBar.setVisibility(View.VISIBLE);
-            getUsersEvent(eventId, l, context);
-        }
+        else
+            userListMutableLiveData.setValue(new ArrayList<>());
+        getUsersEvent(eventId, l, context);
         return userListMutableLiveData;
     }
 
-    public LiveData<List<User>> getUsersSubscriptionLiveData(int cursusId, Loading l, Context context, ProgressBar progressBar) {
-        if (userListMutableLiveData == null) {
+    public LiveData<List<User>> getUsersSubscriptionLiveData(int cursusId, Loading l, Context context, @NonNull ProgressBar progressBar) {
+        progressBar.setVisibility(View.VISIBLE);
+        if (userListMutableLiveData == null)
             userListMutableLiveData = new MutableLiveData<>();
-            progressBar.setVisibility(View.VISIBLE);
-            getUsersSubscription(cursusId, l, context);
-        }
+        else
+            userListMutableLiveData.setValue(new ArrayList<>());
+        getUsersSubscription(cursusId, l, context);
         return userListMutableLiveData;
     }
 
