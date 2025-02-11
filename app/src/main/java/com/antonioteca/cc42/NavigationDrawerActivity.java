@@ -36,6 +36,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.antonioteca.cc42.dao.daofarebase.DaoEventFirebase;
+import com.antonioteca.cc42.dao.daofarebase.DaoSusbscriptionFirebase;
 import com.antonioteca.cc42.databinding.ActivityNavigationDrawerBinding;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Token;
@@ -115,10 +116,10 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         navController.addOnDestinationChangedListener((navCont, navDestination, bundle) -> {
-            if (navDestination.getId() == R.id.detailsEventFragment || navDestination.getId() == R.id.attendanceListFragment)
-                fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
-            else
+            if (navDestination.getId() == R.id.nav_home)
                 fabOpenCameraScannerQrCode.setVisibility(View.VISIBLE);
+            else
+                fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
         });
         // Obter o NavigationView
         // Obter o header view dentro do NavigationView
@@ -215,15 +216,32 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     }
 
     private final ActivityResultLauncher<ScanOptions> barScanOptionsActivityResultLauncher = registerForActivityResult(new ScanContract(), result -> {
-        String eventId = result.getContents();
-        if (eventId.isEmpty()) {
+        String resultContents = result.getContents();
+        if (resultContents.isEmpty()) {
             Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null);
         } else {
-            if (eventId.startsWith("cc42event")) {
+            if (resultContents.startsWith("cc42event")) {
                 Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                 DaoEventFirebase.markAttendance(
                         firebaseDatabase,
-                        eventId.replace("cc42event", ""),
+                        resultContents.replace("cc42event", ""), /* id event*/
+                        uid,
+                        userLogin,
+                        displayName,
+                        cursusId,
+                        campusId,
+                        context,
+                        getLayoutInflater(),
+                        progressBarMarkAttendance,
+                        fabOpenCameraScannerQrCode,
+                        sharedViewModel,
+                        null
+                );
+            } else if (resultContents.startsWith("cc42meal")) {
+                Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                DaoSusbscriptionFirebase.subscription(
+                        firebaseDatabase,
+                        resultContents.replace("cc42event", ""), /* id meal*/
                         uid,
                         userLogin,
                         displayName,
