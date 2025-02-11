@@ -129,4 +129,24 @@
     <string name="choose_galery">Escolher da Galeria</string>
     <string name="subscription">Assinatura</string>
     <string name="press_again_out">Pressionar novamente para sair</string>
+    <string name="msg_permis_notification_denied">Permissão para receber notificação negada.</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="settings">Configurações</string>
+    <string name="notificatio_header">Notificações</string>
+    <string name="notificatio_title">Receber notificações das refeições</string>
+    <string name="notification_summary_off">Não vai receber as actualizações das refeições</string>
+    <string name="notificatio_summary_on">Vai receber as actualizações das refeições</string>
 </resources>
