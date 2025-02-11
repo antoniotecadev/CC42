@@ -220,7 +220,9 @@ public class Util {
 
     private static void launchIntentPermission(boolean containsUri, Context context, ActivityResultLauncher<Intent> intentActivityResultLauncher) {
         Intent intent = new Intent();
-        intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+        }
         if (containsUri) {
             Uri uri_ = Uri.fromParts("package", context.getPackageName(), null);
             intent.setData(uri_);
