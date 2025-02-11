@@ -237,8 +237,8 @@ public class DialogFragmentCreateMeal extends DialogFragment {
 
     private void showImagePickerDialog(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Escolha uma opção");
-        builder.setItems(new CharSequence[]{"Tirar Foto", "Escolher da Galeria"}, (dialog, which) -> {
+        builder.setTitle(R.string.choose_a_option);
+        builder.setItems(new CharSequence[]{getString(R.string.pick_photo), getString(R.string.choose_galery)}, (dialog, which) -> {
             switch (which) {
                 case 0:
                     if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
