@@ -1,11 +1,11 @@
 package com.antonioteca.cc42;
 
-import static com.antonioteca.cc42.network.NetworkConstants.CAMERA_PERMISSION_CODE;
 import static com.antonioteca.cc42.utility.Util.setColorCoalition;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -18,19 +18,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -68,6 +68,15 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
 
+    private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            result -> {
+                if (result)
+                    openCameraScannerQrCodeEvent(new ScanOptions());
+                else
+                    Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_camera_denied), context, null);
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,16 +92,17 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         context = NavigationDrawerActivity.this;
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
-        //fabOpenCameraScannerQrCode = binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode;
+        fabOpenCameraScannerQrCode = binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode;
         progressBarMarkAttendance = binding.appBarNavigationDrawer.progressBarMarkAttendance;
-//        fabOpenCameraScannerQrCode.setOnClickListener(view -> {
-//            // Verificar se a permissão já foi concedida
-//            if (ContextCompat.checkSelfPermission(view.getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-//                // Solicitar a permissão
-//                ActivityCompat.requestPermissions(NavigationDrawerActivity.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-//            } else
-//                openCameraScannerQrCodeEvent(new ScanOptions());
-//        });
+
+        fabOpenCameraScannerQrCode.setOnClickListener(view -> {
+            if (ContextCompat.checkSelfPermission(view.getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                activityResultLauncher.launch(android.Manifest.permission.CAMERA);
+            } else {
+                openCameraScannerQrCodeEvent(new ScanOptions());
+            }
+        });
+
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each.
@@ -104,14 +114,11 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-            @Override
-            public void onDestinationChanged(@NonNull NavController navController, @NonNull NavDestination navDestination, @Nullable Bundle bundle) {
-                /*if (navDestination.getId() == R.id.detailsEventFragment || navDestination.getId() == R.id.attendanceListFragment)
-                    fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
-                else
-                    fabOpenCameraScannerQrCode.setVisibility(View.VISIBLE);*/
-            }
+        navController.addOnDestinationChangedListener((navCont, navDestination, bundle) -> {
+            if (navDestination.getId() == R.id.detailsEventFragment || navDestination.getId() == R.id.attendanceListFragment)
+                fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
+            else
+                fabOpenCameraScannerQrCode.setVisibility(View.VISIBLE);
         });
         // Obter o NavigationView
         // Obter o header view dentro do NavigationView
@@ -207,38 +214,31 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         barScanOptionsActivityResultLauncher.launch(scanOptions);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PERMISSION_CODE)
-            openCameraScannerQrCodeEvent(new ScanOptions());
-        else
-            Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_camera_denied), this, null);
-    }
-
     private final ActivityResultLauncher<ScanOptions> barScanOptionsActivityResultLauncher = registerForActivityResult(new ScanContract(), result -> {
         String eventId = result.getContents();
-        if (eventId == null)
-            Toast.makeText(context, R.string.cancelled, Toast.LENGTH_LONG).show();
-        else if (eventId.startsWith("cc42event")) {
-            Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
-            DaoEventFirebase.markAttendance(
-                    firebaseDatabase,
-                    eventId.replace("cc42event", ""),
-                    uid,
-                    userLogin,
-                    displayName,
-                    cursusId,
-                    campusId,
-                    context,
-                    getLayoutInflater(),
-                    progressBarMarkAttendance,
-                    fabOpenCameraScannerQrCode,
-                    sharedViewModel,
-                    null
-            );
-        } else
-            Toast.makeText(context, R.string.msg_qr_code_invalid, Toast.LENGTH_LONG).show();
+        if (eventId.isEmpty()) {
+            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null);
+        } else {
+            if (eventId.startsWith("cc42event")) {
+                Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                DaoEventFirebase.markAttendance(
+                        firebaseDatabase,
+                        eventId.replace("cc42event", ""),
+                        uid,
+                        userLogin,
+                        displayName,
+                        cursusId,
+                        campusId,
+                        context,
+                        getLayoutInflater(),
+                        progressBarMarkAttendance,
+                        fabOpenCameraScannerQrCode,
+                        sharedViewModel,
+                        null
+                );
+            } else
+                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null);
+        }
     });
 
     /* @Override
