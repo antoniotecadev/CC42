@@ -5,7 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.Color;
@@ -34,7 +38,8 @@ import java.util.List;
 
 public class PdfCreator {
 
-    private static File createFolder(Context context, String folderName) {
+    @Nullable
+    private static File createFolder(@NonNull Context context, String folderName) {
         File folder = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), folderName);
         if (!folder.exists()) {
             boolean wasCreated = folder.mkdirs();
@@ -46,6 +51,7 @@ public class PdfCreator {
         return folder;
     }
 
+    @Nullable
     public static File createPdfAttendanceList(Context context, String eventKind, String eventName, String eventDate, int numberUserAbsent, int numberUserPresent, List<User> userList) {
         File folder = createFolder(context, "AttendanceList");
         if (folder == null)
@@ -84,7 +90,7 @@ public class PdfCreator {
             }
             Color red = new DeviceRgb(200, 0, 0);
             Color green = new DeviceRgb(0, 200, 0);
-            Paragraph title = new Paragraph("Lista de Presença")
+            Paragraph title = new Paragraph(context.getString(R.string.msg_attendance_list))
                     .setTextAlignment(TextAlignment.CENTER)
                     .setFontSize(14)
                     .setBold();
@@ -123,6 +129,95 @@ public class PdfCreator {
                     table.addCell(new Paragraph(context.getString(R.string.text_present)).setFontColor(green));
                 } else if (user.isPresent() != null && !user.isPresent()) {
                     table.addCell(new Paragraph(context.getString(R.string.text_absent)).setFontColor(red));
+                }
+            }
+            document.add(table);
+            document.close();
+            return file;
+        } catch (Exception e) {
+            Util.showAlertDialogBuild("PDF", context.getString(R.string.pdf_not_created) + e.getMessage(), context, null);
+            return null;
+        }
+    }
+
+    @Nullable
+    public static File createPdfSubscriptionList(Context context, Meal meal, int numberUserUnsubscription, int numberUserSubscription, List<User> userList) {
+        File folder = createFolder(context, "MealSubscriptionList");
+        if (folder == null)
+            return null;
+//        Caminho do arquivo PDF
+        File file = new File(folder, "meal_subscription_list.pdf");
+        try {
+            PdfWriter writer = new PdfWriter(new FileOutputStream(file));
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf, PageSize.A4);
+            document.setMargins(20, 20, 20, 20);
+            // Rodapé
+            pdf.addEventHandler(PdfDocumentEvent.END_PAGE, event -> {
+                PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
+                PdfPage page = documentEvent.getPage();
+                PdfCanvas pdfCanvas = new PdfCanvas(page);
+                Rectangle pageSize = page.getPageSize(); // Área do rodapé onde o contúdo será renderizado
+                Rectangle footerArea = new Rectangle(pageSize.getLeft()/*X inicial*/, pageSize.getBottom()/*Y inicial*/, pageSize.getWidth(), 20);
+                Canvas canvas = new Canvas(pdfCanvas, footerArea, true);
+                canvas.showTextAligned(new Paragraph(meal.getName() + "\n" + context.getString(R.string.page) + pdf.getPageNumber(page)).setFontSize(6f), pageSize.getWidth() / 2, 10, TextAlignment.CENTER);
+                canvas.close();
+            });
+            Bitmap logoBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo_42);
+            if (logoBitmap != null) { // Converter bitmap para um array de bytes
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                logoBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] logoBytes = stream.toByteArray();
+
+                Image image = new Image(ImageDataFactory.create(logoBytes))
+                        .setWidth(UnitValue.createPointValue(30)) // Largura da imagem (30%) da página
+                        .setHorizontalAlignment(HorizontalAlignment.CENTER); // Centraliza a imagem
+                document.add(image);
+            } else {
+                Util.showAlertDialogBuild("PDF", context.getString(R.string.error_load_logo), context, null);
+                return null;
+            }
+            Color red = new DeviceRgb(200, 0, 0);
+            Color green = new DeviceRgb(0, 200, 0);
+            Paragraph title = new Paragraph("almoço".toUpperCase())
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setFontSize(14)
+                    .setBold();
+            document.add(title);
+            Paragraph attendanceParagraph = new Paragraph()
+                    .add(new Text(context.getString(R.string.text_signed) + ": ").setFontColor(green))
+                    .add(new Text(String.valueOf(numberUserSubscription)))
+                    .add(new Text(" | "))
+                    .add(new Text(context.getString(R.string.text_unsigned) + ": ").setFontColor(red))
+                    .add(new Text(String.valueOf(numberUserUnsubscription)))
+                    .setTextAlignment(TextAlignment.CENTER);
+            document.add(attendanceParagraph);
+            Paragraph dateParagraph = new Paragraph()
+                    .add(new Text(context.getString(R.string.date).toUpperCase() + ": ").setBold())
+                    .add(new Text(meal.getDate()))
+                    .setTextAlignment(TextAlignment.LEFT);
+            document.add(dateParagraph);
+            Paragraph kindParagraph = new Paragraph()
+                    .add(new Text("meal".toUpperCase() + ": ").setBold())
+                    .add(new Text(meal.getName()))
+                    .setTextAlignment(TextAlignment.LEFT);
+            document.add(kindParagraph);
+            Table table = new Table(UnitValue.createPercentArray(new float[]{10, 50, 25, 15}))
+                    .useAllAvailableWidth();
+            table.setMarginTop(20);
+            table.addHeaderCell(new Paragraph(context.getString(R.string.num)).setBold());
+            table.addHeaderCell(new Paragraph(context.getString(R.string.full_name)).setBold());
+            table.addHeaderCell(new Paragraph(context.getString(R.string.login)).setBold());
+            table.addHeaderCell(new Paragraph(context.getString(R.string.subscription)).setBold());
+            for (int i = 0; i < userList.size(); i++) {
+                User user = userList.get(i);
+                table.addCell(new Paragraph(String.valueOf(i + 1)));
+                table.addCell(new Paragraph(user.displayName));
+                table.addCell(new Paragraph(user.login));
+                if (user.isSubscription() != null && user.isSubscription()) {
+                    table.addCell(new Paragraph(context.getString(R.string.text_signed)).setFontColor(green));
+                } else if (user.isSubscription() != null && !user.isSubscription()) {
+                    table.addCell(new Paragraph(context.getString(R.string.text_unsigned)).setFontColor(red));
                 }
             }
             document.add(table);

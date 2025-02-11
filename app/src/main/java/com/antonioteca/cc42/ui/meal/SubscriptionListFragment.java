@@ -73,9 +73,6 @@ public class SubscriptionListFragment extends Fragment {
     private Loading l;
     private Context context;
     private Integer cursusId;
-    private String eventKind;
-    private String eventName;
-    private String eventDate;
     private Integer cameraId;
     private Activity activity;
     private String colorCoalition;
@@ -157,7 +154,7 @@ public class SubscriptionListFragment extends Fragment {
             if (userList.isEmpty()) {
                 Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
             } else {
-                File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList());
+                File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList());
                 if (filePdf != null)
                     PdfViewer.openPdf(context, filePdf);
             }
@@ -171,11 +168,7 @@ public class SubscriptionListFragment extends Fragment {
             if (userList.isEmpty()) {
                 Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
             } else {
-                File filePdf = PdfCreator.createPdfAttendanceList(context,
-                        eventKind,
-                        eventName,
-                        eventDate,
-                        numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList());
+                File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList());
                 if (filePdf != null)
                     PdfSharer.sharePdf(context, filePdf);
             }
@@ -393,7 +386,7 @@ public class SubscriptionListFragment extends Fragment {
                         if (userList.isEmpty()) {
                             Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
                         } else {
-                            File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserUnsubscription, numberUserSubscription, userList);
+                            File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, userList);
                             if (filePdf != null)
                                 PdfViewer.openPdf(context, filePdf);
                         }
@@ -409,7 +402,7 @@ public class SubscriptionListFragment extends Fragment {
                         if (userList.isEmpty()) {
                             Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
                         } else {
-                            File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserUnsubscription, numberUserSubscription, userList);
+                            File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, userList);
                             if (filePdf != null)
                                 PdfSharer.sharePdf(context, filePdf);
                         }

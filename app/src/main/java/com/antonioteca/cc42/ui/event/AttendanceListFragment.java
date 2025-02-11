@@ -184,11 +184,7 @@ public class AttendanceListFragment extends Fragment {
             if (userList.isEmpty()) {
                 Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_attendance_list_empty), context, null);
             } else {
-                File filePdf = PdfCreator.createPdfAttendanceList(context,
-                        eventKind,
-                        eventName,
-                        eventDate,
-                        numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
+                File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
                 if (filePdf != null)
                     PdfSharer.sharePdf(context, filePdf);
             }

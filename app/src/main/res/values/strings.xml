@@ -34,7 +34,7 @@
     <string name="msg_error_mark_attendance_event">Erro ao armazenar evento e participante</string>
     <string name="msg_error_check_attendance_event">Erro ao verificar presença</string>
     <string name="msg_details_event">Detalhes do evento</string>
-    <string name="msg_attendance_list">Lista de presença</string>
+    <string name="msg_attendance_list">Lista de Presença</string>
     <string name="turn_on_flashlight">Ligar flash</string>
     <string name="turn_off_flashlight">Desligar flash</string>
     <string name="scanner">Scanear</string>
@@ -127,4 +127,5 @@
     <string name="choose_a_option">Escolha uma opção</string>
     <string name="pick_photo">Tirar Foto</string>
     <string name="choose_galery">Escolher da Galeria</string>
+    <string name="subscription">Assinatura</string>
 </resources>
