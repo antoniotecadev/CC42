@@ -20,8 +20,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsEventBinding;
 import com.antonioteca.cc42.model.Event;
 
@@ -75,8 +77,11 @@ public class DetailsEventFragment extends Fragment {
             showModalQrCode(view.getContext(), bitmapQrCode, event.getKind(), event.getName());
         });
         binding.fabOpenAttendanceList.setOnClickListener(v -> {
-            DetailsEventFragmentDirections.ActionDetailsEventFragmentToAttendanceListFragment actionDetailsEventFragmentToAttendanceListFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToAttendanceListFragment(event.getId(), event.getCursus_ids().get(0), event.getKind(), event.getName(), String.valueOf(binding.textViewDate.getText()));
-            Navigation.findNavController(v).navigate(actionDetailsEventFragmentToAttendanceListFragment);
+            NavController navController = Navigation.findNavController(v);
+            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.subscriptionListFragment) {
+                DetailsEventFragmentDirections.ActionDetailsEventFragmentToAttendanceListFragment actionDetailsEventFragmentToAttendanceListFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToAttendanceListFragment(event.getId(), event.getCursus_ids().get(0), event.getKind(), event.getName(), String.valueOf(binding.textViewDate.getText()));
+                Navigation.findNavController(v).navigate(actionDetailsEventFragmentToAttendanceListFragment);
+            }
         });
         return binding.getRoot();
     }

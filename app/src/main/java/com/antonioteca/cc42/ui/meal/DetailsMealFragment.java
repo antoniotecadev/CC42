@@ -15,8 +15,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsMealBinding;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.utility.Util;
@@ -61,9 +63,12 @@ public class DetailsMealFragment extends Fragment {
             showModalQrCode(context, bitmapQrCode, meal.getName(), meal.getDescription());
         });
         binding.fabOpenSubscriptionList.setOnClickListener(v -> {
-            DetailsMealFragmentDirections.ActionDetailsMealFragmentToSubscriptionListFragment actionDetailsMealFragmentToSubscriptionListFragment =
-                    DetailsMealFragmentDirections.actionDetailsMealFragmentToSubscriptionListFragment(meal, cursusId);
-            Navigation.findNavController(v).navigate(actionDetailsMealFragmentToSubscriptionListFragment);
+            NavController navController = Navigation.findNavController(v);
+            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.subscriptionListFragment) {
+                DetailsMealFragmentDirections.ActionDetailsMealFragmentToSubscriptionListFragment actionDetailsMealFragmentToSubscriptionListFragment =
+                        DetailsMealFragmentDirections.actionDetailsMealFragmentToSubscriptionListFragment(meal, cursusId);
+                Navigation.findNavController(v).navigate(actionDetailsMealFragmentToSubscriptionListFragment);
+            }
         });
     }
 
