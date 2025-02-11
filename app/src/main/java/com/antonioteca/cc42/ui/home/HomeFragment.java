@@ -3,6 +3,7 @@ package com.antonioteca.cc42.ui.home;
 import static com.antonioteca.cc42.utility.Util.generateQrCode;
 import static com.antonioteca.cc42.utility.Util.showModalQrCode;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -14,7 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -151,7 +154,24 @@ public class HomeFragment extends Fragment {
             }
         });
         sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> binding.recyclerviewEventsList.setOnTouchListener((v, event) -> disabled));
+        //requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), outApp(getActivity(), context));
         return root;
+    }
+
+    public static OnBackPressedCallback outApp(Activity activity, Context context) {
+        return new OnBackPressedCallback(true) {
+            private long backPressedTime;
+
+            @Override
+            public void handleOnBackPressed() {
+                if (backPressedTime + 2000 > System.currentTimeMillis()) {
+                    activity.finish();
+                    return;
+                } else Toast.makeText(context, R.string.press_again_out, Toast.LENGTH_SHORT).show();
+
+                backPressedTime = System.currentTimeMillis();
+            }
+        };
     }
 
     private void setupVisibility(FragmentHomeBinding binding, int viewP, boolean refreshing, int viewT, int viewR) {

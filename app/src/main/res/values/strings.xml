@@ -128,4 +128,5 @@
     <string name="pick_photo">Tirar Foto</string>
     <string name="choose_galery">Escolher da Galeria</string>
     <string name="subscription">Assinatura</string>
+    <string name="press_again_out">Pressionar novamente para sair</string>
 </resources>
