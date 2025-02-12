@@ -114,4 +114,10 @@
             android:name="cursusId"
             app:argType="integer" />
     </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.antonioteca.cc42.ui.setting.SettingsFragment"
+        android:label="@string/settings"
+        tools:layout="@xml/root_preferences"
+        />
 </navigation>

@@ -13,6 +13,7 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDialogCreateMealBinding;
 import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.model.Meal;
+import com.antonioteca.cc42.network.NotificationFirebase.Notification;
 import com.antonioteca.cc42.utility.DateUtils;
 import com.antonioteca.cc42.utility.Util;
 import com.cloudinary.android.MediaManager;
@@ -272,6 +273,11 @@ public class DaoMealFirebase {
                     restaureViews(binding);
                     String message = mealName + "\n" + context.getString(R.string.save_meal);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
+                    try {
+                        Notification.sendNotificationForTopic(context, layoutInflater, "", "");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 })
                 .addOnFailureListener(e -> {
                     restaureViews(binding);

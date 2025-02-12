@@ -34,10 +34,17 @@ android {
     buildFeatures {
         viewBinding true
     }
+    // Quando há arquivos duplicados em 'META-INF/DEPENDENCIES' durante a compilação do projecto no Gradle
+    // Isso geralmente acontence quando diferentes dependências contêm o mesmo arquivo META INFO
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/INDEX.LIST'
+    }
 }
 
 dependencies {
 
+    implementation 'androidx.preference:preference:1.2.0'
     def room_version = "2.6.1"
     def nav_version = "2.5.3"
     def retrofit_version = "2.11.0"
@@ -113,6 +120,13 @@ dependencies {
     // Add the dependency for the Realtime Database library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-database")
+
+    // Add the dependency for the Messaging library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-messaging'
+
+    // Gerar Token OAuth
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.22.0'
 
     //itext for genereted pdf
     implementation 'com.itextpdf:itext7-core:7.2.3'

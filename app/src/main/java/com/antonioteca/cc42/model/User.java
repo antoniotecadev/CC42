@@ -148,6 +148,14 @@ public class User {
     public void setSubscription(Boolean subscription) {
         this.subscription = subscription;
     }
+
+    public boolean getSubscribedToTopicMealNotification() {
+        return preferences.getBoolean("subscribedToTopicMealNotification", false);
+    }
+
+    public void setSubscribedToTopicMealNotification(boolean value) {
+        editor.putBoolean("subscribedToTopicMealNotification", value);
+    }
 }
 
 class Image {

@@ -136,10 +136,12 @@ public class HomeFragment extends Fragment {
             if (event != null) {
                 HttpStatus httpStatus = event.getContentIfNotHandled();
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
-                Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
-                    setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
-                    eventViewModel.getEvents(context);
-                });
+                if (httpStatus != null) {
+                    Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
+                        setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
+                        eventViewModel.getEvents(context);
+                    });
+                }
             }
         });
 
@@ -147,10 +149,12 @@ public class HomeFragment extends Fragment {
             if (event != null) {
                 HttpException httpException = event.getContentIfNotHandled();
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
-                Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
-                    setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
-                    eventViewModel.getEvents(context);
-                });
+                if (httpException != null) {
+                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
+                        setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
+                        eventViewModel.getEvents(context);
+                    });
+                }
             }
         });
         sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> binding.recyclerviewEventsList.setOnTouchListener((v, event) -> disabled));

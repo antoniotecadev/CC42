@@ -1,0 +1,14 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/notificatio_header" app:icon="@drawable/ic_baseline_notifications_24">
+
+        <SwitchPreferenceCompat
+            app:key="notification_key"
+            app:icon="@drawable/ic_baseline_restaurant_24"
+            app:summaryOff="@string/notification_summary_off"
+            app:summaryOn="@string/notificatio_summary_on"
+            app:title="@string/notificatio_title"
+            app:defaultValue="true"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>

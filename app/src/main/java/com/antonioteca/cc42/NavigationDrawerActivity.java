@@ -2,13 +2,17 @@ package com.antonioteca.cc42;
 
 import static com.antonioteca.cc42.utility.Util.setColorCoalition;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +30,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -51,10 +57,15 @@ import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 public class NavigationDrawerActivity extends AppCompatActivity {
+
+    private static final String CHANNEL_ID = "HEADS_UP_NOTIFICATION";
 
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -95,6 +106,19 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         fabOpenCameraScannerQrCode = binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode;
         progressBarMarkAttendance = binding.appBarNavigationDrawer.progressBarMarkAttendance;
+
+        boolean isSubscribed = user.getSubscribedToTopicMealNotification();
+        if (!isSubscribed) {
+            FirebaseMessaging.getInstance().subscribeToTopic("/topics/meals").addOnCompleteListener(task -> {
+                if (task.isSuccessful())
+                    user.setSubscribedToTopicMealNotification(true);
+                else {
+                    Exception e = task.getException();
+                    if (e != null)
+                        Util.showAlertDialogMessage(this, getLayoutInflater(), getString(R.string.err), "Topic: " + e.getMessage(), "#E53935", null);
+                }
+            });
+        }
 
         fabOpenCameraScannerQrCode.setOnClickListener(view -> {
             if (ContextCompat.checkSelfPermission(view.getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
@@ -182,6 +206,31 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 return NavigationUI.onNavDestinationSelected(menuItem, navController);
             }
         }, this);
+        asNotificationPermission();
+        createNotificationChannel();
+    }
+
+    private void asNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED)
+                requestPermissionLauncherNotification.launch(Manifest.permission.POST_NOTIFICATIONS);
+    }
+
+    private final ActivityResultLauncher<String> requestPermissionLauncherNotification = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(), result -> {
+                if (!result)
+                    Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_notification_denied), context, null);
+            }
+    );
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Informações do aplicativo", NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("Mensagem enviada pela YOGA");
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     private void logout(Context context) {
@@ -206,7 +255,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         finish();
     }
 
-    private void openCameraScannerQrCodeEvent(ScanOptions scanOptions) {
+    private void openCameraScannerQrCodeEvent(@NonNull ScanOptions scanOptions) {
         scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
         scanOptions.setPrompt(getString(R.string.align_camera_qr_code));
         scanOptions.setOrientationLocked(false); // unlock orientation of camera
@@ -258,6 +307,32 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null);
         }
     });
+
+    public static class MyFirebaseMessagingService extends FirebaseMessagingService {
+        @Override
+        public void onMessageReceived(@NonNull RemoteMessage message) {
+            super.onMessageReceived(message);
+            if (message.getNotification() != null) {
+                String title = message.getNotification().getTitle();
+                String body = message.getNotification().getBody();
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setSmallIcon(R.mipmap.ic_check_cadet_42)
+                        .setContentTitle(title)
+                        .setContentText(body)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setCategory(NotificationCompat.CATEGORY_MESSAGE);
+
+                NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+                notificationManagerCompat.notify((int) message.getSentTime(), builder.build());
+            }
+        }
+
+        @Override
+        public void onNewToken(@NonNull String token) {
+            super.onNewToken(token);
+        }
+    }
 
     /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
