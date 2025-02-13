@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -318,6 +319,14 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         }
     }
 
+    public static void fullScreenDialog(Dialog dialog) {
+        if (dialog != null) {
+            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            dialog.getWindow().setLayout(width, height);
+        }
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -327,6 +336,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
+        fullScreenDialog(dialog);
     }
 }
 
