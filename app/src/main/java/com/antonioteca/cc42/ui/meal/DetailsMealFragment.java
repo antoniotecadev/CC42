@@ -52,7 +52,7 @@ public class DetailsMealFragment extends Fragment {
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             if (actionBar != null)
-                actionBar.setTitle(String.valueOf(meal.getQuantity()));
+                actionBar.setTitle(meal.getType() + " (" + meal.getQuantity() + ")");
         }
         binding.textViewName.setText(meal.getName());
         binding.textViewDescription.setText(meal.getDescription());
