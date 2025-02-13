@@ -16,7 +16,6 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -93,7 +92,8 @@ public class DialogFragmentCreateMeal extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
         binding = FragmentDialogCreateMealBinding.inflate(getLayoutInflater());
-        addNumberSpinner(binding.spinnerQuantity, context);
+        addNumberSpinner(context, binding.spinnerQuantity);
+        addMealsSpinner(context, binding.spinnerMeals);
         DialogFragmentCreateMealArgs args = DialogFragmentCreateMealArgs.fromBundle(getArguments());
         Meal meal = args.getMeal();
         int cursusId = args.getCursusId();
@@ -106,6 +106,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
             binding.textInputEditTextName.setText(meal.getName());
             binding.textInputEditTextDescription.setText(meal.getDescription());
             binding.spinnerQuantity.setSelection(meal.getQuantity());
+            itemSelectedSpinner(context, R.array.meals_list, meal.getType(), binding.spinnerMeals);
             binding.buttonCreateMeal.setText(getText(R.string.ok));
         } else {
             loadingImageMeal(imageUri);
@@ -153,11 +154,8 @@ public class DialogFragmentCreateMeal extends DialogFragment {
     private boolean validateData(Meal meal, boolean isCreate, LayoutInflater layoutInflater) {
         String mealName = binding.textInputEditTextName.getText().toString();
         String mealDescription = binding.textInputEditTextDescription.getText().toString();
-        int mealsQauntity = 0;
-        int selectedPosition = binding.spinnerQuantity.getSelectedItemPosition();
-        if (selectedPosition != AdapterView.INVALID_POSITION) {
-            mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(selectedPosition);
-        }
+        int mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(binding.spinnerQuantity.getSelectedItemPosition());
+        String type = (String) binding.spinnerMeals.getItemAtPosition(binding.spinnerMeals.getSelectedItemPosition());
         if (isEmptyField(mealName)) {
             binding.textInputEditTextName.requestFocus();
             binding.textInputEditTextName.setError(getString(R.string.invalid_name_meal));
@@ -165,7 +163,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         }
         if (!isCreate && meal != null
                 && this.imageUri.equals(Uri.parse(meal.getPathImage())) && mealName.equals(meal.getName())
-                && mealDescription.equals(meal.getDescription()) && mealsQauntity == meal.getQuantity()) {
+                && mealDescription.equals(meal.getDescription()) && mealsQauntity == meal.getQuantity() && type.equals(meal.getType())) {
             String message = context.getString(R.string.nothing_edit);
             Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", null);
             return false;
@@ -202,11 +200,8 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                 }
             } else {
                 if (!imageUri.equals(Uri.parse(meal.getPathImage()))) {
-                    int mealsQauntity = 0;
-                    int selectedPosition = binding.spinnerQuantity.getSelectedItemPosition();
-                    if (selectedPosition != AdapterView.INVALID_POSITION) {
-                        mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(selectedPosition);
-                    }
+                    int mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(binding.spinnerQuantity.getSelectedItemPosition());
+                    String type = (String) binding.spinnerMeals.getItemAtPosition(binding.spinnerMeals.getSelectedItemPosition());
                     DaoMealFirebase.uploadNewImage(
                             firebaseDatabase,
                             getLayoutInflater(),
@@ -219,7 +214,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             extractPublicIdFromUrl(meal.getPathImage()),
                             binding.textInputEditTextName.getText().toString().equals(meal.getName())
                                     && binding.textInputEditTextDescription.getText().toString().equals(meal.getDescription())
-                                    && mealsQauntity == meal.getQuantity());
+                                    && mealsQauntity == meal.getQuantity() && type.equals(meal.getType()));
                 } else {
                     updateMealDataInFirebase(
                             firebaseDatabase,
@@ -291,11 +286,10 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         return (TextUtils.isEmpty(value) || value.trim().isEmpty());
     }
 
-    private static void addNumberSpinner(AppCompatSpinner spinner, Context context) {
+    private static void addNumberSpinner(Context context, AppCompatSpinner spinner) {
         ArrayList<Integer> quantity = new ArrayList<>();
         for (int i = 0; i <= 1000; ++i)
             quantity.add(i);
-
         ArrayAdapter<Integer> itemAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, quantity);
         spinner.setAdapter(itemAdapter);
     }
@@ -306,6 +300,22 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                 .circleCrop()
                 .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_menu_60))
                 .into(binding.imageViewMeal);
+    }
+
+    public void addMealsSpinner(Context context, AppCompatSpinner spinner) {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.meals_list, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+    }
+
+    public void itemSelectedSpinner(Context context, int valueArray, String valueTarget, AppCompatSpinner spinner) {
+        final String[] stringArray = context.getResources().getStringArray(valueArray);
+        for (int i = 0; i <= stringArray.length; i++) {
+            if (valueTarget.equalsIgnoreCase(stringArray[i])) {
+                spinner.setSelection(i);
+                break;
+            }
+        }
     }
 
     @Override

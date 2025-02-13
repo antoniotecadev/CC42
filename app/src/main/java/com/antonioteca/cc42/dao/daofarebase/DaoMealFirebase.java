@@ -6,8 +6,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDialogCreateMealBinding;
@@ -151,7 +152,7 @@ public class DaoMealFirebase {
                 }).dispatch();
     }
 
-    private static void updateImageUrlInFirebase(FirebaseDatabase firebaseDatabase,
+    private static void updateImageUrlInFirebase(@NonNull FirebaseDatabase firebaseDatabase,
                                                  LayoutInflater layoutInflater,
                                                  FragmentDialogCreateMealBinding binding,
                                                  Context context,
@@ -182,7 +183,7 @@ public class DaoMealFirebase {
 
     public static void updateMealDataInFirebase(FirebaseDatabase firebaseDatabase,
                                                 LayoutInflater layoutInflater,
-                                                FragmentDialogCreateMealBinding binding,
+                                                @NonNull FragmentDialogCreateMealBinding binding,
                                                 Context context,
                                                 String campusId,
                                                 String cursusId,
@@ -191,11 +192,8 @@ public class DaoMealFirebase {
 
         String mealName = binding.textInputEditTextName.getText().toString();
         String mealDescription = binding.textInputEditTextDescription.getText().toString();
-        int mealsQauntity = 0;
-        int selectedPosition = binding.spinnerQuantity.getSelectedItemPosition();
-        if (selectedPosition != AdapterView.INVALID_POSITION) {
-            mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(selectedPosition);
-        }
+        int mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(binding.spinnerQuantity.getSelectedItemPosition());
+        String type = (String) binding.spinnerMeals.getItemAtPosition(binding.spinnerMeals.getSelectedItemPosition());
 
         DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
@@ -209,6 +207,7 @@ public class DaoMealFirebase {
         updates.put("name", mealName);
         updates.put("description", mealDescription);
         updates.put("quantity", mealsQauntity);
+        updates.put("type", type);
         if (newImageUrl != null)
             updates.put("pathImage", newImageUrl);
 
@@ -237,11 +236,8 @@ public class DaoMealFirebase {
 
         String mealName = binding.textInputEditTextName.getText().toString();
         String mealDescription = binding.textInputEditTextDescription.getText().toString();
-        int mealsQauntity = 0;
-        int selectedPosition = binding.spinnerQuantity.getSelectedItemPosition();
-        if (selectedPosition != AdapterView.INVALID_POSITION) {
-            mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(selectedPosition);
-        }
+        int mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(binding.spinnerQuantity.getSelectedItemPosition());
+        String type = (String) binding.spinnerMeals.getItemAtPosition(binding.spinnerMeals.getSelectedItemPosition());
 
         DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
@@ -258,8 +254,9 @@ public class DaoMealFirebase {
                 mealId,
                 mealName,
                 mealDescription,
-                dateCreated,
                 mealsQauntity,
+                type,
+                dateCreated,
                 imageUrl
         );
 
@@ -274,8 +271,9 @@ public class DaoMealFirebase {
                     String message = mealName + "\n" + context.getString(R.string.save_meal);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
                     try {
-                        Notification.sendNotificationForTopic(context, layoutInflater, "", "");
+                        Notification.sendNotificationForTopic(context, layoutInflater, type + ": " + mealName, mealDescription);
                     } catch (IOException e) {
+                        Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                 })

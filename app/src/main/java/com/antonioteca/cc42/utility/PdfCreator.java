@@ -179,7 +179,7 @@ public class PdfCreator {
             }
             Color red = new DeviceRgb(200, 0, 0);
             Color green = new DeviceRgb(0, 200, 0);
-            Paragraph title = new Paragraph("almoço".toUpperCase())
+            Paragraph title = new Paragraph(meal.getType().toUpperCase())
                     .setTextAlignment(TextAlignment.CENTER)
                     .setFontSize(14)
                     .setBold();

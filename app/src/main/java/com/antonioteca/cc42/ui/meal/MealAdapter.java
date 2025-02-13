@@ -49,9 +49,10 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
     @Override
     public void onBindViewHolder(@NonNull MealAdapterViewHolder holder, int position) {
         Meal meal = mealList.get(position);
-        holder.binding.textViewNameMeal.setText(meal.getName());
+        holder.binding.textViewType.setText(meal.getType());
+        holder.binding.textViewName.setText(meal.getName());
         holder.binding.textViewDescription.setText(meal.getDescription());
-        holder.binding.txtQuantidadeProduto.setText(String.valueOf(meal.getQuantity()));
+        holder.binding.txtViewQuantity.setText(String.valueOf(meal.getQuantity()));
         holder.binding.textViewDateCreated.setText(meal.getDate());
         Util.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal, false);
         holder.itemView.setOnClickListener(v -> {

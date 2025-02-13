@@ -7,19 +7,21 @@ public class Meal implements Parcelable {
     private String id;
     private String name;
     private String description;
-    private String date;
     private int quantity;
+    private String type;
+    private String date;
     private String pathImage;
 
     public Meal() {
     }
 
-    public Meal(String id, String name, String description, String date, int quantity, String pathImage) {
+    public Meal(String id, String name, String description, int quantity, String type, String date, String pathImage) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.date = date;
         this.quantity = quantity;
+        this.type = type;
+        this.date = date;
         this.pathImage = pathImage;
     }
 
@@ -27,8 +29,9 @@ public class Meal implements Parcelable {
         id = in.readString();
         name = in.readString();
         description = in.readString();
-        date = in.readString();
         quantity = in.readInt();
+        type = in.readString();
+        date = in.readString();
         pathImage = in.readString();
     }
 
@@ -37,8 +40,9 @@ public class Meal implements Parcelable {
         dest.writeString(id);
         dest.writeString(name);
         dest.writeString(description);
-        dest.writeString(date);
         dest.writeInt(quantity);
+        dest.writeString(type);
+        dest.writeString(date);
         dest.writeString(pathImage);
     }
 
@@ -97,6 +101,14 @@ public class Meal implements Parcelable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getPathImage() {
