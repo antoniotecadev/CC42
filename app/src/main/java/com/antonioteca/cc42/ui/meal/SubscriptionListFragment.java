@@ -419,7 +419,6 @@ public class SubscriptionListFragment extends Fragment {
         });
     }
 
-    // ScrollListener para detectar quando carregar mais dados
     RecyclerView.OnScrollListener onScrollListener = new EndlessScrollListener() {
         @Override
         public void onLoadMore() {
