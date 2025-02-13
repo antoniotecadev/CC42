@@ -44,8 +44,8 @@ public class MealViewModel extends ViewModel {
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Meal> mealList = new ArrayList<>();
                 if (snapshot.exists()) {
-                    List<Meal> mealList = new ArrayList<>();
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Meal meal = dataSnapshot.getValue(Meal.class);
                         mealList.add(meal);
@@ -54,12 +54,12 @@ public class MealViewModel extends ViewModel {
                     mealListMutableLiveData.setValue(mealList);
                     setupVisibility(binding, View.INVISIBLE, false, View.INVISIBLE, View.VISIBLE);
                 } else {
-                    setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
                     String message = context.getString(R.string.meals_not_found);
                     Util.showAlertDialogBuild(context.getString(R.string.warning), message, context, () -> {
                         setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.INVISIBLE);
                         loadMeals(mealsRef, binding, context);
                     });
+                    mealListMutableLiveData.setValue(mealList);
                 }
             }
 

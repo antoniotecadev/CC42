@@ -103,7 +103,12 @@ public class MealListFragment extends Fragment {
                     MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(true, cursu.getId());
             Navigation.findNavController(v).navigate(actionNavMealToDialogFragmentCreateMeal);
         });
-        mealViewModel.getMealList(mealsRef, binding, context).observe(getViewLifecycleOwner(), meals -> mealAdapter.updateMealList(meals));
+        mealViewModel.getMealList(mealsRef, binding, context).observe(getViewLifecycleOwner(), meals -> {
+            if (!meals.isEmpty() && meals.get(0) != null)
+                mealAdapter.updateMealList(meals);
+            else
+                setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
+        });
     }
 
     @Override
