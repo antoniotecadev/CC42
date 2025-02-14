@@ -23,7 +23,7 @@ public class Notification {
     public static void sendNotificationForTopic(
             Context context,
             LayoutInflater layoutInflater,
-            String title, String body
+            String title, String body, String imageUrl
     ) throws IOException {
         AccessTokenGenerator.getAccessToken(context, accessToken -> {
             Retrofit retrofit = new Retrofit.Builder()
@@ -33,7 +33,7 @@ public class Notification {
 
             FCMService service = retrofit.create(FCMService.class);
 
-            FCMessage.Notification notification = new FCMessage.Notification(title, body);
+            FCMessage.Notification notification = new FCMessage.Notification(title, body, imageUrl);
             FCMessage.Data data = new FCMessage.Data("", "");
             FCMessage.Message message = new FCMessage.Message("meals", notification, data);
             FCMessage fcmMessage = new FCMessage(message);

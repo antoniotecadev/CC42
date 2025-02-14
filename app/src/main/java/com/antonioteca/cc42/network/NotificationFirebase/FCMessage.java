@@ -40,10 +40,12 @@ public class FCMessage {
     public static class Notification {
         private String title;
         private String body;
+        private String image;
 
-        public Notification(String title, String body) {
+        public Notification(String title, String body, String image) {
             this.title = title;
             this.body = body;
+            this.image = image;
         }
     }
 

@@ -6,10 +6,12 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -232,8 +234,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Informações do aplicativo", NotificationManager.IMPORTANCE_HIGH);
-            channel.setDescription("Mensagem enviada pela YOGA");
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Meals Channel", NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("Mensagem enviada quando uma refeição é criada.");
 
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
@@ -320,19 +322,26 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         @Override
         public void onMessageReceived(@NonNull RemoteMessage message) {
             super.onMessageReceived(message);
-            if (message.getNotification() != null) {
+            if (message.getNotification() != null && message.getNotification().getImageUrl() != null) {
+
                 String title = message.getNotification().getTitle();
                 String body = message.getNotification().getBody();
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setSmallIcon(R.mipmap.ic_check_cadet_42)
-                        .setContentTitle(title)
-                        .setContentText(body)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
-                        .setPriority(NotificationCompat.PRIORITY_HIGH)
-                        .setCategory(NotificationCompat.CATEGORY_MESSAGE);
+                String imageUrl = message.getNotification().getImageUrl().toString();
 
-                NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-                notificationManagerCompat.notify((int) message.getSentTime(), builder.build());
+                Glide.with(this)
+                        .asBitmap()
+                        .load(imageUrl)
+                        .into(new CustomTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
+                                showNotification(title, body, bitmap, message, getApplicationContext());
+                            }
+
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                                showNotification(title, body, null, message, getApplicationContext());
+                            }
+                        });
             }
         }
 
@@ -340,6 +349,29 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         public void onNewToken(@NonNull String token) {
             super.onNewToken(token);
         }
+    }
+
+    private static void showNotification(String title, String body, Bitmap image, RemoteMessage message, Context context) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_check_cadet_42)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE);
+        // Adicionar imagem a notificação
+        if (image != null) {
+            builder.setStyle(new NotificationCompat.BigPictureStyle()
+                    .bigPicture(image)
+                    .bigLargeIcon(null));
+        }
+        // Abrir o app ao clicar na notificação
+        Intent intent = new Intent(context, NavigationDrawerActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pendingIntent);
+        // Exibir a notificaçào
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+        notificationManagerCompat.notify((int) message.getSentTime(), builder.build());
     }
 
     /* @Override
