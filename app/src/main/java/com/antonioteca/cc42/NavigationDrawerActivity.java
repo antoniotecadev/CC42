@@ -84,6 +84,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private ProgressBar progressBarMarkAttendance;
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
+    private NavController navController;
 
     private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
@@ -100,8 +101,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         ActivityNavigationDrawerBinding binding = ActivityNavigationDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
-        handleNotificationIntent(getIntent(), navController);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
+        handleNotificationIntent(getIntent());
 
         setSupportActionBar(binding.appBarNavigationDrawer.toolbar);
         User user = new User(NavigationDrawerActivity.this);
@@ -403,7 +404,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         notificationManagerCompat.notify((int) message.getSentTime(), builder.build());
     }
 
-    private void handleNotificationIntent(Intent intent, NavController navController) {
+    private void handleNotificationIntent(Intent intent) {
         if (intent != null && intent.getExtras() != null &&
                 ("OPEN_FRAGMENT_ACTION_FOREGROUND".equals(intent.getAction()) ||
                         "OPEN_FRAGMENT_ACTION_BACKGROUND".equals(intent.getAction()))) { // Primeiro plano
@@ -413,6 +414,9 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             args.putInt("cursusId", cursusId);
             args.putParcelable("detailsMeal", meal);
             navController.navigate(R.id.action_detailsMealFragment, args);
+            intent.replaceExtras(new Bundle());
+            intent.setAction(null);
+            args.clear();
         }
     }
 
@@ -426,8 +430,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
-        handleNotificationIntent(intent, navController);
+        handleNotificationIntent(intent);
     }
 
     @Override
