@@ -155,7 +155,7 @@ public class Util {
         Glide.with(context)
                 .load(imageUrl)
                 .transform(isDetails ? new RoundedCorners(30) : new CircleCrop())
-                .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_menu_60))
+                .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_60))
                 .into(imageView);
     }
 

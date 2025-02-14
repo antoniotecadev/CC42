@@ -299,7 +299,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         Glide.with(this)
                 .load(imageUri)
                 .circleCrop()
-                .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_menu_60))
+                .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_60))
                 .into(binding.imageViewMeal);
     }
 

@@ -31,7 +31,7 @@
                     android:layout_height="400dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"
-                    android:src="@drawable/ic_baseline_restaurant_menu_60" />
+                    android:src="@drawable/ic_baseline_restaurant_60" />
 
                 <TextView
                     android:id="@+id/textViewName"
