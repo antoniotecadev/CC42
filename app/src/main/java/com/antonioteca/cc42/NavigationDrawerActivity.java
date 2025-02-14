@@ -173,6 +173,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         Toolbar toolbar = binding.appBarNavigationDrawer.toolbar;
         String colorCoalition = user.coalition.getColor();
         setColorCoalition(toolbar, colorCoalition);
+
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
             // fabOpenCameraScannerQrCode.setBackgroundTintList(colorStateList); // Opcional
@@ -180,6 +181,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             navigationView.setItemTextColor(colorStateList);
             navigationView.setItemIconTintList(colorStateList);
         }
+
         LinearLayout linearLayout = headerView.findViewById(R.id.linearLayoutNavHeaderNavigationDrawer);
         String imageUrlCoalition = user.coalition.getImageUrl();
         if (imageUrlCoalition != null) {
