@@ -75,6 +75,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private String campusId;
     private String cursusId;
     private Context context;
+    private MenuProvider menuProvider;
     private FloatingActionButton fabOpenCameraScannerQrCode;
     private ProgressBar progressBarMarkAttendance;
     private SharedViewModel sharedViewModel;
@@ -120,6 +121,22 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             });
         }
 
+        menuProvider = new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_settings_general, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                Activity context = NavigationDrawerActivity.this;
+                NavController navController = Navigation.findNavController(context, R.id.nav_host_fragment_content_navigation_drawer);
+                if (menuItem.getItemId() == R.id.action_logout)
+                    logout(context);
+                return NavigationUI.onNavDestinationSelected(menuItem, navController);
+            }
+        };
+
         fabOpenCameraScannerQrCode.setOnClickListener(view -> {
             if (ContextCompat.checkSelfPermission(view.getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
                 activityResultLauncher.launch(android.Manifest.permission.CAMERA);
@@ -140,10 +157,13 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         navController.addOnDestinationChangedListener((navCont, navDestination, bundle) -> {
-            if (navDestination.getId() == R.id.nav_home)
+            if (navDestination.getId() == R.id.nav_home) {
+                addMenuProvider(menuProvider, this);
                 fabOpenCameraScannerQrCode.setVisibility(View.VISIBLE);
-            else
+            } else {
+                removeMenuProvider(menuProvider);
                 fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
+            }
         });
         // Obter o NavigationView
         // Obter o header view dentro do NavigationView
@@ -191,21 +211,6 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 .error(R.drawable.logo_42) // Imagem a ser mostrada caso ocorra um erro
                 .into(imageViewUser);
 
-        this.addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.menu_settings_general, menu);
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                Activity context = NavigationDrawerActivity.this;
-                NavController navController = Navigation.findNavController(context, R.id.nav_host_fragment_content_navigation_drawer);
-                if (menuItem.getItemId() == R.id.action_logout)
-                    logout(context);
-                return NavigationUI.onNavDestinationSelected(menuItem, navController);
-            }
-        }, this);
         asNotificationPermission();
         createNotificationChannel();
     }
