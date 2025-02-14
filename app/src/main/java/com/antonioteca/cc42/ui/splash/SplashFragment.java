@@ -42,11 +42,6 @@ public class SplashFragment extends Fragment {
     private Context context;
     private boolean isSplashActive = true;
 
-    private boolean isTokenExpired() {
-        long expirationTime = new Token(context).getTokenExpirationTime();
-        return System.currentTimeMillis() > expirationTime;
-    }
-
     public SplashFragment() {
         // Required empty public constructor
     }
@@ -153,7 +148,7 @@ public class SplashFragment extends Fragment {
             String refreshToken = token.getRefreshToken();
             if (token.getAccessToken() == null || refreshToken == null)
                 redirectToLogin();
-            else if (isTokenExpired())
+            else if (token.isTokenExpired(token.getTokenExpirationTime()))
                 tokenViewModel.getRefreshTokenUser(refreshToken, context);
             else
                 redirectToHome();

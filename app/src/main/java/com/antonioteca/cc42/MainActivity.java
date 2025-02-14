@@ -15,6 +15,7 @@ import com.antonioteca.cc42.databinding.ActivityMainBinding;
 import com.antonioteca.cc42.factory.TokenViewModelFactory;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Meal;
+import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
@@ -27,6 +28,7 @@ import com.antonioteca.cc42.viewmodel.UserViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Token token;
     private TokenViewModel tokenViewModel;
     private UserViewModel userViewModel;
 
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        token = new Token(this);
         TokenRepository tokenRepository = new TokenRepository(this);
         UserRepository userRepository = new UserRepository(this);
         TokenViewModelFactory tokenViewModelFactory = new TokenViewModelFactory(tokenRepository);
@@ -116,8 +119,8 @@ public class MainActivity extends AppCompatActivity {
         navController.navigate(fragmentId, null, navOptions);
     }
 
-    private void handleNotificationIntent(Intent intent) {
-        if (intent != null && intent.getExtras() != null) { // Segundo plano
+    private void handleNotificationIntent(Intent intent) { // Segundo plano
+        if (intent != null && intent.getExtras() != null && token.getAccessToken() != null && !token.isTokenExpired(token.getTokenExpirationTime())) {
             String targetFragment = intent.getStringExtra("key5");
             if ("DetailsMealFragment".equals(targetFragment)) {
 

@@ -63,4 +63,9 @@ public class Token {
         editor.clear();
         return commit();
     }
+
+    public boolean isTokenExpired(Long tokenExpirationTime) {
+        long expirationTime = tokenExpirationTime;
+        return System.currentTimeMillis() > expirationTime;
+    }
 }
