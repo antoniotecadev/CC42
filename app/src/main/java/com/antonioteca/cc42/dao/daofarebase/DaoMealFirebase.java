@@ -271,7 +271,7 @@ public class DaoMealFirebase {
                     String message = mealName + "\n" + context.getString(R.string.save_meal);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
                     try {
-                        Notification.sendNotificationForTopic(context, layoutInflater, type + ": " + mealName, mealDescription, imageUrl);
+                        Notification.sendNotificationForTopic(context, layoutInflater, meal, Integer.parseInt(cursusId));
                     } catch (IOException e) {
                         Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
                         e.printStackTrace();

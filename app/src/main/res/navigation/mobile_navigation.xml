@@ -120,4 +120,8 @@
         android:label="@string/settings"
         tools:layout="@xml/root_preferences"
         />
+
+    <action
+        android:id="@+id/action_detailsMealFragment"
+        app:destination="@id/detailsMealFragment" />
 </navigation>

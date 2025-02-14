@@ -47,6 +47,7 @@ import com.antonioteca.cc42.dao.daofarebase.DaoEventFirebase;
 import com.antonioteca.cc42.dao.daofarebase.DaoSusbscriptionFirebase;
 import com.antonioteca.cc42.databinding.ActivityNavigationDrawerBinding;
 import com.antonioteca.cc42.model.Coalition;
+import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
@@ -97,6 +98,20 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ActivityNavigationDrawerBinding binding = ActivityNavigationDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
+
+        if (getIntent() != null && "OPEN_FRAGMENT_ACTION".equals(getIntent().getAction())) {
+            int fragmentId = getIntent().getIntExtra("fragment_id", -1);
+            if (fragmentId != -1) {
+                int cursusId = (int) getIntent().getIntExtra("cursusId", 0);
+                Meal meal = (Meal) getIntent().getParcelableExtra("detailsMeal");
+                Bundle args = new Bundle();
+                args.putInt("cursusId", cursusId);
+                args.putParcelable("detailsMeal", meal);
+                navController.navigate(R.id.action_detailsMealFragment, args);
+            }
+        }
         setSupportActionBar(binding.appBarNavigationDrawer.toolbar);
         User user = new User(NavigationDrawerActivity.this);
         uid = String.valueOf(user.getUid());
@@ -155,7 +170,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 R.id.nav_home, R.id.nav_cursu_list_meal)
                 .setOpenableLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
+
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         navController.addOnDestinationChangedListener((navCont, navDestination, bundle) -> {
@@ -322,26 +337,27 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         @Override
         public void onMessageReceived(@NonNull RemoteMessage message) {
             super.onMessageReceived(message);
-            if (message.getNotification() != null && message.getNotification().getImageUrl() != null) {
-
+            if (message.getNotification() != null) {
                 String title = message.getNotification().getTitle();
                 String body = message.getNotification().getBody();
-                String imageUrl = message.getNotification().getImageUrl().toString();
+                if (message.getNotification().getImageUrl() != null) {
+                    String imageUrl = message.getNotification().getImageUrl().toString();
+                    Glide.with(this)
+                            .asBitmap()
+                            .load(imageUrl)
+                            .into(new CustomTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
+                                    showNotification(title, body, bitmap, message, getApplicationContext(), imageUrl);
+                                }
 
-                Glide.with(this)
-                        .asBitmap()
-                        .load(imageUrl)
-                        .into(new CustomTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
-                                showNotification(title, body, bitmap, message, getApplicationContext());
-                            }
-
-                            @Override
-                            public void onLoadCleared(@Nullable Drawable placeholder) {
-                                showNotification(title, body, null, message, getApplicationContext());
-                            }
-                        });
+                                @Override
+                                public void onLoadCleared(@Nullable Drawable placeholder) {
+                                    showNotification(title, body, null, message, getApplicationContext(), imageUrl);
+                                }
+                            });
+                } else
+                    showNotification(title, body, null, message, getApplicationContext(), "");
             }
         }
 
@@ -351,7 +367,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         }
     }
 
-    private static void showNotification(String title, String body, Bitmap image, RemoteMessage message, Context context) {
+    private static void showNotification(String title, String body, Bitmap image, RemoteMessage message, Context context, String imageUrl) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_check_cadet_42)
                 .setContentTitle(title)
@@ -359,16 +375,36 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE);
+
         // Adicionar imagem a notificação
         if (image != null) {
             builder.setStyle(new NotificationCompat.BigPictureStyle()
                     .bigPicture(image)
                     .bigLargeIcon(null));
         }
+
         // Abrir o app ao clicar na notificação
         Intent intent = new Intent(context, NavigationDrawerActivity.class);
+
+        if (message.getData().size() > 0) {
+            String[] partsBody = body.split(": ", 2);
+            String id = message.getData().get("key1");
+            String dataCreated = message.getData().get("key2");
+            String quantity = message.getData().get("key3");
+            String cursusId = message.getData().get("key4");
+            Meal meal = new Meal(id, title, partsBody[1], Integer.parseInt(quantity != null ? quantity : "0"), partsBody[0], dataCreated, imageUrl);
+
+            // Entrar em fragment específico e passar dados da efeição
+            intent.setAction("OPEN_FRAGMENT_ACTION");
+            intent.putExtra("fragment_id", R.id.detailsMealFragment);
+            intent.putExtra("cursusId", Integer.parseInt(cursusId != null ? cursusId : "0"));
+            intent.putExtra("detailsMeal", meal);
+        }
+
+
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendingIntent);
+        builder.setContentIntent(pendingIntent); // Definir a intenção
+
         // Exibir a notificaçào
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
         notificationManagerCompat.notify((int) message.getSentTime(), builder.build());

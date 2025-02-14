@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import androidx.annotation.NonNull;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.utility.Util;
@@ -20,11 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Notification {
 
-    public static void sendNotificationForTopic(
-            Context context,
-            LayoutInflater layoutInflater,
-            String title, String body, String imageUrl
-    ) throws IOException {
+    public static void sendNotificationForTopic(Context context, LayoutInflater layoutInflater, Meal meal, int cursusId) throws IOException {
         AccessTokenGenerator.getAccessToken(context, accessToken -> {
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://fcm.googleapis.com/")
@@ -33,8 +30,8 @@ public class Notification {
 
             FCMService service = retrofit.create(FCMService.class);
 
-            FCMessage.Notification notification = new FCMessage.Notification(title, body, imageUrl);
-            FCMessage.Data data = new FCMessage.Data("", "");
+            FCMessage.Notification notification = new FCMessage.Notification(meal.getName(), meal.getType() + ": " + meal.getDescription(), meal.getPathImage());
+            FCMessage.Data data = new FCMessage.Data(meal.getId(), meal.getDate(), String.valueOf(meal.getQuantity()), String.valueOf(cursusId));
             FCMessage.Message message = new FCMessage.Message("meals", notification, data);
             FCMessage fcmMessage = new FCMessage(message);
 
