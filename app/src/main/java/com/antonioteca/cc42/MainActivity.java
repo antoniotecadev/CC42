@@ -14,6 +14,7 @@ import androidx.navigation.Navigation;
 import com.antonioteca.cc42.databinding.ActivityMainBinding;
 import com.antonioteca.cc42.factory.TokenViewModelFactory;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
+import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
@@ -42,7 +43,12 @@ public class MainActivity extends AppCompatActivity {
         UserViewModelFactory userViewModelFactory = new UserViewModelFactory(userRepository);
         tokenViewModel = new ViewModelProvider(this, tokenViewModelFactory).get(TokenViewModel.class);
         userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
-
+        try {
+            handleNotificationIntent(getIntent());
+        } catch (Exception e) {
+            Util.showAlertDialogBuild(getString(R.string.err), e.getMessage(), MainActivity.this, null);
+            e.printStackTrace();
+        }
         tokenViewModel.getHttpSatus().observe(this, new Observer<HttpStatus>() {
             @Override
             public void onChanged(HttpStatus httpStatus) {
@@ -110,6 +116,33 @@ public class MainActivity extends AppCompatActivity {
         navController.navigate(fragmentId, null, navOptions);
     }
 
+    private void handleNotificationIntent(Intent intent) {
+        if (intent != null && intent.getExtras() != null) { // Segundo plano
+            String targetFragment = intent.getStringExtra("key5");
+            if ("DetailsMealFragment".equals(targetFragment)) {
+
+                String body = intent.getStringExtra("body");
+                String title = intent.getStringExtra("title");
+                String imageUrl = intent.getStringExtra("image");
+
+                String[] partsBody = body.split(": ", 2);
+
+                String id = intent.getStringExtra("key1");
+                String dataCreated = intent.getStringExtra("key2");
+                String quantity = intent.getStringExtra("key3");
+                String cursusId = intent.getStringExtra("key4");
+                Meal meal = new Meal(id, title, partsBody[1], Integer.parseInt(quantity != null ? quantity : "0"), partsBody[0], dataCreated, imageUrl);
+
+                Intent i = new Intent(this, NavigationDrawerActivity.class);
+                i.setAction("OPEN_FRAGMENT_ACTION_BACKGROUND");
+                i.putExtra("cursusId", Integer.parseInt(cursusId));
+                i.putExtra("detailsMeal", meal);
+                startActivity(i);
+                finish();
+            }
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -117,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
         if (fragmentId != -1)
             redirectToLogin(fragmentId);
     }
-    
+
     // capturar código de autorização do redirecionamento
     @Override
     protected void onNewIntent(Intent intent) {
@@ -127,6 +160,13 @@ public class MainActivity extends AppCompatActivity {
             initOnNewIntent = true;
             String code = uri.getQueryParameter(NetworkConstants.CODE);
             tokenViewModel.getAccessTokenUser(code, this);
+        } else {
+            try {
+                handleNotificationIntent(intent);
+            } catch (Exception e) {
+                Util.showAlertDialogBuild(getString(R.string.err), e.getMessage(), MainActivity.this, null);
+                e.printStackTrace();
+            }
         }
     }
 }

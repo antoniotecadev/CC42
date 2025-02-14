@@ -78,6 +78,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private String campusId;
     private String cursusId;
     private Context context;
+    private Bundle args;
     private MenuProvider menuProvider;
     private FloatingActionButton fabOpenCameraScannerQrCode;
     private ProgressBar progressBarMarkAttendance;
@@ -100,18 +101,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
+        handleNotificationIntent(getIntent(), navController);
 
-        if (getIntent() != null && "OPEN_FRAGMENT_ACTION".equals(getIntent().getAction())) {
-            int fragmentId = getIntent().getIntExtra("fragment_id", -1);
-            if (fragmentId != -1) {
-                int cursusId = (int) getIntent().getIntExtra("cursusId", 0);
-                Meal meal = (Meal) getIntent().getParcelableExtra("detailsMeal");
-                Bundle args = new Bundle();
-                args.putInt("cursusId", cursusId);
-                args.putParcelable("detailsMeal", meal);
-                navController.navigate(R.id.action_detailsMealFragment, args);
-            }
-        }
         setSupportActionBar(binding.appBarNavigationDrawer.toolbar);
         User user = new User(NavigationDrawerActivity.this);
         uid = String.valueOf(user.getUid());
@@ -395,19 +386,34 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             Meal meal = new Meal(id, title, partsBody[1], Integer.parseInt(quantity != null ? quantity : "0"), partsBody[0], dataCreated, imageUrl);
 
             // Entrar em fragment específico e passar dados da efeição
-            intent.setAction("OPEN_FRAGMENT_ACTION");
-            intent.putExtra("fragment_id", R.id.detailsMealFragment);
+            intent.setAction("OPEN_FRAGMENT_ACTION_FOREGROUND");
             intent.putExtra("cursusId", Integer.parseInt(cursusId != null ? cursusId : "0"));
             intent.putExtra("detailsMeal", meal);
         }
 
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        } else
+            pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent); // Definir a intenção
 
         // Exibir a notificaçào
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
         notificationManagerCompat.notify((int) message.getSentTime(), builder.build());
+    }
+
+    private void handleNotificationIntent(Intent intent, NavController navController) {
+        if (intent != null && intent.getExtras() != null &&
+                ("OPEN_FRAGMENT_ACTION_FOREGROUND".equals(intent.getAction()) ||
+                        "OPEN_FRAGMENT_ACTION_BACKGROUND".equals(intent.getAction()))) { // Primeiro plano
+            int cursusId = (int) intent.getIntExtra("cursusId", 0);
+            Meal meal = (Meal) intent.getParcelableExtra("detailsMeal");
+            args = new Bundle();
+            args.putInt("cursusId", cursusId);
+            args.putParcelable("detailsMeal", meal);
+            navController.navigate(R.id.action_detailsMealFragment, args);
+        }
     }
 
     /* @Override
@@ -418,9 +424,23 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     }*/
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
+        handleNotificationIntent(intent, navController);
+    }
+
+    @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (args != null)
+            args.clear();
     }
 }
