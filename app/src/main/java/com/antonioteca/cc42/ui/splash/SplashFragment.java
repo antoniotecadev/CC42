@@ -34,10 +34,6 @@ import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.TokenViewModel;
 import com.antonioteca.cc42.viewmodel.UserViewModel;
 
-/**
- * A simple {@link Fragment} subclass.
- * create an instance of this fragment.
- */
 public class SplashFragment extends Fragment {
 
     private TokenViewModel tokenViewModel;

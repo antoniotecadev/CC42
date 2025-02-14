@@ -117,8 +117,7 @@ public class MainActivity extends AppCompatActivity {
         if (fragmentId != -1)
             redirectToLogin(fragmentId);
     }
-
-
+    
     // capturar código de autorização do redirecionamento
     @Override
     protected void onNewIntent(Intent intent) {

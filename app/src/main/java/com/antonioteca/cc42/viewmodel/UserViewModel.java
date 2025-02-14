@@ -183,11 +183,13 @@ public class UserViewModel extends ViewModel {
                     userRepository.getCoalition(user.uid, new Callback<>() {
                         @Override
                         public void onResponse(@NonNull Call<List<Coalition>> call, @NonNull Response<List<Coalition>> response) {
-                            List<Coalition> coalitions = response.body();
-                            if (coalitions == null)
-                                return;
-                            Coalition coalition = coalitions.get(0);
-                            user.setCoalition(coalition);
+                            if (response.isSuccessful()) {
+                                List<Coalition> coalitions = response.body();
+                                if (coalitions != null && !coalitions.isEmpty()) {
+                                    Coalition coalition = coalitions.get(0);
+                                    user.setCoalition(coalition);
+                                }
+                            }
                             userMutableLiveData.postValue(user);
                         }
 
