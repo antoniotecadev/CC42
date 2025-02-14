@@ -22,7 +22,7 @@
     <string name="try_again">Tentar novamente</string>
     <string name="cancel">Cancelar</string>
     <string name="msg_nothing_event_available">! Sem eventos disponíveis\nPuxar para tentar carregar os eventos</string>
-    <string name="msg_registered_event_available">! Sem inscritos neste evento\nPuxar para tentar carregar inscritos</string>
+    <string name="msg_registered_event_available">! Sem inscritos neste evento 😥\nPuxar para tentar carregar inscritos</string>
     <string name="align_camera_qr_code">Alinha a câmera ao CÓDIGO QR</string>
     <string name="cancelled">Cancelado</string>
     <string name="msg_qr_code_invalid">Código QR inválido</string>
