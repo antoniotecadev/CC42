@@ -1,7 +1,5 @@
 package com.antonioteca.cc42.ui.splash;
 
-import static com.antonioteca.cc42.utility.Util.setColorCoalition;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,7 +21,6 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentSplashBinding;
 import com.antonioteca.cc42.factory.TokenViewModelFactory;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
-import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.HttpException;
@@ -64,7 +61,7 @@ public class SplashFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentSplashBinding.inflate(inflater, container, false);
-        setColorCoalition(binding.splashFragment, new Coalition(context).getColor());
+        // setColorCoalition(binding.splashFragment, new Coalition(context).getColor()); // cor de background
         tokenViewModel.getHttpSatus().observe(getViewLifecycleOwner(), new Observer<HttpStatus>() {
             @Override
             public void onChanged(HttpStatus httpStatus) {

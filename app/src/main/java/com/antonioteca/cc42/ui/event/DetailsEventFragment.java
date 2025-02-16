@@ -53,7 +53,7 @@ public class DetailsEventFragment extends Fragment {
             color = Color.parseColor("#FF43A047");
         else
             color = Color.parseColor("#FFFFB300"); // orange
-        binding.linearLayoutCompatEventDetails.setBackgroundColor(color);
+        //binding.linearLayoutCompatEventDetails.setBackgroundColor(color);
         Date eventDateBegin = parseDate(event.getBegin_at());
         Date eventDateEnd = parseDate(event.getEnd_at());
         String day = getFormattedDate(eventDateBegin, "d");
