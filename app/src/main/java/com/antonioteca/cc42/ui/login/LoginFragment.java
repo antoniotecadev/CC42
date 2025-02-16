@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentLoginBinding;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.network.NetworkConstants;
@@ -55,7 +56,20 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final Button loginButton = binding.login;
+        Uri videoUri = Uri.parse("android.resource://" + requireContext().getPackageName() + "/" + R.raw.qr_code_phone_gif);
+        binding.videoViewQrCodePhoneGif.setVideoURI(videoUri);
+        binding.videoViewQrCodePhoneGif.setOnPreparedListener(player -> {
+            player.setLooping(true); // Loop infinito
+            binding.videoViewQrCodePhoneGif.start(); // Iniciar o vídeoautomaticamente
+        });
         loginButton.setOnClickListener(viewOnClick -> signIn());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (binding.videoViewQrCodePhoneGif.isPlaying())
+            binding.videoViewQrCodePhoneGif.stopPlayback(); // Parar a reprodução
     }
 
     @Override
