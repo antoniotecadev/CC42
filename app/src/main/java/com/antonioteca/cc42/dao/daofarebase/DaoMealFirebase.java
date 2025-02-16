@@ -344,6 +344,8 @@ public class DaoMealFirebase {
                 });
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                executorService.shutdown();
             }
         });
     }

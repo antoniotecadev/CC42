@@ -28,6 +28,8 @@ public class AccessTokenGenerator {
                 e.printStackTrace();
                 new Handler(Looper.getMainLooper()).post(() ->
                         tokenCallback.onTokenReceived(null));
+            } finally {
+                executorService.shutdown();
             }
         });
     }
