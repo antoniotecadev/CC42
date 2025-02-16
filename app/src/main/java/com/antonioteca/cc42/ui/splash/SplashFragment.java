@@ -36,6 +36,8 @@ import com.antonioteca.cc42.viewmodel.UserViewModel;
 
 public class SplashFragment extends Fragment {
 
+    private FragmentSplashBinding binding;
+
     private TokenViewModel tokenViewModel;
     private UserViewModel userViewModel;
 
@@ -61,8 +63,7 @@ public class SplashFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        FragmentSplashBinding binding = FragmentSplashBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        binding = FragmentSplashBinding.inflate(inflater, container, false);
         setColorCoalition(binding.splashFragment, new Coalition(context).getColor());
         tokenViewModel.getHttpSatus().observe(getViewLifecycleOwner(), new Observer<HttpStatus>() {
             @Override
@@ -121,7 +122,7 @@ public class SplashFragment extends Fragment {
             }
         });
         // Inflate the layout for this fragment
-        return root;
+        return binding.getRoot();
     }
 
     private void redirectToHome() {
@@ -153,5 +154,11 @@ public class SplashFragment extends Fragment {
             else
                 redirectToHome();
         }, 5000);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
