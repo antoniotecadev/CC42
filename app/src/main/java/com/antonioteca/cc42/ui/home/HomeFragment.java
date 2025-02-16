@@ -81,7 +81,6 @@ public class HomeFragment extends Fragment {
         campusId = user.getCampusId();
         binding.recyclerviewEventsList.setHasFixedSize(true);
         binding.recyclerviewEventsList.setLayoutManager(new LinearLayoutManager(context));
-
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
             eventViewModel.getEvents(context);
@@ -90,10 +89,8 @@ public class HomeFragment extends Fragment {
             Bitmap bitmapQrCode = generateQrCodeWithLogo(context, "user" + uid + "#" + userLogin + "#" + displayName + "#" + cursusId + "#" + campusId);
             showModalQrCode(context, bitmapQrCode, user.getLogin(), user.getDisplayName());
         });
-
         binding.textViewCoalition.setText(user.coalition.getName());
         binding.textViewFullName.setText(user.getDisplayName());
-
         String colorCoalition = user.coalition.getColor();
         if (colorCoalition != null) {
             int color = Color.parseColor(colorCoalition);
@@ -102,7 +99,6 @@ public class HomeFragment extends Fragment {
             binding.textViewCoalition.setTextColor(color);
             binding.textViewFullName.setTextColor(color);
         }
-
         CollapsingToolbarLayout collapsingToolbarLayout = binding.collapsingToolbarLayout;
         collapsingToolbarLayout.setTitle(user.getLogin());
         String imageUrlCoalition = user.coalition.getImageUrl();
