@@ -4,7 +4,7 @@ import static com.antonioteca.cc42.utility.DateUtils.getDaysUntil;
 import static com.antonioteca.cc42.utility.DateUtils.getEventDuration;
 import static com.antonioteca.cc42.utility.DateUtils.getFormattedDate;
 import static com.antonioteca.cc42.utility.DateUtils.parseDate;
-import static com.antonioteca.cc42.utility.Util.generateQrCode;
+import static com.antonioteca.cc42.utility.Util.generateQrCodeWithLogo;
 import static com.antonioteca.cc42.utility.Util.setMarkdownText;
 import static com.antonioteca.cc42.utility.Util.showModalQrCode;
 
@@ -73,7 +73,7 @@ public class DetailsEventFragment extends Fragment {
         binding.textViewPeople.setText(event.getNbr_subscribers() + " / " + event.getMax_people());
         setMarkdownText(binding.textViewDescription, event.getDescription());
         binding.fabGenerateQrCode.setOnClickListener(view -> {
-            Bitmap bitmapQrCode = generateQrCode(view.getContext(), "event" + event.getId());
+            Bitmap bitmapQrCode = generateQrCodeWithLogo(view.getContext(), "event" + event.getId());
             showModalQrCode(view.getContext(), bitmapQrCode, event.getKind(), event.getName());
         });
         binding.fabOpenAttendanceList.setOnClickListener(v -> {

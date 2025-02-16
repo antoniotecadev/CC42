@@ -1,12 +1,13 @@
 package com.antonioteca.cc42.ui.home;
 
-import static com.antonioteca.cc42.utility.Util.generateQrCode;
+import static com.antonioteca.cc42.utility.Util.generateQrCodeWithLogo;
 import static com.antonioteca.cc42.utility.Util.showModalQrCode;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -86,7 +87,7 @@ public class HomeFragment extends Fragment {
             eventViewModel.getEvents(context);
         });
         binding.fabGenerateQrCodeUser.setOnClickListener(v -> {
-            Bitmap bitmapQrCode = generateQrCode(context, "user" + uid + "#" + userLogin + "#" + displayName + "#" + cursusId + "#" + campusId);
+            Bitmap bitmapQrCode = generateQrCodeWithLogo(context, "user" + uid + "#" + userLogin + "#" + displayName + "#" + cursusId + "#" + campusId);
             showModalQrCode(context, bitmapQrCode, user.getLogin(), user.getDisplayName());
         });
 

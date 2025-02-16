@@ -3,7 +3,7 @@ package com.antonioteca.cc42.ui.home;
 import static com.antonioteca.cc42.utility.DateUtils.getDaysUntil;
 import static com.antonioteca.cc42.utility.DateUtils.getFormattedDate;
 import static com.antonioteca.cc42.utility.DateUtils.parseDate;
-import static com.antonioteca.cc42.utility.Util.generateQrCode;
+import static com.antonioteca.cc42.utility.Util.generateQrCodeWithLogo;
 import static com.antonioteca.cc42.utility.Util.showModalQrCode;
 
 import android.graphics.Bitmap;
@@ -106,7 +106,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
-                        Bitmap bitmapQrCode = generateQrCode(view.getContext(), "event" + event.getId());
+                        Bitmap bitmapQrCode = generateQrCodeWithLogo(view.getContext(), "event" + event.getId());
                         showModalQrCode(view.getContext(), bitmapQrCode, event.getKind(), event.getName());
                         return true;
                     }

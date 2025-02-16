@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -35,8 +38,14 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import io.noties.markwon.Markwon;
@@ -103,7 +112,7 @@ public class Util {
         markwon.setMarkdown(textView, markdownText);
     }
 
-    public static Bitmap generateQrCode(Context context, String content) {
+    public static Bitmap generateQrCodeSimple(Context context, String content) {
         Bitmap bitmap = null;
         try {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
@@ -112,6 +121,45 @@ public class Util {
             showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null);
         }
         return bitmap;
+    }
+
+    public static Bitmap generateQrCodeWithLogo(Context context, String content) {
+        try {
+            // Configurar parâmetros do QR Code com alto nível de correção de erro
+            Map<EncodeHintType, Object> hints = new HashMap<>();
+            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H); // Nível H
+            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+            hints.put(EncodeHintType.MARGIN, 1); // Margem mínima
+            // Gerar QR code
+            BitMatrix bitMatrix = new MultiFormatWriter().encode("cc42" + content, BarcodeFormat.QR_CODE, 500, 500, hints);
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap qrCode = barcodeEncoder.createBitmap(bitMatrix);
+            // Criar bitmap para desenhar (com espaço central)
+            // Combina o QR Code com o logotipo
+            Bitmap combinedBitmap = Bitmap.createBitmap(qrCode.getWidth(), qrCode.getHeight(), qrCode.getConfig());
+            Canvas canvas = new Canvas(combinedBitmap);
+            canvas.drawBitmap(qrCode, 0, 0, null);
+            // Obter o logotipo
+            Bitmap logo = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo_42);
+            if (logo != null) {
+                // Criar espaço para o logotipo
+                int logoSize = qrCode.getWidth() / 5;
+                int centerX = (qrCode.getWidth() - logoSize) / 2;
+                int centerY = (qrCode.getHeight() - logoSize) / 2;
+                Paint paint = new Paint();
+                paint.setColor(Color.WHITE);
+                paint.setStyle(Paint.Style.FILL);
+                canvas.drawRect(centerX, centerY, centerX + logoSize, centerY + logoSize, paint);
+                // Redimensionar logo
+                Bitmap resizedLogo = Bitmap.createScaledBitmap(logo, logoSize, logoSize, false);
+                // Desenhar logo sobre o espaço
+                canvas.drawBitmap(resizedLogo, centerX, centerY, null);
+            }
+            return combinedBitmap;
+        } catch (Exception e) {
+            showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null);
+            return null;
+        }
     }
 
     public static void showModalQrCode(Context context, Bitmap bitmapQrCode, String title, String description) {
