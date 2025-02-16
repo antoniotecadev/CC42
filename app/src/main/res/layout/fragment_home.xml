@@ -33,9 +33,12 @@
                 android:layout_marginTop="80dp"
                 android:layout_marginEnd="16dp"
                 android:background="@color/black_overlay"
-                android:text=""
+                android:shadowColor="@android:color/black"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="3"
                 android:textAlignment="center"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
             <TextView
@@ -46,9 +49,12 @@
                 android:layout_marginTop="100dp"
                 android:layout_marginEnd="16dp"
                 android:background="@color/black_overlay"
-                android:text=""
+                android:shadowColor="@android:color/black"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="3"
                 android:textAlignment="center"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textSize="12sp" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
