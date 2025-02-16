@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">CC 42</string>
-    <string name="action_sign_in">Sign in</string>
     <string name="check_cadet">Check Cadet</string>
     <string name="ok">OK</string>
     <string name="net_err">NetworkError</string>

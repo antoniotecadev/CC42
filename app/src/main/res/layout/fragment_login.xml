@@ -15,8 +15,9 @@
         android:layout_gravity="center"
         android:layout_marginBottom="400dp"
         android:background="@android:color/transparent"
-        app:cardBackgroundColor="@android:color/black"
-        app:cardCornerRadius="16dp">
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="8dp">
 
         <VideoView
             android:id="@+id/videoViewQrCodePhoneGif"
@@ -25,16 +26,14 @@
     </androidx.cardview.widget.CardView>
 
     <Button
-        android:id="@+id/login"
+        android:id="@+id/buttonSignIn"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_gravity="center_vertical"
         android:layout_marginHorizontal="16dp"
-        android:text="@string/action_sign_in"
-        android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:backgroundTint="@color/teal_200" />
+        app:backgroundTint="#AFC9F1" />
 
     <TextView
         android:id="@+id/textViewCC42t"

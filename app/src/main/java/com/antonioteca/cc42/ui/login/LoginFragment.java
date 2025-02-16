@@ -1,10 +1,10 @@
 package com.antonioteca.cc42.ui.login;
 
-import static com.antonioteca.cc42.utility.Util.setColorCoalition;
-
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentLoginBinding;
-import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.network.NetworkConstants;
 
 public class LoginFragment extends Fragment {
@@ -48,21 +47,26 @@ public class LoginFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentLoginBinding.inflate(inflater, container, false);
-        setColorCoalition(binding.loginFragment, new Coalition(requireContext()).getColor());
+//        setColorCoalition(binding.loginFragment, new Coalition(requireContext()).getColor());
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final Button loginButton = binding.login;
+        final Button buttonSignIn = binding.buttonSignIn;
         Uri videoUri = Uri.parse("android.resource://" + requireContext().getPackageName() + "/" + R.raw.qr_code_phone_gif);
         binding.videoViewQrCodePhoneGif.setVideoURI(videoUri);
         binding.videoViewQrCodePhoneGif.setOnPreparedListener(player -> {
             player.setLooping(true); // Loop infinito
             binding.videoViewQrCodePhoneGif.start(); // Iniciar o vídeoautomaticamente
         });
-        loginButton.setOnClickListener(viewOnClick -> signIn());
+        String colorText = "<font color='#419259'><b>SIGN</b></font> <font color='#DFB50D'><b>IN</b></font>";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            buttonSignIn.setText(Html.fromHtml(colorText, Html.FROM_HTML_MODE_LEGACY));
+        else
+            buttonSignIn.setText(Html.fromHtml(colorText));
+        buttonSignIn.setOnClickListener(viewOnClick -> signIn());
     }
 
     @Override
