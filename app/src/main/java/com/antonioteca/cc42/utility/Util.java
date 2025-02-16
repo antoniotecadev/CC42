@@ -116,7 +116,7 @@ public class Util {
         Bitmap bitmap = null;
         try {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            bitmap = barcodeEncoder.encodeBitmap("cc42" + content, BarcodeFormat.QR_CODE, 500, 500);
+            bitmap = barcodeEncoder.encodeBitmap("cc42" + content, BarcodeFormat.QR_CODE, 600, 600);
         } catch (Exception e) {
             showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null);
         }
@@ -131,7 +131,7 @@ public class Util {
             hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
             hints.put(EncodeHintType.MARGIN, 1); // Margem mínima
             // Gerar QR code
-            BitMatrix bitMatrix = new MultiFormatWriter().encode("cc42" + content, BarcodeFormat.QR_CODE, 500, 500, hints);
+            BitMatrix bitMatrix = new MultiFormatWriter().encode("cc42" + content, BarcodeFormat.QR_CODE, 600, 600, hints);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap qrCode = barcodeEncoder.createBitmap(bitMatrix);
             // Criar bitmap para desenhar (com espaço central)

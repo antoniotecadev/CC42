@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_nav_home_to_detailsEventFragment"
             app:destination="@id/detailsEventFragment" />
+        <action
+            android:id="@+id/action_nav_home_to_qrCodeFragment"
+            app:destination="@id/qrCodeFragment" />
     </fragment>
 
     <fragment
@@ -26,6 +29,9 @@
         <action
             android:id="@+id/action_detailsEventFragment_to_attendanceListFragment"
             app:destination="@id/attendanceListFragment" />
+        <action
+            android:id="@+id/action_detailsEventFragment_to_qrCodeFragment"
+            app:destination="@id/qrCodeFragment" />
     </fragment>
     <fragment
         android:id="@+id/attendanceListFragment"
@@ -92,6 +98,9 @@
         <action
             android:id="@+id/action_detailsMealFragment_to_subscriptionListFragment"
             app:destination="@id/subscriptionListFragment" />
+        <action
+            android:id="@+id/action_detailsMealFragment_to_qrCodeFragment"
+            app:destination="@id/qrCodeFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_cursu_list_meal"
@@ -124,4 +133,20 @@
     <action
         android:id="@+id/action_detailsMealFragment"
         app:destination="@id/detailsMealFragment" />
+
+    <fragment
+        android:id="@+id/qrCodeFragment"
+        android:name="com.antonioteca.cc42.ui.qrcode.QrCodeFragment"
+        android:label="@string/qr_code"
+        tools:layout="@layout/fragment_qr_code">
+        <argument
+            android:name="content"
+            app:argType="string" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="description"
+            app:argType="string" />
+    </fragment>
 </navigation>

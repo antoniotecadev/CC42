@@ -1,13 +1,8 @@
 package com.antonioteca.cc42.ui.home;
 
-import static com.antonioteca.cc42.utility.Util.generateQrCodeWithLogo;
-import static com.antonioteca.cc42.utility.Util.showModalQrCode;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -23,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -86,8 +82,10 @@ public class HomeFragment extends Fragment {
             eventViewModel.getEvents(context);
         });
         binding.fabGenerateQrCodeUser.setOnClickListener(v -> {
-            Bitmap bitmapQrCode = generateQrCodeWithLogo(context, "user" + uid + "#" + userLogin + "#" + displayName + "#" + cursusId + "#" + campusId);
-            showModalQrCode(context, bitmapQrCode, user.getLogin(), user.getDisplayName());
+            String content = "user" + uid + "#" + userLogin + "#" + displayName + "#" + cursusId + "#" + campusId;
+            HomeFragmentDirections.ActionNavHomeToQrCodeFragment actionNavHomeToQrCodeFragment =
+                    HomeFragmentDirections.actionNavHomeToQrCodeFragment(content, user.getLogin(), user.getDisplayName());
+            Navigation.findNavController(v).navigate(actionNavHomeToQrCodeFragment);
         });
         binding.textViewCoalition.setText(user.coalition.getName());
         binding.textViewFullName.setText(user.getDisplayName());

@@ -4,12 +4,9 @@ import static com.antonioteca.cc42.utility.DateUtils.getDaysUntil;
 import static com.antonioteca.cc42.utility.DateUtils.getEventDuration;
 import static com.antonioteca.cc42.utility.DateUtils.getFormattedDate;
 import static com.antonioteca.cc42.utility.DateUtils.parseDate;
-import static com.antonioteca.cc42.utility.Util.generateQrCodeWithLogo;
 import static com.antonioteca.cc42.utility.Util.setMarkdownText;
-import static com.antonioteca.cc42.utility.Util.showModalQrCode;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -73,8 +70,9 @@ public class DetailsEventFragment extends Fragment {
         binding.textViewPeople.setText(event.getNbr_subscribers() + " / " + event.getMax_people());
         setMarkdownText(binding.textViewDescription, event.getDescription());
         binding.fabGenerateQrCode.setOnClickListener(view -> {
-            Bitmap bitmapQrCode = generateQrCodeWithLogo(view.getContext(), "event" + event.getId());
-            showModalQrCode(view.getContext(), bitmapQrCode, event.getKind(), event.getName());
+            DetailsEventFragmentDirections.ActionDetailsEventFragmentToQrCodeFragment actionDetailsEventFragmentToQrCodeFragment =
+                    DetailsEventFragmentDirections.actionDetailsEventFragmentToQrCodeFragment("event" + event.getId(), event.getKind(), event.getName());
+            Navigation.findNavController(view).navigate(actionDetailsEventFragmentToQrCodeFragment);
         });
         binding.fabOpenAttendanceList.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(v);
