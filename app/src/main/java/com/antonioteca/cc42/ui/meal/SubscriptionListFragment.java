@@ -241,6 +241,7 @@ public class SubscriptionListFragment extends Fragment {
         scanOptions.setOrientationLocked(false);
         scanOptions.setCameraId(0);
         scanOptions.setBeepEnabled(true);
+        scanOptions.setBarcodeImageEnabled(false); // Não capturar e retornar a imagem do código scaneado
 
         inflatedViewStub = binding.viewStub.inflate();
         inflatedViewStub.setVisibility(View.GONE);

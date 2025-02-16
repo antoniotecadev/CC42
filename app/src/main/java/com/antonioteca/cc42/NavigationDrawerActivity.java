@@ -63,6 +63,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.zxing.client.android.Intents;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -277,6 +278,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         scanOptions.setOrientationLocked(false); // unlock orientation of camera
         scanOptions.setCameraId(0);
         scanOptions.setBeepEnabled(true);
+        scanOptions.setBarcodeImageEnabled(false); // Não capturar e retornar a imagem do código scaneado
         barScanOptionsActivityResultLauncher.launch(scanOptions);
     }
 
