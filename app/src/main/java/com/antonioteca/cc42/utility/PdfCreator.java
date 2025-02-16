@@ -11,16 +11,23 @@ import androidx.annotation.Nullable;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
@@ -63,6 +70,8 @@ public class PdfCreator {
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf, PageSize.A4);
             document.setMargins(20, 20, 20, 20);
+            // Evento marca d'agua
+            pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new ImageWatermarkEvent(getImageDataFromDrawable(context, R.drawable.check_cadet_logotipo)));
             // Rodapé
             pdf.addEventHandler(PdfDocumentEvent.END_PAGE, event -> {
                 PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
@@ -140,6 +149,14 @@ public class PdfCreator {
         }
     }
 
+    private static ImageData getImageDataFromDrawable(Context context, int drawebleId) {
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), drawebleId);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        return ImageDataFactory.create(byteArray);
+    }
+
     @Nullable
     public static File createPdfSubscriptionList(Context context, Meal meal, int numberUserUnsubscription, int numberUserSubscription, List<User> userList) {
         File folder = createFolder(context, "MealSubscriptionList");
@@ -152,6 +169,8 @@ public class PdfCreator {
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf, PageSize.A4);
             document.setMargins(20, 20, 20, 20);
+            // Evento marca d'agua
+            pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new ImageWatermarkEvent(getImageDataFromDrawable(context, R.drawable.check_cadet_logotipo)));
             // Rodapé
             pdf.addEventHandler(PdfDocumentEvent.END_PAGE, event -> {
                 PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
@@ -226,6 +245,68 @@ public class PdfCreator {
         } catch (Exception e) {
             Util.showAlertDialogBuild("PDF", context.getString(R.string.pdf_not_created) + e.getMessage(), context, null);
             return null;
+        }
+    }
+
+    // Evento para aplicar marca d'água em todas as páginas
+    private static class TextWatermarkEvent implements IEventHandler {
+
+        @Override
+        public void handleEvent(com.itextpdf.kernel.events.Event event) {
+            PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
+            PdfPage page = documentEvent.getPage();
+            Rectangle pageSize = page.getPageSize();
+            PdfCanvas pdfCanvas = new PdfCanvas(page);
+            try {
+                PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
+                pdfCanvas.saveState();
+                pdfCanvas.beginText()
+                        .setFontAndSize(font, 60)
+                        .setColor(ColorConstants.LIGHT_GRAY, true)
+                        .moveText(pageSize.getWidth() / 2 - 150, pageSize.getHeight() / 2)
+                        .showText("CONFIDENCIAL")
+                        .endText();
+                pdfCanvas.restoreState();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Evento para aplicar marca d'água em todas as páginas
+    private static class ImageWatermarkEvent implements IEventHandler {
+
+        private final ImageData imageData;
+
+        public ImageWatermarkEvent(ImageData imageData) {
+            this.imageData = imageData;
+        }
+
+        @Override
+        public void handleEvent(com.itextpdf.kernel.events.Event event) {
+            PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
+            PdfPage page = documentEvent.getPage();
+            Rectangle pageSize = page.getPageSize();
+            PdfCanvas pdfCanvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), page.getDocument()); // desenhar antes do conteúdo principal
+
+            float offsetX = -100f; // Ajuste para mover à esquerda (negativo)
+            float offsetY = 0f; // Para deslocar na vertical
+            float imageWidth = pageSize.getWidth() / 2;
+            float imageHeight = pageSize.getHeight() / 2;
+
+            //Definir transparencia
+            pdfCanvas.saveState();
+            PdfExtGState extGState = new PdfExtGState();
+            extGState.setFillOpacity(0.15f);
+            pdfCanvas.setExtGState(extGState);
+
+            pdfCanvas.addImageFittedIntoRectangle(imageData,
+                    new Rectangle(
+                            ((pageSize.getHeight() - imageWidth) / 2) + offsetX, // Deslocar para esquerda
+                            ((pageSize.getHeight() - imageHeight) / 2) + offsetY,
+                            imageWidth, imageHeight),
+                    false);
+            pdfCanvas.restoreState();
         }
     }
 }
