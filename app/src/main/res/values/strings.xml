@@ -1,20 +1,16 @@
 <resources>
-    <string name="app_name">CC 42</string>
-    <string name="check_cadet">Check Cadet</string>
-    <string name="ok">OK</string>
-    <string name="net_err">NetworkError</string>
-    <string name="jso_err">JSONError</string>
+    <string name="app_name" translatable="false">CC 42</string>
+    <string name="check_cadet" translatable="false">Check Cadet</string>
+    <string name="ok" translatable="false">OK</string>
+    <string name="net_err" translatable="false">NetworkError</string>
+    <string name="jso_err" translatable="false">JSONError</string>
     <string name="err">Erro</string>
-    <string name="menu_home">Casa</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_home">Início</string>
     <string name="action_logout">Sair</string>
     <string name="no">Não</string>
     <string name="yes">Sim</string>
     <string name="msg_logout">Tem certeza que pretende sair do CC 42 ?</string>
-    <string name="msg_err_save_sess_user">Erro ao salvar sessão de usuário.</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="msg_err_save_sess_user">Erro ao salvar sessão de usuário</string>
     <string name="qr_code">Código QR</string>
     <string name="close">Fechar</string>
     <string name="msg_permis_camera_denied">Permissão para usar a câmera negada</string>
@@ -49,24 +45,24 @@
     <string name="synchronize">Sincronizar</string>
     <string name="synchronization">Sincronizando…</string>
     <string name="msg_synchronization">Lista de presença não está sincronizada. Ao sincronizar, a lista será eliminada do armazenamento local</string>
-    <string name="msg_attendance_list_synchronized">Lista de presença sincronizada.</string>
-    <string name="error_msg_attendance_list_synchronized">Erro ao sincronizar lista de presença.</string>
+    <string name="msg_attendance_list_synchronized">Lista de presença sincronizada</string>
+    <string name="error_msg_attendance_list_synchronized">Erro ao sincronizar lista de presença</string>
     <string name="later">Depois</string>
     <string name="search">Pesquisar</string>
     <string name="name_login">Login | Nome</string>
-    <string name="msg_error_get_ids_user_local">Erro ao obter ids dos estudantes localmente.</string>
+    <string name="msg_error_get_ids_user_local">Erro ao obter ids dos estudantes localmente</string>
     <string name="list_reload">Recarregar</string>
     <string name="list_print">Imprimir</string>
     <string name="permission">Permissão</string>
-    <string name="whithout_permission_cannot_print">Sem permissào não vai poder imprimir a lista.</string>
+    <string name="whithout_permission_cannot_print">Sem permissào não vai poder imprimir a lista</string>
     <string name="msg_folder_not_created">Pasta não criada: </string>
     <string name="pdf_created_sucessfully">PDF criado com sucesso: </string>
     <string name="pdf_not_created">PDF não criado: </string>
     <string name="msg_file_pdf_not_found">Arquivo PDF não encontrado.</string>
-    <string name="msg_no_pdf_viewing_applications_were_found">Nenhum aplicativo de visualização de PDF encontrado.</string>
+    <string name="msg_no_pdf_viewing_applications_were_found">Nenhum aplicativo de visualização de PDF encontrado</string>
     <string name="list_share">Partilhar</string>
-    <string name="whithout_permission_cannot_share">Sem permissào não vai poder partilhar a lista.</string>
-    <string name="error_load_logo">Erro ao carregar logotipo.</string>
+    <string name="whithout_permission_cannot_share">Sem permissào não vai poder partilhar a lista</string>
+    <string name="error_load_logo">Erro ao carregar logotipo</string>
     <string name="full_name">Nome Completo</string>
     <string name="login">Login</string>
     <string name="attendance">Presença</string>
@@ -86,36 +82,36 @@
     <string name="msg_permis_image_denied">Permissão para selecionar imagem negada.</string>
     <string name="quantity">Quantidade:</string>
     <string name="msg_permis_open_camera_denied">Permissão para abrir camera negada.</string>
-    <string name="save_meal">Refeição salva com sucesso!</string>
+    <string name="save_meal">Refeição salva com sucesso</string>
     <string name="error_save_meal">Erro ao salvar refeição</string>
     <string name="invalid_name_meal">Nome inválido</string>
     <string name="start_upload_image">Iniciando o upload de imagem…</string>
     <string name="error_save_image">Erro ao salvar imagem</string>
-    <string name="error_load_data">"Erro ao carregar dados: "</string>
-    <string name="meals_not_found">Refeições não encontradas.</string>
+    <string name="error_load_data">Erro ao carregar dados: </string>
+    <string name="meals_not_found">Refeições não encontradas</string>
     <string name="edit_meal">Editar</string>
     <string name="update_meal">Actualizar</string>
-    <string name="nothing_edit">Não é possível actualizar a refeição, nenhuma alteração foi feita.</string>
-    <string name="error_update_image">"Erro ao actualizar imagem: "</string>
-    <string name="sucess_image_update">Imagem actualizada com sucesso!</string>
+    <string name="nothing_edit">Não é possível actualizar a refeição, nenhuma alteração foi feita</string>
+    <string name="error_update_image">Erro ao actualizar imagem: </string>
+    <string name="sucess_image_update">Imagem actualizada com sucesso</string>
     <string name="error_update_image_url">Erro ao actualizar URL da imagem: </string>
-    <string name="sucess_meal_update">Refeição atualizada com sucesso!</string>
-    <string name="error_meal_update">"Erro ao atualizar refeição: "</string>
+    <string name="sucess_meal_update">Refeição atualizada com sucesso</string>
+    <string name="error_meal_update">Erro ao atualizar refeição: </string>
     <string name="sucess_meal_delete">Refeição eliminada com sucesso!</string>
-    <string name="error_meal_delete">"Erro ao excluir refeição: "</string>
+    <string name="error_meal_delete">Erro ao excluir refeição: </string>
     <string name="delete_meal">Eliminar</string>
     <string name="error_delete_image">Erro ao eliminar a imagem!</string>
     <string name="msg_not_found_cursus">Cursos não encontrados 😥\nPuxar para tentar carregar novamente.</string>
     <string name="title_cursus">Cursos</string>
-    <string name="_0">0</string>
+    <string name="_0" translatable="false">0</string>
     <string name="cursu">Curso</string>
     <string name="msg_meals_not_found">Refeições não encontradas 😥\nPuxar para tentar carregar novamente.</string>
     <string name="msg_users_not_found">! Estudantes não encontrados\nPuxar para tentar carregar novamente.</string>
     <string name="text_signed">Assinado</string>
-    <string name="text_unsigned">N/A</string>
+    <string name="text_unsigned" translatable="false">N/A</string>
     <string name="msg_user_not_fount_list">Não está na lista.</string>
-    <string name="msg_list_whithout_subscription">Lista sem assinaturas.</string>
-    <string name="msg_subscription_list_empty">Lista de assinaturas vazia.</string>
+    <string name="msg_list_whithout_subscription">Lista sem assinaturas</string>
+    <string name="msg_subscription_list_empty">Lista de assinaturas vazia</string>
     <string name="msg_checking_subscription">Verificando assinaturas…</string>
     <string name="msg_you_already_subscription">Já assinou 😉 !</string>
     <string name="msg_sucess_subscription">Assinatura feita com sucesso 😊 !</string>
@@ -135,7 +131,6 @@
     <string name="notification_summary_off">Não vai receber as actualizações das refeições</string>
     <string name="notificatio_summary_on">Vai receber as actualizações das refeições</string>
     <string name="error_send_notification">Ocorreu um erro ao enviar a notificação</string>
-
     <string-array name="meals_list">
         <item>Café da manhã</item>
         <item>Lanche da manhã</item>
@@ -147,5 +142,4 @@
         <item>Buffet</item>
         <item>Degustação</item>
     </string-array>
-
 </resources>
