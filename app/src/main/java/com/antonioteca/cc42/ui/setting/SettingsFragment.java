@@ -1,7 +1,10 @@
 package com.antonioteca.cc42.ui.setting;
 
+import static com.antonioteca.cc42.utility.Util.setAppLanguage;
+
 import android.os.Bundle;
 
+import androidx.preference.ListPreference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
@@ -18,6 +21,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
         SwitchPreferenceCompat notificationKey = findPreference("notification_key");
+        ListPreference languageKey = findPreference("language_key");
 
         if (notificationKey != null) {
             FirebaseMessaging messaging = FirebaseMessaging.getInstance();
@@ -38,6 +42,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             }
                     });
                 }
+                return true;
+            });
+        }
+        if (languageKey != null) {
+            languageKey.setOnPreferenceChangeListener((preference, newValue) -> {
+                // Obter o idioma selecionado
+                String language = newValue.toString();
+                // Alterar o idioma da aplicação
+                setAppLanguage(language, getResources(), getActivity(), true);
                 return true;
             });
         }

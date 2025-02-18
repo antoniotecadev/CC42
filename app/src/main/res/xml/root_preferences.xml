@@ -1,14 +1,28 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/notificatio_header" app:icon="@drawable/ic_baseline_notifications_24">
-
+    <PreferenceCategory
+        app:icon="@drawable/ic_baseline_notifications_24"
+        app:title="@string/notificatio_header">
         <SwitchPreferenceCompat
-            app:key="notification_key"
+            app:defaultValue="true"
             app:icon="@drawable/ic_baseline_restaurant_24"
+            app:key="notification_key"
             app:summaryOff="@string/notification_summary_off"
             app:summaryOn="@string/notificatio_summary_on"
-            app:title="@string/notificatio_title"
-            app:defaultValue="true"/>
-
+            app:title="@string/notificatio_title" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        app:icon="@drawable/ic_baseline_translate_24"
+        app:title="@string/language">
+        <ListPreference
+            android:defaultValue="pt-rBR"
+            android:entries="@array/language_entries"
+            android:entryValues="@array/language_values"
+            android:key="language_key"
+            android:summary="@string/select_language_app"
+            android:title="@string/language"
+            app:dialogIcon="@drawable/ic_baseline_translate_24"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 </PreferenceScreen>

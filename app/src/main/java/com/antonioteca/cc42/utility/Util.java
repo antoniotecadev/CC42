@@ -1,8 +1,12 @@
 package com.antonioteca.cc42.utility;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -28,6 +32,7 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ImageQrCodeBinding;
@@ -45,6 +50,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -295,5 +301,34 @@ public class Util {
         } else
             requestPermission.launch(permission);
         return false;
+    }
+
+    public static void setAppLanguage(String languageCode, Resources resources, Activity activity, boolean isSettingsFragment) {
+        // Criar um objeto Locale com o código do idioma
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+
+        // Configurar a localidade no Resources
+        Configuration config = resources.getConfiguration();
+        config.setLocale(locale);
+
+        // Atualizar a configuração
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
+
+        // Salvar o idioma selecionado nas preferências (opcional)
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity.getBaseContext());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("language_preference", languageCode);
+        editor.apply();
+
+        // Reiniciar a Activity para aplicar as mudanças
+        if (isSettingsFragment)
+            restartActivity(activity);
+    }
+
+    private static void restartActivity(Activity activity) {
+        Intent intent = activity.getIntent();
+        activity.finish();
+        activity.startActivity(intent);
     }
 }

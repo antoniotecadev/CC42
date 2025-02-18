@@ -44,7 +44,7 @@
     <string name="error_msg_attendance_list_synchronized">Error al sincronizar la lista de asistencia</string>
     <string name="later">Más tarde</string>
     <string name="search">Buscar</string>
-    <string name="name_login">Iniciar sesión | Nombre</string>
+    <string name="name_login">User | Nombre</string>
     <string name="msg_error_get_ids_user_local">Error al obtener los IDs de los estudiantes localmente</string>
     <string name="list_reload">Recargar</string>
     <string name="list_print">Imprimir</string>
@@ -135,4 +135,6 @@
         <item>Buffet</item>
         <item>Degustación</item>
     </string-array>
+    <string name="language">Idioma</string>
+    <string name="select_language_app">Elegir el idioma de la aplicación</string>
 </resources>

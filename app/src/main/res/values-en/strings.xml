@@ -135,4 +135,6 @@
         <item>Buffet</item>
         <item>Tasting</item>
     </string-array>
+    <string name="language">language</string>
+    <string name="select_language_app">Choose the application language</string>
 </resources>

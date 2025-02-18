@@ -44,7 +44,7 @@
     <string name="error_msg_attendance_list_synchronized">Erreur lors de la synchronisation de la liste de présence</string>
     <string name="later">Plus tard</string>
     <string name="search">Rechercher</string>
-    <string name="name_login">Connexion | Nom</string>
+    <string name="name_login">User | Nom</string>
     <string name="msg_error_get_ids_user_local">Erreur lors de la récupération des identifiants des étudiants localement</string>
     <string name="list_reload">Recharger</string>
     <string name="list_print">Imprimer</string>
@@ -135,4 +135,6 @@
         <item>Buffet</item>
         <item>Dégustation</item>
     </string-array>
+    <string name="language">langue</string>
+    <string name="select_language_app">Choisir la langue de l\'application</string>
 </resources>
