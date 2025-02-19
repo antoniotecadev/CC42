@@ -137,4 +137,6 @@
     </string-array>
     <string name="language">language</string>
     <string name="select_language_app">Choose the application language</string>
+    <string name="description_app">Check Cadet is an application that allows students of School 42 to mark attendance at events and sign meal lists digitally using QR code.</string>
+    <string name="about_app">About</string>
 </resources>

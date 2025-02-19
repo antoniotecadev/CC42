@@ -5,8 +5,15 @@
     <item
         android:id="@+id/settingsFragment"
         android:icon="@drawable/ic_baseline_settings_24"
-        android:orderInCategory="9"
+        android:orderInCategory="8"
         android:title="@string/settings"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/aboutDialogFragment"
+        android:icon="@drawable/common_full_open_on_phone"
+        android:orderInCategory="9"
+        android:title="@string/about_app"
         app:showAsAction="never" />
 
     <item

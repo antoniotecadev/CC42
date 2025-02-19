@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_nav_home_to_qrCodeFragment"
             app:destination="@id/qrCodeFragment" />
+        <action
+            android:id="@+id/action_nav_home_to_aboutDialogFragment"
+            app:destination="@id/aboutDialogFragment" />
     </fragment>
 
     <fragment
@@ -149,4 +152,9 @@
             android:name="description"
             app:argType="string" />
     </fragment>
+    <dialog
+        android:id="@+id/aboutDialogFragment"
+        android:name="com.antonioteca.cc42.ui.about.AboutDialogFragment"
+        android:label="fragment_about_dialog"
+        tools:layout="@layout/fragment_about_dialog" />
 </navigation>

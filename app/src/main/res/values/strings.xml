@@ -144,4 +144,6 @@
         <item>Buffet</item>
         <item>Degustação</item>
     </string-array>
+    <string name="about_app">Sobre</string>
+    <string name="description_app">Check Cadet é uma aplicação que permite aos estudantes da Escola 42 marcarem presença em eventos e assinar as listas de refeições digitalmente utilizando código QR.</string>
 </resources>
