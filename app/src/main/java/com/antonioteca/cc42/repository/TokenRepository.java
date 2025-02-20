@@ -1,5 +1,7 @@
 package com.antonioteca.cc42.repository;
 
+import static com.antonioteca.cc42.network.FirebaseDataBaseInstance.fetchApiKeyFromDatabase;
+
 import android.content.Context;
 
 import com.antonioteca.cc42.dao.daoapi.DaoApiToken;
@@ -18,22 +20,27 @@ import retrofit2.Callback;
 public class TokenRepository {
 
     private final Token token;
+    private final Context context;
     private final DaoApiToken daoApiToken;
 
+
     public TokenRepository(Context context) {
+        this.context = context;
         token = new Token(context);
         daoApiToken = RetrofitClientApi.getApiService().create(DaoApiToken.class);
     }
 
     public void getAccessTokenUser(String code, Callback<Token> callback) {
-        Call<Token> tokenCall = daoApiToken.getAccessToken(
-                "authorization_code",  // grant_type
-                NetworkConstants.UID, // client_id
-                NetworkConstants.SECRET, // client_secret
-                code,                           // code recebido
-                NetworkConstants.SCHEME_HOST    // redirect_uri
-        );
-        tokenCall.enqueue(callback); // Executar a chamada de forma assíncrona
+        fetchApiKeyFromDatabase("intra", context, apiKey -> {
+            Call<Token> tokenCall = daoApiToken.getAccessToken(
+                    "authorization_code",  // grant_type
+                    NetworkConstants.UID, // client_id
+                    apiKey, // client_secret
+                    code,                           // code recebido
+                    NetworkConstants.SCHEME_HOST    // redirect_uri
+            );
+            tokenCall.enqueue(callback); // Executar a chamada de forma assíncrona
+        });
     }
 
     public boolean saveAcessToken(Token t) {
@@ -44,12 +51,14 @@ public class TokenRepository {
     }
 
     public void getRefreshTokenUser(String refreshToken, Callback<Token> callback) {
-        Call<Token> call = daoApiToken.getRefreshToken(
-                "refresh_token",
-                refreshToken,
-                NetworkConstants.UID,
-                NetworkConstants.SECRET
-        );
-        call.enqueue(callback); // Executar a chamada de forma assíncrona
+        fetchApiKeyFromDatabase("intra", context, apiKey -> {
+            Call<Token> call = daoApiToken.getRefreshToken(
+                    "refresh_token",
+                    refreshToken,
+                    NetworkConstants.UID,
+                    apiKey
+            );
+            call.enqueue(callback); // Executar a chamada de forma assíncrona
+        });
     }
 }
