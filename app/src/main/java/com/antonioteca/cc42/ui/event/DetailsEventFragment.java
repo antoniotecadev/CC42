@@ -70,9 +70,12 @@ public class DetailsEventFragment extends Fragment {
         binding.textViewPeople.setText(event.getNbr_subscribers() + " / " + event.getMax_people());
         setMarkdownText(binding.textViewDescription, event.getDescription());
         binding.fabGenerateQrCode.setOnClickListener(view -> {
-            DetailsEventFragmentDirections.ActionDetailsEventFragmentToQrCodeFragment actionDetailsEventFragmentToQrCodeFragment =
-                    DetailsEventFragmentDirections.actionDetailsEventFragmentToQrCodeFragment("event" + event.getId(), event.getKind(), event.getName());
-            Navigation.findNavController(view).navigate(actionDetailsEventFragmentToQrCodeFragment);
+            NavController navController = Navigation.findNavController(view);
+            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.qrCodeFragment) {
+                DetailsEventFragmentDirections.ActionDetailsEventFragmentToQrCodeFragment actionDetailsEventFragmentToQrCodeFragment =
+                        DetailsEventFragmentDirections.actionDetailsEventFragmentToQrCodeFragment("event" + event.getId(), event.getKind(), event.getName());
+                Navigation.findNavController(view).navigate(actionDetailsEventFragmentToQrCodeFragment);
+            }
         });
         binding.fabOpenAttendanceList.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(v);
