@@ -358,12 +358,4 @@ public class DaoMealFirebase {
         String lastPart = parts[parts.length - 1];
         return lastPart.replaceAll("\\.[a-zA-Z0-9]+$", "");
     }
-
-//    public static String extractPublicIdFromUrlJPG(String imageUrl) {
-//        if (imageUrl.contains(".jpg")) {
-//            String[] parts = imageUrl.split("/");
-//            return parts[parts.length - 1].replace(".jpg", ""); // Adiciona o prefixo da pasta (se houver)
-//        }
-//        return null;
-//    }
 }
