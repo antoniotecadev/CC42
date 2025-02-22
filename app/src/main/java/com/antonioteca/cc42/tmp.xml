@@ -27,7 +27,7 @@
 
         <!-- Título -->
         <TextView
-            android:id="@+id/card_title"
+            android:id="@+id/textViewName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Special title treatment"
@@ -38,7 +38,7 @@
 
         <!-- Texto -->
         <TextView
-            android:id="@+id/card_text"
+            android:id="@+id/textViewDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="With supporting text below as a natural lead-in to additional content."
@@ -46,9 +46,26 @@
             android:gravity="center"
             android:paddingBottom="12dp"/>
 
+        <ImageView
+            android:id="@+id/imageViewMeal"
+            android:layout_width="400dp"
+            android:layout_height="400dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_baseline_restaurant_60" />
+
         <!-- Botão -->
         <Button
-            android:id="@+id/card_button"
+            android:id="@+id/fabGenerateQrCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Go somewhere"
+            android:layout_gravity="center"
+            android:backgroundTint="?attr/colorPrimary"/>
+
+        <!-- Botão -->
+        <Button
+            android:id="@+id/fabOpenSubscriptionList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Go somewhere"
@@ -57,7 +74,7 @@
 
         <!-- Rodapé -->
         <TextView
-            android:id="@+id/card_footer"
+            android:id="@+id/textViewDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="2 days ago"

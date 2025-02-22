@@ -50,6 +50,7 @@ public class DetailsMealFragment extends Fragment {
             if (actionBar != null)
                 actionBar.setTitle(meal.getType() + " (" + meal.getQuantity() + ")");
         }
+        binding.textViewType.setText(meal.getType());
         binding.textViewName.setText(meal.getName());
         binding.textViewDescription.setText(meal.getDescription());
         binding.textViewDate.setText(meal.getDate());
