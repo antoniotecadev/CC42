@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -82,10 +83,13 @@ public class HomeFragment extends Fragment {
             eventViewModel.getEvents(context);
         });
         binding.fabGenerateQrCodeUser.setOnClickListener(v -> {
-            String content = "user" + uid + "#" + userLogin + "#" + displayName + "#" + cursusId + "#" + campusId;
-            HomeFragmentDirections.ActionNavHomeToQrCodeFragment actionNavHomeToQrCodeFragment =
-                    HomeFragmentDirections.actionNavHomeToQrCodeFragment(content, user.getLogin(), user.getDisplayName());
-            Navigation.findNavController(v).navigate(actionNavHomeToQrCodeFragment);
+            NavController navController = Navigation.findNavController(v);
+            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.qrCodeFragment) {
+                String content = "user" + uid + "#" + userLogin + "#" + displayName + "#" + cursusId + "#" + campusId;
+                HomeFragmentDirections.ActionNavHomeToQrCodeFragment actionNavHomeToQrCodeFragment =
+                        HomeFragmentDirections.actionNavHomeToQrCodeFragment(content, user.getLogin(), user.getDisplayName());
+                Navigation.findNavController(v).navigate(actionNavHomeToQrCodeFragment);
+            }
         });
         binding.textViewCoalition.setText(user.coalition.getName());
         binding.textViewFullName.setText(user.getDisplayName());

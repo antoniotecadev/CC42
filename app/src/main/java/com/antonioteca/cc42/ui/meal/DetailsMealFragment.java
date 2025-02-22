@@ -42,6 +42,7 @@ public class DetailsMealFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        NavController navController = Navigation.findNavController(view);
         DetailsMealFragmentArgs args = DetailsMealFragmentArgs.fromBundle(requireArguments());
         Meal meal = args.getDetailsMeal();
         int cursusId = args.getCursusId();
@@ -56,16 +57,17 @@ public class DetailsMealFragment extends Fragment {
         binding.textViewDate.setText(meal.getDate());
         Util.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, true);
         binding.fabGenerateQrCode.setOnClickListener(v -> {
-            DetailsMealFragmentDirections.ActionDetailsMealFragmentToQrCodeFragment actionDetailsMealFragmentToQrCodeFragment =
-                    DetailsMealFragmentDirections.actionDetailsMealFragmentToQrCodeFragment("meal" + meal.getId(), meal.getName(), meal.getDescription());
-            Navigation.findNavController(v).navigate(actionDetailsMealFragmentToQrCodeFragment);
+            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.qrCodeFragment) {
+                DetailsMealFragmentDirections.ActionDetailsMealFragmentToQrCodeFragment actionDetailsMealFragmentToQrCodeFragment =
+                        DetailsMealFragmentDirections.actionDetailsMealFragmentToQrCodeFragment("meal" + meal.getId(), meal.getName(), meal.getDescription());
+                navController.navigate(actionDetailsMealFragmentToQrCodeFragment);
+            }
         });
         binding.fabOpenSubscriptionList.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(v);
             if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.subscriptionListFragment) {
                 DetailsMealFragmentDirections.ActionDetailsMealFragmentToSubscriptionListFragment actionDetailsMealFragmentToSubscriptionListFragment =
                         DetailsMealFragmentDirections.actionDetailsMealFragmentToSubscriptionListFragment(meal, cursusId);
-                Navigation.findNavController(v).navigate(actionDetailsMealFragmentToSubscriptionListFragment);
+                navController.navigate(actionDetailsMealFragmentToSubscriptionListFragment);
             }
         });
     }
