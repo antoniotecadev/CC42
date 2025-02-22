@@ -428,13 +428,6 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         }
     }
 
-    /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_settings_general, menu);
-        return true;
-    }*/
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
