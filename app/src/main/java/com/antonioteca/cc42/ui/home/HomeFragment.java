@@ -70,7 +70,12 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         uid = user.getUid();
         userLogin = user.getLogin();
         displayName = user.getDisplayName();
@@ -158,7 +163,6 @@ public class HomeFragment extends Fragment {
         });
         sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> binding.recyclerviewEventsList.setOnTouchListener((v, event) -> disabled));
         //requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), outApp(getActivity(), context));
-        return root;
     }
 
     public static OnBackPressedCallback outApp(Activity activity, Context context) {
