@@ -32,6 +32,7 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.antonioteca.cc42.R;
@@ -183,7 +184,7 @@ public class Util {
 
     public static void showModalUserDetails(Context context, String title, String description, String urlImageUserRegisteredEvent, String textButtom, boolean isPresent) {
         ImageQrCodeBinding binding = ImageQrCodeBinding.inflate(LayoutInflater.from(context));
-        int color = isPresent ? Color.parseColor("#43A047") : Color.rgb(200, 0, 0);
+        int color = isPresent ? ContextCompat.getColor(context, R.color.green) : ContextCompat.getColor(context, R.color.red);
         binding.textViewTitle.setText(title);
         binding.textViewDescription.setText(description);
         binding.closeModalButton.setBackgroundColor(color);

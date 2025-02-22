@@ -97,18 +97,18 @@ public class PdfCreator {
                 Util.showAlertDialogBuild("PDF", context.getString(R.string.error_load_logo), context, null);
                 return null;
             }
-            Color red = new DeviceRgb(200, 0, 0);
-            Color green = new DeviceRgb(0, 200, 0);
+            Color red = new DeviceRgb(244, 67, 54);
+            Color green = new DeviceRgb(139, 194, 74);
             Paragraph title = new Paragraph(context.getString(R.string.msg_attendance_list))
                     .setTextAlignment(TextAlignment.CENTER)
                     .setFontSize(14)
                     .setBold();
             document.add(title);
             Paragraph attendanceParagraph = new Paragraph()
-                    .add(new Text(context.getString(R.string.text_present) + ": ").setFontColor(green))
+                    .add(new Text(context.getString(R.string.text_present) + ": ").setBold())
                     .add(new Text(String.valueOf(numberUserPresent)))
                     .add(new Text(" | "))
-                    .add(new Text(context.getString(R.string.text_absent) + ": ").setFontColor(red))
+                    .add(new Text(context.getString(R.string.text_absent) + ": ").setBold())
                     .add(new Text(String.valueOf(numberUserAbsent)))
                     .setTextAlignment(TextAlignment.CENTER);
             document.add(attendanceParagraph);
@@ -135,9 +135,9 @@ public class PdfCreator {
                 table.addCell(new Paragraph(user.displayName));
                 table.addCell(new Paragraph(user.login));
                 if (user.isPresent() != null && user.isPresent()) {
-                    table.addCell(new Paragraph(context.getString(R.string.text_present)).setFontColor(green));
+                    table.addCell(new Paragraph(context.getString(R.string.text_present)).setFontColor(green, 100));
                 } else if (user.isPresent() != null && !user.isPresent()) {
-                    table.addCell(new Paragraph(context.getString(R.string.text_absent)).setFontColor(red));
+                    table.addCell(new Paragraph(context.getString(R.string.text_absent)).setFontColor(red, 100));
                 }
             }
             document.add(table);
@@ -196,18 +196,18 @@ public class PdfCreator {
                 Util.showAlertDialogBuild("PDF", context.getString(R.string.error_load_logo), context, null);
                 return null;
             }
-            Color red = new DeviceRgb(200, 0, 0);
-            Color green = new DeviceRgb(0, 200, 0);
+            Color red = new DeviceRgb(244, 67, 54);
+            Color green = new DeviceRgb(139, 194, 74);
             Paragraph title = new Paragraph(meal.getType().toUpperCase())
                     .setTextAlignment(TextAlignment.CENTER)
                     .setFontSize(14)
                     .setBold();
             document.add(title);
             Paragraph attendanceParagraph = new Paragraph()
-                    .add(new Text(context.getString(R.string.text_signed) + ": ").setFontColor(green))
+                    .add(new Text(context.getString(R.string.text_signed) + ": ").setBold())
                     .add(new Text(String.valueOf(numberUserSubscription)))
                     .add(new Text(" | "))
-                    .add(new Text(context.getString(R.string.text_unsigned) + ": ").setFontColor(red))
+                    .add(new Text(context.getString(R.string.text_unsigned) + ": ").setBold())
                     .add(new Text(String.valueOf(numberUserUnsubscription)))
                     .setTextAlignment(TextAlignment.CENTER);
             document.add(attendanceParagraph);
@@ -234,9 +234,9 @@ public class PdfCreator {
                 table.addCell(new Paragraph(user.displayName));
                 table.addCell(new Paragraph(user.login));
                 if (user.isSubscription() != null && user.isSubscription()) {
-                    table.addCell(new Paragraph(context.getString(R.string.text_signed)).setFontColor(green));
+                    table.addCell(new Paragraph(context.getString(R.string.text_signed)).setFontColor(green, 100));
                 } else if (user.isSubscription() != null && !user.isSubscription()) {
-                    table.addCell(new Paragraph(context.getString(R.string.text_unsigned)).setFontColor(red));
+                    table.addCell(new Paragraph(context.getString(R.string.text_unsigned)).setFontColor(red, 100));
                 }
             }
             document.add(table);

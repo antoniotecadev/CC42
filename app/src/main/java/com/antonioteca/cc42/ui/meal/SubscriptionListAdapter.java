@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
@@ -90,8 +91,8 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
     @Override
     public void onBindViewHolder(@NonNull SubscriptionListAdapter.SubscriptionListViewHolder holder, int position) {
         String imageUrl;
-        int redColor = Color.rgb(200, 0, 0);
-        int greenColor = Color.rgb(0, 200, 0);
+        int redColor = ContextCompat.getColor(context, R.color.red);
+        int greenColor = ContextCompat.getColor(context, R.color.green);
         User user = userList.get(position);
         imageUrl = user.getUrlImageUser();
         holder.binding.textViewLogin.setText(user.login);
