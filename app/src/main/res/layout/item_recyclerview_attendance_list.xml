@@ -25,17 +25,18 @@
             android:layout_marginTop="60dp"
             android:layout_marginEnd="1dp"
             android:background="?android:attr/listDivider"
-            app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
-            app:layout_constraintStart_toStartOf="@+id/constraintLayout"
-            app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/imageViewUserRegistered"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginTop="1dp"
-            app:layout_constraintStart_toStartOf="@+id/constraintLayout"
-            app:layout_constraintTop_toTopOf="@+id/constraintLayout"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="2dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@mipmap/ic_launcher_round" />
 
         <TextView
@@ -49,7 +50,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/textViewPresent"
             app:layout_constraintStart_toEndOf="@+id/imageViewUserRegistered"
-            app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textViewPresent"
@@ -60,9 +61,9 @@
             android:textAlignment="textEnd"
             android:textColor="@color/textColorPrimary"
             android:textSize="10sp"
-            app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textViewLogin"
-            app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textViewName"
@@ -72,7 +73,7 @@
             android:layout_marginTop="20dp"
             android:textColor="@color/textColorPrimary"
             android:textSize="10sp"
-            app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageViewUserRegistered"
             app:layout_constraintTop_toTopOf="@+id/textViewLogin" />
 
