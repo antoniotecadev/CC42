@@ -1,8 +1,5 @@
 package com.antonioteca.cc42.network;
 
-import androidx.datastore.preferences.core.Preferences;
-import androidx.datastore.preferences.core.PreferencesKeys;
-
 /**
  * Constantes que são usadas em toda a camada de rede, como URLs de
  * endpoints,
