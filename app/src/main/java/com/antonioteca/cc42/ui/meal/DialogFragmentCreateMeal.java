@@ -336,7 +336,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        fullScreenDialog(dialog);
+        // fullScreenDialog(dialog);
     }
 }
 
