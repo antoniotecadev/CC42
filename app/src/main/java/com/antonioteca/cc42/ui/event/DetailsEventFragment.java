@@ -81,13 +81,13 @@ public class DetailsEventFragment extends Fragment {
             if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.qrCodeFragment) {
                 DetailsEventFragmentDirections.ActionDetailsEventFragmentToQrCodeFragment actionDetailsEventFragmentToQrCodeFragment =
                         DetailsEventFragmentDirections.actionDetailsEventFragmentToQrCodeFragment("event" + event.getId(), event.getKind(), event.getName());
-                Navigation.findNavController(view).navigate(actionDetailsEventFragmentToQrCodeFragment);
+                navController.navigate(actionDetailsEventFragmentToQrCodeFragment);
             }
         });
         binding.fabOpenAttendanceList.setOnClickListener(v -> {
             if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.attendanceListFragment) {
                 DetailsEventFragmentDirections.ActionDetailsEventFragmentToAttendanceListFragment actionDetailsEventFragmentToAttendanceListFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToAttendanceListFragment(event.getId(), event.getCursus_ids().get(0), event.getKind(), event.getName(), String.valueOf(binding.textViewDate.getText()));
-                Navigation.findNavController(v).navigate(actionDetailsEventFragmentToAttendanceListFragment);
+                navController.navigate(actionDetailsEventFragmentToAttendanceListFragment);
             }
         });
     }
