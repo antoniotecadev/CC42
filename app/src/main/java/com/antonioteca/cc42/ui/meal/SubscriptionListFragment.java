@@ -289,19 +289,25 @@ public class SubscriptionListFragment extends Fragment {
             }
         });
 
-        userViewModel.getUsersSubscriptionLiveData(cursusId, l, context, progressBarSubscription).observe(getViewLifecycleOwner(), users -> {
-            if (!users.isEmpty() && users.get(0) != null) {
-                subscriptionListAdapter.updateUserList(users, context);
-                binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
-            } else
-                setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
-        });
+        List<User> userList = userViewModel.getUserList().getValue();
+        if (userList != null && savedInstanceState != null && !userList.isEmpty()) {
+            subscriptionListAdapter.updateUserList(userList, context);
+            binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
+        } else
+            userViewModel.getUsersSubscriptionLiveData(cursusId, l, context, progressBarSubscription).observe(getViewLifecycleOwner(), users -> {
+                if (!users.isEmpty() && users.get(0) != null) {
+                    subscriptionListAdapter.updateUserList(users, context);
+                    binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
+                } else
+                    setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
+            });
 
         userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
             Toast.makeText(context, R.string.msg_checking_subscription, Toast.LENGTH_LONG).show();
             if (!userIds.isEmpty() && userIds.get(0) != null)
                 subscriptionListAdapter.updateSubscriptionUser(userIds);
             setNumberUserChip();
+            userViewModel.getUserList().postValue(subscriptionListAdapter.getUserList());
             setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
         });
 

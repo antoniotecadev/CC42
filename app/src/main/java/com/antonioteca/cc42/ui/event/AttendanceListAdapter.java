@@ -1,7 +1,6 @@
 package com.antonioteca.cc42.ui.event;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
