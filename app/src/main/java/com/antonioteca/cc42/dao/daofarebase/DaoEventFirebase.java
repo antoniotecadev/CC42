@@ -1,16 +1,12 @@
 package com.antonioteca.cc42.dao.daofarebase;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.antonioteca.cc42.R;
-import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -137,7 +133,7 @@ public class DaoEventFirebase {
                 });
     }*/
 
-    public static void markEventAsStarted(
+   /* public static void markEventAsStarted(
             FirebaseDatabase firebaseDatabase,
             String campusId,
             String cursusId,
@@ -208,7 +204,7 @@ public class DaoEventFirebase {
      * Se o status for "iniciado", você impede o registro de presença e exibe uma mensagem adequada.
      * */
 
-    public void markAttendance_(String eventId, String campusId, String userId, String userName, String profileUrl, String profilePicUrl, Context context) {
+    /*public void markAttendance_(String eventId, String campusId, String userId, String userName, String profileUrl, String profilePicUrl, Context context) {
         FirebaseDataBaseInstance firebaseDataBaseInstance = FirebaseDataBaseInstance.getInstance();
         DatabaseReference eventRef = firebaseDataBaseInstance.database.getReference("campus")
                 .child(campusId)
@@ -246,7 +242,7 @@ public class DaoEventFirebase {
      * A ideia é a mesma de quando o evento foi iniciado — você vai verificar se todos marcaram como "terminado" e, em seguida, atualizar o status.
      * */
 
-    public void markEventAsFinished(String campusId, String eventId, Context context) {
+    /*public void markEventAsFinished(String campusId, String eventId, Context context) {
         FirebaseDataBaseInstance firebaseDataBaseInstance = FirebaseDataBaseInstance.getInstance();
         DatabaseReference eventRef = firebaseDataBaseInstance.database.getReference("campus")
                 .child(campusId)
@@ -290,7 +286,7 @@ public class DaoEventFirebase {
      * Após ele marcar, a função deve alterar o estado para "terminado" para esse cadete.
      * */
 
-    public void markEventFinished(String eventId, String campusId, String userId) {
+   /* public void markEventFinished(String eventId, String campusId, String userId) {
         FirebaseDataBaseInstance firebaseDataBaseInstance = FirebaseDataBaseInstance.getInstance();
         DatabaseReference participantRef = firebaseDataBaseInstance.database.getReference("campus")
                 .child(campusId)
@@ -310,7 +306,7 @@ public class DaoEventFirebase {
      * Isso pode ser feito da mesma forma que fizemos para o evento iniciado, verificando o status.
      * */
 
-    public void markAttendance__(String eventId, String campusId, String userId, String userName, String profileUrl, String profilePicUrl, Context context) {
+    /*public void markAttendance__(String eventId, String campusId, String userId, String userName, String profileUrl, String profilePicUrl, Context context) {
         FirebaseDataBaseInstance firebaseDataBaseInstance = FirebaseDataBaseInstance.getInstance();
         DatabaseReference eventRef = firebaseDataBaseInstance.database.getReference("campus")
                 .child(campusId)
@@ -335,5 +331,5 @@ public class DaoEventFirebase {
                 Log.e("Firebase", "Erro ao consultar status do evento", error.toException());
             }
         });
-    }
+    }*/
 }
