@@ -8,14 +8,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
-import com.antonioteca.cc42.viewmodel.UserViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,7 +21,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DaoEventFirebase {
@@ -105,7 +101,7 @@ public class DaoEventFirebase {
         });
     }
 
-    public static void sinchronizationAttendanceList(
+    /*public static void sinchronizationAttendanceList(
             UserViewModel userViewModel, MutableLiveData<List<String>> userIdsWhoMarkedAttendanceMutableLiveData,
             List<Long> userIdsWhoMarkedAttendanceLocal, List<String> userIdsWhoMarkedAttendance,
             FirebaseDatabase firebaseDatabase,
@@ -139,7 +135,7 @@ public class DaoEventFirebase {
                     String message = context.getString(R.string.error_msg_attendance_list_synchronized) + ": " + e.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                 });
-    }
+    }*/
 
     public static void markEventAsStarted(
             FirebaseDatabase firebaseDatabase,

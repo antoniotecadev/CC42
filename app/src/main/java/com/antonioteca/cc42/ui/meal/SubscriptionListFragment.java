@@ -135,7 +135,7 @@ public class SubscriptionListFragment extends Fragment {
                                     () -> decoratedBarcodeView.resume()
                             );
                         } else
-                            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), partsQrCode[2] + "\n" + getString(R.string.msg_user_not_fount_list), "#FDD835", null);
+                            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), partsQrCode[2] + "\n" + getString(R.string.msg_user_not_fount_list), "#FDD835", () -> decoratedBarcodeView.resume());
                     } else
                         Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", () -> decoratedBarcodeView.resume());
                 } else

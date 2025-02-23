@@ -1,7 +1,5 @@
 package com.antonioteca.cc42.viewmodel;
 
-import static com.antonioteca.cc42.dao.daofarebase.DaoEventFirebase.sinchronizationAttendanceList;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.model.Coalition;
-import com.antonioteca.cc42.model.LocalAttendanceList;
 import com.antonioteca.cc42.model.Subscription;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
@@ -34,9 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -122,7 +116,7 @@ public class UserViewModel extends ViewModel {
         return httpExceptionMutableLiveDataEvent;
     }
 
-    public void addUserLocalAttendanceList(
+    /*public void addUserLocalAttendanceList(
             LocalAttendanceList user,
             Context context,
             LayoutInflater layoutInflater,
@@ -166,7 +160,7 @@ public class UserViewModel extends ViewModel {
                     String message = context.getString(R.string.msg_error_delete_local_attendance_lis) + ": " + throwable.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                 }));
-    }
+    }*/
 
     public boolean saveUser(User user) {
         return userRepository.saveUser(user);
@@ -237,7 +231,42 @@ public class UserViewModel extends ViewModel {
         });
     }
 
-    public void synchronizedAttendanceList(UserViewModel userViewModel, FirebaseDatabase firebaseDatabase, int campusId, int cursusId, long eventId, SwipeRefreshLayout swipeRefreshLayout, Context context,
+    public void synchronizedAttendanceList(FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, Context context, LayoutInflater layoutInflater) {
+        DatabaseReference participantsRef = firebaseDatabase.getReference("campus")
+                .child(campusId)
+                .child("cursus")
+                .child(cursusId)
+                .child("events")
+                .child(eventId)
+                .child("participants");  // Referência para os participantes do evento
+
+        List<String> userIdsWithMarkedAttendance = new ArrayList<>();
+        userIdsWithMarkedAttendance.add("-1");
+        participantsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        userIdsWithMarkedAttendance.add(dataSnapshot.getKey());
+//                        Boolean isParticipant = dataSnapshot.getValue(Boolean.class);
+//                        if (Boolean.TRUE.equals(isParticipant)) {
+//                            userIdsWhoMarkedAttendance.add(dataSnapshot.getKey());
+//                        }
+                    }
+                }
+                userIdsListMutableLiveData.postValue(userIdsWithMarkedAttendance);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                String message = context.getString(R.string.msg_error_check_attendance_event) + ": " + error.toException();
+                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                userIdsListMutableLiveData.postValue(userIdsWithMarkedAttendance);
+            }
+        });
+    }
+
+    /*public void synchronizedAttendanceList(UserViewModel userViewModel, FirebaseDatabase firebaseDatabase, int campusId, int cursusId, long eventId, SwipeRefreshLayout swipeRefreshLayout, Context context,
                                            LayoutInflater layoutInflater) {
         compositeDisposable.add(userRepository.geIdsUserLocalAttendanceList(campusId, cursusId, eventId)
                 .subscribeOn(Schedulers.io())
@@ -322,7 +351,7 @@ public class UserViewModel extends ViewModel {
                 userIdsListMutableLiveData.postValue(userIdsWithMarkedAttendance);
             }
         });
-    }
+    }*/
 
     public void getUsersSubscription(int cursusId, Loading l, Context context) {
         l.isLoading = true;
@@ -354,8 +383,7 @@ public class UserViewModel extends ViewModel {
         });
     }
 
-    public void synchronizedSubscriptionList(FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId, Context context,
-                                             LayoutInflater layoutInflater) {
+    public void synchronizedSubscriptionList(FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId, Context context, LayoutInflater layoutInflater) {
         DatabaseReference subscriptionsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
                 .child("cursus")
