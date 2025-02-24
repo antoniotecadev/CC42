@@ -337,13 +337,14 @@ public class AttendanceListFragment extends Fragment {
                 String message = (count > 0 ? getString(R.string.msg_users_not_reload) : "");
                 setupVisibility(binding, View.GONE, false, count > 0 ? View.GONE : View.VISIBLE, count > 0 ? View.VISIBLE : View.GONE);
                 HttpStatus httpStatus = event.getContentIfNotHandled();
-                Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription() + message, context, () -> {
-                    setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
-                    l.currentPage = 1;
-                    activeScrollListener();
-                    attendanceListAdapter.clean();
-                    userViewModel.getUsersEvent(eventId, l, context);
-                });
+                if (httpStatus != null)
+                    Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription() + message, context, () -> {
+                        setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
+                        l.currentPage = 1;
+                        activeScrollListener();
+                        attendanceListAdapter.clean();
+                        userViewModel.getUsersEvent(eventId, l, context);
+                    });
             }
         });
 
@@ -355,13 +356,14 @@ public class AttendanceListFragment extends Fragment {
                 String message = (count > 0 ? getString(R.string.msg_users_not_reload) : "");
                 setupVisibility(binding, View.GONE, false, count > 0 ? View.GONE : View.VISIBLE, count > 0 ? View.VISIBLE : View.GONE);
                 HttpException httpException = event.getContentIfNotHandled();
-                Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription() + message, context, () -> {
-                    setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
-                    l.currentPage = 1;
-                    activeScrollListener();
-                    attendanceListAdapter.clean();
-                    userViewModel.getUsersEvent(eventId, l, context);
-                });
+                if (httpException != null)
+                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription() + message, context, () -> {
+                        setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
+                        l.currentPage = 1;
+                        activeScrollListener();
+                        attendanceListAdapter.clean();
+                        userViewModel.getUsersEvent(eventId, l, context);
+                    });
             }
         });
 
