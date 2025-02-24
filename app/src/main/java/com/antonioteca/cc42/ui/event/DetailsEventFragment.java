@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsEventBinding;
 import com.antonioteca.cc42.model.Event;
 
@@ -78,16 +77,19 @@ public class DetailsEventFragment extends Fragment {
         binding.textViewPeople.setText(event.getNbr_subscribers() + " / " + event.getMax_people());
         setMarkdownText(binding.textViewDescription, event.getDescription());
         binding.fabGenerateQrCode.setOnClickListener(v -> {
-            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.qrCodeFragment) {
-                DetailsEventFragmentDirections.ActionDetailsEventFragmentToQrCodeFragment actionDetailsEventFragmentToQrCodeFragment =
-                        DetailsEventFragmentDirections.actionDetailsEventFragmentToQrCodeFragment("event" + event.getId(), event.getKind(), event.getName());
+            try {
+                DetailsEventFragmentDirections.ActionDetailsEventFragmentToQrCodeFragment actionDetailsEventFragmentToQrCodeFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToQrCodeFragment("event" + event.getId(), event.getKind(), event.getName());
                 navController.navigate(actionDetailsEventFragmentToQrCodeFragment);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
             }
         });
         binding.fabOpenAttendanceList.setOnClickListener(v -> {
-            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.attendanceListFragment) {
+            try {
                 DetailsEventFragmentDirections.ActionDetailsEventFragmentToAttendanceListFragment actionDetailsEventFragmentToAttendanceListFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToAttendanceListFragment(event.getId(), event.getCursus_ids().get(0), event.getKind(), event.getName(), String.valueOf(binding.textViewDate.getText()));
                 navController.navigate(actionDetailsEventFragmentToAttendanceListFragment);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
             }
         });
     }

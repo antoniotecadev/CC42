@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsMealBinding;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.utility.Util;
@@ -57,17 +56,20 @@ public class DetailsMealFragment extends Fragment {
         binding.textViewDate.setText(meal.getDate());
         Util.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, true);
         binding.fabGenerateQrCode.setOnClickListener(v -> {
-            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.qrCodeFragment) {
-                DetailsMealFragmentDirections.ActionDetailsMealFragmentToQrCodeFragment actionDetailsMealFragmentToQrCodeFragment =
-                        DetailsMealFragmentDirections.actionDetailsMealFragmentToQrCodeFragment("meal" + meal.getId(), meal.getName(), meal.getDescription());
+            try {
+                DetailsMealFragmentDirections.ActionDetailsMealFragmentToQrCodeFragment actionDetailsMealFragmentToQrCodeFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToQrCodeFragment("meal" + meal.getId(), meal.getName(), meal.getDescription());
                 navController.navigate(actionDetailsMealFragmentToQrCodeFragment);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
             }
         });
+
         binding.fabOpenSubscriptionList.setOnClickListener(v -> {
-            if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.subscriptionListFragment) {
-                DetailsMealFragmentDirections.ActionDetailsMealFragmentToSubscriptionListFragment actionDetailsMealFragmentToSubscriptionListFragment =
-                        DetailsMealFragmentDirections.actionDetailsMealFragmentToSubscriptionListFragment(meal, cursusId);
+            try {
+                DetailsMealFragmentDirections.ActionDetailsMealFragmentToSubscriptionListFragment actionDetailsMealFragmentToSubscriptionListFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToSubscriptionListFragment(meal, cursusId);
                 navController.navigate(actionDetailsMealFragmentToSubscriptionListFragment);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
             }
         });
     }
