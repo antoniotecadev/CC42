@@ -289,18 +289,13 @@ public class SubscriptionListFragment extends Fragment {
             }
         });
 
-        List<User> userList = userViewModel.getUserList().getValue();
-        if (userList != null && savedInstanceState != null && !userList.isEmpty()) {
-            subscriptionListAdapter.updateUserList(userList, context);
-            binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
-        } else
-            userViewModel.getUsersSubscriptionLiveData(cursusId, l, context, progressBarSubscription).observe(getViewLifecycleOwner(), users -> {
-                if (!users.isEmpty() && users.get(0) != null) {
-                    subscriptionListAdapter.updateUserList(users, context);
-                    binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
-                } else
-                    setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
-            });
+        userViewModel.getUsersSubscriptionLiveData(context, cursusId, l, progressBarSubscription, savedInstanceState).observe(getViewLifecycleOwner(), users -> {
+            if (!users.isEmpty() && users.get(0) != null) {
+                subscriptionListAdapter.updateUserList(users, context);
+                binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
+            } else
+                setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
+        });
 
         userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
             Toast.makeText(context, R.string.msg_checking_subscription, Toast.LENGTH_LONG).show();

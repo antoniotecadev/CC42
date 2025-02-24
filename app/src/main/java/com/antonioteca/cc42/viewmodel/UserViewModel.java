@@ -1,6 +1,7 @@
 package com.antonioteca.cc42.viewmodel;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -71,20 +72,30 @@ public class UserViewModel extends ViewModel {
         return userMutableLiveData;
     }
 
-    public LiveData<List<User>> getUsersEventLiveData(long eventId, Loading l, @NonNull ProgressBar progressBar, Context context) {
+    public LiveData<List<User>> getUsersEventLiveData(Context context, long eventId, Loading l, @NonNull ProgressBar progressBar, Bundle savedInstanceState) {
+        List<User> userList = this.getUserList().getValue();
         if (userListMutableLiveData == null) {
             userListMutableLiveData = new MutableLiveData<>();
             progressBar.setVisibility(View.VISIBLE);
             getUsersEvent(eventId, l, context);
+        } else if (savedInstanceState != null && userList != null && !userList.isEmpty()) {
+            if (userListMutableLiveData.getValue() != null)
+                userListMutableLiveData.getValue().clear();
+            userListMutableLiveData.postValue(userList);
         }
         return userListMutableLiveData;
     }
 
-    public LiveData<List<User>> getUsersSubscriptionLiveData(int cursusId, Loading l, Context context, @NonNull ProgressBar progressBar) {
+    public LiveData<List<User>> getUsersSubscriptionLiveData(Context context, int cursusId, Loading l, @NonNull ProgressBar progressBar, Bundle savedInstanceState) {
+        List<User> userList = this.getUserList().getValue();
         if (userListMutableLiveData == null) {
             userListMutableLiveData = new MutableLiveData<>();
             progressBar.setVisibility(View.VISIBLE);
             getUsersSubscription(cursusId, l, context);
+        } else if (savedInstanceState != null && userList != null && !userList.isEmpty()) {
+            if (userListMutableLiveData.getValue() != null)
+                userListMutableLiveData.getValue().clear();
+            userListMutableLiveData.postValue(userList);
         }
         return userListMutableLiveData;
     }

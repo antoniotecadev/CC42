@@ -304,19 +304,14 @@ public class AttendanceListFragment extends Fragment {
             }
         });
 
-        List<User> userList = userViewModel.getUserList().getValue();
-        if (userList != null && savedInstanceState != null && !userList.isEmpty()) {
-            attendanceListAdapter.updateUserList(userList, context);
-            binding.recyclerviewAttendanceList.setAdapter(attendanceListAdapter);
-        } else
-            userViewModel.getUsersEventLiveData(eventId, l, progressBarMarkAttendance, context).observe(getViewLifecycleOwner(), users -> {
-                if (!users.isEmpty() && users.get(0) != null) {
-                    //setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
-                    attendanceListAdapter.updateUserList(users, context);
-                    binding.recyclerviewAttendanceList.setAdapter(attendanceListAdapter);
-                } else
-                    setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
-            });
+        userViewModel.getUsersEventLiveData(context, eventId, l, progressBarMarkAttendance, savedInstanceState).observe(getViewLifecycleOwner(), users -> {
+            if (!users.isEmpty() && users.get(0) != null) {
+                //setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
+                attendanceListAdapter.updateUserList(users, context);
+                binding.recyclerviewAttendanceList.setAdapter(attendanceListAdapter);
+            } else
+                setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
+        });
 
         userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
             Toast.makeText(context, R.string.msg_checking_attendance, Toast.LENGTH_LONG).show();
