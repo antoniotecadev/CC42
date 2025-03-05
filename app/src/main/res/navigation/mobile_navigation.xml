@@ -90,8 +90,7 @@
     <fragment
         android:id="@+id/detailsMealFragment"
         android:name="com.antonioteca.cc42.ui.meal.DetailsMealFragment"
-        android:label="fragment_details_meal"
-        tools:layout="@layout/fragment_details_meal" >
+        tools:layout="@layout/fragment_details_meal">
         <argument
             android:name="detailsMeal"
             app:argType="com.antonioteca.cc42.model.Meal" />
