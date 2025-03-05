@@ -16,7 +16,7 @@
         app:icon="@drawable/ic_baseline_translate_24"
         app:title="@string/language">
         <ListPreference
-            android:defaultValue="pt-rBR"
+            android:defaultValue="en"
             android:entries="@array/language_entries"
             android:entryValues="@array/language_values"
             android:key="language_key"
