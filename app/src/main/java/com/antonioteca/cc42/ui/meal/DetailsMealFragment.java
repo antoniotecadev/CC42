@@ -45,6 +45,10 @@ public class DetailsMealFragment extends Fragment {
         DetailsMealFragmentArgs args = DetailsMealFragmentArgs.fromBundle(requireArguments());
         Meal meal = args.getDetailsMeal();
         int cursusId = args.getCursusId();
+        if (cursusId == 0) {
+            binding.fabGenerateQrCode.setVisibility(View.GONE);
+            binding.fabOpenSubscriptionList.setVisibility(View.GONE);
+        }
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             if (actionBar != null)

@@ -422,10 +422,10 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         if (intent != null && intent.getExtras() != null &&
                 ("OPEN_FRAGMENT_ACTION_FOREGROUND".equals(intent.getAction()) || // Primeiro plano
                         "OPEN_FRAGMENT_ACTION_BACKGROUND".equals(intent.getAction()))) { // Segundo plano
-            int cursusId = intent.getIntExtra("cursusId", 0);
+            //int cursusId = intent.getIntExtra("cursusId", 0);
             Meal meal = intent.getParcelableExtra("detailsMeal");
             args = new Bundle();
-            args.putInt("cursusId", cursusId);
+            args.putInt("cursusId", 0);
             args.putParcelable("detailsMeal", meal);
             navController.navigate(R.id.action_detailsMealFragment, args);
             intent.replaceExtras(new Bundle());
