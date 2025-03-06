@@ -124,6 +124,9 @@
     <string name="notification_summary_off">Vous ne recevrez pas de mises à jour des repas</string>
     <string name="notificatio_summary_on">Vous recevrez des mises à jour des repas</string>
     <string name="error_send_notification">Une erreur s\'est produite lors de l\'envoi de la notification</string>
+    <string name="notification_permission">Autorisation de notifications</string>
+    <string name="notification_permission_message">Cette application a besoin de l\'autorisation pour afficher des notifications importantes.</string>
+    <string name="notification_permission_denied">Autorisation d\'afficher les notifications refusée</string>
     <string-array name="meals_list">
         <item>Petit-déjeuner</item>
         <item>Collation du matin</item>

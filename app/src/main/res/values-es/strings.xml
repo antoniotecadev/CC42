@@ -124,6 +124,9 @@
     <string name="notification_summary_off">No recibirás actualizaciones de comidas</string>
     <string name="notificatio_summary_on">Recibirás actualizaciones de comidas</string>
     <string name="error_send_notification">Ocurrió un error al enviar la notificación</string>
+    <string name="notification_permission">Permiso de notificaciones</string>
+    <string name="notification_permission_message">Esta aplicación necesita permiso para mostrar notificaciones importantes.</string>
+    <string name="notification_permission_denied">Permiso para mostrar notificaciones denegado</string>
     <string-array name="meals_list">
         <item>Desayuno</item>
         <item>Merienda de la mañana</item>

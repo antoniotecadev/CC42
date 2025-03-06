@@ -1,6 +1,8 @@
 package com.antonioteca.cc42.ui.setting;
 
+import static com.antonioteca.cc42.network.NetworkConstants.REQUEST_CODE_POST_NOTIFICATIONS;
 import static com.antonioteca.cc42.utility.Util.setAppLanguage;
+import static com.antonioteca.cc42.utility.Util.setRequestPermissionLauncherNotification;
 
 import android.os.Bundle;
 
@@ -32,7 +34,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             exception = task.getException();
                             if (exception != null)
                                 Util.showAlertDialogMessage(preference.getContext(), getLayoutInflater(), preference.getContext().getString(R.string.err), exception.getMessage(), "#E53935", null);
-                        }
+                        } else
+                            setRequestPermissionLauncherNotification(preference.getContext(), REQUEST_CODE_POST_NOTIFICATIONS);
                     });
                 } else {
                     messaging.unsubscribeFromTopic("/topics/meals").addOnCompleteListener(task -> {
@@ -50,7 +53,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 // Obter o idioma selecionado
                 String language = newValue.toString();
                 // Alterar o idioma da aplicação
-                setAppLanguage(language, getResources(), getActivity(), true);
+                setAppLanguage(language, getResources(), requireActivity(), true);
                 return true;
             });
         }

@@ -131,8 +131,9 @@
     <string name="notification_summary_off">Não receberá actualizações de refeições</string>
     <string name="notificatio_summary_on">Receberá actualizações de refeições</string>
     <string name="error_send_notification">Ocorreu um erro ao enviar a notificação</string>
-    <string name="language">Idioma</string>
-    <string name="select_language_app">Escolha o idioma da aplicação</string>
+    <string name="notification_permission">Permissão de Notificações</string>
+    <string name="notification_permission_message">Esta aplicação precisa da permissão para exibir notificações importantes.</string>
+    <string name="notification_permission_denied">Permissão para exibir notificações negada</string>
     <string-array name="meals_list">
         <item>Matabicho</item>
         <item>Lanche da manhã</item>
@@ -144,6 +145,8 @@
         <item>Buffet</item>
         <item>Degustação</item>
     </string-array>
-    <string name="about_app">Sobre</string>
+    <string name="language">Idioma</string>
+    <string name="select_language_app">Escolha o idioma da aplicação</string>
     <string name="description_app">Check Cadet é uma aplicação que permite aos estudantes da Escola 42 marcarem presença em eventos e assinar as listas de refeições digitalmente utilizando código QR.</string>
+    <string name="about_app">Sobre</string>
 </resources>
