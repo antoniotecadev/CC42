@@ -274,7 +274,13 @@ public class PdfCreator {
     }
 
     // Evento para aplicar marca d'água em todas as páginas
-        private record ImageWatermarkEvent(ImageData imageData) implements IEventHandler {
+    private static class ImageWatermarkEvent implements IEventHandler {
+
+        private final ImageData imageData;
+
+        public ImageWatermarkEvent(ImageData imageData) {
+            this.imageData = imageData;
+        }
 
         @Override
             public void handleEvent(com.itextpdf.kernel.events.Event event) {
