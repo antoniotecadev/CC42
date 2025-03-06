@@ -274,39 +274,33 @@ public class PdfCreator {
     }
 
     // Evento para aplicar marca d'água em todas as páginas
-    private static class ImageWatermarkEvent implements IEventHandler {
-
-        private final ImageData imageData;
-
-        public ImageWatermarkEvent(ImageData imageData) {
-            this.imageData = imageData;
-        }
+        private record ImageWatermarkEvent(ImageData imageData) implements IEventHandler {
 
         @Override
-        public void handleEvent(com.itextpdf.kernel.events.Event event) {
-            PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
-            PdfPage page = documentEvent.getPage();
-            Rectangle pageSize = page.getPageSize();
-            PdfCanvas pdfCanvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), page.getDocument()); // desenhar antes do conteúdo principal
+            public void handleEvent(com.itextpdf.kernel.events.Event event) {
+                PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
+                PdfPage page = documentEvent.getPage();
+                Rectangle pageSize = page.getPageSize();
+                PdfCanvas pdfCanvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), page.getDocument()); // desenhar antes do conteúdo principal
 
-            float offsetX = -100f; // Ajuste para mover à esquerda (negativo)
-            float offsetY = 0f; // Para deslocar na vertical
-            float imageWidth = pageSize.getWidth() / 2;
-            float imageHeight = pageSize.getHeight() / 2;
+                float offsetX = -100f; // Ajuste para mover à esquerda (negativo)
+                float offsetY = 0f; // Para deslocar na vertical
+                float imageWidth = pageSize.getWidth() / 2;
+                float imageHeight = pageSize.getHeight() / 2;
 
-            //Definir transparencia
-            pdfCanvas.saveState();
-            PdfExtGState extGState = new PdfExtGState();
-            extGState.setFillOpacity(0.15f);
-            pdfCanvas.setExtGState(extGState);
+                //Definir transparencia
+                pdfCanvas.saveState();
+                PdfExtGState extGState = new PdfExtGState();
+                extGState.setFillOpacity(0.15f);
+                pdfCanvas.setExtGState(extGState);
 
-            pdfCanvas.addImageFittedIntoRectangle(imageData,
-                    new Rectangle(
-                            ((pageSize.getHeight() - imageWidth) / 2) + offsetX, // Deslocar para esquerda
-                            ((pageSize.getHeight() - imageHeight) / 2) + offsetY,
-                            imageWidth, imageHeight),
-                    false);
-            pdfCanvas.restoreState();
+                pdfCanvas.addImageFittedIntoRectangle(imageData,
+                        new Rectangle(
+                                ((pageSize.getHeight() - imageWidth) / 2) + offsetX, // Deslocar para esquerda
+                                ((pageSize.getHeight() - imageHeight) / 2) + offsetY,
+                                imageWidth, imageHeight),
+                        false);
+                pdfCanvas.restoreState();
+            }
         }
-    }
 }
