@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -40,14 +41,20 @@ import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.utility.Util;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.chip.Chip;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 public class DialogFragmentCreateMeal extends DialogFragment {
 
@@ -59,7 +66,10 @@ public class DialogFragmentCreateMeal extends DialogFragment {
     private ActivityResultLauncher<Uri> takePictureLauncher;
     private ActivityResultLauncher<String> imagePickerLauncher;
 
+    private int mealsQuantity = 0;
     private FirebaseDatabase firebaseDatabase;
+    private final List<String> selectedItems = new ArrayList<>();
+    private final Map<AppCompatSpinner, Boolean> spinnerInitializedMap = new HashMap<>();
 
     private final ActivityResultLauncher<String> activityResultLauncherCamera = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
@@ -93,8 +103,8 @@ public class DialogFragmentCreateMeal extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
         binding = FragmentDialogCreateMealBinding.inflate(getLayoutInflater());
-        addNumberSpinner(context, binding.spinnerQuantity);
-        addMealsSpinner(context, binding.spinnerMeals);
+        addMealsSpinner(binding.spinnerCarbohydratesMeals, true, R.array.meals_carbohydrates_title);
+        addMealsSpinner(binding.spinnerProteinsLegumesVegetablesMeals, false, R.array.meals_proteins_legumes_vegetables_title);
         DialogFragmentCreateMealArgs args = DialogFragmentCreateMealArgs.fromBundle(getArguments());
         Meal meal = args.getMeal();
         int cursusId = args.getCursusId();
@@ -104,10 +114,8 @@ public class DialogFragmentCreateMeal extends DialogFragment {
             Uri imageUri = Uri.parse(meal.getPathImage());
             this.imageUri = imageUri;
             loadingImageMeal(imageUri);
-            binding.textInputEditTextName.setText(meal.getName());
-            binding.textInputEditTextDescription.setText(meal.getDescription());
-            binding.spinnerQuantity.setSelection(meal.getQuantity());
-            itemSelectedSpinner(context, R.array.meals_list, meal.getType(), binding.spinnerMeals);
+            addChipsFromData(meal.getName());
+            binding.quantityEditText.setText(String.valueOf(meal.getQuantity()));
             binding.buttonCreateMeal.setText(getText(R.string.ok));
         } else {
             loadingImageMeal(imageUri);
@@ -149,22 +157,103 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         binding.imageViewMeal.setOnClickListener(v ->
                 showImagePickerDialog(v.getContext())
         );
+        handleSpinnerMeals(binding.spinnerCarbohydratesMeals);
+        handleSpinnerMeals(binding.spinnerProteinsLegumesVegetablesMeals);
         return dialog;
     }
 
+    private void handleSpinnerMeals(AppCompatSpinner appCompatSpinner) {
+        appCompatSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Verifica se o Spinner já foi inicializado
+                Boolean isInitialized = spinnerInitializedMap.get(appCompatSpinner);
+                if (isInitialized == null || !isInitialized) {
+                    spinnerInitializedMap.put(appCompatSpinner, true);
+                    return; // Sai do método sem executar o código abaixo
+                }
+                String selectedItem = parent.getItemAtPosition(position).toString();
+
+                // Verifica se o item já foi adicionado
+                if (!selectedItems.contains(selectedItem)) {
+                    selectedItems.add(selectedItem); // Adiciona à lista
+                    addChip(selectedItem); // Adiciona o Chip ao layout
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Nada a fazer aqui
+            }
+        });
+    }
+
+    // Método para adicionar um Chip ao layout
+    private void addChip(String text) {
+        Chip chip = new Chip(context);
+        chip.setText(text);
+        chip.setCloseIconVisible(true); // Botão de fechar
+        chip.setCloseIconTintResource(R.color.light_blue_900); // Cor do ícone de fechar
+        chip.setOnCloseIconClickListener(v -> {
+            binding.chipContainer.removeView(chip); // Remove o Chip do layout
+            selectedItems.remove(text); // Remove o item da lista
+            updateFinalText(); // Atualiza o texto final
+        });
+        binding.chipContainer.addView(chip); // Adiciona o Chip ao LinearLayout
+        updateFinalText(); // Atualiza o texto final
+    }
+
+    private void addChipsFromData(String data) {
+        // Divide a string em um array de strings
+        String[] items = data.split(",");
+
+        // Itera sobre o array de strings
+        for (String item : items) {
+            // Remove espaços em branco extras
+            String mealTrim = item.trim();
+
+            // Cria um novo Chip
+            Chip chip = new Chip(context);
+            chip.setText(mealTrim);
+            chip.setCloseIconVisible(true);
+            chip.setCloseIconTintResource(R.color.light_blue_900); // Cor do ícone de fechar
+            chip.setOnCloseIconClickListener(v -> {
+                binding.chipContainer.removeView(chip); // Remove o Chip do layout
+                selectedItems.remove(mealTrim); // Remove o item da lista
+                updateFinalText(); // Atualiza o texto final
+            });
+
+            // Adiciona o Chip ao LinearLayout
+            selectedItems.add(mealTrim); // Adicionar item  a lista
+            binding.chipContainer.addView(chip);
+            updateFinalText();
+        }
+    }
+
+    // Método para atualizar o EditText com os valores selecionados
+    private void updateFinalText() {
+        StringBuilder finalText = new StringBuilder();
+        for (String item : selectedItems) {
+            finalText.append(item).append(", ");
+        }
+        // Remove a última vírgula e espaço
+        if (finalText.length() > 0) {
+            finalText.setLength(finalText.length() - 2);
+        }
+        // Define o texto no EditText
+        binding.mealsEditText.setText(finalText.toString());
+    }
+
     private boolean validateData(Meal meal, boolean isCreate, LayoutInflater layoutInflater) {
-        String mealName = binding.textInputEditTextName.getText().toString();
-        String mealDescription = binding.textInputEditTextDescription.getText().toString();
-        int mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(binding.spinnerQuantity.getSelectedItemPosition());
-        String type = (String) binding.spinnerMeals.getItemAtPosition(binding.spinnerMeals.getSelectedItemPosition());
-        if (isEmptyField(mealName)) {
-            binding.textInputEditTextName.requestFocus();
-            binding.textInputEditTextName.setError(getString(R.string.invalid_name_meal));
+        String mealsName = binding.mealsEditText.getText().toString();
+        if (isEmptyField(mealsName)) {
+            Toast.makeText(context, R.string.meals_not_found, Toast.LENGTH_LONG).show();
             return false;
         }
         if (!isCreate && meal != null
-                && this.imageUri.equals(Uri.parse(meal.getPathImage())) && mealName.equals(meal.getName())
-                && mealDescription.equals(meal.getDescription()) && mealsQauntity == meal.getQuantity() && type.equals(meal.getType())) {
+                && this.imageUri.equals(Uri.parse(meal.getPathImage()))
+                && mealsName.equals(meal.getName())
+                && getMealsQuantity() == meal.getQuantity()) {
             String message = context.getString(R.string.nothing_edit);
             Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", null);
             return false;
@@ -186,7 +275,8 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             context,
                             String.valueOf(user.getCampusId()),
                             String.valueOf(cursusId),
-                            imageUri
+                            imageUri,
+                            getMealsQuantity()
                     );
                 } else {
                     DaoMealFirebase.saveMealToFirebase(
@@ -196,13 +286,12 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             context,
                             String.valueOf(user.getCampusId()),
                             String.valueOf(cursusId),
-                            ""
+                            "",
+                            getMealsQuantity()
                     );
                 }
             } else {
                 if (!imageUri.equals(Uri.parse(meal.getPathImage()))) {
-                    int mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(binding.spinnerQuantity.getSelectedItemPosition());
-                    String type = (String) binding.spinnerMeals.getItemAtPosition(binding.spinnerMeals.getSelectedItemPosition());
                     DaoMealFirebase.uploadNewImage(
                             firebaseDatabase,
                             getLayoutInflater(),
@@ -213,9 +302,8 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             meal.getId(),
                             imageUri,
                             extractPublicIdFromUrl(meal.getPathImage()),
-                            binding.textInputEditTextName.getText().toString().equals(meal.getName())
-                                    && binding.textInputEditTextDescription.getText().toString().equals(meal.getDescription())
-                                    && mealsQauntity == meal.getQuantity() && type.equals(meal.getType()));
+                            binding.mealsEditText.getText().toString().equals(meal.getName()) && getMealsQuantity() == meal.getQuantity(),
+                            getMealsQuantity());
                 } else {
                     updateMealDataInFirebase(
                             firebaseDatabase,
@@ -225,10 +313,18 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             String.valueOf(user.getCampusId()),
                             String.valueOf(cursusId),
                             meal.getId(),
-                            null); // Actualizar todos os dados no Firebase
+                            null,
+                            getMealsQuantity()); // Actualizar todos os dados no Firebase
                 }
             }
         }
+    }
+
+    private int getMealsQuantity() {
+        String quantityString = Objects.requireNonNull(binding.quantityEditText.getText()).toString();
+        if (!TextUtils.isEmpty(quantityString))
+            mealsQuantity = Integer.parseInt(quantityString);
+        return mealsQuantity;
     }
 
     private void showImagePickerDialog(Context context) {
@@ -303,10 +399,32 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                 .into(binding.imageViewMeal);
     }
 
-    public void addMealsSpinner(Context context, AppCompatSpinner spinner) {
+    public void addMealsSpinner(AppCompatSpinner spinner, boolean isCarbohydrates, int arrayString) {
+        // Lista de seções
+        List<String> sections = Arrays.asList(getResources().getStringArray(arrayString));
+        // Itens de cada seção
+        Map<String, List<String>> sectionItems = new HashMap<>();
+        if (isCarbohydrates) {
+            sectionItems.put(sections.get(0), Arrays.asList(getResources().getStringArray(R.array.rice_list)));
+            sectionItems.put(sections.get(1), Arrays.asList(getResources().getStringArray(R.array.pasta_list)));
+            sectionItems.put(sections.get(2), Arrays.asList(getResources().getStringArray(R.array.funge_list)));
+            sectionItems.put(sections.get(3), Arrays.asList(getResources().getStringArray(R.array.potato_list)));
+            sectionItems.put(sections.get(4), Arrays.asList(getResources().getStringArray(R.array.breads_list)));
+        } else {
+            sectionItems.put(sections.get(0), Arrays.asList(getResources().getStringArray(R.array.leguminous_list)));
+            sectionItems.put(sections.get(1), Arrays.asList(getResources().getStringArray(R.array.meats_list)));
+            sectionItems.put(sections.get(2), Arrays.asList(getResources().getStringArray(R.array.eggs_list)));
+            sectionItems.put(sections.get(3), Arrays.asList(getResources().getStringArray(R.array.vegetables_and_salads_list)));
+            sectionItems.put(sections.get(4), Arrays.asList(getResources().getStringArray(R.array.sauces_list)));
+        }
+        SectionedSpinnerAdapter adapter = new SectionedSpinnerAdapter(requireContext(), sections, sectionItems);
+        spinner.setAdapter(adapter);
+        /*
+        Opcional: sem seções
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.meals_list, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+        */
     }
 
     public void itemSelectedSpinner(Context context, int valueArray, String valueTarget, AppCompatSpinner spinner) {
@@ -323,7 +441,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         if (dialog != null) {
             int width = ViewGroup.LayoutParams.MATCH_PARENT;
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            dialog.getWindow().setLayout(width, height);
+            Objects.requireNonNull(dialog.getWindow()).setLayout(width, height);
         }
     }
 
@@ -339,4 +457,3 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         // fullScreenDialog(dialog);
     }
 }
-

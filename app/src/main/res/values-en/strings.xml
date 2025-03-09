@@ -75,7 +75,7 @@
     <string name="status">Status</string>
     <string name="block_status">Blocked</string>
     <string name="msg_permis_image_denied">Permission to select image denied.</string>
-    <string name="quantity">Quantity:</string>
+    <string name="quantity">Quantity</string>
     <string name="msg_permis_open_camera_denied">Permission to open camera denied.</string>
     <string name="save_meal">Meal saved successfully</string>
     <string name="error_save_meal">Error saving meal</string>
@@ -142,4 +142,117 @@
     <string name="select_language_app">Choose the application language</string>
     <string name="description_app">Check Cadet is an application that allows students of School 42 to mark attendance at events and sign meal lists digitally using QR code.</string>
     <string name="about_app">About</string>
+    <string name="carbohydrates">Carbohydrates</string>
+    <string name="proteins_legumes_vegetables">Proteins, Leguminous and Vegetables</string>
+    <string name="breakfast">Breakfast</string>
+    <string name="lunch">Lunch</string>
+    <string name="dinner">Dinner</string>
+    <string name="set_breakfast_start_time">Set the Breakfast start time</string>
+    <string name="set_breakfast_end_time">Set the Breakfast End Time</string>
+    <string name="set_lunch_start_time">Set Lunch Start Time</string>
+    <string name="set_lunch_end_time">Set Lunch End Time</string>
+    <string name="set_dinner_start_time">Set Dinner Start Time</string>
+    <string name="set_dinner_end_time">Set Dinner End Time</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="outside_meal_times">Outside meal times</string>
+    <string-array name="meals_carbohydrates_title">
+        <item>Rice</item>
+        <item>Pasta</item>
+        <item>Funge</item>
+        <item>Potato</item>
+        <item>Brads</item>
+    </string-array>
+    <string-array name="meals_proteins_legumes_vegetables_title">
+        <item>Leguminous</item>
+        <item>Meats</item>
+        <item>Eggs</item>
+        <item>Vegetables and Salads</item>
+        <item>Sauces</item>
+    </string-array>
+    <!-- Categoria 1: Base -->
+    <string-array name="rice_list">
+        <item>White rice</item>
+        <item>Brown rice</item>
+        <item>Cuxá rice</item>
+        <item>Coconut rice</item>
+        <item>Jollof rice</item>
+        <item>Tomato rice</item>
+    </string-array>
+    <string-array name="pasta_list">
+        <item>Spaghetti</item>
+        <item>Penne pasta</item>
+        <item>Fusilli pasta</item>
+        <item>Tagliatelle pasta</item>
+        <item>Lasagna</item>
+        <item>Cannelloni</item>
+    </string-array>
+    <string-array name="funge_list">
+        <item>Cassava funge</item>
+        <item>Corn funge</item>
+    </string-array>
+    <string-array name="potato_list">
+        <item>Boiled potato</item>
+        <item>French fries</item>
+        <item>Mashed potato</item>
+        <item>Roasted sweet potato</item>
+        <item>Sautéed potato</item>
+    </string-array>
+    <string-array name="breads_list">
+        <item>French bread</item>
+        <item>Whole wheat bread</item>
+        <item>Sandwich bread</item>
+        <item>Cornbread</item>
+        <item>Coconut bread</item>
+        <item>Cheese bread</item>
+    </string-array>
+    <!-- Categoria 2: Acompanhamentos -->
+    <string-array name="leguminous_list">
+        <item>Black beans</item>
+        <item>Red beans</item>
+        <item>White beans</item>
+        <item>Black-eyed peas</item>
+        <item>Chickpeas</item>
+        <item>Lentils</item>
+        <item>Peas</item>
+        <item>Butter beans</item>
+    </string-array>
+    <string-array name="meats_list">
+        <item>Chicken</item>
+        <item>Grilled chicken</item>
+        <item>Fried chicken</item>
+        <item>Beef</item>
+        <item>Pork</item>
+        <item>Goat meat</item>
+        <item>Fish</item>
+        <item>Grilled fish</item>
+        <item>Fried fish</item>
+    </string-array>
+    <string-array name="eggs_list">
+        <item>Boiled egg</item>
+        <item>Fried egg</item>
+        <item>Scrambled egg</item>
+        <item>Omelette</item>
+    </string-array>
+    <string-array name="vegetables_and_salads_list">
+        <item>Lettuce salad</item>
+        <item>Tomato salad</item>
+        <item>Cucumber salad</item>
+        <item>Grated carrot salad</item>
+        <item>Cabbage salad</item>
+        <item>Sautéed kale</item>
+        <item>Sautéed spinach</item>
+        <item>Boiled broccoli</item>
+        <item>Grilled zucchini</item>
+        <item>Roasted eggplant</item>
+        <item>Boiled chayote</item>
+    </string-array>
+    <string-array name="sauces_list">
+        <item>Tomato sauce</item>
+        <item>White sauce</item>
+        <item>Garlic sauce</item>
+        <item>Piri-piri sauce</item>
+        <item>Calulu</item>
+        <item>Quizaca</item>
+    </string-array>
 </resources>

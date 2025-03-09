@@ -5,32 +5,29 @@ import android.os.Parcelable;
 
 public class Meal implements Parcelable {
     private String id;
-    private String name;
-    private String description;
-    private int quantity;
     private String type;
+    private String name;
+    private int quantity;
     private String date;
     private String pathImage;
 
     public Meal() {
     }
 
-    public Meal(String id, String name, String description, int quantity, String type, String date, String pathImage) {
+    public Meal(String id, String type, String name, int quantity, String date, String pathImage) {
         this.id = id;
-        this.name = name;
-        this.description = description;
-        this.quantity = quantity;
         this.type = type;
+        this.name = name;
+        this.quantity = quantity;
         this.date = date;
         this.pathImage = pathImage;
     }
 
     protected Meal(Parcel in) {
         id = in.readString();
-        name = in.readString();
-        description = in.readString();
-        quantity = in.readInt();
         type = in.readString();
+        name = in.readString();
+        quantity = in.readInt();
         date = in.readString();
         pathImage = in.readString();
     }
@@ -38,10 +35,9 @@ public class Meal implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
-        dest.writeString(name);
-        dest.writeString(description);
-        dest.writeInt(quantity);
         dest.writeString(type);
+        dest.writeString(name);
+        dest.writeInt(quantity);
         dest.writeString(date);
         dest.writeString(pathImage);
     }
@@ -51,7 +47,7 @@ public class Meal implements Parcelable {
         return 0;
     }
 
-    public static final Creator<Meal> CREATOR = new Creator<Meal>() {
+    public static final Creator<Meal> CREATOR = new Creator<>() {
         @Override
         public Meal createFromParcel(Parcel in) {
             return new Meal(in);
@@ -71,20 +67,20 @@ public class Meal implements Parcelable {
         this.id = id;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getDate() {
@@ -101,14 +97,6 @@ public class Meal implements Parcelable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getPathImage() {

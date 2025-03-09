@@ -223,14 +223,6 @@ public class Util {
                 .into(imageViewUserRegistered);
     }
 
-    public static void loadingImageMeal(Context context, String imageUrl, ImageView imageView, boolean isDetails) {
-        Glide.with(context)
-                .load(imageUrl)
-                .transform(isDetails ? new RoundedCorners(30) : new CircleCrop())
-                .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_60))
-                .into(imageView);
-    }
-
     public static void setVisibleProgressBar(ProgressBar progressBar, FloatingActionButton floatingActionButton, SharedViewModel sharedViewModel) {
         sharedViewModel.setDisabledRecyclerView(true);
         progressBar.setVisibility(View.VISIBLE);

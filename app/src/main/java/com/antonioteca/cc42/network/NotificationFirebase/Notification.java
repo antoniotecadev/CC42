@@ -30,7 +30,7 @@ public class Notification {
 
             FCMService service = retrofit.create(FCMService.class);
 
-            FCMessage.Notification notification = new FCMessage.Notification(meal.getName(), meal.getType() + ": " + meal.getDescription(), meal.getPathImage());
+            FCMessage.Notification notification = new FCMessage.Notification(meal.getType(), meal.getName(), meal.getPathImage());
             FCMessage.Data data = new FCMessage.Data(meal.getId(), meal.getDate(), String.valueOf(meal.getQuantity()), String.valueOf(cursusId), "DetailsMealFragment", notification);
             FCMessage.Message message = new FCMessage.Message("meals", notification, data);
             FCMessage fcmMessage = new FCMessage(message);

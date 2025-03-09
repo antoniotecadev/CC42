@@ -75,7 +75,7 @@
     <string name="status">Status</string>
     <string name="block_status">Bloqueado</string>
     <string name="msg_permis_image_denied">Permissão para selecionar imagem negada.</string>
-    <string name="quantity">Quantidade:</string>
+    <string name="quantity">Quantidade</string>
     <string name="msg_permis_open_camera_denied">Permissão para abrir a câmera negada.</string>
     <string name="save_meal">Refeição salva com sucesso</string>
     <string name="error_save_meal">Erro ao salvar a refeição</string>
@@ -142,4 +142,117 @@
     <string name="select_language_app">Escolha o idioma do aplicativo</string>
     <string name="description_app">Check Cadet é um aplicativo que permite aos estudantes da Escola 42 marcarem presença em eventos e assinarem as listas de refeições digitalmente utilizando código QR.</string>
     <string name="about_app">Sobre</string>
+    <string name="carbohydrates">Carboidratos</string>
+    <string name="proteins_legumes_vegetables">Proteínas, Leguminosas e Vegetais</string>
+    <string name="breakfast">Café da manhã</string>
+    <string name="lunch">Almoço</string>
+    <string name="dinner">Jantar</string>
+    <string name="set_breakfast_start_time">Defina a hora de início do Café da Manhã</string>
+    <string name="set_breakfast_end_time">Defina a hora de término do Café da Manhã</string>
+    <string name="set_lunch_start_time">Defina o horário de início do Almoço</string>
+    <string name="set_lunch_end_time">Defina o horário de término do Almoço</string>
+    <string name="set_dinner_start_time">Defina o horário de início do Jantar</string>
+    <string name="set_dinner_end_time">Defina o horário de término do Jantar</string>
+    <string name="start_time">Hora de Início</string>
+    <string name="end_time">Hora de Fim</string>
+    <string name="outside_meal_times">Fora do horário da refeição</string>
+    <string-array name="meals_carbohydrates_title">
+        <item>Arroz</item>
+        <item>Massas</item>
+        <item>Funge</item>
+        <item>Batata</item>
+        <item>Pães</item>
+    </string-array>
+    <string-array name="meals_proteins_legumes_vegetables_title">
+        <item>Leguminoses</item>
+        <item>Carnes</item>
+        <item>Ovos</item>
+        <item>Vegetais e saladas</item>
+        <item>Molhos</item>
+    </string-array>
+    <!-- Categoria 1: Base -->
+    <string-array name="rice_list">
+        <item>Arroz branco</item>
+        <item>Arroz integral</item>
+        <item>Arroz de cuxá</item>
+        <item>Arroz de coco</item>
+        <item>Arroz de jollof</item>
+        <item>Arroz de tomate</item>
+    </string-array>
+    <string-array name="pasta_list">
+        <item>Espaguete</item>
+        <item>Macarrão penne</item>
+        <item>Macarrão fusilli</item>
+        <item>Macarrão talharim</item>
+        <item>Lasanha</item>
+        <item>Canelone</item>
+    </string-array>
+    <string-array name="funge_list">
+        <item>Funge de bombó</item>
+        <item>Funge de milho</item>
+    </string-array>
+    <string-array name="potato_list">
+        <item>Batata cozida</item>
+        <item>Batata frita</item>
+        <item>Purê de batata</item>
+        <item>Batata-doce assada</item>
+        <item>Batata sauté</item>
+    </string-array>
+    <string-array name="breads_list">
+        <item>Pão francês</item>
+        <item>Pão integral</item>
+        <item>Pão de forma</item>
+        <item>Pão de milho</item>
+        <item>Pão de coco</item>
+        <item>Pão de queijo</item>
+    </string-array>
+    <!-- Categoria 2: Acompanhamentos -->
+    <string-array name="leguminous_list">
+        <item>Feijão preto</item>
+        <item>Feijão vermelho</item>
+        <item>Feijão branco</item>
+        <item>Feijão-fradinho</item>
+        <item>Grão-de-bico</item>
+        <item>Lentilha</item>
+        <item>Ervilha</item>
+        <item>Feijão manteiga</item>
+    </string-array>
+    <string-array name="meats_list">
+        <item>Frango</item>
+        <item>Frango grelhado</item>
+        <item>Frango frito</item>
+        <item>Carne bovina</item>
+        <item>Carne de porco</item>
+        <item>Carne de Cabrito</item>
+        <item>Peixe</item>
+        <item>Peixe grelhado</item>
+        <item>Peixe frito</item>
+    </string-array>
+    <string-array name="eggs_list">
+        <item>Ovo cozido</item>
+        <item>Ovo frito</item>
+        <item>Ovo mexido</item>
+        <item>Omelete</item>
+    </string-array>
+    <string-array name="vegetables_and_salads_list">
+        <item>Salada de alface</item>
+        <item>Salada de tomate</item>
+        <item>Salada de pepino</item>
+        <item>Salada de cenoura ralada</item>
+        <item>Salada de repolho</item>
+        <item>Couve refogada</item>
+        <item>Espinafre refogado</item>
+        <item>Brócolis cozido</item>
+        <item>Abobrinha grelhada</item>
+        <item>Berinjela assada</item>
+        <item>Chuchu cozido</item>
+    </string-array>
+    <string-array name="sauces_list">
+        <item>Molho de tomate</item>
+        <item>Molho branco</item>
+        <item>Molho de alho</item>
+        <item>Molho de piri-piri</item>
+        <item>Calulu</item>
+        <item>Quizaca</item>
+    </string-array>
 </resources>

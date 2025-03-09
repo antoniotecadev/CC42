@@ -16,8 +16,7 @@ import androidx.navigation.Navigation;
 
 import com.antonioteca.cc42.databinding.FragmentDetailsMealBinding;
 import com.antonioteca.cc42.model.Meal;
-import com.antonioteca.cc42.utility.Util;
-
+import com.antonioteca.cc42.utility.MealsUtils;
 
 public class DetailsMealFragment extends Fragment {
 
@@ -32,8 +31,7 @@ public class DetailsMealFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentDetailsMealBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -56,12 +54,12 @@ public class DetailsMealFragment extends Fragment {
         }
         binding.textViewType.setText(meal.getType());
         binding.textViewName.setText(meal.getName());
-        binding.textViewDescription.setText(meal.getDescription());
+        binding.textViewDescription.setText("description");
         binding.textViewDate.setText(meal.getDate());
-        Util.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, true);
+        MealsUtils.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, true);
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
-                DetailsMealFragmentDirections.ActionDetailsMealFragmentToQrCodeFragment actionDetailsMealFragmentToQrCodeFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToQrCodeFragment("meal" + meal.getId(), meal.getName(), meal.getDescription());
+                DetailsMealFragmentDirections.ActionDetailsMealFragmentToQrCodeFragment actionDetailsMealFragmentToQrCodeFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToQrCodeFragment("meal" + meal.getId(), meal.getName(), "description");
                 navController.navigate(actionDetailsMealFragmentToQrCodeFragment);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();

@@ -25,4 +25,43 @@
             app:dialogIcon="@drawable/ic_baseline_translate_24"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
+    <PreferenceCategory
+        app:icon="@drawable/ic_baseline_restaurant_24"
+        app:title="@string/meals">
+        <!-- Pequeno Almoço -->
+        <PreferenceCategory android:title="@string/breakfast">
+            <Preference
+                android:key="breakfast_start"
+                android:summary="@string/set_breakfast_start_time"
+                android:title="@string/start_time" />
+            <Preference
+                android:key="breakfast_end"
+                android:summary="@string/set_breakfast_end_time"
+                android:title="@string/end_time" />
+        </PreferenceCategory>
+
+        <!-- Almoço -->
+        <PreferenceCategory android:title="@string/lunch">
+            <Preference
+                android:key="lunch_start"
+                android:summary="@string/set_lunch_start_time"
+                android:title="@string/start_time" />
+            <Preference
+                android:key="lunch_end"
+                android:summary="@string/set_lunch_end_time"
+                android:title="@string/end_time" />
+        </PreferenceCategory>
+
+        <!-- Jantar -->
+        <PreferenceCategory android:title="@string/dinner">
+            <Preference
+                android:key="dinner_start"
+                android:summary="@string/set_dinner_start_time"
+                android:title="@string/start_time" />
+            <Preference
+                android:key="dinner_end"
+                android:summary="@string/set_dinner_end_time"
+                android:title="@string/end_time" />
+        </PreferenceCategory>
+    </PreferenceCategory>
 </PreferenceScreen>
