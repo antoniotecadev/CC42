@@ -17,6 +17,11 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!--    Android 13+ (API 33+)-->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!--    Android 14 (API 34)-->
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+
     <application
         android:name=".network.MyApplicationCloudinary"
         android:allowBackup="true"
@@ -34,8 +39,8 @@
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:configChanges="orientation"
             android:screenOrientation="fullSensor"
-            tools:replace="android:screenOrientation"
-            tools:ignore="DiscouragedApi" />
+            tools:ignore="DiscouragedApi"
+            tools:replace="android:screenOrientation" />
         <activity
             android:name=".NavigationDrawerActivity"
             android:exported="false"
