@@ -19,9 +19,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -408,14 +406,6 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         return (TextUtils.isEmpty(value) || value.trim().isEmpty());
     }
 
-    private static void addNumberSpinner(Context context, AppCompatSpinner spinner) {
-        ArrayList<Integer> quantity = new ArrayList<>();
-        for (int i = 0; i <= 1000; ++i)
-            quantity.add(i);
-        ArrayAdapter<Integer> itemAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, quantity);
-        spinner.setAdapter(itemAdapter);
-    }
-
     private void loadingImageMeal(Uri imageUri) {
         Glide.with(this)
                 .load(imageUri)
@@ -450,24 +440,6 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         */
-    }
-
-    public void itemSelectedSpinner(Context context, int valueArray, String valueTarget, AppCompatSpinner spinner) {
-        final String[] stringArray = context.getResources().getStringArray(valueArray);
-        for (int i = 0; i <= stringArray.length; i++) {
-            if (valueTarget.equalsIgnoreCase(stringArray[i])) {
-                spinner.setSelection(i);
-                break;
-            }
-        }
-    }
-
-    public static void fullScreenDialog(Dialog dialog) {
-        if (dialog != null) {
-            int width = ViewGroup.LayoutParams.MATCH_PARENT;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            Objects.requireNonNull(dialog.getWindow()).setLayout(width, height);
-        }
     }
 
     @Override
