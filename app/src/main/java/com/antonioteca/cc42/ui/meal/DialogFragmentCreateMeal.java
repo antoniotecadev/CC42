@@ -388,17 +388,23 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         imagePickerLauncher.launch(intent);
     }
 
+    // Abre a câmera
     private void openCamera(Context context) {
-        File photoFile = null;
-        try {
-            photoFile = createImageFile(context); // Criar arquivo temporário
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Verifica se o dispositivo tem uma câmera
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+            File photoFile;
+            try {
+                photoFile = createImageFile(context); // Criar arquivo temporário
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(context, getString(R.string.error_creating_image_file), Toast.LENGTH_LONG).show();
+                return;
+            }
 
-        if (photoFile != null) {
             imageUri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".fileprovider", photoFile);
             takePictureLauncher.launch(imageUri); // Abrir a câmera
+        } else {
+            Toast.makeText(context, getString(R.string.device_does_not_have_camera), Toast.LENGTH_LONG).show();
         }
     }
 

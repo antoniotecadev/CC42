@@ -156,6 +156,8 @@
     <string name="start_time">Start Time</string>
     <string name="end_time">End Time</string>
     <string name="outside_meal_times">Outside meal times</string>
+    <string name="error_creating_image_file">Error creating image file</string>
+    <string name="device_does_not_have_camera">Device does not have a camera</string>
     <string-array name="meals_carbohydrates_title">
         <item>Rice</item>
         <item>Pasta</item>

@@ -156,6 +156,8 @@
     <string name="start_time">Hora de Início</string>
     <string name="end_time">Hora de Fim</string>
     <string name="outside_meal_times">Fora do horário da refeição</string>
+    <string name="error_creating_image_file">Erro ao criar arquivo de imagem</string>
+    <string name="device_does_not_have_camera">Dispositivo não possui câmera</string>
     <string-array name="meals_carbohydrates_title">
         <item>Arroz</item>
         <item>Massas</item>

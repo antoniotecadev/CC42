@@ -156,6 +156,8 @@
     <string name="start_time">Hora de inicio</string>
     <string name="end_time">Fin del tiempo</string>
     <string name="outside_meal_times">Horarios de comidas al aire libre</string>
+    <string name="error_creating_image_file">Error al crear el archivo de imagen</string>
+    <string name="device_does_not_have_camera">El dispositivo no tiene cámara</string>
     <string-array name="meals_carbohydrates_title">
         <item>Arroz</item>
         <item>Pasta</item>
