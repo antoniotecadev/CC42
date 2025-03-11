@@ -106,7 +106,7 @@ public class DaoMealFirebase {
                                       String publicId,
                                       boolean onlyImage,
                                       int mealsQuantity
-                                      ) {
+    ) {
 
         MediaManager.get().upload(newImageUri)
                 .option("public_id", publicId) // Usar o mesmo public ID para substituir a imagem
@@ -279,7 +279,6 @@ public class DaoMealFirebase {
                         Notification.sendNotificationForTopic(context, layoutInflater, meal, Integer.parseInt(cursusId));
                     } catch (IOException e) {
                         Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -338,7 +337,7 @@ public class DaoMealFirebase {
         if (publicId == null) return;
         executorService.execute(() -> {
             try {
-                Map result = MediaManager.get().getCloudinary()
+                Map<?, ?> result = MediaManager.get().getCloudinary()
                         .uploader()
                         .destroy(publicId, ObjectUtils.asMap("invalidate", true));
                 hendler.post(() -> {
@@ -348,7 +347,7 @@ public class DaoMealFirebase {
                     }
                 });
             } catch (IOException e) {
-                e.printStackTrace();
+                Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
             } finally {
                 executorService.shutdown();
             }
