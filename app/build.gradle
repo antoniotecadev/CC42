@@ -33,23 +33,25 @@ android {
     }
     buildFeatures {
         viewBinding true
+        buildConfig = true // A classe BuildConfig é uma classe gerada automaticamente que contém informações relacionadas à construção do projeto, como se você está construindo uma versão de depuração (debug) ou de lançamento (release)
     }
-    // Quando há arquivos duplicados em 'META-INF/DEPENDENCIES' durante a compilação do projecto no Gradle
-    // Isso geralmente acontence quando diferentes dependências contêm o mesmo arquivo META INFO
     packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/INDEX.LIST'
+        resources {
+            excludes += ['META-INF/DEPENDENCIES', 'META-INF/INDEX.LIST']
+        }
     }
+// Quando há arquivos duplicados em 'META-INF/DEPENDENCIES' durante a compilação do projecto no Gradle
+    // Isso geralmente acontence quando diferentes dependências contêm o mesmo arquivo META INFO
 }
 
 dependencies {
 
-    implementation 'androidx.preference:preference:1.2.0'
     def room_version = "2.6.1"
     def nav_version = "2.5.3"
     def retrofit_version = "2.11.0"
     def glide_version = "4.16.0"
 
+    implementation 'androidx.preference:preference:1.2.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.2.0'
     implementation 'androidx.annotation:annotation:1.3.0'

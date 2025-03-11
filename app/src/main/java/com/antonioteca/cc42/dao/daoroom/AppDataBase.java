@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 
 import com.antonioteca.cc42.model.LocalAttendanceList;
 
-@Database(entities = {LocalAttendanceList.class}, version = 1)
+/*@Database(entities = {LocalAttendanceList.class}, version = 1)
 public abstract class AppDataBase extends RoomDatabase {
 
     private static AppDataBase instance;
@@ -22,4 +22,4 @@ public abstract class AppDataBase extends RoomDatabase {
             }
         return instance;
     }
-}
+}*/
