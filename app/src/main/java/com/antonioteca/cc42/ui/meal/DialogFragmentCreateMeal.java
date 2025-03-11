@@ -171,7 +171,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         return dialog;
     }
 
-    private void handleSpinnerMeals(AppCompatSpinner appCompatSpinner) {
+    private void handleSpinnerMeals(@NonNull AppCompatSpinner appCompatSpinner) {
         appCompatSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -204,7 +204,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         updateFinalText(); // Atualiza o texto final
     }
 
-    private void addChipsFromData(String data) {
+    private void addChipsFromData(@NonNull String data) {
         // Divide a string em um array de strings
         String[] items = data.split(",");
 
@@ -368,6 +368,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
     }
 
     //    Crie um arquivo temporário para salvar a foto tirada
+    @NonNull
     private File createImageFile(Context context) throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -386,7 +387,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         imagePickerLauncher.launch(intent);
     }
 
-    private void openCamera(Context context) {
+    private void openCamera(@NonNull Context context) {
         // Verifica se o dispositivo tem uma câmera
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
             File photoFile;
