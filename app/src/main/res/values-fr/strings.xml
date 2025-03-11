@@ -75,7 +75,7 @@
     <string name="status">Statut</string>
     <string name="block_status">Bloqué</string>
     <string name="msg_permis_image_denied">Autorisation de sélectionner une image refusée.</string>
-    <string name="quantity">Quantité :</string>
+    <string name="quantity">Quantité</string>
     <string name="msg_permis_open_camera_denied">Autorisation d\'ouvrir la caméra refusée.</string>
     <string name="save_meal">Repas enregistré avec succès</string>
     <string name="error_save_meal">Erreur lors de l\'enregistrement du repas</string>
@@ -124,6 +124,9 @@
     <string name="notification_summary_off">Vous ne recevrez pas de mises à jour des repas</string>
     <string name="notificatio_summary_on">Vous recevrez des mises à jour des repas</string>
     <string name="error_send_notification">Une erreur s\'est produite lors de l\'envoi de la notification</string>
+    <string name="notification_permission">Autorisation de notifications</string>
+    <string name="notification_permission_message">Cette application a besoin de l\'autorisation pour afficher des notifications importantes.</string>
+    <string name="notification_permission_denied">Autorisation d\'afficher les notifications refusée</string>
     <string-array name="meals_list">
         <item>Petit-déjeuner</item>
         <item>Collation du matin</item>
@@ -139,4 +142,119 @@
     <string name="select_language_app">Choisir la langue de l\'application</string>
     <string name="description_app">Check Cadet est une application qui permet aux étudiants de l\'École 42 de marquer leur présence aux événements et de signer les listes de repas numériquement en utilisant un code QR.</string>
     <string name="about_app">À propos</string>
+    <string name="carbohydrates">Glucides</string>
+    <string name="proteins_legumes_vegetables">Protéines, légumineuses et légumes</string>
+    <string name="breakfast">Petit-déjeuner</string>
+    <string name="lunch">Déjeuner</string>
+    <string name="dinner">Dîner</string>
+    <string name="set_breakfast_start_time">Régler l\'heure de début du petit-déjeuner</string>
+    <string name="set_breakfast_end_time">Régler l\'heure de fin du petit-déjeuner</string>
+    <string name="set_lunch_start_time">Définir l\'heure de début du déjeuner</string>
+    <string name="set_lunch_end_time">Définir l\'heure de fin du déjeuner</string>
+    <string name="set_dinner_start_time">Définir l\'heure de début du dîner</string>
+    <string name="set_dinner_end_time">Définir l\'heure de fin du dîner</string>
+    <string name="start_time">Heure de début</string>
+    <string name="end_time">Fin des temps</string>
+    <string name="outside_meal_times">En dehors des heures de repas</string>
+    <string name="error_creating_image_file">Erreur lors de la création du fichier image</string>
+    <string name="device_does_not_have_camera">L\'appareil n\'a pas d\'appareil photo</string>
+    <string-array name="meals_carbohydrates_title">
+        <item>Riz</item>
+        <item>Pâtes</item>
+        <item>Funge</item>
+        <item>Pomme de terre</item>
+        <item>Pains</item>
+    </string-array>
+    <string-array name="meals_proteins_legumes_vegetables_title">
+        <item>Légumineuses</item>
+        <item>Viandes</item>
+        <item>Œuf</item>
+        <item>Légumes et salades</item>
+        <item>Sauces</item>
+    </string-array>
+    <!-- Categoria 1: Base -->
+    <string-array name="rice_list">
+        <item>Riz blanc</item>
+        <item>Riz brun</item>
+        <item>Riz de cuxá</item>
+        <item>Riz au coco</item>
+        <item>Riz jollof</item>
+        <item>Riz à la tomate</item>
+    </string-array>
+    <string-array name="pasta_list">
+        <item>Spaghetti</item>
+        <item>Pennes</item>
+        <item>Fusilli</item>
+        <item>Tagliatelles</item>
+        <item>Lasagne</item>
+        <item>Cannelloni</item>
+    </string-array>
+    <string-array name="funge_list">
+        <item>Funge de manioc</item>
+        <item>Funge de maïs</item>
+    </string-array>
+    <string-array name="potato_list">
+        <item>Pomme de terre bouillie</item>
+        <item>Frites</item>
+        <item>Purée de pommes de terre</item>
+        <item>Patate douce rôtie</item>
+        <item>Pommes de terre sautées</item>
+    </string-array>
+    <string-array name="breads_list">
+        <item>Pain français</item>
+        <item>Pain complet</item>
+        <item>Pain de mie</item>
+        <item>Pain de maïs</item>
+        <item>Pain à la noix de coco</item>
+        <item>Pain au fromage</item>
+    </string-array>
+    <!-- Categoria 2: Acompanhamentos -->
+    <string-array name="leguminous_list">
+        <item>Haricots noirs</item>
+        <item>Haricots rouges</item>
+        <item>Haricots blancs</item>
+        <item>Haricots à œil noir</item>
+        <item>Pois chiches</item>
+        <item>Lentilles</item>
+        <item>Pois</item>
+        <item>Haricots beurre</item>
+    </string-array>
+    <string-array name="meats_list">
+        <item>Poulet</item>
+        <item>Poulet grillé</item>
+        <item>Poulet frit</item>
+        <item>Bœuf</item>
+        <item>Porc</item>
+        <item>Viande de chèvre</item>
+        <item>Poisson</item>
+        <item>Poisson grillé</item>
+        <item>Poisson frit</item>
+    </string-array>
+    <string-array name="eggs_list">
+        <item>Œuf dur</item>
+        <item>Œuf au plat</item>
+        <item>Œuf brouillé</item>
+        <item>Omelette</item>
+    </string-array>
+    <string-array name="vegetables_and_salads_list">
+        <item>Salade de laitue</item>
+        <item>Salade de tomates</item>
+        <item>Salade de concombre</item>
+        <item>Salade de carottes râpées</item>
+        <item>Salade de chou</item>
+        <item>Chou frisé sauté</item>
+        <item>Épinards sautés</item>
+        <item>Brocoli bouilli</item>
+        <item>Courgette grillée</item>
+        <item>Aubergine rôtie</item>
+        <item>Chayote bouillie</item>
+    </string-array>
+    <string-array name="sauces_list">
+        <item>Sauce tomate</item>
+        <item>Sauce blanche</item>
+        <item>Sauce à l\'ail</item>
+        <item>Sauce piri-piri</item>
+        <item>Calulu</item>
+        <item>Quizaca</item>
+    </string-array>
 </resources>

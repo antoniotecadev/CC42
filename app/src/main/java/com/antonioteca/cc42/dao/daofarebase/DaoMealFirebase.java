@@ -16,6 +16,7 @@ import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.network.NotificationFirebase.Notification;
 import com.antonioteca.cc42.utility.DateUtils;
+import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.utility.Util;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
@@ -27,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -38,7 +40,9 @@ public class DaoMealFirebase {
                                                Context context,
                                                String campusId,
                                                String cursusId,
-                                               Uri imageUri) {
+                                               Uri imageUri,
+                                               int mealsQuantity
+    ) {
 
         MediaManager.get().upload(imageUri)
                 .option("asset_folder", "campus/" + campusId + "/meals") // Pasta no Cloudinary (opcional)
@@ -65,7 +69,9 @@ public class DaoMealFirebase {
                                 context,
                                 campusId,
                                 cursusId,
-                                imageUrl);
+                                imageUrl,
+                                mealsQuantity
+                        );
                     }
 
                     @Override
@@ -78,7 +84,8 @@ public class DaoMealFirebase {
                                 context,
                                 campusId,
                                 cursusId,
-                                "");
+                                "",
+                                mealsQuantity);
                     }
 
                     @Override
@@ -97,7 +104,9 @@ public class DaoMealFirebase {
                                       String mealId,
                                       Uri newImageUri,
                                       String publicId,
-                                      boolean onlyImage) {
+                                      boolean onlyImage,
+                                      int mealsQuantity
+                                      ) {
 
         MediaManager.get().upload(newImageUri)
                 .option("public_id", publicId) // Usar o mesmo public ID para substituir a imagem
@@ -134,7 +143,8 @@ public class DaoMealFirebase {
                                     campusId,
                                     cursusId,
                                     mealId,
-                                    newImageUrl); // Actualizar todos os dados no Firebase
+                                    newImageUrl,
+                                    mealsQuantity); // Actualizar todos os dados no Firebase
                         }
                     }
 
@@ -188,12 +198,11 @@ public class DaoMealFirebase {
                                                 String campusId,
                                                 String cursusId,
                                                 String mealId,
-                                                String newImageUrl) {
+                                                String newImageUrl,
+                                                int mealsQuantity
+    ) {
 
-        String mealName = binding.textInputEditTextName.getText().toString();
-        String mealDescription = binding.textInputEditTextDescription.getText().toString();
-        int mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(binding.spinnerQuantity.getSelectedItemPosition());
-        String type = (String) binding.spinnerMeals.getItemAtPosition(binding.spinnerMeals.getSelectedItemPosition());
+        String mealName = binding.mealsEditText.getText().toString();
 
         DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
@@ -205,9 +214,7 @@ public class DaoMealFirebase {
         // Criar um mapa com os novos valores
         Map<String, Object> updates = new HashMap<>();
         updates.put("name", mealName);
-        updates.put("description", mealDescription);
-        updates.put("quantity", mealsQauntity);
-        updates.put("type", type);
+        updates.put("quantity", mealsQuantity);
         if (newImageUrl != null)
             updates.put("pathImage", newImageUrl);
 
@@ -232,12 +239,12 @@ public class DaoMealFirebase {
                                           Context context,
                                           String campusId,
                                           String cursusId,
-                                          String imageUrl) {
+                                          String imageUrl,
+                                          int mealsQuantity
+    ) {
 
-        String mealName = binding.textInputEditTextName.getText().toString();
-        String mealDescription = binding.textInputEditTextDescription.getText().toString();
-        int mealsQauntity = (int) binding.spinnerQuantity.getItemAtPosition(binding.spinnerQuantity.getSelectedItemPosition());
-        String type = (String) binding.spinnerMeals.getItemAtPosition(binding.spinnerMeals.getSelectedItemPosition());
+        String mealName = binding.mealsEditText.getText().toString();
+        String type = MealsUtils.getMealType(context);
 
         DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
@@ -252,21 +259,19 @@ public class DaoMealFirebase {
         // Criar um objeto Meal
         Meal meal = new Meal(
                 mealId,
-                mealName,
-                mealDescription,
-                mealsQauntity,
                 type,
+                mealName,
+                mealsQuantity,
                 dateCreated,
                 imageUrl
         );
 
         // Salvar os dados da refeição no Firebase Realtime Database
-        mealsRef.child(mealId).setValue(meal)
+        mealsRef.child(Objects.requireNonNull(mealId)).setValue(meal)
                 .addOnSuccessListener(aVoid -> {
-                    binding.spinnerQuantity.setSelection(0);
-                    binding.textInputEditTextName.setText("");
-                    binding.textInputEditTextDescription.setText("");
-                    binding.textInputEditTextName.requestFocus();
+                    binding.chipContainer.removeAllViews();
+                    binding.mealsEditText.setText("");
+                    binding.quantityEditText.setText("0");
                     restaureViews(binding);
                     String message = mealName + "\n" + context.getString(R.string.save_meal);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);

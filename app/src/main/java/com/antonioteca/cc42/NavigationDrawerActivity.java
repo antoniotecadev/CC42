@@ -1,9 +1,12 @@
 package com.antonioteca.cc42;
 
+import static com.antonioteca.cc42.network.NetworkConstants.REQUEST_CODE_POST_NOTIFICATIONS;
 import static com.antonioteca.cc42.utility.Util.setAppLanguage;
 import static com.antonioteca.cc42.utility.Util.setColorCoalition;
+import static com.antonioteca.cc42.utility.Util.setRequestPermissionLauncherNotification;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -26,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -231,6 +235,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
         asNotificationPermission();
         createNotificationChannel();
+        setRequestPermissionLauncherNotification(context, REQUEST_CODE_POST_NOTIFICATIONS);
     }
 
     private void asNotificationPermission() {
@@ -367,6 +372,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private static void showNotification(String title, String body, Bitmap image, RemoteMessage message, Context context, String imageUrl) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_check_cadet_42)
@@ -386,22 +392,21 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         // Abrir o app ao clicar na notificação
         Intent intent = new Intent(context, NavigationDrawerActivity.class);
 
-        if (message.getData().size() > 0) {
-            String[] partsBody = body.split(": ", 2);
+        if (!message.getData().isEmpty()) {
             String id = message.getData().get("key1");
             String dataCreated = message.getData().get("key2");
             String quantity = message.getData().get("key3");
             String cursusId = message.getData().get("key4");
-            Meal meal = new Meal(id, title, partsBody[1], Integer.parseInt(quantity != null ? quantity : "0"), partsBody[0], dataCreated, imageUrl);
+            Meal meal = new Meal(id, title, body, Integer.parseInt(quantity != null ? quantity : "0"), dataCreated, imageUrl);
 
-            // Entrar em fragment específico e passar dados da efeição
+            // Entrar em fragment específico e passar dados da refeição
             intent.setAction("OPEN_FRAGMENT_ACTION_FOREGROUND");
             intent.putExtra("cursusId", Integer.parseInt(cursusId != null ? cursusId : "0"));
             intent.putExtra("detailsMeal", meal);
         }
 
         PendingIntent pendingIntent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // Android 6 >
             pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         } else
             pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -414,17 +419,28 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
     private void handleNotificationIntent(Intent intent) {
         if (intent != null && intent.getExtras() != null &&
-                ("OPEN_FRAGMENT_ACTION_FOREGROUND".equals(intent.getAction()) ||
-                        "OPEN_FRAGMENT_ACTION_BACKGROUND".equals(intent.getAction()))) { // Primeiro plano
-            int cursusId = (int) intent.getIntExtra("cursusId", 0);
-            Meal meal = (Meal) intent.getParcelableExtra("detailsMeal");
+                ("OPEN_FRAGMENT_ACTION_FOREGROUND".equals(intent.getAction()) || // Primeiro plano
+                        "OPEN_FRAGMENT_ACTION_BACKGROUND".equals(intent.getAction()))) { // Segundo plano
+            //int cursusId = intent.getIntExtra("cursusId", 0);
+            Meal meal = intent.getParcelableExtra("detailsMeal");
             args = new Bundle();
-            args.putInt("cursusId", cursusId);
+            args.putInt("cursusId", 0);
             args.putParcelable("detailsMeal", meal);
             navController.navigate(R.id.action_detailsMealFragment, args);
             intent.replaceExtras(new Bundle());
             intent.setAction(null);
             args.clear();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
+            // Verificar se a permissão foi concedida
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                Toast.makeText(context, getString(R.string.notification_permission_denied), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

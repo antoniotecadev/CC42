@@ -1,9 +1,11 @@
 package com.antonioteca.cc42.utility;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -32,6 +34,7 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
@@ -58,6 +61,20 @@ import java.util.Objects;
 import io.noties.markwon.Markwon;
 
 public class Util {
+
+    public static void setRequestPermissionLauncherNotification(Context context, int REQUEST_CODE_POST_NOTIFICATIONS) {
+        // Verificar se a permissão foi concedida para exibir notificações - Android 13 >
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                Util.showAlertDialogBuild(
+                        context.getString(R.string.notification_permission),
+                        context.getString(R.string.notification_permission_message),
+                        context,
+                        null);
+                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_POST_NOTIFICATIONS);
+            }
+        }
+    }
 
     public static void showAlertDialogBuild(String title, String message, Context context, Runnable runnableTryAgain) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -204,14 +221,6 @@ public class Util {
                 .placeholder(R.drawable.ic_baseline_account_circle_300) // Imagem de substituição enquanto a imagem carrega
                 .error(R.drawable.ic_baseline_account_circle_300) // Imagem a ser mostrada caso ocorra um erro
                 .into(imageViewUserRegistered);
-    }
-
-    public static void loadingImageMeal(Context context, String imageUrl, ImageView imageView, boolean isDetails) {
-        Glide.with(context)
-                .load(imageUrl)
-                .transform(isDetails ? new RoundedCorners(30) : new CircleCrop())
-                .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_60))
-                .into(imageView);
     }
 
     public static void setVisibleProgressBar(ProgressBar progressBar, FloatingActionButton floatingActionButton, SharedViewModel sharedViewModel) {

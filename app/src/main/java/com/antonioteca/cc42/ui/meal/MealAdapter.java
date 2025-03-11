@@ -2,6 +2,7 @@ package com.antonioteca.cc42.ui.meal;
 
 import static com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase.deleteMealFromFirebase;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -15,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewMealListBinding;
 import com.antonioteca.cc42.model.Meal;
-import com.antonioteca.cc42.utility.Util;
+import com.antonioteca.cc42.utility.MealsUtils;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
@@ -51,10 +52,10 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         Meal meal = mealList.get(position);
         holder.binding.textViewType.setText(meal.getType());
         holder.binding.textViewName.setText(meal.getName());
-        holder.binding.textViewDescription.setText(meal.getDescription());
+        holder.binding.textViewDescription.setText("description");
         holder.binding.txtViewQuantity.setText(String.valueOf(meal.getQuantity()));
         holder.binding.textViewDateCreated.setText(meal.getDate());
-        Util.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal, false);
+        MealsUtils.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal, false);
         holder.itemView.setOnClickListener(v -> {
             MealListFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment
                     = MealListFragmentDirections.actionNavMealToDetailsMealFragment(meal, cursusId);
@@ -82,6 +83,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         return mealList.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateMealList(List<Meal> newMealList) {
         mealList = newMealList;
         notifyDataSetChanged();

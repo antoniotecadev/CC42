@@ -71,7 +71,7 @@ public class PdfCreator {
             Document document = new Document(pdf, PageSize.A4);
             document.setMargins(20, 20, 20, 20);
             // Evento marca d'agua
-            pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new ImageWatermarkEvent(getImageDataFromDrawable(context, R.drawable.check_cadet_logotipo)));
+            pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new ImageWatermarkEvent(getImageDataFromDrawable(context)));
             // Rodapé
             pdf.addEventHandler(PdfDocumentEvent.END_PAGE, event -> {
                 PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
@@ -149,8 +149,8 @@ public class PdfCreator {
         }
     }
 
-    private static ImageData getImageDataFromDrawable(Context context, int drawebleId) {
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), drawebleId);
+    private static ImageData getImageDataFromDrawable(Context context) {
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.check_cadet_logotipo);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
@@ -170,7 +170,7 @@ public class PdfCreator {
             Document document = new Document(pdf, PageSize.A4);
             document.setMargins(20, 20, 20, 20);
             // Evento marca d'agua
-            pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new ImageWatermarkEvent(getImageDataFromDrawable(context, R.drawable.check_cadet_logotipo)));
+            pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new ImageWatermarkEvent(getImageDataFromDrawable(context)));
             // Rodapé
             pdf.addEventHandler(PdfDocumentEvent.END_PAGE, event -> {
                 PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
@@ -283,30 +283,30 @@ public class PdfCreator {
         }
 
         @Override
-        public void handleEvent(com.itextpdf.kernel.events.Event event) {
-            PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
-            PdfPage page = documentEvent.getPage();
-            Rectangle pageSize = page.getPageSize();
-            PdfCanvas pdfCanvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), page.getDocument()); // desenhar antes do conteúdo principal
+            public void handleEvent(com.itextpdf.kernel.events.Event event) {
+                PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
+                PdfPage page = documentEvent.getPage();
+                Rectangle pageSize = page.getPageSize();
+                PdfCanvas pdfCanvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), page.getDocument()); // desenhar antes do conteúdo principal
 
-            float offsetX = -100f; // Ajuste para mover à esquerda (negativo)
-            float offsetY = 0f; // Para deslocar na vertical
-            float imageWidth = pageSize.getWidth() / 2;
-            float imageHeight = pageSize.getHeight() / 2;
+                float offsetX = -100f; // Ajuste para mover à esquerda (negativo)
+                float offsetY = 0f; // Para deslocar na vertical
+                float imageWidth = pageSize.getWidth() / 2;
+                float imageHeight = pageSize.getHeight() / 2;
 
-            //Definir transparencia
-            pdfCanvas.saveState();
-            PdfExtGState extGState = new PdfExtGState();
-            extGState.setFillOpacity(0.15f);
-            pdfCanvas.setExtGState(extGState);
+                //Definir transparencia
+                pdfCanvas.saveState();
+                PdfExtGState extGState = new PdfExtGState();
+                extGState.setFillOpacity(0.15f);
+                pdfCanvas.setExtGState(extGState);
 
-            pdfCanvas.addImageFittedIntoRectangle(imageData,
-                    new Rectangle(
-                            ((pageSize.getHeight() - imageWidth) / 2) + offsetX, // Deslocar para esquerda
-                            ((pageSize.getHeight() - imageHeight) / 2) + offsetY,
-                            imageWidth, imageHeight),
-                    false);
-            pdfCanvas.restoreState();
+                pdfCanvas.addImageFittedIntoRectangle(imageData,
+                        new Rectangle(
+                                ((pageSize.getHeight() - imageWidth) / 2) + offsetX, // Deslocar para esquerda
+                                ((pageSize.getHeight() - imageHeight) / 2) + offsetY,
+                                imageWidth, imageHeight),
+                        false);
+                pdfCanvas.restoreState();
+            }
         }
-    }
 }
