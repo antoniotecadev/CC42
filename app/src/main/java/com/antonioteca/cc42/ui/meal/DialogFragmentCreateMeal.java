@@ -388,7 +388,6 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         imagePickerLauncher.launch(intent);
     }
 
-    // Abre a câmera
     private void openCamera(Context context) {
         // Verifica se o dispositivo tem uma câmera
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
