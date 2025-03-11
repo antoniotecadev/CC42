@@ -396,7 +396,6 @@ public class DialogFragmentCreateMeal extends DialogFragment {
             try {
                 photoFile = createImageFile(context); // Criar arquivo temporário
             } catch (IOException e) {
-                e.printStackTrace();
                 Toast.makeText(context, getString(R.string.error_creating_image_file), Toast.LENGTH_LONG).show();
                 return;
             }
@@ -457,6 +456,5 @@ public class DialogFragmentCreateMeal extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        // fullScreenDialog(dialog);
     }
 }
