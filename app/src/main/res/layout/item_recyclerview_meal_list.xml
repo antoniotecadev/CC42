@@ -38,7 +38,7 @@
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="@color/textColorPrimary"
         android:textSize="10sp"
-        android:textStyle="bold|italic"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/txtViewQuantity"
         app:layout_constraintStart_toEndOf="@+id/imageViewMeal"
         app:layout_constraintTop_toTopOf="parent" />
@@ -50,7 +50,7 @@
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="@color/textColorPrimary"
         android:textSize="10sp"
-        android:textStyle="bold"
+        android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/textViewType"
         app:layout_constraintTop_toBottomOf="@+id/textViewType" />
