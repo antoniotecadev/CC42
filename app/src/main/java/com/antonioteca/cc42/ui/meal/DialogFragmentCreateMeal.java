@@ -198,16 +198,8 @@ public class DialogFragmentCreateMeal extends DialogFragment {
     }
 
     // Método para adicionar um Chip ao layout
-    private void addChip(String text) {
-        Chip chip = new Chip(context);
-        chip.setText(text);
-        chip.setCloseIconVisible(true); // Botão de fechar
-        chip.setCloseIconTintResource(R.color.light_blue_900); // Cor do ícone de fechar
-        chip.setOnCloseIconClickListener(v -> {
-            binding.chipContainer.removeView(chip); // Remove o Chip do layout
-            selectedItems.remove(text); // Remove o item da lista
-            updateFinalText(); // Atualiza o texto final
-        });
+    private void addChip(String mealTrim) {
+        final Chip chip = getChip(mealTrim);
         binding.chipContainer.addView(chip); // Adiciona o Chip ao LinearLayout
         updateFinalText(); // Atualiza o texto final
     }
@@ -221,21 +213,27 @@ public class DialogFragmentCreateMeal extends DialogFragment {
             // Remove espaços em branco extras
             String mealTrim = item.trim();
             // Cria um novo Chip
-            Chip chip = new Chip(context);
-            chip.setText(mealTrim);
-            chip.setCloseIconVisible(true);
-            chip.setCloseIconTintResource(R.color.light_blue_900); // Cor do ícone de fechar
-            chip.setOnCloseIconClickListener(v -> {
-                binding.chipContainer.removeView(chip); // Remove o Chip do layout
-                selectedItems.remove(mealTrim); // Remove o item da lista
-                updateFinalText(); // Atualiza o texto final
-            });
+            final Chip chip = getChip(mealTrim);
 
             // Adiciona o Chip ao LinearLayout
             selectedItems.add(mealTrim); // Adicionar item  a lista
             binding.chipContainer.addView(chip);
             updateFinalText();
         }
+    }
+
+    @NonNull
+    private Chip getChip(String mealTrim) {
+        Chip chip = new Chip(context);
+        chip.setText(mealTrim);
+        chip.setCloseIconVisible(true);
+        chip.setCloseIconTintResource(R.color.light_blue_900); // Cor do ícone de fechar
+        chip.setOnCloseIconClickListener(v -> {
+            binding.chipContainer.removeView(chip); // Remove o Chip do layout
+            selectedItems.remove(mealTrim); // Remove o item da lista
+            updateFinalText(); // Atualiza o texto final
+        });
+        return chip;
     }
 
     // Método para atualizar o EditText com os valores selecionados
