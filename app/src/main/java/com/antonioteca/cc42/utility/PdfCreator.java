@@ -213,7 +213,7 @@ public class PdfCreator {
             document.add(attendanceParagraph);
             Paragraph dateParagraph = new Paragraph()
                     .add(new Text(context.getString(R.string.date).toUpperCase() + ": ").setBold())
-                    .add(new Text(meal.getDate()))
+                    .add(new Text(meal.getCreatedDate()))
                     .setTextAlignment(TextAlignment.LEFT);
             document.add(dateParagraph);
             Paragraph kindParagraph = new Paragraph()

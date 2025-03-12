@@ -45,6 +45,7 @@ public class FCMessage {
 
     public static class Data {
 
+        private String key0;
         private String key1;
         private String key2;
         private String key3;
@@ -54,7 +55,8 @@ public class FCMessage {
         private String body;
         private String image;
 
-        public Data(String key1, String key2, String key3, String key4, String key5, Notification notification) {
+        public Data(String key0, String key1, String key2, String key3, String key4, String key5, Notification notification) {
+            this.key0 = key0;
             this.key1 = key1;
             this.key2 = key2;
             this.key3 = key3;

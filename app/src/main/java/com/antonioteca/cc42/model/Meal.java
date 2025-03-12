@@ -3,24 +3,28 @@ package com.antonioteca.cc42.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 public class Meal implements Parcelable {
     private String id;
     private String type;
     private String name;
     private int quantity;
-    private String date;
+    private String createdDate;
     private String pathImage;
+    private String createdBy;
 
     public Meal() {
     }
 
-    public Meal(String id, String type, String name, int quantity, String date, String pathImage) {
+    public Meal(String id, String type, String name, int quantity, String pathImage, String createdBy, String createdDate) {
         this.id = id;
         this.type = type;
         this.name = name;
         this.quantity = quantity;
-        this.date = date;
         this.pathImage = pathImage;
+        this.createdBy = createdBy;
+        this.createdDate = createdDate;
     }
 
     protected Meal(Parcel in) {
@@ -28,18 +32,20 @@ public class Meal implements Parcelable {
         type = in.readString();
         name = in.readString();
         quantity = in.readInt();
-        date = in.readString();
+        createdDate = in.readString();
         pathImage = in.readString();
+        createdBy = in.readString();
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(id);
         dest.writeString(type);
         dest.writeString(name);
         dest.writeInt(quantity);
-        dest.writeString(date);
+        dest.writeString(createdDate);
         dest.writeString(pathImage);
+        dest.writeString(createdBy);
     }
 
     @Override
@@ -83,12 +89,12 @@ public class Meal implements Parcelable {
         this.name = name;
     }
 
-    public String getDate() {
-        return date;
+    public String getCreatedDate() {
+        return createdDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setCreatedDate(String date) {
+        this.createdDate = date;
     }
 
     public int getQuantity() {
@@ -105,5 +111,13 @@ public class Meal implements Parcelable {
 
     public void setPathImage(String pathImage) {
         this.pathImage = pathImage;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 }

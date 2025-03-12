@@ -38,6 +38,7 @@ public class DaoMealFirebase {
                                                LayoutInflater layoutInflater,
                                                FragmentDialogCreateMealBinding binding,
                                                Context context,
+                                               String createdBy,
                                                String campusId,
                                                String cursusId,
                                                Uri imageUri,
@@ -67,6 +68,7 @@ public class DaoMealFirebase {
                                 layoutInflater,
                                 binding,
                                 context,
+                                createdBy,
                                 campusId,
                                 cursusId,
                                 imageUrl,
@@ -82,6 +84,7 @@ public class DaoMealFirebase {
                                 layoutInflater,
                                 binding,
                                 context,
+                                createdBy,
                                 campusId,
                                 cursusId,
                                 "",
@@ -99,6 +102,7 @@ public class DaoMealFirebase {
                                       LayoutInflater layoutInflater,
                                       FragmentDialogCreateMealBinding binding,
                                       Context context,
+                                      String updatedBy,
                                       String campusId,
                                       String cursusId,
                                       String mealId,
@@ -140,6 +144,7 @@ public class DaoMealFirebase {
                                     layoutInflater,
                                     binding,
                                     context,
+                                    updatedBy,
                                     campusId,
                                     cursusId,
                                     mealId,
@@ -195,6 +200,7 @@ public class DaoMealFirebase {
                                                 LayoutInflater layoutInflater,
                                                 @NonNull FragmentDialogCreateMealBinding binding,
                                                 Context context,
+                                                String updatedBy,
                                                 String campusId,
                                                 String cursusId,
                                                 String mealId,
@@ -211,12 +217,16 @@ public class DaoMealFirebase {
                 .child("meals")
                 .child(mealId);
 
+        String updatedData = DateUtils.getCurrentDate();
+
         // Criar um mapa com os novos valores
         Map<String, Object> updates = new HashMap<>();
         updates.put("name", mealName);
         updates.put("quantity", mealsQuantity);
         if (newImageUrl != null)
             updates.put("pathImage", newImageUrl);
+        updates.put("updatedBy", updatedBy);
+        updates.put("updatedData", updatedData);
 
         // Atualizar os dados
         mealsRef.updateChildren(updates)
@@ -237,6 +247,7 @@ public class DaoMealFirebase {
                                           LayoutInflater layoutInflater,
                                           FragmentDialogCreateMealBinding binding,
                                           Context context,
+                                          String createdBy,
                                           String campusId,
                                           String cursusId,
                                           String imageUrl,
@@ -254,7 +265,7 @@ public class DaoMealFirebase {
         // Gerar um ID único para a refeição
         String mealId = mealsRef.push().getKey();
 
-        String dateCreated = DateUtils.getCurrentDate();
+        String createdData = DateUtils.getCurrentDate();
 
         // Criar um objeto Meal
         Meal meal = new Meal(
@@ -262,8 +273,9 @@ public class DaoMealFirebase {
                 type,
                 mealName,
                 mealsQuantity,
-                dateCreated,
-                imageUrl
+                imageUrl,
+                createdBy,
+                createdData
         );
 
         // Salvar os dados da refeição no Firebase Realtime Database

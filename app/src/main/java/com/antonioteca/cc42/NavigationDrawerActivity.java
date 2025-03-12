@@ -393,11 +393,12 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         Intent intent = new Intent(context, NavigationDrawerActivity.class);
 
         if (!message.getData().isEmpty()) {
-            String id = message.getData().get("key1");
+            String id = message.getData().get("key0");
+            String createdBy = message.getData().get("key1");
             String dataCreated = message.getData().get("key2");
             String quantity = message.getData().get("key3");
             String cursusId = message.getData().get("key4");
-            Meal meal = new Meal(id, title, body, Integer.parseInt(quantity != null ? quantity : "0"), dataCreated, imageUrl);
+            Meal meal = new Meal(id, title, body, Integer.parseInt(quantity != null ? quantity : "0"), imageUrl, createdBy, dataCreated);
 
             // Entrar em fragment específico e passar dados da refeição
             intent.setAction("OPEN_FRAGMENT_ACTION_FOREGROUND");
