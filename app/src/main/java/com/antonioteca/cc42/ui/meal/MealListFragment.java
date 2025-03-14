@@ -81,6 +81,8 @@ public class MealListFragment extends Fragment {
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
+            mealAdapter.clean();
+            mealViewModel.loadMeals(context, binding, mealsRef, null);
         });
 
         mealAdapter = new MealAdapter(context,

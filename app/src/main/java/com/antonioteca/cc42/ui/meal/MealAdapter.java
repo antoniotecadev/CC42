@@ -97,6 +97,11 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         return mealList.size();
     }
 
+    public void clean() {
+        this.mealList.clear();
+        notifyItemRangeRemoved(0, getItemCount());
+    }
+
     public void loadMoreMeals() {
         if (lastKey != null) {
             mealViewModel.loadMeals(context, binding, mealsRef, lastKey);
