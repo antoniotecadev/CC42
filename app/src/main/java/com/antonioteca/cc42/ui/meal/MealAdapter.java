@@ -2,11 +2,11 @@ package com.antonioteca.cc42.ui.meal;
 
 import static com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase.deleteMealFromFirebase;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -14,26 +14,37 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewMealListBinding;
 import com.antonioteca.cc42.model.Meal;
+import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
+import com.antonioteca.cc42.viewmodel.MealViewModel;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterViewHolder> {
-
+    private final List<Meal> mealList = new ArrayList<>();
     private final FirebaseDatabase firebaseDatabase;
     private final LayoutInflater layoutInflater;
+    private final FragmentMealBinding binding;
+    private final MealViewModel mealViewModel;
+    private final DatabaseReference mealsRef;
+    private final Context context;
+    private String lastKey = null;
+    private final Loading loading;
     private final int campusId;
     private final int cursusId;
 
-    private final Context context;
-    private List<Meal> mealList;
-
-    public MealAdapter(Context context, List<Meal> mealList, FirebaseDatabase firebaseDatabase, LayoutInflater layoutInflater, int campusId, int cursusId) {
+    public MealAdapter(Context context, Loading loading, FragmentMealBinding binding, DatabaseReference mealsRef, MealViewModel mealViewModel, FirebaseDatabase firebaseDatabase, LayoutInflater layoutInflater, int campusId, int cursusId) {
+        this.loading = loading;
+        this.binding = binding;
+        this.mealsRef = mealsRef;
+        this.mealViewModel = mealViewModel;
         this.context = context;
-        this.mealList = mealList;
         this.campusId = campusId;
         this.cursusId = cursusId;
         this.layoutInflater = layoutInflater;
@@ -49,6 +60,11 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
 
     @Override
     public void onBindViewHolder(@NonNull MealAdapterViewHolder holder, int position) {
+        if (!loading.isLoading && (position == getItemCount() - 1)) {
+            Toast.makeText(context, R.string.loading_more_meals, Toast.LENGTH_SHORT).show();
+            loading.isLoading = true;
+            loadMoreMeals();
+        }
         Meal meal = mealList.get(position);
         holder.binding.textViewType.setText(meal.getType());
         holder.binding.textViewName.setText(meal.getName());
@@ -57,8 +73,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         holder.binding.textViewDateCreated.setText(meal.getCreatedDate());
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal, false);
         holder.itemView.setOnClickListener(v -> {
-            MealListFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment
-                    = MealListFragmentDirections.actionNavMealToDetailsMealFragment(meal, cursusId);
+            MealListFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment = MealListFragmentDirections.actionNavMealToDetailsMealFragment(meal, cursusId);
             Navigation.findNavController(v).navigate(actionNavMealToDetailsMealFragment);
         });
         holder.itemView.setOnCreateContextMenuListener((contextMenu, view, contextMenuInfo) -> {
@@ -66,8 +81,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             MenuItem menuItemEdit = contextMenu.add(view.getContext().getString(R.string.edit_meal));
             MenuItem menuItemDelete = contextMenu.add(view.getContext().getString(R.string.delete_meal));
             menuItemEdit.setOnMenuItemClickListener(item -> {
-                MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal =
-                        MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(false, cursusId).setMeal(meal);
+                MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal = MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(false, cursusId).setMeal(meal);
                 Navigation.findNavController(view).navigate(actionNavMealToDialogFragmentCreateMeal);
                 return true;
             });
@@ -83,10 +97,18 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         return mealList.size();
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public void updateMealList(List<Meal> newMealList) {
-        mealList = newMealList;
-        notifyDataSetChanged();
+    public void loadMoreMeals() {
+        if (lastKey != null) {
+            mealViewModel.loadMeals(context, binding, mealsRef, lastKey);
+        }
+    }
+
+    public void updateMealList(List<Meal> newMealList, String lastKey) {
+        int previousSize = getItemCount();
+        this.mealList.addAll(newMealList);
+        this.lastKey = lastKey;
+        notifyItemRangeInserted(previousSize, newMealList.size());
+        loading.isLoading = false;
     }
 
     private void deleteMeal(FirebaseDatabase firebaseDatabase, Context context, Meal meal, LayoutInflater layoutInflater, int campusId, int cursusId) {
@@ -95,13 +117,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         builder.setMessage(meal.getName());
         builder.setIcon(R.drawable.logo_42);
         builder.setNeutralButton(R.string.no, (dialog, which) -> dialog.dismiss());
-        builder.setPositiveButton(R.string.yes, (dialog, which) -> deleteMealFromFirebase(firebaseDatabase,
-                layoutInflater,
-                context,
-                String.valueOf(campusId),
-                String.valueOf(cursusId),
-                meal.getId(),
-                meal.getPathImage()));
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> deleteMealFromFirebase(firebaseDatabase, layoutInflater, context, String.valueOf(campusId), String.valueOf(cursusId), meal.getId(), meal.getPathImage()));
         builder.show();
     }
 

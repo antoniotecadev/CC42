@@ -158,6 +158,7 @@
     <string name="outside_meal_times">En dehors des heures de repas</string>
     <string name="error_creating_image_file">Erreur lors de la création du fichier image</string>
     <string name="device_does_not_have_camera">L\'appareil n\'a pas d\'appareil photo</string>
+    <string name="loading_more_meals">Chargement de plus de repas...</string>
     <string-array name="meals_carbohydrates_title">
         <item>Riz</item>
         <item>Pâtes</item>

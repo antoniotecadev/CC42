@@ -24,17 +24,17 @@ import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Cursu;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
+import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.ArrayList;
 
 public class MealListFragment extends Fragment {
 
 
     private User user;
     private Context context;
+    private Loading loading;
     private MealAdapter mealAdapter;
     private MealViewModel mealViewModel;
     private FragmentMealBinding binding;
@@ -45,6 +45,7 @@ public class MealListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loading = new Loading();
         context = requireContext();
         user = new User(context);
         user.coalition = new Coalition(context);
@@ -80,11 +81,13 @@ public class MealListFragment extends Fragment {
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
-            mealViewModel.loadMeals(mealsRef, binding, context);
         });
 
         mealAdapter = new MealAdapter(context,
-                new ArrayList<>(),
+                loading,
+                binding,
+                mealsRef,
+                mealViewModel,
                 firebaseDatabase,
                 getLayoutInflater(),
                 user.getCampusId(),
@@ -103,11 +106,12 @@ public class MealListFragment extends Fragment {
                     MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(true, cursu.getId());
             Navigation.findNavController(v).navigate(actionNavMealToDialogFragmentCreateMeal);
         });
-        mealViewModel.getMealList(mealsRef, binding, context).observe(getViewLifecycleOwner(), meals -> {
-            if (!meals.isEmpty() && meals.get(0) != null)
-                mealAdapter.updateMealList(meals);
-            else
-                setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
+
+        mealViewModel.getMealList(context, binding, mealsRef, null).observe(getViewLifecycleOwner(), meals -> {
+            if (!meals.isEmpty() && meals.get(0) != null) {
+                mealAdapter.updateMealList(meals, meals.get(meals.size() - 1).getId());
+            } else
+                loading.isLoading = false;
         });
     }
 

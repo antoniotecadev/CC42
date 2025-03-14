@@ -17,6 +17,7 @@ import com.antonioteca.cc42.utility.Util;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -30,18 +31,24 @@ public class MealViewModel extends ViewModel {
 
     private MutableLiveData<List<Meal>> mealListMutableLiveData;
 
-    public LiveData<List<Meal>> getMealList(DatabaseReference mealsRef, FragmentMealBinding binding, Context context) {
+    public LiveData<List<Meal>> getMealList(Context context, FragmentMealBinding binding, DatabaseReference mealsRef, String startAtKey) {
         if (mealListMutableLiveData == null) {
             mealListMutableLiveData = new MutableLiveData<>();
             binding.progressBarMeal.setVisibility(View.VISIBLE);
-            loadMeals(mealsRef, binding, context);
+            loadMeals(context, binding, mealsRef, startAtKey);
         }
         return mealListMutableLiveData;
     }
 
-    public void loadMeals(DatabaseReference mealsRef, FragmentMealBinding binding, Context context) {
+    public void loadMeals(Context context, FragmentMealBinding binding, DatabaseReference mealsRef, String startAtKey) {
         this.mealsRef = mealsRef;
-        valueEventListener = new ValueEventListener() {
+        Query query = mealsRef.orderByKey();
+        if (startAtKey != null) {
+            query = query.endBefore(startAtKey).limitToLast(15);
+        } else {
+            query = query.limitToLast(15);
+        }
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Meal> mealList = new ArrayList<>();
@@ -51,29 +58,30 @@ public class MealViewModel extends ViewModel {
                         mealList.add(meal);
                     }
                     Collections.reverse(mealList);
-                    mealListMutableLiveData.setValue(mealList);
                     setupVisibility(binding, View.INVISIBLE, false, View.INVISIBLE, View.VISIBLE);
-                } else {
+                } else if (mealListMutableLiveData.getValue() == null) {
+                    setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
                     String message = context.getString(R.string.meals_not_found);
                     Util.showAlertDialogBuild(context.getString(R.string.warning), message, context, () -> {
                         setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.INVISIBLE);
-                        loadMeals(mealsRef, binding, context);
+                        loadMeals(context, binding, mealsRef, startAtKey);
                     });
-                    mealListMutableLiveData.setValue(mealList);
                 }
+                mealListMutableLiveData.setValue(mealList);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
-                String message = context.getString(R.string.error_load_data) + ": " + error.getMessage();
-                Util.showAlertDialogBuild(context.getString(R.string.err), message, context, () -> {
-                    setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.INVISIBLE);
-                    loadMeals(mealsRef, binding, context);
-                });
+                if (mealListMutableLiveData.getValue() == null) {
+                    String message = context.getString(R.string.error_load_data) + ": " + error.getMessage();
+                    Util.showAlertDialogBuild(context.getString(R.string.err), message, context, () -> {
+                        setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.INVISIBLE);
+                        loadMeals(context, binding, mealsRef, startAtKey);
+                    });
+                }
+                mealListMutableLiveData.setValue(new ArrayList<>());
             }
-        };
-        mealsRef.addValueEventListener(valueEventListener);
+        });
     }
 
     @Override
