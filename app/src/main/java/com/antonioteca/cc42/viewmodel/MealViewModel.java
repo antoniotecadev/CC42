@@ -64,7 +64,7 @@ public class MealViewModel extends ViewModel {
         return mealListMutableLiveData;
     }
 
-    public void loadMeals(Context context, FragmentMealBinding binding, DatabaseReference mealsRef, String startAtKey) {
+    public void loadMeals(Context context, FragmentMealBinding binding, @NonNull DatabaseReference mealsRef, String startAtKey) {
         this.mealsRef = mealsRef;
         Query query = mealsRef.orderByKey();
         if (startAtKey != null) {
@@ -270,7 +270,7 @@ public class MealViewModel extends ViewModel {
                 });
     }
 
-    public void updateMealDataInFirebase(FirebaseDatabase firebaseDatabase,
+    public void updateMealDataInFirebase(@NonNull FirebaseDatabase firebaseDatabase,
                                          LayoutInflater layoutInflater,
                                          @NonNull FragmentDialogCreateMealBinding binding,
                                          Context context,
@@ -317,9 +317,9 @@ public class MealViewModel extends ViewModel {
                 });
     }
 
-    public void saveMealToFirebase(FirebaseDatabase firebaseDatabase,
+    public void saveMealToFirebase(@NonNull FirebaseDatabase firebaseDatabase,
                                    LayoutInflater layoutInflater,
-                                   FragmentDialogCreateMealBinding binding,
+                                   @NonNull FragmentDialogCreateMealBinding binding,
                                    Context context,
                                    String createdBy,
                                    String campusId,
@@ -376,13 +376,13 @@ public class MealViewModel extends ViewModel {
                 });
     }
 
-    private void restaureViews(FragmentDialogCreateMealBinding binding) {
+    private void restaureViews(@NonNull FragmentDialogCreateMealBinding binding) {
         binding.buttonClose.setEnabled(true);
         binding.buttonCreateMeal.setEnabled(true);
         binding.progressBarMeal.setVisibility(View.GONE);
     }
 
-    public void deleteMealFromFirebase(FirebaseDatabase firebaseDatabase,
+    public void deleteMealFromFirebase(@NonNull FirebaseDatabase firebaseDatabase,
                                        LayoutInflater layoutInflater,
                                        Context context,
                                        String campusId,
