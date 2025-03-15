@@ -2,8 +2,6 @@ package com.antonioteca.cc42.ui.meal;
 
 
 import static android.app.Activity.RESULT_OK;
-import static com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase.extractPublicIdFromUrl;
-import static com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase.updateMealDataInFirebase;
 
 import android.Manifest;
 import android.app.Dialog;
@@ -31,15 +29,17 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.antonioteca.cc42.R;
-import com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase;
 import com.antonioteca.cc42.databinding.FragmentDialogCreateMealBinding;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.utility.Util;
+import com.antonioteca.cc42.viewmodel.MealViewModel;
+import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.chip.Chip;
@@ -65,8 +65,9 @@ public class DialogFragmentCreateMeal extends DialogFragment {
     private AlertDialog dialog;
     private FragmentDialogCreateMealBinding binding;
     private ActivityResultLauncher<Uri> takePictureLauncher;
-
     private int mealsQuantity = 0;
+    private MealViewModel mealViewModel;
+    private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
     private final List<String> selectedItems = new ArrayList<>();
     private final Map<AppCompatSpinner, Boolean> spinnerInitializedMap = new HashMap<>();
@@ -112,6 +113,8 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         user = new User(context);
         user.coalition = new Coalition(context);
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
+        mealViewModel = new ViewModelProvider(this).get(MealViewModel.class);
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
     }
 
     @NonNull
@@ -168,6 +171,9 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         );
         handleSpinnerMeals(binding.spinnerCarbohydratesMeals);
         handleSpinnerMeals(binding.spinnerProteinsLegumesVegetablesMeals);
+        mealViewModel.getCreatedMealLiveData().observe(this, newMeal ->
+                sharedViewModel.setNewMeal(newMeal)
+        );
         return dialog;
     }
 
@@ -274,7 +280,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
             binding.progressBarMeal.setVisibility(View.VISIBLE);
             if (isCreate && meal == null) {
                 if (imageUri != null) {
-                    DaoMealFirebase.uploadImageToCloudinary(
+                    mealViewModel.uploadImageToCloudinary(
                             firebaseDatabase,
                             getLayoutInflater(),
                             binding,
@@ -286,7 +292,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             getMealsQuantity()
                     );
                 } else {
-                    DaoMealFirebase.saveMealToFirebase(
+                    mealViewModel.saveMealToFirebase(
                             firebaseDatabase,
                             getLayoutInflater(),
                             binding,
@@ -300,7 +306,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                 }
             } else {
                 if (!imageUri.equals(Uri.parse(meal.getPathImage()))) {
-                    DaoMealFirebase.uploadNewImage(
+                    mealViewModel.uploadNewImage(
                             firebaseDatabase,
                             getLayoutInflater(),
                             binding,
@@ -310,11 +316,11 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             String.valueOf(cursusId),
                             meal.getId(),
                             imageUri,
-                            extractPublicIdFromUrl(meal.getPathImage()),
+                            mealViewModel.extractPublicIdFromUrl(meal.getPathImage()),
                             binding.mealsEditText.getText().toString().equals(meal.getName()) && getMealsQuantity() == meal.getQuantity(),
                             getMealsQuantity());
                 } else {
-                    updateMealDataInFirebase(
+                    mealViewModel.updateMealDataInFirebase(
                             firebaseDatabase,
                             getLayoutInflater(),
                             binding,

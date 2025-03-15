@@ -1,7 +1,5 @@
 package com.antonioteca.cc42.ui.meal;
 
-import static com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase.deleteMealFromFirebase;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -108,6 +106,19 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         }
     }
 
+    public void addMeal(Meal meal) {
+        mealList.add(0, meal);
+        notifyItemInserted(0);
+    }
+
+    public void updateMeal(Meal meal) {
+        int index = mealList.indexOf(meal);
+        if (index != -1) {
+            mealList.set(index, meal);
+            notifyItemChanged(index);
+        }
+    }
+
     public void updateMealList(List<Meal> newMealList, String lastKey) {
         int previousSize = getItemCount();
         this.mealList.addAll(newMealList);
@@ -122,7 +133,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         builder.setMessage(meal.getName());
         builder.setIcon(R.drawable.logo_42);
         builder.setNeutralButton(R.string.no, (dialog, which) -> dialog.dismiss());
-        builder.setPositiveButton(R.string.yes, (dialog, which) -> deleteMealFromFirebase(firebaseDatabase, layoutInflater, context, String.valueOf(campusId), String.valueOf(cursusId), meal.getId(), meal.getPathImage()));
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> mealViewModel.deleteMealFromFirebase(firebaseDatabase, layoutInflater, context, String.valueOf(campusId), String.valueOf(cursusId), meal.getId(), meal.getPathImage()));
         builder.show();
     }
 

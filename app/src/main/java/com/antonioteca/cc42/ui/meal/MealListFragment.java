@@ -1,7 +1,5 @@
 package com.antonioteca.cc42.ui.meal;
 
-import static com.antonioteca.cc42.dao.daofarebase.DaoMealFirebase.setupVisibility;
-
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -22,10 +20,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Cursu;
+import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.utility.Loading;
+import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
+import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -36,11 +37,11 @@ public class MealListFragment extends Fragment {
     private Context context;
     private Loading loading;
     private MealAdapter mealAdapter;
-    private MealViewModel mealViewModel;
-    private FragmentMealBinding binding;
-    private FirebaseDatabase firebaseDatabase;
-
     private DatabaseReference mealsRef;
+    private FragmentMealBinding binding;
+    private MealViewModel mealViewModel;
+    private SharedViewModel sharedViewModel;
+    private FirebaseDatabase firebaseDatabase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,7 @@ public class MealListFragment extends Fragment {
         user.coalition = new Coalition(context);
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         mealViewModel = new ViewModelProvider(this).get(MealViewModel.class);
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
     }
 
     @Override
@@ -80,7 +82,7 @@ public class MealListFragment extends Fragment {
         binding.recyclerViewMeal.setLayoutManager(new LinearLayoutManager(context));
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
-            setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
+            MealsUtils.setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
             mealAdapter.clean();
             mealViewModel.loadMeals(context, binding, mealsRef, null);
         });
@@ -114,6 +116,14 @@ public class MealListFragment extends Fragment {
                 mealAdapter.updateMealList(meals, meals.get(meals.size() - 1).getId());
             } else
                 loading.isLoading = false;
+        });
+
+        sharedViewModel.getNewMealLiveData().observe(getViewLifecycleOwner(), event -> {
+            Meal newMeal = event.getContentIfNotHandled();
+            if (newMeal != null) {
+                mealAdapter.addMeal(newMeal);
+                binding.recyclerViewMeal.scrollToPosition(0);
+            }
         });
     }
 
