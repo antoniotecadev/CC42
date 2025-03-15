@@ -288,7 +288,7 @@ public class MealViewModel extends ViewModel {
                 .child("meals")
                 .child(mealId);
 
-        String updatedData = DateUtils.getCurrentDate();
+        String updatedDate = DateUtils.getCurrentDate();
 
         // Criar um mapa com os novos valores
         Map<String, Object> updates = new HashMap<>();
@@ -297,7 +297,7 @@ public class MealViewModel extends ViewModel {
         if (newImageUrl != null)
             updates.put("pathImage", newImageUrl);
         updates.put("updatedBy", updatedBy);
-        updates.put("updatedData", updatedData);
+        updates.put("updatedDate", updatedDate);
 
         // Atualizar os dados
         mealsRef.updateChildren(updates)
@@ -336,7 +336,7 @@ public class MealViewModel extends ViewModel {
         // Gerar um ID único para a refeição
         String mealId = mealsRef.push().getKey();
 
-        String createdData = DateUtils.getCurrentDate();
+        String createdDate = DateUtils.getCurrentDate();
 
         // Criar um objeto Meal
         Meal meal = new Meal(
@@ -346,7 +346,7 @@ public class MealViewModel extends ViewModel {
                 mealsQuantity,
                 imageUrl,
                 createdBy,
-                createdData
+                createdDate
         );
 
         // Salvar os dados da refeição no Firebase Realtime Database
