@@ -41,10 +41,6 @@ import androidx.preference.PreferenceManager;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ImageQrCodeBinding;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -63,15 +59,10 @@ import io.noties.markwon.Markwon;
 public class Util {
 
     public static void setRequestPermissionLauncherNotification(Context context, int REQUEST_CODE_POST_NOTIFICATIONS) {
-        // Verificar se a permissão foi concedida para exibir notificações - Android 13 >
+        // Verificar se a permissão foi concedida para exibir notificações - Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                Util.showAlertDialogBuild(
-                        context.getString(R.string.notification_permission),
-                        context.getString(R.string.notification_permission_message),
-                        context,
-                        null);
-                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_POST_NOTIFICATIONS);
+                Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.notificatio_header), context.getString(R.string.notification_permission_message), "#4CAF50", () -> ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_POST_NOTIFICATIONS));
             }
         }
     }
