@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import androidx.preference.PreferenceManager;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
@@ -67,5 +68,12 @@ public class MealsUtils {
                 .transform(isDetails ? new RoundedCorners(30) : new CircleCrop())
                 .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_60))
                 .into(imageView);
+    }
+
+    public static void setupVisibility(FragmentMealBinding binding, int viewP, boolean refreshing, int viewT, int viewR) {
+        binding.progressBarMeal.setVisibility(viewP);
+        binding.swipeRefreshLayout.setRefreshing(refreshing);
+        binding.textViewNotFoundMeals.setVisibility(viewT);
+        binding.recyclerViewMeal.setVisibility(viewR);
     }
 }
