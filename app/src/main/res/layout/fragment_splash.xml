@@ -4,13 +4,10 @@
     android:id="@+id/splashFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back_default_42_16_9"
+    android:background="@drawable/back_splash"
     android:theme="@style/ThemeOverlay.CC42.FullscreenContainer"
     tools:context=".ui.splash.SplashFragment">
 
-    <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc. -->
     <TextView
         android:id="@+id/fullscreen_content"
         android:layout_width="wrap_content"
