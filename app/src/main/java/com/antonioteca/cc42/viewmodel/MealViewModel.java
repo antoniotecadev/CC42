@@ -44,8 +44,6 @@ import java.util.concurrent.Executors;
 
 public class MealViewModel extends ViewModel {
 
-    private DatabaseReference mealsRef;
-    private ValueEventListener valueEventListener;
     private MutableLiveData<Meal> createdMealMutableLiveData;
     private MutableLiveData<List<Meal>> mealListMutableLiveData;
 
@@ -65,7 +63,6 @@ public class MealViewModel extends ViewModel {
     }
 
     public void loadMeals(Context context, FragmentMealBinding binding, @NonNull DatabaseReference mealsRef, String startAtKey) {
-        this.mealsRef = mealsRef;
         Query query = mealsRef.orderByKey();
         if (startAtKey != null) {
             query = query.endBefore(startAtKey).limitToLast(15);
@@ -446,7 +443,5 @@ public class MealViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        if (mealsRef != null && valueEventListener != null)
-            mealsRef.removeEventListener(valueEventListener);
     }
 }
