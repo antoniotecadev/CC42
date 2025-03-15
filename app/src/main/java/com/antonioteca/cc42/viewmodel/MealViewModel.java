@@ -45,12 +45,19 @@ import java.util.concurrent.Executors;
 public class MealViewModel extends ViewModel {
 
     private MutableLiveData<Meal> createdMealMutableLiveData;
+    private MutableLiveData<Meal> updatedMealMutableLiveData;
     private MutableLiveData<List<Meal>> mealListMutableLiveData;
 
     public LiveData<Meal> getCreatedMealLiveData() {
         if (createdMealMutableLiveData == null)
             createdMealMutableLiveData = new MutableLiveData<>();
         return createdMealMutableLiveData;
+    }
+
+    public LiveData<Meal> getUpdatedMealLiveData() {
+        if (updatedMealMutableLiveData == null)
+            updatedMealMutableLiveData = new MutableLiveData<>();
+        return updatedMealMutableLiveData;
     }
 
     public LiveData<List<Meal>> getMealList(Context context, FragmentMealBinding binding, DatabaseReference mealsRef, String startAtKey) {
@@ -173,6 +180,7 @@ public class MealViewModel extends ViewModel {
                                LayoutInflater layoutInflater,
                                FragmentDialogCreateMealBinding binding,
                                Context context,
+                               Meal meal,
                                String updatedBy,
                                String campusId,
                                String cursusId,
@@ -215,6 +223,7 @@ public class MealViewModel extends ViewModel {
                                     layoutInflater,
                                     binding,
                                     context,
+                                    meal,
                                     updatedBy,
                                     campusId,
                                     cursusId,
@@ -271,6 +280,7 @@ public class MealViewModel extends ViewModel {
                                          LayoutInflater layoutInflater,
                                          @NonNull FragmentDialogCreateMealBinding binding,
                                          Context context,
+                                         Meal meal,
                                          String updatedBy,
                                          String campusId,
                                          String cursusId,
@@ -294,14 +304,19 @@ public class MealViewModel extends ViewModel {
         Map<String, Object> updates = new HashMap<>();
         updates.put("name", mealName);
         updates.put("quantity", mealsQuantity);
-        if (newImageUrl != null)
-            updates.put("pathImage", newImageUrl);
         updates.put("updatedBy", updatedBy);
         updates.put("updatedDate", updatedDate);
+        if (newImageUrl != null) {
+            meal.setPathImage(newImageUrl);
+            updates.put("pathImage", newImageUrl);
+        }
+        meal.setName(mealName);
+        meal.setQuantity(mealsQuantity);
 
         // Atualizar os dados
         mealsRef.updateChildren(updates)
                 .addOnSuccessListener(aVoid -> {
+                    updatedMealMutableLiveData.setValue(meal);
                     restaureViews(binding);
                     String message = context.getString(R.string.sucess_meal_update);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);

@@ -174,6 +174,9 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         mealViewModel.getCreatedMealLiveData().observe(this, newMeal ->
                 sharedViewModel.setNewMeal(newMeal)
         );
+        mealViewModel.getUpdatedMealLiveData().observe(this, newMeal ->
+                sharedViewModel.setUpdatedMeal(newMeal)
+        );
         return dialog;
     }
 
@@ -311,6 +314,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             getLayoutInflater(),
                             binding,
                             context,
+                            meal,
                             user.getDisplayName(),
                             String.valueOf(user.getCampusId()),
                             String.valueOf(cursusId),
@@ -325,6 +329,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             getLayoutInflater(),
                             binding,
                             context,
+                            meal,
                             user.getDisplayName(),
                             String.valueOf(user.getCampusId()),
                             String.valueOf(cursusId),

@@ -8,9 +8,18 @@ import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.utility.EventObserver;
 
 public class SharedViewModel extends ViewModel {
-    private final MutableLiveData<Boolean> disabledMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<EventObserver<Meal>> newMeal = new MutableLiveData<>();
     private final MutableLiveData<Long> longMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<EventObserver<Meal>> newMeal = new MutableLiveData<>();
+    private final MutableLiveData<EventObserver<Meal>> updatedMeal = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> disabledMutableLiveData = new MutableLiveData<>();
+
+    public MutableLiveData<EventObserver<Meal>> getUpdatedMealLiveData() {
+        return updatedMeal;
+    }
+
+    public void setUpdatedMeal(Meal meal) {
+        updatedMeal.setValue(new EventObserver<>(meal));
+    }
 
     public void setNewMeal(Meal meal) {
         newMeal.setValue(new EventObserver<>(meal));

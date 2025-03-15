@@ -125,6 +125,12 @@ public class MealListFragment extends Fragment {
                 binding.recyclerViewMeal.scrollToPosition(0);
             }
         });
+
+        sharedViewModel.getUpdatedMealLiveData().observe(getViewLifecycleOwner(), event -> {
+            Meal updatedMeal = event.getContentIfNotHandled();
+            if (updatedMeal != null)
+                mealAdapter.updateMeal(updatedMeal);
+        });
     }
 
     @Override
