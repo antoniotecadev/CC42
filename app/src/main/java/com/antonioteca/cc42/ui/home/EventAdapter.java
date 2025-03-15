@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewEventBinding;
 import com.antonioteca.cc42.model.Event;
+import com.antonioteca.cc42.model.User;
 
 import java.util.Date;
 import java.util.List;
@@ -106,7 +107,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
-                        Bitmap bitmapQrCode = generateQrCodeWithLogo(view.getContext(), "event" + event.getId());
+                        Bitmap bitmapQrCode = generateQrCodeWithLogo(view.getContext(), "event" + event.getId() + "#" + new User(view.getContext()).getUid());
                         showModalQrCode(view.getContext(), bitmapQrCode, event.getKind(), event.getName());
                         return true;
                     }

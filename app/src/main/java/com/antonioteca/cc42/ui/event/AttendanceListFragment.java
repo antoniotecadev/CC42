@@ -137,8 +137,8 @@ public class AttendanceListFragment extends Fragment {
                             DaoEventFirebase.markAttendance(
                                     firebaseDatabase,
                                     String.valueOf(eventId),
+                                    user.getUid(),
                                     partsQrCode[0],
-                                    partsQrCode[1],
                                     partsQrCode[2],
                                     partsQrCode[3],
                                     partsQrCode[4],

@@ -300,22 +300,27 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null);
         } else {
             if (resultContents.startsWith("cc42event")) {
-                Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
-                DaoEventFirebase.markAttendance(
-                        firebaseDatabase,
-                        resultContents.replace("cc42event", ""), /* id event*/
-                        uid,
-                        userLogin,
-                        displayName,
-                        cursusId,
-                        campusId,
-                        context,
-                        getLayoutInflater(),
-                        progressBarMarkAttendance,
-                        fabOpenCameraScannerQrCode,
-                        sharedViewModel,
-                        null
-                );
+                String resultQrCode = resultContents.replace("cc42event", "");
+                String[] partsQrCode = resultQrCode.split("#", 2);
+                if (partsQrCode.length == 2) {
+                    Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                    DaoEventFirebase.markAttendance(
+                            firebaseDatabase,
+                            partsQrCode[0], /* id event*/
+                            Long.parseLong(partsQrCode[1]), /* id registered*/
+                            uid,
+                            displayName,
+                            cursusId,
+                            campusId,
+                            context,
+                            getLayoutInflater(),
+                            progressBarMarkAttendance,
+                            fabOpenCameraScannerQrCode,
+                            sharedViewModel,
+                            null
+                    );
+                } else
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null);
             } else if (resultContents.startsWith("cc42meal")) {
                 Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                 DaoSusbscriptionFirebase.subscription(

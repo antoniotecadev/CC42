@@ -23,6 +23,7 @@ import androidx.navigation.Navigation;
 
 import com.antonioteca.cc42.databinding.FragmentDetailsEventBinding;
 import com.antonioteca.cc42.model.Event;
+import com.antonioteca.cc42.model.User;
 
 import java.util.Date;
 
@@ -78,7 +79,7 @@ public class DetailsEventFragment extends Fragment {
         setMarkdownText(binding.textViewDescription, event.getDescription());
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
-                DetailsEventFragmentDirections.ActionDetailsEventFragmentToQrCodeFragment actionDetailsEventFragmentToQrCodeFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToQrCodeFragment("event" + event.getId(), event.getKind(), event.getName());
+                DetailsEventFragmentDirections.ActionDetailsEventFragmentToQrCodeFragment actionDetailsEventFragmentToQrCodeFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToQrCodeFragment("event" + event.getId() + "#" + new User(requireContext()).getUid(), event.getKind(), event.getName());
                 navController.navigate(actionDetailsEventFragmentToQrCodeFragment);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();

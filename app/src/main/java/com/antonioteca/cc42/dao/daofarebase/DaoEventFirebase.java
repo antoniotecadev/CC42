@@ -25,8 +25,8 @@ public class DaoEventFirebase {
     public static void markAttendance(
             FirebaseDatabase firebaseDatabase,
             String eventId,
+            Long registeredBy,
             String userId,
-            String userLogin,
             String displayName,
             String cursusId,
             String campusId,
@@ -56,17 +56,14 @@ public class DaoEventFirebase {
                     String message = displayName + "\n" + context.getString(R.string.msg_you_already_mark_attendance_event);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", runnableResumeCamera);
                 } else {
-//                    Armazenamento de Dados de Participante
-//                    Map<String, Object> participantData = new HashMap<>();
-//                    participantData.put("uid", userId);
-//                    participantData.put("user", userLogin);
-//                    participantData.put("display_name", displayName);
+                    Map<String, Object> participantData = new HashMap<>();
+                    participantData.put(String.valueOf(userId), true);
+                    participantData.put("registeredBy", registeredBy);
 
-                    // Crie os dados do evento e usuários
+                    // Atualiza o nó do participante no evento
                     Map<String, Object> eventUpdates = new HashMap<>();
-//                    eventUpdates.put("cursus/" + cursusId + "/users/" + userId, participantData);
 //                    eventUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/status", "pendente"); // ou "iniciado" ou "finalizado"
-                    eventUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/participants/" + userId, true);
+                    eventUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/participants/" + userId, participantData);
 
                     // Referência ao Firebase para adicionar o cadete
                     DatabaseReference campusReference = firebaseDatabase.getReference("campus")
