@@ -79,7 +79,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:padding="4dp"
-                        android:src="@drawable/baseline_border_star_40" />
+                        android:src="@drawable/baseline_star_border_40" />
 
                     <!-- Estrela 2 -->
                     <ImageView
@@ -87,7 +87,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:padding="4dp"
-                        android:src="@drawable/baseline_border_star_40" />
+                        android:src="@drawable/baseline_star_border_40" />
 
                     <!-- Estrela 3 -->
                     <ImageView
@@ -95,7 +95,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:padding="4dp"
-                        android:src="@drawable/baseline_border_star_40" />
+                        android:src="@drawable/baseline_star_border_40" />
 
                     <!-- Estrela 4 -->
                     <ImageView
@@ -103,7 +103,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:padding="4dp"
-                        android:src="@drawable/baseline_border_star_40" />
+                        android:src="@drawable/baseline_star_border_40" />
 
                     <!-- Estrela 5 -->
                     <ImageView
@@ -111,7 +111,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:padding="4dp"
-                        android:src="@drawable/baseline_border_star_40" />
+                        android:src="@drawable/baseline_star_border_40" />
                 </LinearLayout>
 
                 <View

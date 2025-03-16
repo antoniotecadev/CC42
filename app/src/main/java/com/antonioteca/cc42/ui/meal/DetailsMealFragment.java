@@ -148,11 +148,11 @@ public class DetailsMealFragment extends Fragment {
     }
 
     private void resetStars() {
-        binding.star1.setImageResource(R.drawable.baseline_border_star_40);
-        binding.star2.setImageResource(R.drawable.baseline_border_star_40);
-        binding.star3.setImageResource(R.drawable.baseline_border_star_40);
-        binding.star4.setImageResource(R.drawable.baseline_border_star_40);
-        binding.star5.setImageResource(R.drawable.baseline_border_star_40);
+        binding.star1.setImageResource(R.drawable.baseline_star_border_40);
+        binding.star2.setImageResource(R.drawable.baseline_star_border_40);
+        binding.star3.setImageResource(R.drawable.baseline_star_border_40);
+        binding.star4.setImageResource(R.drawable.baseline_star_border_40);
+        binding.star5.setImageResource(R.drawable.baseline_star_border_40);
     }
 
     @Override
