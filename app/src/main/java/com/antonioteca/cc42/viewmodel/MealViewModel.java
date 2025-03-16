@@ -48,6 +48,8 @@ import java.util.concurrent.Executors;
 
 public class MealViewModel extends ViewModel {
 
+    private DatabaseReference mealRef;
+    private ValueEventListener valueEventListener;
     private MutableLiveData<Meal> createdMealMutableLiveData;
     private MutableLiveData<Meal> updatedMealMutableLiveData;
     private MutableLiveData<List<Meal>> mealListMutableLiveData;
@@ -509,14 +511,14 @@ public class MealViewModel extends ViewModel {
             String mealId
     ) {
         // Referência para a refeição específica
-        DatabaseReference mealRef = firebaseDatabase.getReference("campus")
+        mealRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
                 .child("cursus")
                 .child(cursusId)
                 .child("meals")
                 .child(mealId);
 
-        mealRef.child("ratings").addListenerForSingleValueEvent(new ValueEventListener() {
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -555,11 +557,14 @@ public class MealViewModel extends ViewModel {
             public void onCancelled(@NonNull DatabaseError error) {
                 Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), error.getMessage(), "#E53935", null);
             }
-        });
+        };
+        mealRef.child("ratings").addValueEventListener(valueEventListener);
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
+        if (mealRef != null && valueEventListener != null)
+            mealRef.removeEventListener(valueEventListener);
     }
 }
