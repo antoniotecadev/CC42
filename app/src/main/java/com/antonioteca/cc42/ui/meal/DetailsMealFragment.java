@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -68,7 +69,9 @@ public class DetailsMealFragment extends Fragment {
         mealId = meal.getId();
         cursusId = args.getCursusId();
         mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), mealId)
-                .observe(getViewLifecycleOwner(), ratingValues -> fillStars((int) ratingValues.get(0), false));
+                .observe(getViewLifecycleOwner(),
+                        ratingValues ->
+                                fillStars((int) ratingValues.get(0), (String) ratingValues.get(1), false));
         if (cursusId == 0) {
             binding.fabGenerateQrCode.setVisibility(View.GONE);
             binding.fabOpenSubscriptionList.setVisibility(View.GONE);
@@ -88,11 +91,11 @@ public class DetailsMealFragment extends Fragment {
         binding.textViewDate.setText(meal.getCreatedDate());
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, true);
         // Configura os cliques das estrelas
-        binding.star1.setOnClickListener(v -> fillStars(1, true));
-        binding.star2.setOnClickListener(v -> fillStars(2, true));
-        binding.star3.setOnClickListener(v -> fillStars(3, true));
-        binding.star4.setOnClickListener(v -> fillStars(4, true));
-        binding.star5.setOnClickListener(v -> fillStars(5, true));
+        binding.star1.setOnClickListener(v -> fillStars(1, null, true));
+        binding.star2.setOnClickListener(v -> fillStars(2, null, true));
+        binding.star3.setOnClickListener(v -> fillStars(3, null, true));
+        binding.star4.setOnClickListener(v -> fillStars(4, null, true));
+        binding.star5.setOnClickListener(v -> fillStars(5, null, true));
 
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
@@ -114,7 +117,7 @@ public class DetailsMealFragment extends Fragment {
     }
 
     // Método para lidar com o clique nas estrelas
-    private void fillStars(int selectedRating, boolean isOnClick) {
+    private void fillStars(int selectedRating, String averageRating, boolean isOnClick) {
         if (rating != selectedRating && !loading.isLoading) {
             rating = selectedRating;
             if (isOnClick) {
@@ -143,6 +146,24 @@ public class DetailsMealFragment extends Fragment {
                         String.valueOf(cursusId), mealId,
                         String.valueOf(user.getUid()),
                         selectedRating);
+            } else {
+                double average = Double.parseDouble(averageRating);
+
+                // Preenche parcialmente a próxima estrela (opcional)
+                double fractionalPart = average - selectedRating;
+                if (fractionalPart > 0) {
+                    ImageView nextStar = null;
+                    if (selectedRating == 0) nextStar = binding.star1;
+                    else if (selectedRating == 1) nextStar = binding.star2;
+                    else if (selectedRating == 2) nextStar = binding.star3;
+                    else if (selectedRating == 3) nextStar = binding.star4;
+                    else if (selectedRating == 4) nextStar = binding.star5;
+
+                    if (nextStar != null) {
+                        // Define uma imagem de estrela parcialmente preenchida (se disponível)
+                        nextStar.setImageResource(R.drawable.baseline_star_half_40); // Exemplo de ícone de meia estrela
+                    }
+                }
             }
         }
     }
