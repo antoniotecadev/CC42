@@ -147,23 +147,27 @@ public class DetailsMealFragment extends Fragment {
                         String.valueOf(user.getUid()),
                         selectedRating);
             } else {
-                double average = Double.parseDouble(averageRating);
+                starHalf(selectedRating, averageRating);
+            }
+        }
+    }
 
-                // Preenche parcialmente a próxima estrela (opcional)
-                double fractionalPart = average - selectedRating;
-                if (fractionalPart > 0) {
-                    ImageView nextStar = null;
-                    if (selectedRating == 0) nextStar = binding.star1;
-                    else if (selectedRating == 1) nextStar = binding.star2;
-                    else if (selectedRating == 2) nextStar = binding.star3;
-                    else if (selectedRating == 3) nextStar = binding.star4;
-                    else if (selectedRating == 4) nextStar = binding.star5;
+    private void starHalf(int fullStars , String averageRating) {
+        double average = Double.parseDouble(averageRating);
 
-                    if (nextStar != null) {
-                        // Define uma imagem de estrela parcialmente preenchida (se disponível)
-                        nextStar.setImageResource(R.drawable.baseline_star_half_40); // Exemplo de ícone de meia estrela
-                    }
-                }
+        // Preenche parcialmente a próxima estrela (opcional)
+        double fractionalPart = average - fullStars ;
+        if (fractionalPart > 0) {
+            ImageView nextStar = null;
+            if (fullStars  == 0) nextStar = binding.star1;
+            else if (fullStars  == 1) nextStar = binding.star2;
+            else if (fullStars  == 2) nextStar = binding.star3;
+            else if (fullStars  == 3) nextStar = binding.star4;
+            else if (fullStars  == 4) nextStar = binding.star5;
+
+            if (nextStar != null) {
+                // Define uma imagem de estrela parcialmente preenchida (se disponível)
+                nextStar.setImageResource(R.drawable.baseline_star_half_40); // Exemplo de ícone de meia estrela
             }
         }
     }
