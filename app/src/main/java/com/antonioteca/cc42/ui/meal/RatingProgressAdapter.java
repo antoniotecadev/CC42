@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRatingProgressBinding;
 
 import java.util.List;
@@ -28,19 +29,22 @@ public class RatingProgressAdapter extends RecyclerView.Adapter<RatingProgressAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         RatingProgressItem item = ratingProgressItems.get(position);
-
+        int rating = item.rating();
         // Define a estrela (ícone)
-        holder.binding.star1.setImageResource(item.getStarIcon());
-        holder.binding.star2.setImageResource(item.getStarIcon());
-        holder.binding.star3.setImageResource(item.getStarIcon());
-        holder.binding.star4.setImageResource(item.getStarIcon());
-        holder.binding.star5.setImageResource(item.getStarIcon());
-
+        if (rating >= 1)
+            holder.binding.star1.setImageResource(R.drawable.baseline_filled_star_40);
+        if (rating >= 2)
+            holder.binding.star2.setImageResource(R.drawable.baseline_filled_star_40);
+        if (rating >= 3)
+            holder.binding.star3.setImageResource(R.drawable.baseline_filled_star_40);
+        if (rating >= 4)
+            holder.binding.star4.setImageResource(R.drawable.baseline_filled_star_40);
+        if (rating >= 5)
+            holder.binding.star5.setImageResource(R.drawable.baseline_filled_star_40);
         // Define o progresso da barra
-        holder.binding.progressBar.setProgress(item.getProgress());
-
+        holder.binding.progressBar.setProgress(item.progress());
         // Define a porcentagem
-        holder.binding.tvPercentage.setText(item.getProgress() + "%");
+        holder.binding.tvPercentage.setText(item.progress() + "%");
     }
 
     @Override

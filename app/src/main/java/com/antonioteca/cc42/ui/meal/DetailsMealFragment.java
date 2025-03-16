@@ -76,16 +76,18 @@ public class DetailsMealFragment extends Fragment {
         mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), mealId)
                 .observe(getViewLifecycleOwner(),
                         ratingValues -> {
-                            String averageRating = (String) ratingValues.get(1);
-                            HashMap<?, ?> ratingCounts = (HashMap<?, ?>) ratingValues.get(2);
-                            int numberOfRatings = (int) ratingValues.get(3);
+                            String averageRating = (String) ratingValues.get(1); // média da avaliação total sem ser arrendodando ex: 4.5
+                            HashMap<?, ?> ratingCounts = (HashMap<?, ?>) ratingValues.get(2); // Total de avaliação para cada estrela
+                            int numberOfRatings = (int) ratingValues.get(3); // Total de números de avaliações geral de uma refeição
 
+                            // ratingValues.get(0): média da avaliação total arrendodando ex: 5
                             fillStars((int) ratingValues.get(0), averageRating, false);
 
                             List<RatingProgressItem> ratingProgressItems = new ArrayList<>();
-                            for (int i = 1; i <= ratingCounts.size(); i++) {
-                                int percentage = ((int) ratingCounts.get(i) * 100 / numberOfRatings);
-                                ratingProgressItems.add(new RatingProgressItem(R.drawable.baseline_star_border_40, percentage));
+                            for (int i = 1; i <= ratingCounts.size(); i++) { // i: estrela
+                                int ratingCount = (int) ratingCounts.get(i); // Total de avaliação para estrela
+                                int percentage = (ratingCount * 100 / numberOfRatings);
+                                ratingProgressItems.add(new RatingProgressItem(ratingCount, percentage));
                             }
                             RatingProgressAdapter adapter = new RatingProgressAdapter(ratingProgressItems);
                             binding.recyclerViewRating.setLayoutManager(new LinearLayoutManager(context));
