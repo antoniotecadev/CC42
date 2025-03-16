@@ -83,7 +83,6 @@ public class DetailsMealFragment extends Fragment {
         }
         binding.textViewType.setText(meal.getType());
         binding.textViewName.setText(meal.getName());
-        binding.textViewDescription.setText("");
         binding.textViewDate.setText(meal.getCreatedDate());
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, true);
 
