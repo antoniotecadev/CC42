@@ -67,6 +67,8 @@ public class DetailsMealFragment extends Fragment {
         Meal meal = args.getDetailsMeal();
         mealId = meal.getId();
         cursusId = args.getCursusId();
+        mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), mealId)
+                .observe(getViewLifecycleOwner(), ratingValues -> fillStars((int) ratingValues.get(0), false));
         if (cursusId == 0) {
             binding.fabGenerateQrCode.setVisibility(View.GONE);
             binding.fabOpenSubscriptionList.setVisibility(View.GONE);
@@ -85,6 +87,12 @@ public class DetailsMealFragment extends Fragment {
         binding.textViewName.setText(meal.getName());
         binding.textViewDate.setText(meal.getCreatedDate());
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, true);
+        // Configura os cliques das estrelas
+        binding.star1.setOnClickListener(v -> fillStars(1, true));
+        binding.star2.setOnClickListener(v -> fillStars(2, true));
+        binding.star3.setOnClickListener(v -> fillStars(3, true));
+        binding.star4.setOnClickListener(v -> fillStars(4, true));
+        binding.star5.setOnClickListener(v -> fillStars(5, true));
 
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
@@ -103,20 +111,17 @@ public class DetailsMealFragment extends Fragment {
                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-        // Configura os cliques das estrelas
-        binding.star1.setOnClickListener(v -> onStarClick(1));
-        binding.star2.setOnClickListener(v -> onStarClick(2));
-        binding.star3.setOnClickListener(v -> onStarClick(3));
-        binding.star4.setOnClickListener(v -> onStarClick(4));
-        binding.star5.setOnClickListener(v -> onStarClick(5));
     }
 
     // Método para lidar com o clique nas estrelas
-    private void onStarClick(int selectedRating) {
+    private void fillStars(int selectedRating, boolean isOnClick) {
         if (rating != selectedRating && !loading.isLoading) {
-            loading.isLoading = true;
             rating = selectedRating;
-            resetStars(); // Reseta todas as estrelas
+            if (isOnClick) {
+                resetStars(); // Reseta todas as estrelas
+                loading.isLoading = true;
+                binding.progressBarMeal.setVisibility(View.VISIBLE);
+            }
             // Preenche as estrelas com base na avaliação selecionada
             if (selectedRating >= 1)
                 binding.star1.setImageResource(R.drawable.baseline_filled_star_40);
@@ -128,16 +133,17 @@ public class DetailsMealFragment extends Fragment {
                 binding.star4.setImageResource(R.drawable.baseline_filled_star_40);
             if (selectedRating >= 5)
                 binding.star5.setImageResource(R.drawable.baseline_filled_star_40);
-            binding.progressBarMeal.setVisibility(View.VISIBLE);
-            mealViewModel.rateMeal(
-                    context,
-                    firebaseDatabase,
-                    loading,
-                    binding.progressBarMeal,
-                    String.valueOf(user.getCampusId()),
-                    String.valueOf(cursusId), mealId,
-                    String.valueOf(user.getUid()),
-                    selectedRating);
+            if (isOnClick) {
+                mealViewModel.rateMeal(
+                        context,
+                        firebaseDatabase,
+                        loading,
+                        binding.progressBarMeal,
+                        String.valueOf(user.getCampusId()),
+                        String.valueOf(cursusId), mealId,
+                        String.valueOf(user.getUid()),
+                        selectedRating);
+            }
         }
     }
 

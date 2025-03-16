@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 public class Meal implements Parcelable {
     private String id;
+    private int rating;
     private String type;
     private String name;
     private int quantity;
@@ -17,12 +18,13 @@ public class Meal implements Parcelable {
     public Meal() {
     }
 
-    public Meal(String id, String type, String name, int quantity, String pathImage, String createdBy, String createdDate) {
+    public Meal(String id, String type, String name, int quantity, String pathImage, int rating, String createdBy, String createdDate) {
         this.id = id;
         this.type = type;
         this.name = name;
         this.quantity = quantity;
         this.pathImage = pathImage;
+        this.rating = rating;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
     }
@@ -32,8 +34,9 @@ public class Meal implements Parcelable {
         type = in.readString();
         name = in.readString();
         quantity = in.readInt();
-        createdDate = in.readString();
         pathImage = in.readString();
+        rating = in.readInt();
+        createdDate = in.readString();
         createdBy = in.readString();
     }
 
@@ -43,8 +46,9 @@ public class Meal implements Parcelable {
         dest.writeString(type);
         dest.writeString(name);
         dest.writeInt(quantity);
-        dest.writeString(createdDate);
         dest.writeString(pathImage);
+        dest.writeInt(rating);
+        dest.writeString(createdDate);
         dest.writeString(createdBy);
     }
 
@@ -77,10 +81,6 @@ public class Meal implements Parcelable {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getName() {
         return name;
     }
@@ -91,10 +91,6 @@ public class Meal implements Parcelable {
 
     public String getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(String date) {
-        this.createdDate = date;
     }
 
     public int getQuantity() {
@@ -113,11 +109,11 @@ public class Meal implements Parcelable {
         this.pathImage = pathImage;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public int getRating() {
+        return rating;
     }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
+    public String getCreatedBy() {
+        return createdBy;
     }
 }

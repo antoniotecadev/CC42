@@ -378,7 +378,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     }
 
     @SuppressLint("MissingPermission")
-    private static void showNotification(String title, String body, Bitmap image, RemoteMessage message, Context context, String imageUrl) {
+    private static void showNotification(String title, String body, Bitmap image, RemoteMessage message, Context context, String imageUrl) { // Primeiro plano
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_check_cadet_42)
                 .setContentTitle(title)
@@ -403,7 +403,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             String dataCreated = message.getData().get("key2");
             String quantity = message.getData().get("key3");
             String cursusId = message.getData().get("key4");
-            Meal meal = new Meal(id, title, body, Integer.parseInt(quantity != null ? quantity : "0"), imageUrl, createdBy, dataCreated);
+            Meal meal = new Meal(id, title, body, Integer.parseInt(quantity != null ? quantity : "0"), imageUrl, 0, createdBy, dataCreated);
 
             // Entrar em fragment específico e passar dados da refeição
             intent.setAction("OPEN_FRAGMENT_ACTION_FOREGROUND");

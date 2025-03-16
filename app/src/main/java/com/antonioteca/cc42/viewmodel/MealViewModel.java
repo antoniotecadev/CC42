@@ -35,7 +35,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +51,7 @@ public class MealViewModel extends ViewModel {
     private MutableLiveData<Meal> createdMealMutableLiveData;
     private MutableLiveData<Meal> updatedMealMutableLiveData;
     private MutableLiveData<List<Meal>> mealListMutableLiveData;
+    private MutableLiveData<List<Object>> ratingValuesMutableLiveData;
 
     public LiveData<Meal> getCreatedMealLiveData() {
         if (createdMealMutableLiveData == null)
@@ -60,6 +63,14 @@ public class MealViewModel extends ViewModel {
         if (updatedMealMutableLiveData == null)
             updatedMealMutableLiveData = new MutableLiveData<>();
         return updatedMealMutableLiveData;
+    }
+
+    public LiveData<List<Object>> getRatingValuesLiveData(Context context, FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId) {
+        if (ratingValuesMutableLiveData == null) {
+            getRateMeal(context, firebaseDatabase, campusId, cursusId, mealId);
+            ratingValuesMutableLiveData = new MutableLiveData<>();
+        }
+        return ratingValuesMutableLiveData;
     }
 
     public LiveData<List<Meal>> getMealList(Context context, FragmentMealBinding binding, DatabaseReference mealsRef, String startAtKey) {
@@ -331,38 +342,6 @@ public class MealViewModel extends ViewModel {
                 });
     }
 
-    public void rateMeal(
-            Context context,
-            FirebaseDatabase firebaseDatabase,
-            Loading loading,
-            ProgressBar progressBarMeal,
-            String campusId,
-            String cursusId,
-            String mealId,
-            String userId,
-            int rating
-    ) {
-        // Referência para a refeição específica
-        DatabaseReference mealRef = firebaseDatabase.getReference("campus")
-                .child(campusId)
-                .child("cursus")
-                .child(cursusId)
-                .child("meals")
-                .child(mealId);
-
-        mealRef.child("ratings").child(userId).setValue(rating)
-                .addOnSuccessListener(aVoid -> {
-                    loading.isLoading = false;
-                    progressBarMeal.setVisibility(View.INVISIBLE);
-                    Util.showAlertDialogMessage(context, LayoutInflater.from(context), "" + rating, context.getString(R.string.rating_submitted_successfully), "#4CAF50", null);
-                })
-                .addOnFailureListener(e -> {
-                    loading.isLoading = false;
-                    progressBarMeal.setVisibility(View.INVISIBLE);
-                    Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), e.getMessage(), "#E53935", null);
-                });
-    }
-
     public void saveMealToFirebase(@NonNull FirebaseDatabase firebaseDatabase,
                                    LayoutInflater layoutInflater,
                                    @NonNull FragmentDialogCreateMealBinding binding,
@@ -394,6 +373,7 @@ public class MealViewModel extends ViewModel {
                 mealName,
                 mealsQuantity,
                 imageUrl,
+                0,
                 createdBy,
                 createdDate
         );
@@ -487,6 +467,85 @@ public class MealViewModel extends ViewModel {
         String[] parts = imageUrl.split("/");
         String lastPart = parts[parts.length - 1];
         return lastPart.replaceAll("\\.[a-zA-Z0-9]+$", "");
+    }
+
+    public void rateMeal(
+            Context context,
+            @NonNull FirebaseDatabase firebaseDatabase,
+            Loading loading,
+            ProgressBar progressBarMeal,
+            String campusId,
+            String cursusId,
+            String mealId,
+            String userId,
+            int rating
+    ) {
+        // Referência para a refeição específica
+        DatabaseReference mealRef = firebaseDatabase.getReference("campus")
+                .child(campusId)
+                .child("cursus")
+                .child(cursusId)
+                .child("meals")
+                .child(mealId);
+
+        mealRef.child("ratings").child(userId).setValue(rating)
+                .addOnSuccessListener(aVoid -> {
+                    loading.isLoading = false;
+                    progressBarMeal.setVisibility(View.INVISIBLE);
+                    Util.showAlertDialogMessage(context, LayoutInflater.from(context), "" + rating, context.getString(R.string.rating_submitted_successfully), "#4CAF50", null);
+                })
+                .addOnFailureListener(e -> {
+                    loading.isLoading = false;
+                    progressBarMeal.setVisibility(View.INVISIBLE);
+                    Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), e.getMessage(), "#E53935", null);
+                });
+    }
+
+    public void getRateMeal(
+            Context context,
+            FirebaseDatabase firebaseDatabase,
+            String campusId,
+            String cursusId,
+            String mealId
+    ) {
+        // Referência para a refeição específica
+        DatabaseReference mealRef = firebaseDatabase.getReference("campus")
+                .child(campusId)
+                .child("cursus")
+                .child(cursusId)
+                .child("meals")
+                .child(mealId);
+
+        mealRef.child("ratings").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    int totalRatings = 0;
+                    int numberOfRatings = 0;
+
+                    // Soma todas as avaliações e conta o número de avaliações
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Long rating = dataSnapshot.getValue(Long.class);
+                        if (rating == null) continue;
+                        totalRatings += rating;
+                        numberOfRatings++;
+                    }
+                    // Calcula a média das avaliações
+                    double averageRating = (double) totalRatings / numberOfRatings;
+                    // Arredonda a média para o número inteiro mais próximo
+                    int roundedRating = (int) Math.round(averageRating);
+                    // Formata a média para uma casa decimal
+                    DecimalFormat decimalFormat = new DecimalFormat("#.0");
+                    String formattedAverage = decimalFormat.format(averageRating);
+                    ratingValuesMutableLiveData.setValue(Arrays.asList(roundedRating, formattedAverage));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), error.getMessage(), "#E53935", null);
+            }
+        });
     }
 
     @Override
