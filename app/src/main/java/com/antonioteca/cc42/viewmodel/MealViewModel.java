@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.network.NotificationFirebase.Notification;
 import com.antonioteca.cc42.utility.DateUtils;
+import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.utility.Util;
 import com.cloudinary.android.MediaManager;
@@ -326,6 +328,38 @@ public class MealViewModel extends ViewModel {
                     String message = context.getString(R.string.error_meal_update) + e.getMessage();
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
                     deleteImageFromCloudinary(newImageUrl, layoutInflater, context);
+                });
+    }
+
+    public void rateMeal(
+            Context context,
+            FirebaseDatabase firebaseDatabase,
+            Loading loading,
+            ProgressBar progressBarMeal,
+            String campusId,
+            String cursusId,
+            String mealId,
+            String userId,
+            int rating
+    ) {
+        // Referência para a refeição específica
+        DatabaseReference mealRef = firebaseDatabase.getReference("campus")
+                .child(campusId)
+                .child("cursus")
+                .child(cursusId)
+                .child("meals")
+                .child(mealId);
+
+        mealRef.child("ratings").child(userId).setValue(rating)
+                .addOnSuccessListener(aVoid -> {
+                    loading.isLoading = false;
+                    progressBarMeal.setVisibility(View.INVISIBLE);
+                    Util.showAlertDialogMessage(context, LayoutInflater.from(context), "" + rating, context.getString(R.string.rating_submitted_successfully), "#4CAF50", null);
+                })
+                .addOnFailureListener(e -> {
+                    loading.isLoading = false;
+                    progressBarMeal.setVisibility(View.INVISIBLE);
+                    Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), e.getMessage(), "#E53935", null);
                 });
     }
 
