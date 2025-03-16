@@ -159,6 +159,7 @@
     <string name="error_creating_image_file">Error al crear el archivo de imagen</string>
     <string name="device_does_not_have_camera">El dispositivo no tiene cámara</string>
     <string name="loading_more_meals">Cargando más comidas...</string>
+    <string name="rating_submitted_successfully">Evaluación enviada con éxito</string>
     <string-array name="meals_carbohydrates_title">
         <item>Arroz</item>
         <item>Pasta</item>

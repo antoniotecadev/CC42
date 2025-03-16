@@ -159,6 +159,7 @@
     <string name="error_creating_image_file">Error creating image file</string>
     <string name="device_does_not_have_camera">Device does not have a camera</string>
     <string name="loading_more_meals">Loading more meals...</string>
+    <string name="rating_submitted_successfully">Rating submitted successfully</string>
     <string-array name="meals_carbohydrates_title">
         <item>Rice</item>
         <item>Pasta</item>
