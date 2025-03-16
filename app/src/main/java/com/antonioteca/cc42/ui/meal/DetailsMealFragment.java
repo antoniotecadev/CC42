@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsMealBinding;
@@ -29,6 +30,10 @@ import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class DetailsMealFragment extends Fragment {
 
@@ -70,8 +75,23 @@ public class DetailsMealFragment extends Fragment {
         cursusId = args.getCursusId();
         mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), mealId)
                 .observe(getViewLifecycleOwner(),
-                        ratingValues ->
-                                fillStars((int) ratingValues.get(0), (String) ratingValues.get(1), false));
+                        ratingValues -> {
+                            String averageRating = (String) ratingValues.get(1);
+                            HashMap<?, ?> ratingCounts = (HashMap<?, ?>) ratingValues.get(2);
+                            int numberOfRatings = (int) ratingValues.get(3);
+
+                            fillStars((int) ratingValues.get(0), averageRating, false);
+
+                            List<RatingProgressItem> ratingProgressItems = new ArrayList<>();
+                            for (int i = 1; i <= ratingCounts.size(); i++) {
+                                int percentage = ((int) ratingCounts.get(i) * 100 / numberOfRatings);
+                                ratingProgressItems.add(new RatingProgressItem(R.drawable.baseline_star_border_40, percentage));
+                            }
+                            RatingProgressAdapter adapter = new RatingProgressAdapter(ratingProgressItems);
+                            binding.recyclerViewRating.setLayoutManager(new LinearLayoutManager(context));
+                            binding.recyclerViewRating.setAdapter(adapter);
+                            binding.averageRating.setText(averageRating);
+                        });
         if (cursusId == 0) {
             binding.fabGenerateQrCode.setVisibility(View.GONE);
             binding.fabOpenSubscriptionList.setVisibility(View.GONE);
@@ -152,18 +172,18 @@ public class DetailsMealFragment extends Fragment {
         }
     }
 
-    private void starHalf(int fullStars , String averageRating) {
+    private void starHalf(int fullStars, String averageRating) {
         double average = Double.parseDouble(averageRating);
 
         // Preenche parcialmente a próxima estrela (opcional)
-        double fractionalPart = average - fullStars ;
+        double fractionalPart = average - fullStars;
         if (fractionalPart > 0) {
             ImageView nextStar = null;
-            if (fullStars  == 0) nextStar = binding.star1;
-            else if (fullStars  == 1) nextStar = binding.star2;
-            else if (fullStars  == 2) nextStar = binding.star3;
-            else if (fullStars  == 3) nextStar = binding.star4;
-            else if (fullStars  == 4) nextStar = binding.star5;
+            if (fullStars == 0) nextStar = binding.star1;
+            else if (fullStars == 1) nextStar = binding.star2;
+            else if (fullStars == 2) nextStar = binding.star3;
+            else if (fullStars == 3) nextStar = binding.star4;
+            else if (fullStars == 4) nextStar = binding.star5;
 
             if (nextStar != null) {
                 // Define uma imagem de estrela parcialmente preenchida (se disponível)

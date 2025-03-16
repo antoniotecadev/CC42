@@ -522,13 +522,23 @@ public class MealViewModel extends ViewModel {
                 if (snapshot.exists()) {
                     int totalRatings = 0;
                     int numberOfRatings = 0;
-
+                    // HashMap to store the count of each rating (ratings 1-5)
+                    HashMap<Integer, Integer> ratingCounts = new HashMap<>();
+                    for (int i = 1; i <= 5; i++)
+                        ratingCounts.put(i, 0);
                     // Soma todas as avaliações e conta o número de avaliações
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        Long rating = dataSnapshot.getValue(Long.class);
-                        if (rating == null) continue;
+                        Long ratingLong = dataSnapshot.getValue(Long.class);
+                        if (ratingLong == null) continue;
+                        int rating = ratingLong.intValue();
                         totalRatings += rating;
                         numberOfRatings++;
+                        // Increment the count for the specific rating
+                        if (rating >= 1 && rating <= 5) {
+                            Integer count = ratingCounts.get(rating);
+                            if (count == null) count = 0;
+                            ratingCounts.put(rating, count + 1);
+                        }
                     }
                     // Calcula a média das avaliações
                     double averageRating = (double) totalRatings / numberOfRatings;
@@ -537,7 +547,7 @@ public class MealViewModel extends ViewModel {
                     // Formata a média para uma casa decimal
                     DecimalFormat decimalFormat = new DecimalFormat("#.0");
                     String formattedAverage = decimalFormat.format(averageRating);
-                    ratingValuesMutableLiveData.setValue(Arrays.asList(roundedRating, formattedAverage));
+                    ratingValuesMutableLiveData.setValue(Arrays.asList(roundedRating, formattedAverage, ratingCounts, numberOfRatings));
                 }
             }
 
