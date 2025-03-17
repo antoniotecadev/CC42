@@ -123,9 +123,13 @@ public class SplashFragment extends Fragment {
     }
 
     private void redirectToHome() {
-        Intent intent = new Intent(context, NavigationDrawerActivity.class);
-        startActivity(intent);
-        requireActivity().finish();
+        try {
+            Intent intent = new Intent(context, NavigationDrawerActivity.class);
+            startActivity(intent);
+            requireActivity().finish();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     private void redirectToLogin() {

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -28,9 +29,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
-
         SwitchPreferenceCompat notificationKey = findPreference("notification_key");
+        SwitchPreferenceCompat themeModeKey = findPreference("theme_mode_key");
         ListPreference languageKey = findPreference("language_key");
+
+        ThemePreferences themePreferences = new ThemePreferences(requireContext());
 
         if (notificationKey != null) {
             FirebaseMessaging messaging = FirebaseMessaging.getInstance();
@@ -61,6 +64,27 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 String language = newValue.toString();
                 // Alterar o idioma da aplicação
                 setAppLanguage(language, getResources(), requireActivity(), true);
+                return true;
+            });
+        }
+        if (themeModeKey != null) {
+            // Define o estado inicial do Switch
+            boolean isDarkMode = themePreferences.getThemeMode() == AppCompatDelegate.MODE_NIGHT_YES;
+            themeModeKey.setChecked(isDarkMode);
+
+            // Define o listener para mudanças
+            themeModeKey.setOnPreferenceChangeListener((preference, newValue) -> {
+                boolean themeIsDarkMode = (boolean) newValue;
+
+                // Salva a preferência do usuário
+                int themeMode = themeIsDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
+                themePreferences.setThemeMode(themeMode);
+
+                // Aplica o tema
+                AppCompatDelegate.setDefaultNightMode(themeMode);
+
+                // Reinicia a Activity para aplicar o novo tema
+                requireActivity().recreate();
                 return true;
             });
         }

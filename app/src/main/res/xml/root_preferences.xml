@@ -1,67 +1,62 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
         app:icon="@drawable/ic_baseline_notifications_24"
-        app:title="@string/notificatio_header">
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:icon="@drawable/ic_baseline_restaurant_24"
-            app:key="notification_key"
-            app:summaryOff="@string/notification_summary_off"
-            app:summaryOn="@string/notificatio_summary_on"
-            app:title="@string/notificatio_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
+        app:key="notification_key"
+        app:summaryOff="@string/notification_summary_off"
+        app:summaryOn="@string/notificatio_summary_on"
+        app:title="@string/notificatio_title" />
+    <ListPreference
+        android:defaultValue="en"
+        android:entries="@array/language_entries"
+        android:entryValues="@array/language_values"
+        android:key="language_key"
+        android:summary="@string/select_language_app"
+        android:title="@string/language"
+        app:dialogIcon="@drawable/ic_baseline_translate_24"
         app:icon="@drawable/ic_baseline_translate_24"
-        app:title="@string/language">
-        <ListPreference
-            android:defaultValue="en"
-            android:entries="@array/language_entries"
-            android:entryValues="@array/language_values"
-            android:key="language_key"
-            android:summary="@string/select_language_app"
-            android:title="@string/language"
-            app:dialogIcon="@drawable/ic_baseline_translate_24"
-            app:useSimpleSummaryProvider="true" />
+        app:useSimpleSummaryProvider="true" />
+    <!-- Opção para Modo Claro -->
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="theme_mode_key"
+        android:title="Modo Escuro"
+        app:icon="@drawable/baseline_nightlight_24"
+        app:summaryOff="Ative para usar o modo escuro"
+        app:summaryOn="Desative para usar o modo claro" />
+    <!-- Pequeno Almoço -->
+    <PreferenceCategory app:title="@string/breakfast">
+        <Preference
+            android:key="breakfast_start"
+            android:summary="@string/set_breakfast_start_time"
+            android:title="@string/start_time" />
+        <Preference
+            android:key="breakfast_end"
+            android:summary="@string/set_breakfast_end_time"
+            android:title="@string/end_time" />
     </PreferenceCategory>
-    <PreferenceCategory
-        app:icon="@drawable/ic_baseline_restaurant_24"
-        app:title="@string/meals">
-        <!-- Pequeno Almoço -->
-        <PreferenceCategory android:title="@string/breakfast">
-            <Preference
-                android:key="breakfast_start"
-                android:summary="@string/set_breakfast_start_time"
-                android:title="@string/start_time" />
-            <Preference
-                android:key="breakfast_end"
-                android:summary="@string/set_breakfast_end_time"
-                android:title="@string/end_time" />
-        </PreferenceCategory>
-
-        <!-- Almoço -->
-        <PreferenceCategory android:title="@string/lunch">
-            <Preference
-                android:key="lunch_start"
-                android:summary="@string/set_lunch_start_time"
-                android:title="@string/start_time" />
-            <Preference
-                android:key="lunch_end"
-                android:summary="@string/set_lunch_end_time"
-                android:title="@string/end_time" />
-        </PreferenceCategory>
-
-        <!-- Jantar -->
-        <PreferenceCategory android:title="@string/dinner">
-            <Preference
-                android:key="dinner_start"
-                android:summary="@string/set_dinner_start_time"
-                android:title="@string/start_time" />
-            <Preference
-                android:key="dinner_end"
-                android:summary="@string/set_dinner_end_time"
-                android:title="@string/end_time" />
-        </PreferenceCategory>
+    <!-- Almoço -->
+    <PreferenceCategory app:title="@string/lunch">
+        <Preference
+            android:key="lunch_start"
+            android:summary="@string/set_lunch_start_time"
+            android:title="@string/start_time" />
+        <Preference
+            android:key="lunch_end"
+            android:summary="@string/set_lunch_end_time"
+            android:title="@string/end_time" />
+    </PreferenceCategory>
+    <!-- Jantar -->
+    <PreferenceCategory app:title="@string/dinner">
+        <Preference
+            android:key="dinner_start"
+            android:summary="@string/set_dinner_start_time"
+            android:title="@string/start_time" />
+        <Preference
+            android:key="dinner_end"
+            android:summary="@string/set_dinner_end_time"
+            android:title="@string/end_time" />
     </PreferenceCategory>
 </PreferenceScreen>

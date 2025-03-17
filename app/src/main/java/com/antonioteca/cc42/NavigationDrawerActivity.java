@@ -37,6 +37,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -58,6 +59,7 @@ import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
+import com.antonioteca.cc42.ui.setting.ThemePreferences;
 import com.antonioteca.cc42.utility.GlideApp;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
@@ -104,6 +106,10 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Aplicar o Tema ao Iniciar o App
+        ThemePreferences themePreferences = new ThemePreferences(this);
+        int themeMode = themePreferences.getThemeMode();
+        AppCompatDelegate.setDefaultNightMode(themeMode);
         // Carregar o idioma salvo antes de chamar super.onCreate()
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String language = preferences.getString("language_preference", null);
