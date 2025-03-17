@@ -121,10 +121,12 @@ public class CursuListMealFragment extends Fragment {
             if (event != null) {
                 HttpStatus httpStatus = event.getContentIfNotHandled();
                 setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
-                Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
-                    setupVisibility(binding, View.VISIBLE, false, View.INVISIBLE, View.INVISIBLE);
-                    cursuViewModel.getCursus(context);
-                });
+                if (httpStatus != null) {
+                    Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
+                        setupVisibility(binding, View.VISIBLE, false, View.INVISIBLE, View.INVISIBLE);
+                        cursuViewModel.getCursus(context);
+                    });
+                }
             }
         });
 
@@ -132,10 +134,12 @@ public class CursuListMealFragment extends Fragment {
             if (event != null) {
                 HttpException httpException = event.getContentIfNotHandled();
                 setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
-                Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
-                    setupVisibility(binding, View.VISIBLE, false, View.INVISIBLE, View.INVISIBLE);
-                    cursuViewModel.getCursus(context);
-                });
+                if (httpException != null) {
+                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
+                        setupVisibility(binding, View.VISIBLE, false, View.INVISIBLE, View.INVISIBLE);
+                        cursuViewModel.getCursus(context);
+                    });
+                }
             }
         });
 
