@@ -4,7 +4,7 @@
     <item android:id="@android:id/background">
         <shape>
             <corners android:radius="4dp"/>
-            <solid android:color="#E0E0E0"/> <!-- Cor de fundo -->
+            <solid android:color="#DAE0E0E0"/> <!-- Cor de fundo -->
         </shape>
     </item>
 
@@ -13,7 +13,7 @@
         <clip>
             <shape>
                 <corners android:radius="4dp"/>
-                <solid android:color="#111111"/> <!-- Cor do progresso (dourado) -->
+                <solid android:color="@color/textColorPrimary"/> <!-- Cor do progresso (dourado) -->
             </shape>
         </clip>
     </item>

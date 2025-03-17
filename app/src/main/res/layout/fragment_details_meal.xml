@@ -79,6 +79,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
                         android:text="@string/_0"
+                        android:textColor="@color/textColorPrimary"
                         android:textSize="24sp" />
 
                     <androidx.recyclerview.widget.RecyclerView
