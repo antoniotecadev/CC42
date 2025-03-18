@@ -13,6 +13,7 @@ import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.RetrofitClientApi;
 import com.antonioteca.cc42.utility.Loading;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,11 +32,13 @@ public class UserRepository {
 
     private final User user;
     private final Token token;
+    private final Context context;
     private final DaoApiUser daoApiUser;
 
     //private final AppDataBase appDataBase;
 
     public UserRepository(Context context) {
+        this.context = context;
         user = new User(context);
         token = new Token(context);
         /*WeakReference<Context> weakReference = new WeakReference<>(context);
@@ -83,8 +86,19 @@ public class UserRepository {
         coalitionCall.enqueue(callback);
     }
 
-    public void loadUsersEventPaginated(long eventId, Loading l, Callback<List<User>> callback) {
+    public void loadUsersEventPaginated(long eventId, @NonNull Loading l, Callback<List<User>> callback) {
+        if (token.isTokenExpired(token.getTokenExpirationTime())) {
+            token.getRefreshTokenUserSave(context, (success) -> {
+                if (success)
+                    extractedLoadUsersEventPaginated(eventId, l, callback);
+                else
+                    callback.onResponse(null, Response.success(new ArrayList<>()));
+            });
+        } else
+            extractedLoadUsersEventPaginated(eventId, l, callback);
+    }
 
+    private void extractedLoadUsersEventPaginated(long eventId, @NonNull Loading l, Callback<List<User>> callback) {
         String accessToken = "Bearer " + token.getAccessToken();
 
         daoApiUser.getUsersEvent(eventId, accessToken, l.currentPage, 50).enqueue(new Callback<>() {
@@ -117,8 +131,19 @@ public class UserRepository {
         });
     }
 
-    public void loadUserSubscriptionPaginated(int cursusId, Loading l, Callback<List<Subscription>> callback) {
+    public void loadUserSubscriptionPaginated(int cursusId, @NonNull Loading l, Callback<List<Subscription>> callback) {
+        if (token.isTokenExpired(token.getTokenExpirationTime())) {
+            token.getRefreshTokenUserSave(context, (success) -> {
+                if (success)
+                    extractedLoadUserSubscriptionPaginated(cursusId, l, callback);
+                else
+                    callback.onResponse(null, Response.success(new ArrayList<>()));
+            });
+        } else
+            extractedLoadUserSubscriptionPaginated(cursusId, l, callback);
+    }
 
+    private void extractedLoadUserSubscriptionPaginated(int cursusId, @NonNull Loading l, Callback<List<Subscription>> callback) {
         String accessToken = "Bearer " + token.getAccessToken();
 
         daoApiUser.getUsersSubscription(accessToken, cursusId, user.getCampusId(), true, l.currentPage, 50).enqueue(new Callback<>() {

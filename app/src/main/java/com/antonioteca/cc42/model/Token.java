@@ -4,8 +4,18 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.antonioteca.cc42.network.HttpException;
+import com.antonioteca.cc42.network.HttpStatus;
+import com.antonioteca.cc42.repository.TokenRepository;
 import com.google.gson.annotations.SerializedName;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Classe que representam os dados da aplicação
@@ -68,4 +78,33 @@ public class Token {
         long expirationTime = tokenExpirationTime;
         return System.currentTimeMillis() > expirationTime;
     }
+
+    public void getRefreshTokenUserSave(Context context, CallBackToken callBackToken) {
+        TokenRepository tokenRepository = new TokenRepository(context);
+        tokenRepository.getRefreshTokenUser(getRefreshToken(), new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Token> call, @NonNull Response<Token> response) {
+                if (response.isSuccessful()) {
+                    Token token = response.body();
+                    if (token != null) {
+                        tokenRepository.saveAcessToken(token);
+                        callBackToken.onTokenReceived(true);
+                    } else
+                        callBackToken.onTokenReceived(false);
+                } else {
+                    HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
+                    Toast.makeText(context, httpStatus.getCode() + ": " + httpStatus.getDescription(), Toast.LENGTH_LONG).show();
+                    callBackToken.onTokenReceived(false);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Token> call, @NonNull Throwable throwable) {
+                HttpException httpException = HttpException.handleException(throwable, context);
+                Toast.makeText(context, httpException.getCode() + ": " + httpException.getDescription(), Toast.LENGTH_LONG).show();
+                callBackToken.onTokenReceived(false);
+            }
+        });
+    }
 }
+
