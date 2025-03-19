@@ -177,6 +177,9 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         mealViewModel.getUpdatedMealLiveData().observe(this, newMeal ->
                 sharedViewModel.setUpdatedMeal(newMeal)
         );
+        mealViewModel.getPathImageLiveData().observe(this, newImageUrl ->
+                sharedViewModel.setUpdatedPathImage(newImageUrl)
+        );
         return dialog;
     }
 

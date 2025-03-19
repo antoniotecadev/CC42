@@ -30,6 +30,8 @@ import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.List;
+
 public class MealListFragment extends Fragment {
 
 
@@ -130,6 +132,15 @@ public class MealListFragment extends Fragment {
             Meal updatedMeal = event.getContentIfNotHandled();
             if (updatedMeal != null)
                 mealAdapter.updateMeal(updatedMeal);
+        });
+
+        sharedViewModel.getPathImageLiveData().observe(getViewLifecycleOwner(), event -> {
+            List<String> list = event.getContentIfNotHandled();
+            if (list != null) {
+                String idMeal = list.get(0);
+                String pathImage = list.get(1);
+                mealAdapter.updatePathImage(idMeal, pathImage);
+            }
         });
     }
 

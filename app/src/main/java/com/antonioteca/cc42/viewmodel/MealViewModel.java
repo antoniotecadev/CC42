@@ -53,6 +53,7 @@ public class MealViewModel extends ViewModel {
     private MutableLiveData<Meal> createdMealMutableLiveData;
     private MutableLiveData<Meal> updatedMealMutableLiveData;
     private MutableLiveData<List<Meal>> mealListMutableLiveData;
+    private MutableLiveData<List<String>> pathImageMutableLiveData;
     private MutableLiveData<List<Object>> ratingValuesMutableLiveData;
 
     public LiveData<Meal> getCreatedMealLiveData() {
@@ -65,6 +66,12 @@ public class MealViewModel extends ViewModel {
         if (updatedMealMutableLiveData == null)
             updatedMealMutableLiveData = new MutableLiveData<>();
         return updatedMealMutableLiveData;
+    }
+
+    public LiveData<List<String>> getPathImageLiveData() {
+        if (pathImageMutableLiveData == null)
+            pathImageMutableLiveData = new MutableLiveData<>();
+        return pathImageMutableLiveData;
     }
 
     public LiveData<List<Object>> getRatingValuesLiveData(Context context, FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId) {
@@ -225,6 +232,7 @@ public class MealViewModel extends ViewModel {
                     public void onSuccess(String requestId, Map resultData) {
                         String newImageUrl = (String) resultData.get("url");
                         if (onlyImage) {
+                            pathImageMutableLiveData.setValue(Arrays.asList(mealId, newImageUrl));
                             updateImageUrlInFirebase(firebaseDatabase,
                                     layoutInflater,
                                     binding,

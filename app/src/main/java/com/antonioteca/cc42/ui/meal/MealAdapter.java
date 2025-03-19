@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterViewHolder> {
     private final List<Meal> mealList = new ArrayList<>();
@@ -116,6 +117,16 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         if (index != -1) {
             mealList.set(index, meal);
             notifyItemChanged(index);
+        }
+    }
+
+    public void updatePathImage(String idMeal, String pathImage) {
+        for (int i = 0; i < mealList.size(); i++) {
+            if (Objects.equals(mealList.get(i).getId(), idMeal)) {
+                mealList.get(i).setPathImage(pathImage);
+                notifyItemChanged(i);
+                break;
+            }
         }
     }
 
