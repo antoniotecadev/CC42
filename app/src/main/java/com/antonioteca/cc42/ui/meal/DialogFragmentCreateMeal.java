@@ -171,12 +171,14 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         );
         handleSpinnerMeals(binding.spinnerCarbohydratesMeals);
         handleSpinnerMeals(binding.spinnerProteinsLegumesVegetablesMeals);
-        mealViewModel.getCreatedMealLiveData().observe(this, newMeal ->
-                sharedViewModel.setNewMeal(newMeal)
-        );
-        mealViewModel.getUpdatedMealLiveData().observe(this, newMeal ->
-                sharedViewModel.setUpdatedMeal(newMeal)
-        );
+        mealViewModel.getCreatedMealLiveData().observe(this, newMeal -> {
+            selectedItems.clear();
+            sharedViewModel.setNewMeal(newMeal);
+        });
+        mealViewModel.getUpdatedMealLiveData().observe(this, newMeal -> {
+            selectedItems.clear();
+            sharedViewModel.setUpdatedMeal(newMeal);
+        });
         mealViewModel.getPathImageLiveData().observe(this, newImageUrl ->
                 sharedViewModel.setUpdatedPathImage(newImageUrl)
         );
