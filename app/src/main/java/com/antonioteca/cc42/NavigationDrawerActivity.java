@@ -386,7 +386,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     @SuppressLint("MissingPermission")
     private static void showNotification(String title, String body, Bitmap image, RemoteMessage message, Context context, String imageUrl) { // Primeiro plano
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_check_cadet_42)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
