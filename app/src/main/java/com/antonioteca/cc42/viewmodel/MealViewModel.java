@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -387,6 +388,16 @@ public class MealViewModel extends ViewModel {
                 createdBy,
                 createdDate
         );
+
+        Log.d("MealAdapter", "meal.getId(): " + meal.getId());
+        Log.d("MealAdapter", "meal.getType(): " + meal.getType());
+        Log.d("MealAdapter", "meal.getName(): " + meal.getName());
+        Log.d("MealAdapter", "meal.getQuantity(): " + meal.getQuantity());
+        Log.d("MealAdapter", "meal.getPathImage(): " + meal.getPathImage());
+        Log.d("MealAdapter", "meal.getRating(): " + meal.getRating());
+        Log.d("MealAdapter", "meal.getCreatedBy(): " + meal.getCreatedBy());
+        Log.d("MealAdapter", "meal.getCreatedDate(): " + meal.getCreatedDate());
+        Log.d("MealAdapter", "cursusId: " + cursusId);
 
         // Salvar os dados da refeição no Firebase Realtime Database
         mealsRef.child(Objects.requireNonNull(mealId)).setValue(meal)

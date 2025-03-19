@@ -4,10 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,12 +18,14 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewMealListBinding;
 import com.antonioteca.cc42.model.Meal;
+import com.antonioteca.cc42.network.NotificationFirebase.Notification;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -79,6 +84,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             contextMenu.setHeaderTitle(meal.getName());
             MenuItem menuItemEdit = contextMenu.add(view.getContext().getString(R.string.edit_meal));
             MenuItem menuItemDelete = contextMenu.add(view.getContext().getString(R.string.delete_meal));
+            MenuItem menuItemNotify = contextMenu.add(view.getContext().getString(R.string.notify_meal));
             menuItemEdit.setOnMenuItemClickListener(item -> {
                 MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal = MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(false, cursusId).setMeal(meal);
                 Navigation.findNavController(view).navigate(actionNavMealToDialogFragmentCreateMeal);
@@ -86,6 +92,41 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             });
             menuItemDelete.setOnMenuItemClickListener(item -> {
                 deleteMeal(firebaseDatabase, context, meal, layoutInflater, campusId, cursusId);
+                return true;
+            });
+            menuItemNotify.setOnMenuItemClickListener(item -> {
+                ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.meals_way, android.R.layout.simple_spinner_item);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                LinearLayout linearLayout = new LinearLayout(context);
+                linearLayout.setOrientation(LinearLayout.VERTICAL);
+                linearLayout.setPadding(32, 16, 32, 0);
+                AppCompatSpinner spinner = new AppCompatSpinner(context);
+                spinner.setPadding(0, 0, 0, 32);
+                spinner.setAdapter(adapter);
+                linearLayout.addView(spinner);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setView(linearLayout);
+                builder.setTitle(R.string.notify_meal);
+                builder.setMessage(meal.getName());
+                builder.setIcon(R.drawable.logo_42);
+                builder.setCancelable(false);
+                builder.setNeutralButton(R.string.no, (dialog, which) -> dialog.dismiss());
+                builder.setPositiveButton(R.string.yes, null);
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                    meal.setType(meal.getType() + ": " + spinner.getSelectedItem().toString());
+                    try {
+                        Notification.sendNotificationForTopic(context, layoutInflater, meal, cursusId);
+                        dialog.dismiss();
+                    } catch (IOException e) {
+                        Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
+                    }
+                });
                 return true;
             });
         });

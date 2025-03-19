@@ -20,20 +20,14 @@ public class FCMessage {
     }
 
     public static class Notification {
-        private String icon;
         private String title;
         private String body;
         private String image;
 
         public Notification(String icon, String title, String body, String image) {
-            this.icon = icon;
             this.title = title;
             this.body = body;
             this.image = image;
-        }
-
-        public String getIcon() {
-            return icon;
         }
 
         public String getTitle() {

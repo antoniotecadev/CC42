@@ -2,6 +2,7 @@ package com.antonioteca.cc42.network.NotificationFirebase;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -42,7 +43,8 @@ public class Notification {
                     if (!response.isSuccessful()) {
                         HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
                         Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpStatus.getDescription(), "#E53935", null);
-                    }
+                    } else
+                        Toast.makeText(context, R.string.notification_sent, Toast.LENGTH_LONG).show();
                 }
 
                 @Override
