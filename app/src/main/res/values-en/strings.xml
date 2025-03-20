@@ -139,7 +139,6 @@
         <item>Tasting</item>
     </string-array>
     <string-array name="meals_way">
-        <item>@string/information</item>
         <item>First issue</item>
         <item>Second issue</item>
         <item>Third issue</item>

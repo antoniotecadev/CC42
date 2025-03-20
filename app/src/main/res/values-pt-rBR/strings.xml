@@ -139,7 +139,6 @@
         <item>Degustação</item>
     </string-array>
     <string-array name="meals_way">
-        <item>@string/information</item>
         <item>Primeira via</item>
         <item>Segunda via</item>
         <item>Terceira via</item>

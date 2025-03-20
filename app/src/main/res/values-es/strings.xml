@@ -139,7 +139,6 @@
         <item>Degustación</item>
     </string-array>
     <string-array name="meals_way">
-        <item>@string/information</item>
         <item>Primera emisión</item>
         <item>Segunda emisión</item>
         <item>Tercera emisión</item>
