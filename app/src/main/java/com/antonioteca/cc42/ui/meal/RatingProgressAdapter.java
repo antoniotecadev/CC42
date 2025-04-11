@@ -1,12 +1,12 @@
 package com.antonioteca.cc42.ui.meal;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRatingProgressBinding;
 
 import java.util.List;
@@ -29,22 +29,24 @@ public class RatingProgressAdapter extends RecyclerView.Adapter<RatingProgressAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         RatingProgressItem item = ratingProgressItems.get(position);
-        int rating = item.rating();
+        int ratingCount = item.ratingCount();
+
         // Define a estrela (ícone)
-        if (rating >= 1)
-            holder.binding.star1.setImageResource(R.drawable.baseline_filled_star_40);
-        if (rating >= 2)
-            holder.binding.star2.setImageResource(R.drawable.baseline_filled_star_40);
-        if (rating >= 3)
-            holder.binding.star3.setImageResource(R.drawable.baseline_filled_star_40);
-        if (rating >= 4)
-            holder.binding.star4.setImageResource(R.drawable.baseline_filled_star_40);
-        if (rating >= 5)
-            holder.binding.star5.setImageResource(R.drawable.baseline_filled_star_40);
+        if (position >= 0)
+            holder.binding.star1.setVisibility(View.VISIBLE);
+        if (position >= 1)
+            holder.binding.star2.setVisibility(View.VISIBLE);
+        if (position >= 2)
+            holder.binding.star3.setVisibility(View.VISIBLE);
+        if (position >= 3)
+            holder.binding.star4.setVisibility(View.VISIBLE);
+        if (position >= 4)
+            holder.binding.star5.setVisibility(View.VISIBLE);
+
         // Define o progresso da barra
         holder.binding.progressBar.setProgress(item.progress());
-        // Define a porcentagem
-        holder.binding.tvPercentage.setText(item.progress() + "%");
+        // Define a porcentagem e numero de avaliação para cada estrela
+        holder.binding.textViewRatingCountPercentage.setText(ratingCount + " - " + item.progress() + "%");
     }
 
     @Override
