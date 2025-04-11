@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 public class Meal implements Parcelable {
     private String id;
-    private int rating;
+    private transient int rating;
     private String type;
     private String name;
     private int quantity;
