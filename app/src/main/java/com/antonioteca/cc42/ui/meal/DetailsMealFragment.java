@@ -42,8 +42,10 @@ public class DetailsMealFragment extends Fragment {
     private int cursusId;
     private String mealId;
     private int rating = 0;
+
     private Loading loading;
     private Context context;
+    private int numberOfRatings = 0;
     private MealViewModel mealViewModel;
     private FirebaseDatabase firebaseDatabase;
     private FragmentDetailsMealBinding binding;
@@ -78,7 +80,7 @@ public class DetailsMealFragment extends Fragment {
                         ratingValues -> {
                             String averageRating = (String) ratingValues.get(1); // média da avaliação total sem ser arrendodando ex: 4.5
                             HashMap<?, ?> ratingCounts = (HashMap<?, ?>) ratingValues.get(2); // Total de avaliação para cada estrela
-                            int numberOfRatings = (int) ratingValues.get(3); // Total de números de avaliações geral de uma refeição
+                            numberOfRatings = (int) ratingValues.get(3); // Total de números de avaliações geral de uma refeição
 
                             // ratingValues.get(0): média da avaliação total arrendodando ex: 5
                             fillStars((int) ratingValues.get(0), averageRating, false);
@@ -92,6 +94,7 @@ public class DetailsMealFragment extends Fragment {
                             RatingProgressAdapter adapter = new RatingProgressAdapter(ratingProgressItems);
                             binding.recyclerViewRating.setLayoutManager(new LinearLayoutManager(context));
                             binding.recyclerViewRating.setAdapter(adapter);
+                            binding.numberOfRatings.setText(String.valueOf(numberOfRatings));
                             binding.averageRating.setText(averageRating);
                         });
         if (cursusId == 0) {
