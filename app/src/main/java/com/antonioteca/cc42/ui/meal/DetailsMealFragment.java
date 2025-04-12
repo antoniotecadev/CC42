@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -187,11 +186,14 @@ public class DetailsMealFragment extends Fragment {
         }
     }
 
-    private void starHalf(StarRatingBinding starRatingBinding, Double ratingAverage, int ratingAverageRounded) {
+    private void starHalf(StarRatingBinding starRatingBinding, double ratingAverage, int ratingAverageRounded) {
         // Preenche parcialmente a próxima estrela (opcional)
         double result = Math.abs(ratingAverage - ratingAverageRounded);
         if (result > 0.0) {
             ImageView nextStar = null;
+            boolean isEquals = (int) ratingAverage == ratingAverageRounded;
+            if (isEquals)
+                ratingAverageRounded += 1;
             if (ratingAverageRounded == 1) nextStar = starRatingBinding.star1;
             else if (ratingAverageRounded == 2) nextStar = starRatingBinding.star2;
             else if (ratingAverageRounded == 3) nextStar = starRatingBinding.star3;

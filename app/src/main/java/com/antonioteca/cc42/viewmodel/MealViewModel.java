@@ -35,6 +35,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -554,6 +555,7 @@ public class MealViewModel extends ViewModel {
                     int roundedRating = (int) Math.round(averageRating);
                     // Formata a média para uma casa decimal
                     DecimalFormat decimalFormat = new DecimalFormat("#.0");
+                    decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
                     String formattedAverage = decimalFormat.format(averageRating);
                     ratingValuesMutableLiveData.setValue(Arrays.asList(roundedRating, formattedAverage, ratingCounts, numberOfRatings, ratingValuesUsers));
                 }
