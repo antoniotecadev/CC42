@@ -126,6 +126,7 @@ public class DetailsMealFragment extends Fragment {
 
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
+                rating = 0; // Para poder mostrar a classificação, ao voltar <-
                 DetailsMealFragmentDirections.ActionDetailsMealFragmentToQrCodeFragment actionDetailsMealFragmentToQrCodeFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToQrCodeFragment("meal" + meal.getId(), meal.getName(), "description");
                 navController.navigate(actionDetailsMealFragmentToQrCodeFragment);
             } catch (IllegalArgumentException e) {
@@ -135,6 +136,7 @@ public class DetailsMealFragment extends Fragment {
 
         binding.fabOpenSubscriptionList.setOnClickListener(v -> {
             try {
+                rating = 0; // Para poder mostrar a classificação, ao voltar <-
                 DetailsMealFragmentDirections.ActionDetailsMealFragmentToSubscriptionListFragment actionDetailsMealFragmentToSubscriptionListFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToSubscriptionListFragment(meal, cursusId);
                 navController.navigate(actionDetailsMealFragmentToSubscriptionListFragment);
             } catch (IllegalArgumentException e) {
