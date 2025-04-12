@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsMealBinding;
+import com.antonioteca.cc42.databinding.StarRatingBinding;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
@@ -83,7 +85,7 @@ public class DetailsMealFragment extends Fragment {
                             numberOfRatings = (int) ratingValues.get(3); // Total de números de avaliações geral de uma refeição
 
                             // ratingValues.get(0): média da avaliação total arrendodando ex: 5
-                            fillStars((int) ratingValues.get(0), averageRating, false);
+                            fillStars(binding.starRatingDone, (int) ratingValues.get(0), averageRating, false);
 
                             List<RatingProgressItem> ratingProgressItems = new ArrayList<>();
                             for (int i = 1; i <= ratingCounts.size(); i++) { // i: estrela
@@ -116,11 +118,11 @@ public class DetailsMealFragment extends Fragment {
         binding.textViewDate.setText(meal.getCreatedDate());
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, true);
         // Configura os cliques das estrelas
-        binding.star1.setOnClickListener(v -> fillStars(1, null, true));
-        binding.star2.setOnClickListener(v -> fillStars(2, null, true));
-        binding.star3.setOnClickListener(v -> fillStars(3, null, true));
-        binding.star4.setOnClickListener(v -> fillStars(4, null, true));
-        binding.star5.setOnClickListener(v -> fillStars(5, null, true));
+        binding.starRating.star1.setOnClickListener(v -> fillStars(binding.starRating, 1, null, true));
+        binding.starRating.star2.setOnClickListener(v -> fillStars(binding.starRating, 2, null, true));
+        binding.starRating.star3.setOnClickListener(v -> fillStars(binding.starRating, 3, null, true));
+        binding.starRating.star4.setOnClickListener(v -> fillStars(binding.starRating, 4, null, true));
+        binding.starRating.star5.setOnClickListener(v -> fillStars(binding.starRating, 5, null, true));
 
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
@@ -142,7 +144,7 @@ public class DetailsMealFragment extends Fragment {
     }
 
     // Método para lidar com o clique nas estrelas
-    private void fillStars(int selectedRating, String averageRating, boolean isOnClick) {
+    private void fillStars(StarRatingBinding starRatingBinding, int selectedRating, String averageRating, boolean isOnClick) {
         if (rating != selectedRating && !loading.isLoading) {
             rating = selectedRating;
             if (isOnClick) {
@@ -152,15 +154,15 @@ public class DetailsMealFragment extends Fragment {
             }
             // Preenche as estrelas com base na avaliação selecionada
             if (selectedRating >= 1)
-                binding.star1.setImageResource(R.drawable.baseline_filled_star_40);
+                starRatingBinding.star1.setImageResource(R.drawable.baseline_filled_star_40);
             if (selectedRating >= 2)
-                binding.star2.setImageResource(R.drawable.baseline_filled_star_40);
+                starRatingBinding.star2.setImageResource(R.drawable.baseline_filled_star_40);
             if (selectedRating >= 3)
-                binding.star3.setImageResource(R.drawable.baseline_filled_star_40);
+                starRatingBinding.star3.setImageResource(R.drawable.baseline_filled_star_40);
             if (selectedRating >= 4)
-                binding.star4.setImageResource(R.drawable.baseline_filled_star_40);
+                starRatingBinding.star4.setImageResource(R.drawable.baseline_filled_star_40);
             if (selectedRating >= 5)
-                binding.star5.setImageResource(R.drawable.baseline_filled_star_40);
+                starRatingBinding.star5.setImageResource(R.drawable.baseline_filled_star_40);
             if (isOnClick) {
                 mealViewModel.rateMeal(
                         context,
@@ -172,23 +174,23 @@ public class DetailsMealFragment extends Fragment {
                         String.valueOf(user.getUid()),
                         selectedRating);
             } else {
-                starHalf(selectedRating, averageRating);
+                starHalf(starRatingBinding, selectedRating, averageRating);
             }
         }
     }
 
-    private void starHalf(int fullStars, String averageRating) {
+    private void starHalf(StarRatingBinding starRatingBinding, int fullStars, String averageRating) {
         double average = Double.parseDouble(averageRating);
 
         // Preenche parcialmente a próxima estrela (opcional)
         double fractionalPart = average - fullStars;
         if (fractionalPart > 0) {
             ImageView nextStar = null;
-            if (fullStars == 0) nextStar = binding.star1;
-            else if (fullStars == 1) nextStar = binding.star2;
-            else if (fullStars == 2) nextStar = binding.star3;
-            else if (fullStars == 3) nextStar = binding.star4;
-            else if (fullStars == 4) nextStar = binding.star5;
+            if (fullStars == 0) nextStar = starRatingBinding.star1;
+            else if (fullStars == 1) nextStar = starRatingBinding.star2;
+            else if (fullStars == 2) nextStar = starRatingBinding.star3;
+            else if (fullStars == 3) nextStar = starRatingBinding.star4;
+            else if (fullStars == 4) nextStar = starRatingBinding.star5;
 
             if (nextStar != null) {
                 // Define uma imagem de estrela parcialmente preenchida (se disponível)
@@ -198,11 +200,11 @@ public class DetailsMealFragment extends Fragment {
     }
 
     private void resetStars() {
-        binding.star1.setImageResource(R.drawable.baseline_star_border_40);
-        binding.star2.setImageResource(R.drawable.baseline_star_border_40);
-        binding.star3.setImageResource(R.drawable.baseline_star_border_40);
-        binding.star4.setImageResource(R.drawable.baseline_star_border_40);
-        binding.star5.setImageResource(R.drawable.baseline_star_border_40);
+        binding.starRating.star1.setImageResource(R.drawable.baseline_star_border_40);
+        binding.starRating.star2.setImageResource(R.drawable.baseline_star_border_40);
+        binding.starRating.star3.setImageResource(R.drawable.baseline_star_border_40);
+        binding.starRating.star4.setImageResource(R.drawable.baseline_star_border_40);
+        binding.starRating.star5.setImageResource(R.drawable.baseline_star_border_40);
     }
 
     @Override

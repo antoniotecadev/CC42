@@ -12,9 +12,7 @@
         android:layout_height="10dp"
         android:layout_marginEnd="2dp"
         android:src="@drawable/baseline_filled_star_40"
-        android:tint="@color/textColorPrimary"
-        android:visibility="invisible"
-        tools:ignore="UseAppTint" />
+        android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/star2"
@@ -22,9 +20,7 @@
         android:layout_height="10dp"
         android:layout_marginEnd="2dp"
         android:src="@drawable/baseline_filled_star_40"
-        android:tint="@color/textColorPrimary"
-        android:visibility="invisible"
-        tools:ignore="UseAppTint" />
+        android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/star3"
@@ -32,9 +28,7 @@
         android:layout_height="10dp"
         android:layout_marginEnd="2dp"
         android:src="@drawable/baseline_filled_star_40"
-        android:tint="@color/textColorPrimary"
-        android:visibility="invisible"
-        tools:ignore="UseAppTint" />
+        android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/star4"
@@ -42,9 +36,7 @@
         android:layout_height="10dp"
         android:layout_marginEnd="2dp"
         android:src="@drawable/baseline_filled_star_40"
-        android:tint="@color/textColorPrimary"
-        android:visibility="invisible"
-        tools:ignore="UseAppTint" />
+        android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/star5"
@@ -52,9 +44,7 @@
         android:layout_height="10dp"
         android:layout_marginEnd="2dp"
         android:src="@drawable/baseline_filled_star_40"
-        android:tint="@color/textColorPrimary"
-        android:visibility="invisible"
-        tools:ignore="UseAppTint" />
+        android:visibility="invisible" />
 
     <!-- Barra de Progresso -->
     <ProgressBar
