@@ -85,11 +85,12 @@ public class DetailsMealFragment extends Fragment {
                             HashMap<?, ?> ratingCounts = (HashMap<?, ?>) ratingValues.get(2); // Total de avaliação para cada estrela
                             numberOfRatings = (int) ratingValues.get(3); // Total de números de avaliações geral de uma refeição
                             ratingValuesUsers = (HashMap<?, ?>) ratingValues.get(4); // Avaliações de cada usuário
-                            int ratingValueUser = (int) ratingValuesUsers.get(String.valueOf(user.getUid())); // Avaliação do usuário atual
+                            Integer ratingValueUser = (Integer) ratingValuesUsers.get(String.valueOf(user.getUid())); // Avaliação do usuário actual
 
                             // ratingValues.get(0): média da avaliação total arrendodando ex: 5
                             fillStars(binding.starRatingDone, (int) ratingValues.get(0), Double.valueOf(averageRating), false);
-                            fillStars(binding.starRating, ratingValueUser, null, false);
+                            if (ratingValueUser != null)
+                                fillStars(binding.starRating, ratingValueUser, null, false);
 
                             List<RatingProgressItem> ratingProgressItems = new ArrayList<>();
                             for (int i = 1; i <= ratingCounts.size(); i++) { // i: estrela
