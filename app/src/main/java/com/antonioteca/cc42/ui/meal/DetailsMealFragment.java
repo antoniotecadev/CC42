@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -144,7 +143,7 @@ public class DetailsMealFragment extends Fragment {
     }
 
     // Método para lidar com o clique nas estrelas
-    private void fillStars(StarRatingBinding starRatingBinding, int selectedRating, String averageRating, boolean isOnClick) {
+    private void fillStars(StarRatingBinding starRatingBinding, int selectedRating, String ratingAverage, boolean isOnClick) {
         if (rating != selectedRating && !loading.isLoading) {
             rating = selectedRating;
             if (isOnClick) {
@@ -174,23 +173,23 @@ public class DetailsMealFragment extends Fragment {
                         String.valueOf(user.getUid()),
                         selectedRating);
             } else {
-                starHalf(starRatingBinding, selectedRating, averageRating);
+                starHalf(starRatingBinding, ratingAverage, selectedRating/*ratingAverageRounded*/);
             }
         }
     }
 
-    private void starHalf(StarRatingBinding starRatingBinding, int fullStars, String averageRating) {
-        double average = Double.parseDouble(averageRating);
+    private void starHalf(StarRatingBinding starRatingBinding, String ratingAverage, int ratingAverageRounded) {
+        double average = Double.parseDouble(ratingAverage);
 
         // Preenche parcialmente a próxima estrela (opcional)
-        double fractionalPart = average - fullStars;
-        if (fractionalPart > 0) {
+        double result = Math.abs(average - ratingAverageRounded);
+        if (result > 0.0) {
             ImageView nextStar = null;
-            if (fullStars == 0) nextStar = starRatingBinding.star1;
-            else if (fullStars == 1) nextStar = starRatingBinding.star2;
-            else if (fullStars == 2) nextStar = starRatingBinding.star3;
-            else if (fullStars == 3) nextStar = starRatingBinding.star4;
-            else if (fullStars == 4) nextStar = starRatingBinding.star5;
+            if (ratingAverageRounded == 1) nextStar = starRatingBinding.star1;
+            else if (ratingAverageRounded == 2) nextStar = starRatingBinding.star2;
+            else if (ratingAverageRounded == 3) nextStar = starRatingBinding.star3;
+            else if (ratingAverageRounded == 4) nextStar = starRatingBinding.star4;
+            else if (ratingAverageRounded == 5) nextStar = starRatingBinding.star5;
 
             if (nextStar != null) {
                 // Define uma imagem de estrela parcialmente preenchida (se disponível)
