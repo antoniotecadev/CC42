@@ -71,6 +71,7 @@ public class DetailsMealFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        reduceStarSize(binding.starRatingDone, 30, 30);
         NavController navController = Navigation.findNavController(view);
         DetailsMealFragmentArgs args = DetailsMealFragmentArgs.fromBundle(requireArguments());
         Meal meal = args.getDetailsMeal();
@@ -204,6 +205,28 @@ public class DetailsMealFragment extends Fragment {
         binding.starRating.star3.setImageResource(R.drawable.baseline_star_border_40);
         binding.starRating.star4.setImageResource(R.drawable.baseline_star_border_40);
         binding.starRating.star5.setImageResource(R.drawable.baseline_star_border_40);
+    }
+
+    public void reduceStarSize(StarRatingBinding starRatingBinding, int newWidth, int newHeight) {
+        ImageView[] stars = new ImageView[]{
+                starRatingBinding.star1,
+                starRatingBinding.star2,
+                starRatingBinding.star3,
+                starRatingBinding.star4,
+                starRatingBinding.star5
+        };
+
+        for (ImageView star : stars) {
+            ViewGroup.LayoutParams params = star.getLayoutParams();
+            params.width = dpToPx(newWidth, context);
+            params.height = dpToPx(newHeight, context);
+            star.setLayoutParams(params);
+        }
+    }
+
+    int dpToPx(int dp, Context context) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
     }
 
     @Override
