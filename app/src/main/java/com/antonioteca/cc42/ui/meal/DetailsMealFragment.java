@@ -96,7 +96,7 @@ public class DetailsMealFragment extends Fragment {
                             RatingProgressAdapter adapter = new RatingProgressAdapter(ratingProgressItems);
                             binding.recyclerViewRating.setLayoutManager(new LinearLayoutManager(context));
                             binding.recyclerViewRating.setAdapter(adapter);
-                            binding.numberOfRatings.setText(String.valueOf(numberOfRatings));
+                            binding.numberOfRatings.setText(numberOfRatings + " Ratings");
                             binding.averageRating.setText(averageRating);
                         });
         if (cursusId == 0) {

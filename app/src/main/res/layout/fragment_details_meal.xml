@@ -65,22 +65,15 @@
                     android:paddingBottom="12dp"
                     android:src="@drawable/ic_baseline_restaurant_60" />
 
-                <include android:id="@+id/starRatingDone" layout="@layout/star_rating" />
+                <include
+                    android:id="@+id/starRatingDone"
+                    layout="@layout/star_rating" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
                     android:gravity="center"
                     android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/numberOfRatings"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="2dp"
-                        android:text="@string/_0"
-                        android:textSize="8sp" />
 
                     <TextView
                         android:id="@+id/averageRating"
@@ -89,7 +82,8 @@
                         android:layout_marginEnd="10dp"
                         android:text="@string/_0"
                         android:textColor="@color/textColorPrimary"
-                        android:textSize="24sp" />
+                        android:textSize="48sp"
+                        android:textStyle="bold" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerViewRating"
@@ -98,7 +92,34 @@
                         tools:listitem="@layout/item_rating_progress" />
                 </LinearLayout>
 
-                <include android:id="@+id/starRating" layout="@layout/star_rating" />
+                <TextView
+                    android:id="@+id/numberOfRatings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="@string/_0"
+                    android:textStyle="bold"
+                    android:textSize="16sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingVertical="8dp"
+                    android:text="Tap to Rate"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <include
+                    android:id="@+id/starRating"
+                    layout="@layout/star_rating" />
 
                 <View
                     android:id="@+id/dividerFooter"
