@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,7 @@ public class DetailsMealFragment extends Fragment {
     private Loading loading;
     private Context context;
     private int numberOfRatings = 0;
+    private HashMap<?, ?> ratingValuesUsers;
     private MealViewModel mealViewModel;
     private FirebaseDatabase firebaseDatabase;
     private FragmentDetailsMealBinding binding;
@@ -83,9 +85,12 @@ public class DetailsMealFragment extends Fragment {
                             String averageRating = (String) ratingValues.get(1); // média da avaliação total sem ser arrendodando ex: 4.5
                             HashMap<?, ?> ratingCounts = (HashMap<?, ?>) ratingValues.get(2); // Total de avaliação para cada estrela
                             numberOfRatings = (int) ratingValues.get(3); // Total de números de avaliações geral de uma refeição
+                            ratingValuesUsers = (HashMap<?, ?>) ratingValues.get(4); // Avaliações de cada usuário
+                            int ratingValueUser = (int) ratingValuesUsers.get(String.valueOf(user.getUid())); // Avaliação do usuário atual
 
                             // ratingValues.get(0): média da avaliação total arrendodando ex: 5
-                            fillStars(binding.starRatingDone, (int) ratingValues.get(0), averageRating, false);
+                            fillStars(binding.starRatingDone, (int) ratingValues.get(0), Double.valueOf(averageRating), false);
+                            fillStars(binding.starRating, ratingValueUser, null, false);
 
                             List<RatingProgressItem> ratingProgressItems = new ArrayList<>();
                             for (int i = 1; i <= ratingCounts.size(); i++) { // i: estrela
@@ -146,9 +151,10 @@ public class DetailsMealFragment extends Fragment {
     }
 
     // Método para lidar com o clique nas estrelas
-    private void fillStars(StarRatingBinding starRatingBinding, int selectedRating, String ratingAverage, boolean isOnClick) {
+    private void fillStars(StarRatingBinding starRatingBinding, int selectedRating, Double ratingAverage, boolean isOnClick) {
         if (rating != selectedRating && !loading.isLoading) {
-            rating = selectedRating;
+            if (ratingAverage == null)
+                rating = selectedRating;
             if (isOnClick) {
                 resetStars(); // Reseta todas as estrelas
                 loading.isLoading = true;
@@ -175,17 +181,15 @@ public class DetailsMealFragment extends Fragment {
                         String.valueOf(cursusId), mealId,
                         String.valueOf(user.getUid()),
                         selectedRating);
-            } else {
+            } else if (ratingAverage != null) {
                 starHalf(starRatingBinding, ratingAverage, selectedRating/*ratingAverageRounded*/);
             }
         }
     }
 
-    private void starHalf(StarRatingBinding starRatingBinding, String ratingAverage, int ratingAverageRounded) {
-        double average = Double.parseDouble(ratingAverage);
-
+    private void starHalf(StarRatingBinding starRatingBinding, Double ratingAverage, int ratingAverageRounded) {
         // Preenche parcialmente a próxima estrela (opcional)
-        double result = Math.abs(average - ratingAverageRounded);
+        double result = Math.abs(ratingAverage - ratingAverageRounded);
         if (result > 0.0) {
             ImageView nextStar = null;
             if (ratingAverageRounded == 1) nextStar = starRatingBinding.star1;

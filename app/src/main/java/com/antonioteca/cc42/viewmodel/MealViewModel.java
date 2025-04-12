@@ -533,6 +533,7 @@ public class MealViewModel extends ViewModel {
                     int numberOfRatings = 0;
                     // HashMap to store the count of each rating (ratings 1-5)
                     HashMap<Integer, Integer> ratingCounts = new HashMap<>();
+                    HashMap<String, Integer> ratingValuesUsers = new HashMap<>();
                     for (int i = 1; i <= 5; i++)
                         ratingCounts.put(i, 0);
                     // Soma todas as avaliações e conta o número de avaliações
@@ -545,6 +546,7 @@ public class MealViewModel extends ViewModel {
                         Integer count = ratingCounts.get(rating);
                         if (count == null) count = 0;
                         ratingCounts.put(rating, count + 1);
+                        ratingValuesUsers.put(dataSnapshot.getKey(), rating);
                     }
                     // Calcula a média das avaliações
                     double averageRating = (double) totalRatings / numberOfRatings;
@@ -553,7 +555,7 @@ public class MealViewModel extends ViewModel {
                     // Formata a média para uma casa decimal
                     DecimalFormat decimalFormat = new DecimalFormat("#.0");
                     String formattedAverage = decimalFormat.format(averageRating);
-                    ratingValuesMutableLiveData.setValue(Arrays.asList(roundedRating, formattedAverage, ratingCounts, numberOfRatings));
+                    ratingValuesMutableLiveData.setValue(Arrays.asList(roundedRating, formattedAverage, ratingCounts, numberOfRatings, ratingValuesUsers));
                 }
             }
 
