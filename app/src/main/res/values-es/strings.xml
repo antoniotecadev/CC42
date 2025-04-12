@@ -168,6 +168,8 @@
     <string name="notify_meal">Notificar</string>
     <string name="information">Información</string>
     <string name="notification_sent">Notificación enviada</string>
+    <string name="ratings">" Calificaciones"</string>
+    <string name="tap_to_rate">Toca para calificar</string>
     <string-array name="meals_carbohydrates_title">
         <item>Arroz</item>
         <item>Pasta</item>

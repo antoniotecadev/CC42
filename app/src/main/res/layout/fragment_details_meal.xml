@@ -113,7 +113,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:paddingVertical="8dp"
-                    android:text="Tap to Rate"
+                    android:text="@string/tap_to_rate"
                     android:textColor="@color/textColorPrimary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
