@@ -537,17 +537,14 @@ public class MealViewModel extends ViewModel {
                         ratingCounts.put(i, 0);
                     // Soma todas as avaliações e conta o número de avaliações
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        Long ratingLong = dataSnapshot.getValue(Long.class);
-                        if (ratingLong == null) continue;
-                        int rating = ratingLong.intValue();
+                        Integer rating = dataSnapshot.getValue(Integer.class);
+                        if (rating == null || rating < 1 || rating > 5) continue;
                         totalRatings += rating;
                         numberOfRatings++;
                         // Increment the count for the specific rating
-                        if (rating >= 1 && rating <= 5) {
-                            Integer count = ratingCounts.get(rating);
-                            if (count == null) count = 0;
-                            ratingCounts.put(rating, count + 1);
-                        }
+                        Integer count = ratingCounts.get(rating);
+                        if (count == null) count = 0;
+                        ratingCounts.put(rating, count + 1);
                     }
                     // Calcula a média das avaliações
                     double averageRating = (double) totalRatings / numberOfRatings;
