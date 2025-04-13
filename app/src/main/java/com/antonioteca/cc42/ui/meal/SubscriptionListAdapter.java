@@ -1,7 +1,6 @@
 package com.antonioteca.cc42.ui.meal;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -12,9 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewSubscriptionListBinding;
 import com.antonioteca.cc42.model.User;
+import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.utility.Util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionListAdapter.SubscriptionListViewHolder> {
@@ -48,6 +49,16 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
                 this.userList.get(i).setSubscription(true);
                 notifyItemChanged(i);
                 break;
+            }
+        }
+    }
+
+    public void updateRatingValueUser(HashMap<?, ?> ratingValuesUsers) {
+        for (int i = 0; i < getItemCount(); i++) {
+            String uid = String.valueOf(this.userList.get(i).uid);
+            if (ratingValuesUsers.containsKey(uid)) {
+                this.userList.get(i).ratingValue = (int) ratingValuesUsers.get(uid);
+                notifyItemChanged(i);
             }
         }
     }
@@ -97,6 +108,9 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         imageUrl = user.getUrlImageUser();
         holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
+        if (user.ratingValue > 0)
+            MealsUtils.selectedRating(holder.binding.starRatingDone, user.ratingValue);
+        MealsUtils.reduceStarSize(context, holder.binding.starRatingDone, 20, 20);
         if (user.isSubscription() != null && user.isSubscription()) {
             holder.binding.textViewSubscription.setTextColor(greenColor);
             holder.binding.textViewSubscription.setText(context.getString(R.string.text_signed));

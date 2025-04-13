@@ -59,7 +59,7 @@
         android:id="@+id/nav_meal"
         android:name="com.antonioteca.cc42.ui.meal.MealListFragment"
         android:label="@string/meals"
-        tools:layout="@layout/fragment_meal" >
+        tools:layout="@layout/fragment_meal">
         <action
             android:id="@+id/action_nav_meal_to_dialogFragmentCreateMeal"
             app:destination="@id/dialogFragmentCreateMeal" />
@@ -74,15 +74,15 @@
         android:id="@+id/dialogFragmentCreateMeal"
         android:name="com.antonioteca.cc42.ui.meal.DialogFragmentCreateMeal"
         android:label="DialogFragmentCreateMeal"
-        tools:layout="@layout/fragment_dialog_create_meal" >
+        tools:layout="@layout/fragment_dialog_create_meal">
         <argument
             android:name="isCreate"
             app:argType="boolean" />
         <argument
             android:name="meal"
+            android:defaultValue="@null"
             app:argType="com.antonioteca.cc42.model.Meal"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
         <argument
             android:name="cursusId"
             app:argType="integer" />
@@ -108,7 +108,7 @@
         android:id="@+id/nav_cursu_list_meal"
         android:name="com.antonioteca.cc42.ui.meal.CursuListMealFragment"
         android:label="@string/title_cursus"
-        tools:layout="@layout/fragment_cursu_list_meal" >
+        tools:layout="@layout/fragment_cursu_list_meal">
         <action
             android:id="@+id/action_nav_cursu_list_meal_to_nav_meal"
             app:destination="@id/nav_meal" />
@@ -117,20 +117,24 @@
         android:id="@+id/subscriptionListFragment"
         android:name="com.antonioteca.cc42.ui.meal.SubscriptionListFragment"
         android:label="@string/subscriptions_list"
-        tools:layout="@layout/fragment_subscription_list" >
+        tools:layout="@layout/fragment_subscription_list">
         <argument
             android:name="meal"
             app:argType="com.antonioteca.cc42.model.Meal" />
         <argument
             android:name="cursusId"
             app:argType="integer" />
+        <argument
+            android:name="ratingValuesUsers"
+            android:defaultValue="@null"
+            app:nullable="true"
+            app:argType="java.util.HashMap" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.antonioteca.cc42.ui.setting.SettingsFragment"
         android:label="@string/settings"
-        tools:layout="@xml/root_preferences"
-        />
+        tools:layout="@xml/root_preferences" />
 
     <action
         android:id="@+id/action_detailsMealFragment"

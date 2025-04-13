@@ -42,8 +42,8 @@ public class DetailsMealFragment extends Fragment {
     private User user;
     private int cursusId;
     private String mealId;
+    private Bundle bundle;
     private int rating = 0;
-
     private Loading loading;
     private Context context;
     private int numberOfRatings = 0;
@@ -55,6 +55,7 @@ public class DetailsMealFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        bundle = new Bundle();
         context = requireContext();
         loading = new Loading();
         user = new User(context);
@@ -72,7 +73,7 @@ public class DetailsMealFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        reduceStarSize(binding.starRatingDone, 30, 30);
+        MealsUtils.reduceStarSize(context, binding.starRatingDone, 30, 30);
         NavController navController = Navigation.findNavController(view);
         DetailsMealFragmentArgs args = DetailsMealFragmentArgs.fromBundle(requireArguments());
         Meal meal = args.getDetailsMeal();
@@ -85,6 +86,7 @@ public class DetailsMealFragment extends Fragment {
                             HashMap<?, ?> ratingCounts = (HashMap<?, ?>) ratingValues.get(2); // Total de avaliação para cada estrela
                             numberOfRatings = (int) ratingValues.get(3); // Total de números de avaliações geral de uma refeição
                             ratingValuesUsers = (HashMap<?, ?>) ratingValues.get(4); // Avaliações de cada usuário
+                            //bundle.putSerializable("ratingValuesUsers", ratingValuesUsers);
                             Integer ratingValueUser = (Integer) ratingValuesUsers.get(String.valueOf(user.getUid())); // Avaliação do usuário actual
 
                             // ratingValues.get(0): média da avaliação total arrendodando ex: 5
@@ -150,7 +152,7 @@ public class DetailsMealFragment extends Fragment {
         binding.fabOpenSubscriptionList.setOnClickListener(v -> {
             try {
                 rating = 0; // Para poder mostrar a classificação, ao voltar <-
-                DetailsMealFragmentDirections.ActionDetailsMealFragmentToSubscriptionListFragment actionDetailsMealFragmentToSubscriptionListFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToSubscriptionListFragment(meal, cursusId);
+                DetailsMealFragmentDirections.ActionDetailsMealFragmentToSubscriptionListFragment actionDetailsMealFragmentToSubscriptionListFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToSubscriptionListFragment(meal, cursusId).setRatingValuesUsers(ratingValuesUsers);
                 navController.navigate(actionDetailsMealFragmentToSubscriptionListFragment);
             } catch (IllegalArgumentException e) {
                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -168,17 +170,7 @@ public class DetailsMealFragment extends Fragment {
                 loading.isLoading = true;
                 binding.progressBarMeal.setVisibility(View.VISIBLE);
             }
-            // Preenche as estrelas com base na avaliação selecionada
-            if (selectedRating >= 1)
-                starRatingBinding.star1.setImageResource(R.drawable.baseline_filled_star_40);
-            if (selectedRating >= 2)
-                starRatingBinding.star2.setImageResource(R.drawable.baseline_filled_star_40);
-            if (selectedRating >= 3)
-                starRatingBinding.star3.setImageResource(R.drawable.baseline_filled_star_40);
-            if (selectedRating >= 4)
-                starRatingBinding.star4.setImageResource(R.drawable.baseline_filled_star_40);
-            if (selectedRating >= 5)
-                starRatingBinding.star5.setImageResource(R.drawable.baseline_filled_star_40);
+            MealsUtils.selectedRating(starRatingBinding, selectedRating);
             if (isOnClick) {
                 mealViewModel.rateMeal(
                         context,
@@ -224,31 +216,11 @@ public class DetailsMealFragment extends Fragment {
         binding.starRating.star5.setImageResource(R.drawable.baseline_star_border_40);
     }
 
-    public void reduceStarSize(StarRatingBinding starRatingBinding, int newWidth, int newHeight) {
-        ImageView[] stars = new ImageView[]{
-                starRatingBinding.star1,
-                starRatingBinding.star2,
-                starRatingBinding.star3,
-                starRatingBinding.star4,
-                starRatingBinding.star5
-        };
-
-        for (ImageView star : stars) {
-            ViewGroup.LayoutParams params = star.getLayoutParams();
-            params.width = dpToPx(newWidth, context);
-            params.height = dpToPx(newHeight, context);
-            star.setLayoutParams(params);
-        }
-    }
-
-    int dpToPx(int dp, Context context) {
-        float density = context.getResources().getDisplayMetrics().density;
-        return Math.round(dp * density);
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (bundle != null)
+            bundle.clear();
         binding = null;
     }
 }

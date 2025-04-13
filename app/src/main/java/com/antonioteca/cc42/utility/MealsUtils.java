@@ -2,12 +2,14 @@ package com.antonioteca.cc42.utility;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.preference.PreferenceManager;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentMealBinding;
+import com.antonioteca.cc42.databinding.StarRatingBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
@@ -75,5 +77,40 @@ public class MealsUtils {
         binding.swipeRefreshLayout.setRefreshing(refreshing);
         binding.textViewNotFoundMeals.setVisibility(viewT);
         binding.recyclerViewMeal.setVisibility(viewR);
+    }
+
+    public static void selectedRating(StarRatingBinding starRatingBinding, int selectedRating) {
+        // Preenche as estrelas com base na avaliação selecionada
+        if (selectedRating >= 1)
+            starRatingBinding.star1.setImageResource(R.drawable.baseline_filled_star_40);
+        if (selectedRating >= 2)
+            starRatingBinding.star2.setImageResource(R.drawable.baseline_filled_star_40);
+        if (selectedRating >= 3)
+            starRatingBinding.star3.setImageResource(R.drawable.baseline_filled_star_40);
+        if (selectedRating >= 4)
+            starRatingBinding.star4.setImageResource(R.drawable.baseline_filled_star_40);
+        if (selectedRating >= 5)
+            starRatingBinding.star5.setImageResource(R.drawable.baseline_filled_star_40);
+    }
+    public static void reduceStarSize(Context context, StarRatingBinding starRatingBinding, int newWidth, int newHeight) {
+        ImageView[] stars = new ImageView[]{
+                starRatingBinding.star1,
+                starRatingBinding.star2,
+                starRatingBinding.star3,
+                starRatingBinding.star4,
+                starRatingBinding.star5
+        };
+
+        for (ImageView star : stars) {
+            ViewGroup.LayoutParams params = star.getLayoutParams();
+            params.width = dpToPx(newWidth, context);
+            params.height = dpToPx(newHeight, context);
+            star.setLayoutParams(params);
+        }
+    }
+
+    private static int dpToPx(int dp, Context context) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
     }
 }

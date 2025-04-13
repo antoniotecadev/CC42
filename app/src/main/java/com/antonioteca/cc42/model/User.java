@@ -42,6 +42,9 @@ public class User {
     private boolean isStaff;
 
     @Expose(serialize = false, deserialize = false)
+    public int ratingValue = 0;
+
+    @Expose(serialize = false, deserialize = false)
     public Boolean present = null;
 
     @Expose(serialize = false, deserialize = false)

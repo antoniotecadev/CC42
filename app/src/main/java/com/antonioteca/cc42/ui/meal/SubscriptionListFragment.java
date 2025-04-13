@@ -64,6 +64,7 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import com.journeyapps.barcodescanner.camera.CameraSettings;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 public class SubscriptionListFragment extends Fragment {
@@ -221,6 +222,7 @@ public class SubscriptionListFragment extends Fragment {
         SubscriptionListFragmentArgs args = SubscriptionListFragmentArgs.fromBundle(requireArguments());
         meal = args.getMeal();
         cursusId = args.getCursusId();
+        HashMap<?, ?> ratingValuesUsers = (HashMap<?, ?>) args.getRatingValuesUsers();
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             if (actionBar != null)
@@ -302,6 +304,8 @@ public class SubscriptionListFragment extends Fragment {
             if (!userIds.isEmpty() && userIds.get(0) != null)
                 subscriptionListAdapter.updateSubscriptionUser(userIds);
             setNumberUserChip();
+            if (ratingValuesUsers != null)
+                subscriptionListAdapter.updateRatingValueUser(ratingValuesUsers);
             userViewModel.getUserList().postValue(subscriptionListAdapter.getUserList());
             setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
         });
