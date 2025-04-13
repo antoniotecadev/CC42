@@ -89,8 +89,16 @@ public class DetailsMealFragment extends Fragment {
 
                             // ratingValues.get(0): média da avaliação total arrendodando ex: 5
                             fillStars(binding.starRatingDone, (int) ratingValues.get(0), Double.valueOf(averageRating), false);
-                            if (ratingValueUser != null)
+                            if (ratingValueUser != null) {
+                                binding.textViewTapToRate.setTextColor(getResources().getColor(R.color.green));
                                 fillStars(binding.starRating, ratingValueUser, null, false);
+                                binding.textViewTapToRate.setText(user.getLogin());
+                                binding.starRating.star1.setClickable(false);
+                                binding.starRating.star2.setClickable(false);
+                                binding.starRating.star3.setClickable(false);
+                                binding.starRating.star4.setClickable(false);
+                                binding.starRating.star5.setClickable(false);
+                            }
 
                             List<RatingProgressItem> ratingProgressItems = new ArrayList<>();
                             for (int i = 1; i <= ratingCounts.size(); i++) { // i: estrela
