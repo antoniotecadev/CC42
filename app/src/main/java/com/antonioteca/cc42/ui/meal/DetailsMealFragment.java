@@ -81,7 +81,7 @@ public class DetailsMealFragment extends Fragment {
         mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), mealId)
                 .observe(getViewLifecycleOwner(),
                         ratingValues -> {
-                            String averageRating = (String) ratingValues.get(1); // média da avaliação total sem ser arrendodando ex: 4.5
+                            String averageRating = ratingValues.get(1).toString().replace(",", "."); // média da avaliação total sem ser arrendodando ex: 4.5
                             HashMap<?, ?> ratingCounts = (HashMap<?, ?>) ratingValues.get(2); // Total de avaliação para cada estrela
                             numberOfRatings = (int) ratingValues.get(3); // Total de números de avaliações geral de uma refeição
                             ratingValuesUsers = (HashMap<?, ?>) ratingValues.get(4); // Avaliações de cada usuário
