@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
             handleNotificationIntent(getIntent());
         } catch (Exception e) {
             Util.showAlertDialogBuild(getString(R.string.err), e.getMessage(), MainActivity.this, null);
-            e.printStackTrace();
         }
         tokenViewModel.getHttpSatus().observe(this, new Observer<HttpStatus>() {
             @Override
