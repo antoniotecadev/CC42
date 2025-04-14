@@ -86,6 +86,7 @@ public class MealListFragment extends Fragment {
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             MealsUtils.setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
             mealAdapter.clean();
+            mealViewModel.mealList.clear();
             mealViewModel.loadMeals(context, binding, mealsRef, null);
         });
 
@@ -116,6 +117,7 @@ public class MealListFragment extends Fragment {
         mealViewModel.getMealList(context, binding, mealsRef, null).observe(getViewLifecycleOwner(), meals -> {
             if (!meals.isEmpty() && meals.get(0) != null) {
                 mealAdapter.updateMealList(meals, meals.get(meals.size() - 1).getId());
+                mealViewModel.mealList.addAll(meals);
             } else
                 loading.isLoading = false;
         });

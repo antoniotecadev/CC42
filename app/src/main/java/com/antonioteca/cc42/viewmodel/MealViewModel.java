@@ -49,6 +49,7 @@ import java.util.concurrent.Executors;
 
 public class MealViewModel extends ViewModel {
 
+    public List<Meal> mealList = new ArrayList<>();
     private DatabaseReference mealRef;
     private ValueEventListener valueEventListener;
     private MutableLiveData<Meal> createdMealMutableLiveData;
@@ -88,6 +89,11 @@ public class MealViewModel extends ViewModel {
             mealListMutableLiveData = new MutableLiveData<>();
             binding.progressBarMeal.setVisibility(View.VISIBLE);
             loadMeals(context, binding, mealsRef, startAtKey);
+        } else if (mealListMutableLiveData.getValue() != null && !this.mealList.isEmpty()) {
+            mealListMutableLiveData.getValue().clear();
+            List<Meal> mealList = new ArrayList<>(this.mealList);
+            this.mealList.clear();
+            mealListMutableLiveData.postValue(mealList);
         }
         return mealListMutableLiveData;
     }
