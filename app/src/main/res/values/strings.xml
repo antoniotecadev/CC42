@@ -179,6 +179,12 @@
     <string name="notification_sent">Notificação enviada</string>
     <string name="ratings">Classificações</string>
     <string name="tap_to_rate">Toque para avaliar</string>
+    <string name="dark_mode">Modo Escuro</string>
+    <string name="theme_mode_summary_on">Active para usar o modo escuro</string>
+    <string name="theme_mode_summary_off">Desactive para usar o modo claro</string>
+    <string name="meal_time_range">Intervalo das refeições</string>
+    <string name="meal_time_range_summary_on">Mostrar</string>
+    <string name="meal_time_range_summary_off">Ocultar</string>
     <string-array name="meals_carbohydrates_title">
         <item>Arroz</item>
         <item>Massas</item>

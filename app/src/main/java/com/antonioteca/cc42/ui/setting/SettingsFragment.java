@@ -12,6 +12,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
@@ -29,9 +30,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
-        SwitchPreferenceCompat notificationKey = findPreference("notification_key");
-        SwitchPreferenceCompat themeModeKey = findPreference("theme_mode_key");
+
+        PreferenceCategory breakfastCategory = findPreference("breakfast");
+        PreferenceCategory lunchCategory = findPreference("lunch");
+        PreferenceCategory dinnerCategory = findPreference("dinner");
+
         ListPreference languageKey = findPreference("language_key");
+        SwitchPreferenceCompat themeModeKey = findPreference("theme_mode_key");
+        SwitchPreferenceCompat notificationKey = findPreference("notification_key");
+        SwitchPreferenceCompat mealTimeRangeKey = findPreference("meal_time_range_key");
 
         ThemePreferences themePreferences = new ThemePreferences(requireContext());
 
@@ -88,6 +95,20 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             });
         }
+
+        if (mealTimeRangeKey != null && breakfastCategory != null && lunchCategory != null && dinnerCategory != null) {
+            breakfastCategory.setVisible(mealTimeRangeKey.isChecked());
+            lunchCategory.setVisible(mealTimeRangeKey.isChecked());
+            dinnerCategory.setVisible(mealTimeRangeKey.isChecked());
+
+            mealTimeRangeKey.setOnPreferenceChangeListener((preference, newValue) -> {
+                breakfastCategory.setVisible((boolean) newValue);
+                lunchCategory.setVisible((boolean) newValue);
+                dinnerCategory.setVisible((boolean) newValue);
+                return true;
+            });
+        }
+
         // Obtém as SharedPreferences
         sharedPreferences = getPreferenceManager().getSharedPreferences();
 
