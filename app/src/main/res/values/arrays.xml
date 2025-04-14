@@ -2,7 +2,6 @@
     <string-array name="language_entries">
         <item>Portuguese (Angola)</item>
         <item>Portuguese (Brasil)</item>
-        <item>Portuguese (Portugal)</item>
         <item>English</item>
         <item>Spanish</item>
         <item>French</item>
@@ -11,7 +10,6 @@
     <string-array name="language_values">
         <item>pt-rAO</item>
         <item>pt-rBR</item>
-        <item>pt-rPT</item>
         <item>en</item>
         <item>es</item>
         <item>fr</item>
