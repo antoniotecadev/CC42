@@ -24,6 +24,7 @@ import android.os.Vibrator;
 import android.provider.Settings;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -297,14 +299,22 @@ public class Util {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (Environment.isExternalStorageManager())
                 return true;
+            else {
+                if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED)
+                    launchIntentPermission(context, requestIntentPermission);
+                else
+                    return true;
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED)
+                requestPermission.launch(permission);
             else
-                launchIntentPermission(context, requestIntentPermission);
-        } else
-            requestPermission.launch(permission);
+                return true;
+        }
         return false;
     }
 
-    public static void setAppLanguage(String languageCode, Resources resources, Activity activity, boolean isSettingsFragment) {
+    public static void setAppLanguage(String languageCode, @NonNull Resources resources, @NonNull Activity activity, boolean isSettingsFragment) {
         // Criar um objeto Locale com o código do idioma
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);
