@@ -43,7 +43,6 @@ public class DetailsMealFragment extends Fragment {
     private User user;
     private int cursusId;
     private String mealId;
-    private Bundle bundle;
     private int rating = 0;
     private Loading loading;
     private Context context;
@@ -56,7 +55,6 @@ public class DetailsMealFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bundle = new Bundle();
         context = requireContext();
         loading = new Loading();
         user = new User(context);
@@ -232,8 +230,6 @@ public class DetailsMealFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (bundle != null)
-            bundle.clear();
         binding = null;
     }
 }
