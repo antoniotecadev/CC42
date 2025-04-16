@@ -35,6 +35,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class DetailsMealFragment extends Fragment {
 
@@ -73,6 +74,7 @@ public class DetailsMealFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setColorCoalitionStar();
         MealsUtils.reduceStarSize(context, binding.starRatingDone, 30, 30);
         NavController navController = Navigation.findNavController(view);
         DetailsMealFragmentArgs args = DetailsMealFragmentArgs.fromBundle(requireArguments());
@@ -214,6 +216,17 @@ public class DetailsMealFragment extends Fragment {
         binding.starRating.star3.setImageResource(R.drawable.baseline_star_border_40);
         binding.starRating.star4.setImageResource(R.drawable.baseline_star_border_40);
         binding.starRating.star5.setImageResource(R.drawable.baseline_star_border_40);
+    }
+
+    private void setColorCoalitionStar() {
+        int color;
+        String colorCoalition = user.coalition.getColor();
+        color = Color.parseColor(Objects.requireNonNullElse(colorCoalition, "#FF039BE5"));
+        binding.starRating.star1.setColorFilter(color);
+        binding.starRating.star2.setColorFilter(color);
+        binding.starRating.star3.setColorFilter(color);
+        binding.starRating.star4.setColorFilter(color);
+        binding.starRating.star5.setColorFilter(color);
     }
 
     @Override
