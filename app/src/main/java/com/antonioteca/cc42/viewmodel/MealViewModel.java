@@ -20,6 +20,7 @@ import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.network.NotificationFirebase.Notification;
 import com.antonioteca.cc42.utility.DateUtils;
+import com.antonioteca.cc42.utility.EventObserver;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.utility.Util;
@@ -54,6 +55,7 @@ public class MealViewModel extends ViewModel {
     private ValueEventListener valueEventListener;
     private MutableLiveData<Meal> createdMealMutableLiveData;
     private MutableLiveData<Meal> updatedMealMutableLiveData;
+    private MutableLiveData<EventObserver<Meal>> deleteMealMutableLiveData;
     private MutableLiveData<List<Meal>> mealListMutableLiveData;
     private MutableLiveData<List<String>> pathImageMutableLiveData;
     private MutableLiveData<List<Object>> ratingValuesMutableLiveData;
@@ -68,6 +70,12 @@ public class MealViewModel extends ViewModel {
         if (updatedMealMutableLiveData == null)
             updatedMealMutableLiveData = new MutableLiveData<>();
         return updatedMealMutableLiveData;
+    }
+
+    public LiveData<EventObserver<Meal>> getDeleteMealLiveData() {
+        if (deleteMealMutableLiveData == null)
+            deleteMealMutableLiveData = new MutableLiveData<>();
+        return deleteMealMutableLiveData;
     }
 
     public LiveData<List<String>> getPathImageLiveData() {
@@ -429,20 +437,20 @@ public class MealViewModel extends ViewModel {
                                        Context context,
                                        String campusId,
                                        String cursusId,
-                                       String mealId,
-                                       String imageUrl) {
+                                       Meal meal) {
 
         DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
                 .child("cursus")
                 .child(cursusId)
                 .child("meals")
-                .child(mealId);
+                .child(meal.getId());
 
         mealsRef.removeValue()
                 .addOnSuccessListener(aVoid -> {
-                    deleteImageFromCloudinary(imageUrl, layoutInflater, context);
+                    deleteMealMutableLiveData.setValue(new EventObserver<>(meal));
                     String message = context.getString(R.string.sucess_meal_delete);
+                    deleteImageFromCloudinary(meal.getPathImage(), layoutInflater, context);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
                 })
                 .addOnFailureListener(e -> {

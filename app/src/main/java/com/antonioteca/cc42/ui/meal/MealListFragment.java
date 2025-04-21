@@ -136,6 +136,12 @@ public class MealListFragment extends Fragment {
                 mealAdapter.updateMeal(updatedMeal);
         });
 
+        mealViewModel.getDeleteMealLiveData().observe(getViewLifecycleOwner(), event -> {
+            Meal deleteMeal = event.getContentIfNotHandled();
+            if (deleteMeal != null)
+                mealAdapter.deleteMeal(deleteMeal);
+        });
+
         sharedViewModel.getPathImageLiveData().observe(getViewLifecycleOwner(), event -> {
             List<String> list = event.getContentIfNotHandled();
             if (list != null) {

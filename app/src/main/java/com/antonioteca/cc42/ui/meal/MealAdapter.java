@@ -161,6 +161,14 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         }
     }
 
+    public void deleteMeal(Meal meal) {
+        int index = mealList.indexOf(meal);
+        if (index != -1) {
+            mealList.remove(index);
+            notifyItemRemoved(index);
+        }
+    }
+
     public void updatePathImage(String idMeal, String pathImage) {
         for (int i = 0; i < mealList.size(); i++) {
             if (Objects.equals(mealList.get(i).getId(), idMeal)) {
@@ -185,7 +193,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         builder.setMessage(meal.getName());
         builder.setIcon(R.drawable.logo_42);
         builder.setNeutralButton(R.string.no, (dialog, which) -> dialog.dismiss());
-        builder.setPositiveButton(R.string.yes, (dialog, which) -> mealViewModel.deleteMealFromFirebase(firebaseDatabase, layoutInflater, context, String.valueOf(campusId), String.valueOf(cursusId), meal.getId(), meal.getPathImage()));
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> mealViewModel.deleteMealFromFirebase(firebaseDatabase, layoutInflater, context, String.valueOf(campusId), String.valueOf(cursusId), meal));
         builder.show();
     }
 
