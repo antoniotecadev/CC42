@@ -136,7 +136,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
         boolean isSubscribed = user.getSubscribedToTopicMealNotification();
         if (!isSubscribed) {
-            FirebaseMessaging.getInstance().subscribeToTopic("/topics/meals").addOnCompleteListener(task -> {
+            FirebaseMessaging.getInstance().subscribeToTopic("/topics/meals_" + campusId + "_" + cursusId).addOnCompleteListener(task -> {
                 if (task.isSuccessful())
                     user.setSubscribedToTopicMealNotification(true);
                 else {

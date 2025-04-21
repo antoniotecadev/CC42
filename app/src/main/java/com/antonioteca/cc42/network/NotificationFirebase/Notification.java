@@ -22,7 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Notification {
 
-    public static void sendNotificationForTopic(Context context, LayoutInflater layoutInflater, Meal meal, int cursusId) throws IOException {
+    public static void sendNotificationForTopic(Context context, LayoutInflater layoutInflater, Meal meal, int campusId, int cursusId) throws IOException {
         AccessTokenGenerator.getAccessToken(context, accessToken -> {
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://fcm.googleapis.com/")
@@ -33,7 +33,7 @@ public class Notification {
 
             FCMessage.Notification notification = new FCMessage.Notification("ic_notification", meal.getType(), meal.getName(), meal.getPathImage());
             FCMessage.Data data = new FCMessage.Data(meal.getId(), meal.getCreatedBy(), meal.getCreatedDate(), String.valueOf(meal.getQuantity()), String.valueOf(cursusId), "DetailsMealFragment", notification);
-            FCMessage.Message message = new FCMessage.Message("meals", notification, data);
+            FCMessage.Message message = new FCMessage.Message("meals_" + campusId + "_" + cursusId, notification, data);
             FCMessage fcmMessage = new FCMessage(message);
 
             Call<Void> call = service.sendMessage("Bearer " + accessToken, fcmMessage);

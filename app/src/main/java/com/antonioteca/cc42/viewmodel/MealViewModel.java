@@ -405,7 +405,7 @@ public class MealViewModel extends ViewModel {
                     String message = mealName + "\n" + context.getString(R.string.save_meal);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
                     try {
-                        Notification.sendNotificationForTopic(context, layoutInflater, meal, Integer.parseInt(cursusId));
+                        Notification.sendNotificationForTopic(context, layoutInflater, meal, Integer.parseInt(campusId), Integer.parseInt(cursusId));
                     } catch (IOException e) {
                         Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
                     }

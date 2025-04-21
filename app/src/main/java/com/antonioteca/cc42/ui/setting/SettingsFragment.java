@@ -17,6 +17,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.utility.Util;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -30,6 +31,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
+
+        User user = new User(requireContext());
+        String campusId = String.valueOf(user.getCampusId());
+        String cursusId = String.valueOf(user.getCursusId());
+        String topic = "/topics/meals_" + campusId + "_" + cursusId;
 
         PreferenceCategory breakfastCategory = findPreference("breakfast");
         PreferenceCategory lunchCategory = findPreference("lunch");
@@ -46,7 +52,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             FirebaseMessaging messaging = FirebaseMessaging.getInstance();
             notificationKey.setOnPreferenceChangeListener((preference, newValue) -> {
                 if (!notificationKey.isChecked()) {
-                    messaging.subscribeToTopic("/topics/meals").addOnCompleteListener(task -> {
+                    messaging.subscribeToTopic(topic).addOnCompleteListener(task -> {
                         if (!task.isSuccessful()) {
                             exception = task.getException();
                             if (exception != null)
@@ -55,7 +61,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             setRequestPermissionLauncherNotification(preference.getContext(), REQUEST_CODE_POST_NOTIFICATIONS);
                     });
                 } else {
-                    messaging.unsubscribeFromTopic("/topics/meals").addOnCompleteListener(task -> {
+                    messaging.unsubscribeFromTopic(topic).addOnCompleteListener(task -> {
                         if (!task.isSuccessful())
                             if (exception != null) {
                                 Util.showAlertDialogMessage(preference.getContext(), getLayoutInflater(), preference.getContext().getString(R.string.err), exception.getMessage(), "#E53935", null);
