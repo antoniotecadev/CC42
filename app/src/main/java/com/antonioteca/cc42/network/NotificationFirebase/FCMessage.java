@@ -24,7 +24,7 @@ public class FCMessage {
         private String body;
         private String image;
 
-        public Notification(String icon, String title, String body, String image) {
+        public Notification(String title, String body, String image) {
             this.title = title;
             this.body = body;
             this.image = image;
@@ -51,17 +51,19 @@ public class FCMessage {
         private String key3;
         private String key4;
         private String key5;
+        private String key6;
         private String title;
         private String body;
         private String image;
 
-        public Data(String key0, String key1, String key2, String key3, String key4, String key5, Notification notification) {
+        public Data(String key0, String key1, String key2, String key3, String key4, String key5, String key6, Notification notification) {
             this.key0 = key0;
             this.key1 = key1;
             this.key2 = key2;
             this.key3 = key3;
             this.key4 = key4;
             this.key5 = key5;
+            this.key6 = key6;
             this.title = notification.getTitle();
             this.body = notification.getBody();
             this.image = notification.getImage();

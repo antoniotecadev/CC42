@@ -10,6 +10,7 @@ public class Meal implements Parcelable {
     private transient int rating;
     private String type;
     private String name;
+    private String description;
     private int quantity;
     private String createdDate;
     private String pathImage;
@@ -18,10 +19,11 @@ public class Meal implements Parcelable {
     public Meal() {
     }
 
-    public Meal(String id, String type, String name, int quantity, String pathImage, int rating, String createdBy, String createdDate) {
+    public Meal(String id, String type, String name, String description, int quantity, String pathImage, int rating, String createdBy, String createdDate) {
         this.id = id;
         this.type = type;
         this.name = name;
+        this.description = description;
         this.quantity = quantity;
         this.pathImage = pathImage;
         this.rating = rating;
@@ -33,6 +35,7 @@ public class Meal implements Parcelable {
         id = in.readString();
         type = in.readString();
         name = in.readString();
+        description = in.readString();
         quantity = in.readInt();
         pathImage = in.readString();
         rating = in.readInt();
@@ -45,6 +48,7 @@ public class Meal implements Parcelable {
         dest.writeString(id);
         dest.writeString(type);
         dest.writeString(name);
+        dest.writeString(description);
         dest.writeInt(quantity);
         dest.writeString(pathImage);
         dest.writeInt(rating);
@@ -90,6 +94,14 @@ public class Meal implements Parcelable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getCreatedDate() {

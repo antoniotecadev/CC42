@@ -327,7 +327,8 @@ public class MealViewModel extends ViewModel {
                                          int mealsQuantity
     ) {
 
-        String mealName = binding.mealsEditText.getText().toString();
+        String mealName = binding.nameEditText.getText().toString();
+        String mealDescription = binding.descriptionEditText.getText().toString();
 
         DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
@@ -341,6 +342,7 @@ public class MealViewModel extends ViewModel {
         // Criar um mapa com os novos valores
         Map<String, Object> updates = new HashMap<>();
         updates.put("name", mealName);
+        updates.put("description", mealDescription);
         updates.put("quantity", mealsQuantity);
         updates.put("updatedBy", updatedBy);
         updates.put("updatedDate", updatedDate);
@@ -349,6 +351,7 @@ public class MealViewModel extends ViewModel {
             updates.put("pathImage", newImageUrl);
         }
         meal.setName(mealName);
+        meal.setDescription(mealDescription);
         meal.setQuantity(mealsQuantity);
 
         // Atualizar os dados
@@ -378,7 +381,8 @@ public class MealViewModel extends ViewModel {
                                    int mealsQuantity
     ) {
 
-        String mealName = binding.mealsEditText.getText().toString();
+        String mealName = binding.nameEditText.getText().toString();
+        String mealDescription = binding.descriptionEditText.getText().toString();
         String type = MealsUtils.getMealType(context);
 
         DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
@@ -396,6 +400,7 @@ public class MealViewModel extends ViewModel {
                 mealId,
                 type,
                 mealName,
+                mealDescription,
                 mealsQuantity,
                 imageUrl,
                 0,
@@ -407,7 +412,8 @@ public class MealViewModel extends ViewModel {
                 .addOnSuccessListener(aVoid -> {
                     createdMealMutableLiveData.setValue(meal);
                     binding.chipContainer.removeAllViews();
-                    binding.mealsEditText.setText("");
+                    binding.nameEditText.setText("");
+                    binding.descriptionEditText.setText("");
                     binding.quantityEditText.setText("0");
                     restaureViews(binding);
                     String message = mealName + "\n" + context.getString(R.string.save_meal);

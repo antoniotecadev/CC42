@@ -130,10 +130,13 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         boolean isCreate = args.getIsCreate();
 
         if (!isCreate && meal != null) {
+            String mealdescription = meal.getDescription();
             Uri imageUri = Uri.parse(meal.getPathImage());
             this.imageUri = imageUri;
             loadingImageMeal(imageUri);
-            addChipsFromData(meal.getName());
+            binding.nameEditText.setText(meal.getName());
+            if (mealdescription != null)
+                addChipsFromData(mealdescription);
             binding.quantityEditText.setText(String.valueOf(meal.getQuantity()));
             binding.buttonCreateMeal.setText(getText(R.string.ok));
         } else {
@@ -219,20 +222,22 @@ public class DialogFragmentCreateMeal extends DialogFragment {
     }
 
     private void addChipsFromData(@NonNull String data) {
-        // Divide a string em um array de strings
-        String[] items = data.split(",");
+        if (!data.isEmpty()) {
+            // Divide a string em um array de strings
+            String[] items = data.split(",");
 
-        // Itera sobre o array de strings
-        for (String item : items) {
-            // Remove espaços em branco extras
-            String mealTrim = item.trim();
-            // Cria um novo Chip
-            final Chip chip = getChip(mealTrim);
+            // Itera sobre o array de strings
+            for (String item : items) {
+                // Remove espaços em branco extras
+                String mealTrim = item.trim();
+                // Cria um novo Chip
+                final Chip chip = getChip(mealTrim);
 
-            // Adiciona o Chip ao LinearLayout
-            selectedItems.add(mealTrim); // Adicionar item  a lista
-            binding.chipContainer.addView(chip);
-            updateFinalText();
+                // Adiciona o Chip ao LinearLayout
+                selectedItems.add(mealTrim); // Adicionar item  a lista
+                binding.chipContainer.addView(chip);
+                updateFinalText();
+            }
         }
     }
 
@@ -261,11 +266,11 @@ public class DialogFragmentCreateMeal extends DialogFragment {
             finalText.setLength(finalText.length() - 2);
         }
         // Define o texto no EditText
-        binding.mealsEditText.setText(finalText.toString());
+        binding.descriptionEditText.setText(finalText.toString());
     }
 
     private boolean validateData(Meal meal, boolean isCreate, LayoutInflater layoutInflater) {
-        String mealsName = binding.mealsEditText.getText().toString();
+        String mealsName = binding.nameEditText.getText().toString();
         if (isEmptyField(mealsName)) {
             Toast.makeText(context, R.string.meals_not_found, Toast.LENGTH_LONG).show();
             return false;
@@ -326,7 +331,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             meal.getId(),
                             imageUri,
                             mealViewModel.extractPublicIdFromUrl(meal.getPathImage()),
-                            binding.mealsEditText.getText().toString().equals(meal.getName()) && getMealsQuantity() == meal.getQuantity(),
+                            binding.nameEditText.getText().toString().equals(meal.getName()) && getMealsQuantity() == meal.getQuantity(),
                             getMealsQuantity());
                 } else {
                     mealViewModel.updateMealDataInFirebase(

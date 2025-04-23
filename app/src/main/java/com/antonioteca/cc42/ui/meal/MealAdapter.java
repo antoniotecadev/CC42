@@ -72,7 +72,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         Meal meal = mealList.get(position);
         holder.binding.textViewType.setText(meal.getType());
         holder.binding.textViewName.setText(meal.getName());
-//        holder.binding.textViewDescription.setText("");
+        holder.binding.textViewDescription.setText(meal.getDescription());
         holder.binding.txtViewQuantity.setText(String.valueOf(meal.getQuantity()));
         holder.binding.textViewDateCreated.setText(meal.getCreatedDate());
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal, false);

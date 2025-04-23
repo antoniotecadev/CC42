@@ -132,7 +132,8 @@ public class MainActivity extends AppCompatActivity {
                 String createdData = intent.getStringExtra("key2");
                 String quantity = intent.getStringExtra("key3");
                 String cursusId = intent.getStringExtra("key4");
-                Meal meal = new Meal(id, title, body, Integer.parseInt(quantity != null ? quantity : "0"), imageUrl, 0, createdBy, createdData);
+                String description = intent.getStringExtra("key6");
+                Meal meal = new Meal(id, title, body, description, Integer.parseInt(quantity != null ? quantity : "0"), imageUrl, 0, createdBy, createdData);
 
                 Intent i = new Intent(this, NavigationDrawerActivity.class);
                 i.setAction("OPEN_FRAGMENT_ACTION_BACKGROUND");
