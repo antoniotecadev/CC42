@@ -151,6 +151,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
     public void addMeal(Meal meal) {
         mealList.add(0, meal);
         notifyItemInserted(0);
+        mealViewModel.mealList.add(0, meal);
     }
 
     public void updateMeal(Meal meal) {
@@ -158,6 +159,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         if (index != -1) {
             mealList.set(index, meal);
             notifyItemChanged(index);
+            mealViewModel.mealList.set(index, meal);
         }
     }
 
@@ -166,6 +168,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         if (index != -1) {
             mealList.remove(index);
             notifyItemRemoved(index);
+            mealViewModel.mealList.remove(index);
         }
     }
 
