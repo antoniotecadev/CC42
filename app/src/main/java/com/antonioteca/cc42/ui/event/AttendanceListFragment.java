@@ -116,7 +116,8 @@ public class AttendanceListFragment extends Fragment {
                     String resultQrCode = result.getText().replace("cc42user", "");
                     String[] partsQrCode = resultQrCode.split("#", 5);
                     if (partsQrCode.length == 5) {
-                        if (attendanceListAdapter.containsUser(Long.parseLong(partsQrCode[0]))) {
+                        String urlImageUser = attendanceListAdapter.containsUser(Long.parseLong(partsQrCode[0]));
+                        if (urlImageUser != null) {
                             /*if (true) {
                                 LocalAttendanceList user = new LocalAttendanceList();
                                 user.userId = Long.parseLong(partsQrCode[0]);
@@ -142,7 +143,7 @@ public class AttendanceListFragment extends Fragment {
                                     partsQrCode[2],
                                     partsQrCode[3],
                                     partsQrCode[4],
-                                    null,
+                                    urlImageUser,
                                     context,
                                     layoutInflater,
                                     binding.progressBarMarkAttendance,

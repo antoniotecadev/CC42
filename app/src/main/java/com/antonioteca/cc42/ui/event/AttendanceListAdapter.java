@@ -15,6 +15,7 @@ import com.antonioteca.cc42.utility.Util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAdapter.AttendanceListViewHolder> {
 
@@ -71,13 +72,13 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         notifyDataSetChanged();
     }
 
-    public boolean containsUser(long userId) {
+    public String containsUser(long userId) {
         for (User user : getUserList()) {
             if (user.uid == userId) {
-                return true;
+                return Objects.requireNonNullElse(user.getUrlImageUser(), "");
             }
         }
-        return false;
+        return null;
     }
 
     @NonNull

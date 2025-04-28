@@ -17,6 +17,7 @@ import com.antonioteca.cc42.utility.Util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionListAdapter.SubscriptionListViewHolder> {
 
@@ -83,13 +84,13 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         notifyDataSetChanged();
     }
 
-    public boolean containsUser(long userId) {
+    public String containsUser(long userId) {
         for (User user : getUserList()) {
             if (user.uid == userId) {
-                return true;
+                return Objects.requireNonNullElse(user.getUrlImageUser(), "");
             }
         }
-        return false;
+        return null;
     }
 
     @NonNull
