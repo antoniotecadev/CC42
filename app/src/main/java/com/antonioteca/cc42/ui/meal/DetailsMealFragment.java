@@ -143,7 +143,7 @@ public class DetailsMealFragment extends Fragment {
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
                 rating = 0; // Para poder mostrar a classificação, ao voltar <-
-                DetailsMealFragmentDirections.ActionDetailsMealFragmentToQrCodeFragment actionDetailsMealFragmentToQrCodeFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToQrCodeFragment("meal" + meal.getId(), meal.getName(), "description");
+                DetailsMealFragmentDirections.ActionDetailsMealFragmentToQrCodeFragment actionDetailsMealFragmentToQrCodeFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToQrCodeFragment("meal" + meal.getId(), meal.getName(), meal.getDescription());
                 navController.navigate(actionDetailsMealFragmentToQrCodeFragment);
             } catch (IllegalArgumentException e) {
                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
