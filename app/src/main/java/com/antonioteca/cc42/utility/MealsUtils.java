@@ -2,7 +2,6 @@ package com.antonioteca.cc42.utility;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.preference.PreferenceManager;
@@ -92,6 +91,7 @@ public class MealsUtils {
         if (selectedRating >= 5)
             starRatingBinding.star5.setImageResource(R.drawable.baseline_filled_star_40);
     }
+
     public static void reduceStarSize(Context context, StarRatingBinding starRatingBinding, int newWidth, int newHeight) {
         ImageView[] stars = new ImageView[]{
                 starRatingBinding.star1,
@@ -102,15 +102,7 @@ public class MealsUtils {
         };
 
         for (ImageView star : stars) {
-            ViewGroup.LayoutParams params = star.getLayoutParams();
-            params.width = dpToPx(newWidth, context);
-            params.height = dpToPx(newHeight, context);
-            star.setLayoutParams(params);
+            Util.setWidthHeightImageView(context, newWidth, newHeight, star);
         }
-    }
-
-    private static int dpToPx(int dp, Context context) {
-        float density = context.getResources().getDisplayMetrics().density;
-        return Math.round(dp * density);
     }
 }

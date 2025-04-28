@@ -86,6 +86,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private String displayName;
     private String campusId;
     private String cursusId;
+    private String urlImageUser;
     private Context context;
     private Bundle args;
     private MenuProvider menuProvider;
@@ -128,6 +129,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         displayName = user.getDisplayName();
         cursusId = String.valueOf(user.getCursusId());
         campusId = String.valueOf(user.getCampusId());
+        urlImageUser = user.getImage();
         context = NavigationDrawerActivity.this;
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
@@ -142,7 +144,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 else {
                     Exception e = task.getException();
                     if (e != null)
-                        Util.showAlertDialogMessage(this, getLayoutInflater(), getString(R.string.err), "Topic: " + e.getMessage(), "#E53935", null);
+                        Util.showAlertDialogMessage(this, getLayoutInflater(), getString(R.string.err), "Topic: " + e.getMessage(), "#E53935", null, null);
                 }
             });
         }
@@ -303,7 +305,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         String resultContents = result.getContents();
         if (resultContents == null) return;
         if (resultContents.isEmpty()) {
-            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null);
+            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, null);
         } else {
             if (resultContents.startsWith("cc42event")) {
                 String resultQrCode = resultContents.replace("cc42event", "");
@@ -318,6 +320,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                             displayName,
                             cursusId,
                             campusId,
+                            urlImageUser,
                             context,
                             getLayoutInflater(),
                             progressBarMarkAttendance,
@@ -326,7 +329,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                             null
                     );
                 } else
-                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null);
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, null);
             } else if (resultContents.startsWith("cc42meal")) {
                 Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                 DaoSusbscriptionFirebase.subscription(
@@ -337,6 +340,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                         displayName,
                         cursusId,
                         campusId,
+                        urlImageUser,
                         context,
                         getLayoutInflater(),
                         progressBarMarkAttendance,
@@ -345,7 +349,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                         null
                 );
             } else
-                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null);
+                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, null);
         }
     });
 

@@ -30,6 +30,7 @@ public class DaoEventFirebase {
             String displayName,
             String cursusId,
             String campusId,
+            String urlImageUser,
             Context context,
             LayoutInflater layoutInflater,
             ProgressBar progressBarMarkAttendance,
@@ -54,7 +55,7 @@ public class DaoEventFirebase {
                 if (snapshot.exists()) {
                     Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                     String message = displayName + "\n" + context.getString(R.string.msg_you_already_mark_attendance_event);
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", runnableResumeCamera);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", urlImageUser, runnableResumeCamera);
                 } else {
                     Map<String, Object> participantData = new HashMap<>();
                     participantData.put(String.valueOf(userId), true);
@@ -75,12 +76,12 @@ public class DaoEventFirebase {
                                 sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
                                 Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = displayName + "\n" + context.getString(R.string.msg_sucess_mark_attendance_event);
-                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", runnableResumeCamera);
+                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", urlImageUser, runnableResumeCamera);
                             })
                             .addOnFailureListener(e -> {
                                 Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = context.getString(R.string.msg_error_mark_attendance_event) + ": " + e.getMessage();
-                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", runnableResumeCamera);
+                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", urlImageUser, runnableResumeCamera);
                             });
                 }
             }
@@ -89,7 +90,7 @@ public class DaoEventFirebase {
             public void onCancelled(@NonNull DatabaseError error) {
                 Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                 String message = context.getString(R.string.msg_error_check_attendance_event) + ": " + error.toException();
-                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", runnableResumeCamera);
+                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", urlImageUser, runnableResumeCamera);
             }
         });
     }

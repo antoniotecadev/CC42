@@ -194,7 +194,7 @@ public class MealViewModel extends ViewModel {
                     @Override
                     public void onError(String requestId, ErrorInfo error) {
                         String message = context.getString(R.string.error_save_image) + ": " + error.getDescription();
-                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
                         saveMealToFirebase(firebaseDatabase,
                                 layoutInflater,
                                 binding,
@@ -275,7 +275,7 @@ public class MealViewModel extends ViewModel {
                     public void onError(String requestId, ErrorInfo error) {
                         restaureViews(binding);
                         String message = context.getString(R.string.error_update_image) + error.getDescription();
-                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
                     }
 
                     @Override
@@ -304,12 +304,12 @@ public class MealViewModel extends ViewModel {
                 .addOnSuccessListener(aVoid -> {
                     restaureViews(binding);
                     String message = context.getString(R.string.sucess_image_update);
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null, null);
                 })
                 .addOnFailureListener(e -> {
                     restaureViews(binding);
                     String message = context.getString(R.string.error_update_image_url) + e.getMessage();
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
                     deleteImageFromCloudinary(newImageUrl, layoutInflater, context);
                 });
     }
@@ -360,12 +360,12 @@ public class MealViewModel extends ViewModel {
                     updatedMealMutableLiveData.setValue(meal);
                     restaureViews(binding);
                     String message = context.getString(R.string.sucess_meal_update);
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null, null);
                 })
                 .addOnFailureListener(e -> {
                     restaureViews(binding);
                     String message = context.getString(R.string.error_meal_update) + e.getMessage();
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
                     deleteImageFromCloudinary(newImageUrl, layoutInflater, context);
                 });
     }
@@ -417,7 +417,7 @@ public class MealViewModel extends ViewModel {
                     binding.quantityEditText.setText("0");
                     restaureViews(binding);
                     String message = mealName + "\n" + context.getString(R.string.save_meal);
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null, null);
                     try {
                         Notification.sendNotificationForTopic(context, layoutInflater, meal, Integer.parseInt(campusId), Integer.parseInt(cursusId));
                     } catch (IOException e) {
@@ -427,7 +427,7 @@ public class MealViewModel extends ViewModel {
                 .addOnFailureListener(e -> {
                     restaureViews(binding);
                     String message = mealName + "\n" + context.getString(R.string.error_save_meal) + ": " + e.getMessage();
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
                     deleteImageFromCloudinary(imageUrl, layoutInflater, context);
                 });
     }
@@ -457,11 +457,11 @@ public class MealViewModel extends ViewModel {
                     deleteMealMutableLiveData.setValue(new EventObserver<>(meal));
                     String message = context.getString(R.string.sucess_meal_delete);
                     deleteImageFromCloudinary(meal.getPathImage(), layoutInflater, context);
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null, null);
                 })
                 .addOnFailureListener(e -> {
                     String message = context.getString(R.string.error_meal_delete) + e.getMessage();
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
                 });
     }
 
@@ -479,7 +479,7 @@ public class MealViewModel extends ViewModel {
                 hendler.post(() -> {
                     if (!"ok".equals(result.get("result"))) {
                         String message = context.getString(R.string.error_delete_image);
-                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
                     }
                 });
             } catch (IOException e) {
@@ -522,12 +522,12 @@ public class MealViewModel extends ViewModel {
                 .addOnSuccessListener(aVoid -> {
                     loading.isLoading = false;
                     progressBarMeal.setVisibility(View.INVISIBLE);
-                    Util.showAlertDialogMessage(context, LayoutInflater.from(context), "" + rating, context.getString(R.string.rating_submitted_successfully), "#4CAF50", null);
+                    Util.showAlertDialogMessage(context, LayoutInflater.from(context), "" + rating, context.getString(R.string.rating_submitted_successfully), "#4CAF50", null, null);
                 })
                 .addOnFailureListener(e -> {
                     loading.isLoading = false;
                     progressBarMeal.setVisibility(View.INVISIBLE);
-                    Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), e.getMessage(), "#E53935", null);
+                    Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), e.getMessage(), "#E53935", null, null);
                 });
     }
 
@@ -583,7 +583,7 @@ public class MealViewModel extends ViewModel {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), error.getMessage(), "#E53935", null);
+                Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), error.getMessage(), "#E53935", null, null);
             }
         };
         mealRef.child("ratings").addValueEventListener(valueEventListener);

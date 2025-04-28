@@ -110,7 +110,7 @@ public class AttendanceListFragment extends Fragment {
             Util.startVibration(context);
             beepManager.playBeepSoundAndVibrate();
             if (result.getText().isEmpty()) {
-                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", () -> decoratedBarcodeView.resume());
+                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
             } else {
                 if (result.getText().startsWith("cc42user")) {
                     String resultQrCode = result.getText().replace("cc42user", "");
@@ -142,6 +142,7 @@ public class AttendanceListFragment extends Fragment {
                                     partsQrCode[2],
                                     partsQrCode[3],
                                     partsQrCode[4],
+                                    null,
                                     context,
                                     layoutInflater,
                                     binding.progressBarMarkAttendance,
@@ -151,11 +152,11 @@ public class AttendanceListFragment extends Fragment {
                             );
                             //}
                         } else
-                            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), partsQrCode[2] + "\n" + getString(R.string.msg_user_unregistered), "#FDD835", () -> decoratedBarcodeView.resume());
+                            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), partsQrCode[2] + "\n" + getString(R.string.msg_user_unregistered), "#FDD835", null, () -> decoratedBarcodeView.resume());
                     } else
-                        Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", () -> decoratedBarcodeView.resume());
+                        Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
                 } else
-                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", () -> decoratedBarcodeView.resume());
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
             }
         }
 

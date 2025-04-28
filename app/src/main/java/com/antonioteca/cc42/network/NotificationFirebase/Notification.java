@@ -42,7 +42,7 @@ public class Notification {
                 public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                     if (!response.isSuccessful()) {
                         HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
-                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpStatus.getDescription(), "#E53935", null);
+                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpStatus.getDescription(), "#E53935", null, null);
                     } else
                         Toast.makeText(context, R.string.notification_sent, Toast.LENGTH_LONG).show();
                 }
@@ -50,7 +50,7 @@ public class Notification {
                 @Override
                 public void onFailure(@NonNull Call<Void> call, @NonNull Throwable throwable) {
                     HttpException httpException = HttpException.handleException(throwable, context);
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpException.getDescription(), "#E53935", null);
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpException.getDescription(), "#E53935", null, null);
                 }
             });
         });

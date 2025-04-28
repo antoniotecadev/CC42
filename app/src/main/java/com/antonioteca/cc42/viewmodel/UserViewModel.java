@@ -275,7 +275,7 @@ public class UserViewModel extends ViewModel {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 String message = context.getString(R.string.msg_error_check_attendance_event) + ": " + error.toException();
-                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
                 userIdsListMutableLiveData.postValue(userIdsWithMarkedAttendance);
             }
         });
@@ -423,7 +423,7 @@ public class UserViewModel extends ViewModel {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 String message = context.getString(R.string.msg_error_check_subscription) + ": " + error.toException();
-                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null);
+                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
                 userIdsListMutableLiveData.postValue(userIdsSubscription);
             }
         });

@@ -56,7 +56,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         if (!task.isSuccessful()) {
                             exception = task.getException();
                             if (exception != null)
-                                Util.showAlertDialogMessage(preference.getContext(), getLayoutInflater(), preference.getContext().getString(R.string.err), exception.getMessage(), "#E53935", null);
+                                Util.showAlertDialogMessage(preference.getContext(), getLayoutInflater(), preference.getContext().getString(R.string.err), exception.getMessage(), "#E53935", null, null);
                         } else
                             setRequestPermissionLauncherNotification(preference.getContext(), REQUEST_CODE_POST_NOTIFICATIONS);
                     });
@@ -64,7 +64,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     messaging.unsubscribeFromTopic(topic).addOnCompleteListener(task -> {
                         if (!task.isSuccessful())
                             if (exception != null) {
-                                Util.showAlertDialogMessage(preference.getContext(), getLayoutInflater(), preference.getContext().getString(R.string.err), exception.getMessage(), "#E53935", null);
+                                Util.showAlertDialogMessage(preference.getContext(), getLayoutInflater(), preference.getContext().getString(R.string.err), exception.getMessage(), "#E53935", null, null);
                             }
                     });
                 }

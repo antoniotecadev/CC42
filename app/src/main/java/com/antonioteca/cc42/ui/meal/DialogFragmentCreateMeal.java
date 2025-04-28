@@ -280,7 +280,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                 && mealsName.equals(meal.getName())
                 && getMealsQuantity() == meal.getQuantity()) {
             String message = context.getString(R.string.nothing_edit);
-            Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", null);
+            Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", null, null);
             return false;
         }
         return true;

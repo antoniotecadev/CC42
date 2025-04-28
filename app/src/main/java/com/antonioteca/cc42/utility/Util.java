@@ -24,7 +24,6 @@ import android.os.Vibrator;
 import android.provider.Settings;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +63,7 @@ public class Util {
         // Verificar se a permissão foi concedida para exibir notificações - Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.notificatio_header), context.getString(R.string.notification_permission_message), "#4CAF50", () -> ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_POST_NOTIFICATIONS));
+                Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.notificatio_header), context.getString(R.string.notification_permission_message), "#4CAF50", null, () -> ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_POST_NOTIFICATIONS));
             }
         }
     }
@@ -233,7 +232,7 @@ public class Util {
                                               String title,
                                               String message,
                                               String colorString,
-                                              Runnable runnableResumeCamera) {
+                                              String urlImageUser, Runnable runnableResumeCamera) {
         View customView = layoutInflater.inflate(R.layout.modal_layout_event_message, null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -242,6 +241,11 @@ public class Util {
         TextView modalMessage = customView.findViewById(R.id.modalMessage);
         TextView modalTitle = customView.findViewById(R.id.modalTitle);
         Button closeModalButton = customView.findViewById(R.id.closeModalButton);
+        if (urlImageUser != null) {
+            Util.setWidthHeightImageView(context, 200, 200, customView.findViewById(R.id.successIcon));
+            ImageView successIcon = customView.findViewById(R.id.successIcon);
+            setImageUserRegistered(context, urlImageUser, successIcon);
+        }
         int color = Color.parseColor(colorString);
         ColorStateList colorStateList = ColorStateList.valueOf(color);
         modalTitle.setText(title);
@@ -341,5 +345,17 @@ public class Util {
         Intent intent = activity.getIntent();
         activity.finish();
         activity.startActivity(intent);
+    }
+
+    public static void setWidthHeightImageView(Context context, int newWidth, int newHeight, ImageView imageView) {
+        ViewGroup.LayoutParams params = imageView.getLayoutParams();
+        params.width = dpToPx(newWidth, context);
+        params.height = dpToPx(newHeight, context);
+        imageView.setLayoutParams(params);
+    }
+
+    public static int dpToPx(int dp, Context context) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
     }
 }
