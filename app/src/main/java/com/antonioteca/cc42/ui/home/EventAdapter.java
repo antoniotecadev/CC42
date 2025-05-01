@@ -99,21 +99,22 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             }
         });
 
-        holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-            @Override
-            public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-                contextMenu.setHeaderTitle(event.getDescription());
-                MenuItem menuItem = contextMenu.add(view.getContext().getString(R.string.qr_code));
-                menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
-                        Bitmap bitmapQrCode = generateQrCodeWithLogo(view.getContext(), "event" + event.getId() + "#" + new User(view.getContext()).getUid());
-                        showModalQrCode(view.getContext(), bitmapQrCode, event.getKind(), event.getName());
-                        return true;
-                    }
-                });
-            }
-        });
+//        Gerar código QR Code
+//        holder.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+//            @Override
+//            public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+//                contextMenu.setHeaderTitle(event.getDescription());
+//                MenuItem menuItem = contextMenu.add(view.getContext().getString(R.string.qr_code));
+//                menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//                    @Override
+//                    public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
+//                        Bitmap bitmapQrCode = generateQrCodeWithLogo(view.getContext(), "event" + event.getId() + "#" + new User(view.getContext()).getUid());
+//                        showModalQrCode(view.getContext(), bitmapQrCode, event.getKind(), event.getName());
+//                        return true;
+//                    }
+//                });
+//            }
+//        });
     }
 
     @Override

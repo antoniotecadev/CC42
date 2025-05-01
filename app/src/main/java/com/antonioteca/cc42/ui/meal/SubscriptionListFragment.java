@@ -124,6 +124,7 @@ public class SubscriptionListFragment extends Fragment {
                             DaoSusbscriptionFirebase.subscription(
                                     firebaseDatabase,
                                     String.valueOf(meal.getId()),
+                                    null,
                                     partsQrCode[0], /* id */
                                     partsQrCode[1], /* login */
                                     partsQrCode[2], /* displayName */

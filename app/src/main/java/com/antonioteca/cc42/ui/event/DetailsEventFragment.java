@@ -7,6 +7,7 @@ import static com.antonioteca.cc42.utility.DateUtils.parseDate;
 import static com.antonioteca.cc42.utility.Util.setMarkdownText;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,16 +25,20 @@ import androidx.navigation.Navigation;
 import com.antonioteca.cc42.databinding.FragmentDetailsEventBinding;
 import com.antonioteca.cc42.model.Event;
 import com.antonioteca.cc42.model.User;
+import com.antonioteca.cc42.utility.Loading;
 
 import java.util.Date;
 
 public class DetailsEventFragment extends Fragment {
-
+    private User user;
+    private Context context;
     private FragmentDetailsEventBinding binding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = requireContext();
+        user = new User(context);
     }
 
     @SuppressLint("SetTextI18n")
@@ -77,14 +82,16 @@ public class DetailsEventFragment extends Fragment {
         binding.textViewLocation.setText(event.getLocation());
         binding.textViewPeople.setText(event.getNbr_subscribers() + " / " + event.getMax_people());
         setMarkdownText(binding.textViewDescription, event.getDescription());
+
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
-                DetailsEventFragmentDirections.ActionDetailsEventFragmentToQrCodeFragment actionDetailsEventFragmentToQrCodeFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToQrCodeFragment("event" + event.getId() + "#" + new User(requireContext()).getUid(), event.getKind(), event.getName());
+                DetailsEventFragmentDirections.ActionDetailsEventFragmentToQrCodeFragment actionDetailsEventFragmentToQrCodeFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToQrCodeFragment("event" + event.getId() + "#" + user.getUid(), event.getKind(), event.getName(), user.getCampusId(), event.getCursus_ids().get(0));
                 navController.navigate(actionDetailsEventFragmentToQrCodeFragment);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
         });
+
         binding.fabOpenAttendanceList.setOnClickListener(v -> {
             try {
                 DetailsEventFragmentDirections.ActionDetailsEventFragmentToAttendanceListFragment actionDetailsEventFragmentToAttendanceListFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToAttendanceListFragment(event.getId(), event.getCursus_ids().get(0), event.getKind(), event.getName(), String.valueOf(binding.textViewDate.getText()));

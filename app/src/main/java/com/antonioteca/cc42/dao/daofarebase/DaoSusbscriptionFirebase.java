@@ -25,6 +25,7 @@ public class DaoSusbscriptionFirebase {
     public static void subscription(
             FirebaseDatabase firebaseDatabase,
             String mealId,
+            String userStaffId,
             String userId,
             String userLogin,
             String displayName,
@@ -62,6 +63,8 @@ public class DaoSusbscriptionFirebase {
 
                     campusReference.updateChildren(update)
                             .addOnSuccessListener(aVoid -> {
+                                if (userStaffId != null)
+                                    Util.sendInfoTmpUserEventMeal(userStaffId, firebaseDatabase, campusId, cursusId, displayName, urlImageUser);
                                 sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
                                 Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = displayName + "\n" + context.getString(R.string.msg_sucess_subscription);

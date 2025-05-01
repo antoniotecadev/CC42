@@ -43,6 +43,8 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ImageQrCodeBinding;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -357,5 +359,21 @@ public class Util {
     public static int dpToPx(int dp, Context context) {
         float density = context.getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
+    }
+
+    public static void sendInfoTmpUserEventMeal(String userStaffId, FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String displayName, String urlImageUser) {
+        if (userStaffId != null) {
+            DatabaseReference ref = firebaseDatabase.getReference("campus")
+                    .child(campusId)
+                    .child("cursus")
+                    .child(cursusId)
+                    .child("infoTmpUserEventMeal")
+                    .child(userStaffId);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("displayName", displayName);
+            map.put("urlImageUser", urlImageUser);
+            ref.updateChildren(map);
+        }
     }
 }

@@ -154,6 +154,12 @@
         <argument
             android:name="description"
             app:argType="string" />
+        <argument
+            android:name="campusId"
+            app:argType="integer" />
+        <argument
+            android:name="cursusId"
+            app:argType="integer" />
     </fragment>
     <dialog
         android:id="@+id/aboutDialogFragment"

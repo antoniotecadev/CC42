@@ -92,7 +92,7 @@ public class HomeFragment extends Fragment {
             if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.qrCodeFragment) {
                 String content = "user" + uid + "#" + userLogin + "#" + displayName + "#" + cursusId + "#" + campusId;
                 HomeFragmentDirections.ActionNavHomeToQrCodeFragment actionNavHomeToQrCodeFragment =
-                        HomeFragmentDirections.actionNavHomeToQrCodeFragment(content, user.getLogin(), user.getDisplayName());
+                        HomeFragmentDirections.actionNavHomeToQrCodeFragment(content, userLogin, displayName, 0, 0);
                 Navigation.findNavController(v).navigate(actionNavHomeToQrCodeFragment);
             }
         });

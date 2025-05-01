@@ -25,6 +25,7 @@ public class DaoEventFirebase {
     public static void markAttendance(
             FirebaseDatabase firebaseDatabase,
             String eventId,
+            String userStaffId,
             Long registeredBy,
             String userId,
             String displayName,
@@ -73,6 +74,8 @@ public class DaoEventFirebase {
                     // Execute a operação atômica para armazenar o evento e os participantes
                     campusReference.updateChildren(eventUpdates)
                             .addOnSuccessListener(aVoid -> {
+                                if (userStaffId != null)
+                                    Util.sendInfoTmpUserEventMeal(userStaffId, firebaseDatabase, campusId, cursusId, displayName, urlImageUser);
                                 sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
                                 Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = displayName + "\n" + context.getString(R.string.msg_sucess_mark_attendance_event);

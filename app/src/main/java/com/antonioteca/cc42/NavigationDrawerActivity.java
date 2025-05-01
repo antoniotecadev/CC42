@@ -315,7 +315,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     DaoEventFirebase.markAttendance(
                             firebaseDatabase,
                             partsQrCode[0], /* id event*/
-                            Long.parseLong(partsQrCode[1]), /* id registered*/
+                            partsQrCode[1], /* id user staff */
+                            Long.parseLong(partsQrCode[1]), /* id user staff */
                             uid,
                             displayName,
                             cursusId,
@@ -331,23 +332,29 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 } else
                     Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, null);
             } else if (resultContents.startsWith("cc42meal")) {
-                Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
-                DaoSusbscriptionFirebase.subscription(
-                        firebaseDatabase,
-                        resultContents.replace("cc42meal", ""), /* id meal*/
-                        uid,
-                        userLogin,
-                        displayName,
-                        cursusId,
-                        campusId,
-                        urlImageUser,
-                        context,
-                        getLayoutInflater(),
-                        progressBarMarkAttendance,
-                        fabOpenCameraScannerQrCode,
-                        sharedViewModel,
-                        null
-                );
+                String resultQrCode = resultContents.replace("cc42meal", "");
+                String[] partsQrCode = resultQrCode.split("#", 2);
+                if (partsQrCode.length == 2) {
+                    Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                    DaoSusbscriptionFirebase.subscription(
+                            firebaseDatabase,
+                            partsQrCode[0], /* id meal*/
+                            partsQrCode[1], /* id user staff */
+                            uid,
+                            userLogin,
+                            displayName,
+                            cursusId,
+                            campusId,
+                            urlImageUser,
+                            context,
+                            getLayoutInflater(),
+                            progressBarMarkAttendance,
+                            fabOpenCameraScannerQrCode,
+                            sharedViewModel,
+                            null
+                    );
+                } else
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, null);
             } else
                 Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, null);
         }
