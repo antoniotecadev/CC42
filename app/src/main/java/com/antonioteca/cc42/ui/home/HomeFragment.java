@@ -42,11 +42,8 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 public class HomeFragment extends Fragment {
 
     private User user;
-    private Long uid;
     private String userLogin;
     private String displayName;
-    private Integer campusId;
-    private Integer cursusId;
 
     private Context context;
     private EventAdapter eventAdapter;
@@ -76,28 +73,31 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        uid = user.getUid();
+
         userLogin = user.getLogin();
         displayName = user.getDisplayName();
-        cursusId = user.getCursusId();
-        campusId = user.getCampusId();
+
         binding.recyclerviewEventsList.setHasFixedSize(true);
         binding.recyclerviewEventsList.setLayoutManager(new LinearLayoutManager(context));
+
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
             eventViewModel.getEvents(context);
         });
+
         binding.fabGenerateQrCodeUser.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(v);
             if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.qrCodeFragment) {
-                String content = "user" + uid + "#" + userLogin + "#" + displayName + "#" + cursusId + "#" + campusId;
+                String content = "user" + user.getUid() + "#" + userLogin + "#" + displayName + "#" + user.getCursusId() + "#" + user.getCampusId();
                 HomeFragmentDirections.ActionNavHomeToQrCodeFragment actionNavHomeToQrCodeFragment =
                         HomeFragmentDirections.actionNavHomeToQrCodeFragment(content, userLogin, displayName, 0, 0);
                 Navigation.findNavController(v).navigate(actionNavHomeToQrCodeFragment);
             }
         });
+
         binding.textViewCoalition.setText(user.coalition.getName());
         binding.textViewFullName.setText(user.getDisplayName());
+
         String colorCoalition = user.coalition.getColor();
         if (colorCoalition != null) {
             int color = Color.parseColor(colorCoalition);

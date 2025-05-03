@@ -25,6 +25,7 @@ import java.util.Locale;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
+    private String topic;
     private Exception exception;
     private SharedPreferences sharedPreferences;
 
@@ -33,9 +34,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
         User user = new User(requireContext());
-        String campusId = String.valueOf(user.getCampusId());
-        String cursusId = String.valueOf(user.getCursusId());
-        String topic = "/topics/meals_" + campusId + "_" + cursusId;
+
+        topic = "/topics/meals_" + user.getCampusId() + "_";
+
+        if (user.isStaff())
+            topic += user.getCampusName();
+        else
+            topic += user.getCursusId();
 
         PreferenceCategory breakfastCategory = findPreference("breakfast");
         PreferenceCategory lunchCategory = findPreference("lunch");

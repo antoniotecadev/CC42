@@ -123,22 +123,32 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         handleNotificationIntent(getIntent());
 
         setSupportActionBar(binding.appBarNavigationDrawer.toolbar);
-        User user = new User(NavigationDrawerActivity.this);
+        context = NavigationDrawerActivity.this;
+        User user = new User(context);
+
         uid = String.valueOf(user.getUid());
         userLogin = user.getLogin();
         displayName = user.getDisplayName();
-        cursusId = String.valueOf(user.getCursusId());
         campusId = String.valueOf(user.getCampusId());
         urlImageUser = user.getImage();
-        context = NavigationDrawerActivity.this;
+
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         fabOpenCameraScannerQrCode = binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode;
         progressBarMarkAttendance = binding.appBarNavigationDrawer.progressBarMarkAttendance;
 
+        String topic = "/topics/meals_" + campusId + "_";
+
+        if (user.isStaff())
+            topic += user.getCampusName();
+        else {
+            cursusId = String.valueOf(user.getCursusId());
+            topic += cursusId;
+        }
+
         boolean isSubscribed = user.getSubscribedToTopicMealNotification();
         if (!isSubscribed) {
-            FirebaseMessaging.getInstance().subscribeToTopic("/topics/meals_" + campusId + "_" + cursusId).addOnCompleteListener(task -> {
+            FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnCompleteListener(task -> {
                 if (task.isSuccessful())
                     user.setSubscribedToTopicMealNotification(true);
                 else {

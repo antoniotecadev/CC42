@@ -68,7 +68,9 @@ public class User {
         editor.putString("url", user.url.trim());
         editor.putString("image_link", user.image.link.trim());
         editor.putInt("campus_id", user.campus.get(0).id);
-        editor.putInt("cursus_id", user.projectsUsers.get(0).cursusIds.get(0));
+        editor.putString("campus_name", user.campus.get(0).name.trim());
+        if (!user.isStaff)
+            editor.putInt("cursus_id", user.projectsUsers.get(0).cursusIds.get(0));
         if (coalition != null) {
             editor.putString("name_coalition", coalition.name);
             editor.putString("image_url_coalition", coalition.image_url.trim());
@@ -112,6 +114,10 @@ public class User {
 
     public int getCampusId() {
         return preferences.getInt("campus_id", 0);
+    }
+
+    public String getCampusName() {
+        return preferences.getString("campus_name", null);
     }
 
     public int getCursusId() {
@@ -167,6 +173,7 @@ class Image {
 
 class Campus {
     public int id;
+    public String name;
 }
 
 class ProjectUser {
