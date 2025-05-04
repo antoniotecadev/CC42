@@ -60,14 +60,29 @@ public class CursuAdapter extends RecyclerView.Adapter<CursuAdapter.CursuViewHol
         return cursuList.size();
     }
 
-    public void filter(String text) {
+    public void moveTopCursuUser() {
+        for (Cursu cursu : cursuList) {
+            if (cursu.getId() == cursusIdUser && cursuList.indexOf(cursu) != 0) {
+                cursuList.add(0, cursu);
+                notifyItemMoved(cursuList.indexOf(cursu), 0);
+                break;
+            }
+        }
+    }
+
+    public void filter(String text, boolean isStaff) {
         this.cursuList.clear();
         if (text.isEmpty())
             this.cursuList.addAll(cursuListFull);
         else if (!cursuListFull.isEmpty()) {
             text = text.toLowerCase();
             for (Cursu cursu : cursuListFull) {
-                if (cursu.getName().toLowerCase().contains(text) || String.valueOf(cursu.getId()).toLowerCase().contains(text)) {
+                if (isStaff) {
+                    int cursusId = cursu.getId();
+                    if (cursusId == 21 || cursusId == 66 || cursusId == 9) {
+                        cursuList.add(cursu);
+                    }
+                } else if (cursu.getName().toLowerCase().contains(text) || String.valueOf(cursu.getId()).toLowerCase().contains(text)) {
                     cursuList.add(cursu);
                 }
             }

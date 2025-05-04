@@ -36,6 +36,7 @@ public class CursuListMealFragment extends Fragment {
     private int color;
     private User user;
     private int cursusId;
+    private boolean isStaff;
     private Context context;
     private MenuProvider menuProvider;
     private CursuAdapter cursuAdapter;
@@ -50,6 +51,7 @@ public class CursuListMealFragment extends Fragment {
         CursuViewModelFactory cursuViewModelFactory = new CursuViewModelFactory(cursuRepository);
         cursuViewModel = new ViewModelProvider(this, cursuViewModelFactory).get(CursuViewModel.class);
         user = new User(context);
+        isStaff = user.isStaff();
         cursusId = user.getCursusId();
         user.coalition = new Coalition(context);
     }
@@ -98,11 +100,11 @@ public class CursuListMealFragment extends Fragment {
             if (!click[0]) {
                 click[0] = true;
                 binding.floatingActionButtonSearchCursuIdUserDown.setColorFilter(ContextCompat.getColor(context, R.color.green));
-                cursuAdapter.filter(String.valueOf(cursusId));
+                cursuAdapter.filter(String.valueOf(cursusId), isStaff);
             } else {
                 click[0] = false;
                 binding.floatingActionButtonSearchCursuIdUserDown.setColorFilter(ContextCompat.getColor(context, R.color.black));
-                cursuAdapter.filter("");
+                cursuAdapter.filter("", isStaff);
             }
         });
 
@@ -112,10 +114,10 @@ public class CursuListMealFragment extends Fragment {
                 cursuAdapter = new CursuAdapter(context, cursus, color, cursusId);
                 binding.recyclerviewCursuList.setAdapter(cursuAdapter);
                 binding.chipNumberCursus.setText(String.valueOf(cursuAdapter.getItemCount()));
+                cursuAdapter.moveTopCursuUser();
             } else
                 setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
         });
-
 
         cursuViewModel.getHttpSatusCursu().observe(getViewLifecycleOwner(), event -> {
             if (event != null) {
@@ -154,13 +156,13 @@ public class CursuListMealFragment extends Fragment {
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
-                        cursuAdapter.filter(query);
+                        cursuAdapter.filter(query, false);
                         return false;
                     }
 
                     @Override
                     public boolean onQueryTextChange(String newText) {
-                        cursuAdapter.filter(newText);
+                        cursuAdapter.filter(newText, false);
                         return false;
                     }
                 });
