@@ -278,6 +278,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
         if (!isCreate && meal != null
                 && this.imageUri.equals(Uri.parse(meal.getPathImage()))
                 && mealsName.equals(meal.getName())
+                && binding.descriptionEditText.getText().toString().equals(meal.getDescription())
                 && getMealsQuantity() == meal.getQuantity()) {
             String message = context.getString(R.string.nothing_edit);
             Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", null, null);
