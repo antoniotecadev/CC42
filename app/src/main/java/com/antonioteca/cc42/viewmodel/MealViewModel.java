@@ -47,6 +47,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 public class MealViewModel extends ViewModel {
 
@@ -156,6 +157,7 @@ public class MealViewModel extends ViewModel {
                                         String createdBy,
                                         String campusId,
                                         String cursusId,
+                                        String campusName,
                                         Uri imageUri,
                                         int mealsQuantity
     ) {
@@ -186,6 +188,7 @@ public class MealViewModel extends ViewModel {
                                 createdBy,
                                 campusId,
                                 cursusId,
+                                campusName,
                                 imageUrl,
                                 mealsQuantity
                         );
@@ -202,6 +205,7 @@ public class MealViewModel extends ViewModel {
                                 createdBy,
                                 campusId,
                                 cursusId,
+                                campusName,
                                 "",
                                 mealsQuantity);
                     }
@@ -377,6 +381,7 @@ public class MealViewModel extends ViewModel {
                                    String createdBy,
                                    String campusId,
                                    String cursusId,
+                                   String campusName,
                                    String imageUrl,
                                    int mealsQuantity
     ) {
@@ -419,7 +424,11 @@ public class MealViewModel extends ViewModel {
                     String message = mealName + "\n" + context.getString(R.string.save_meal);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", null, null);
                     try {
-                        Notification.sendNotificationForTopic(context, layoutInflater, meal, Integer.parseInt(campusId), Integer.parseInt(cursusId));
+                        String topicStudent = "meals_" + campusId + "_" + cursusId;
+                        String topicStaff = "meals_" + campusId + "_" + campusName;
+                        List<String> topics = Arrays.asList(topicStudent, topicStaff);
+                        String condition = topics.stream().map(topic -> "'" + topic + "' in topics").collect(Collectors.joining(" || "));
+                        Notification.sendNotificationForTopic(context, layoutInflater, meal, Integer.parseInt(cursusId), null, condition);
                     } catch (IOException e) {
                         Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
                     }

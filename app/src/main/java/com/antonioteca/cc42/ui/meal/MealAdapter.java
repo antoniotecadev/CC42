@@ -121,7 +121,8 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
                     meal.setType(meal.getType() + ": " + spinner.getSelectedItem().toString());
                     try {
-                        Notification.sendNotificationForTopic(context, layoutInflater, meal, campusId, cursusId);
+                        String topicStudent = "meals_" + campusId + "_" + cursusId;
+                        Notification.sendNotificationForTopic(context, layoutInflater, meal, cursusId, topicStudent, null);
                         dialog.dismiss();
                     } catch (IOException e) {
                         Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();

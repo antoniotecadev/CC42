@@ -9,11 +9,13 @@ public class FCMessage {
 
     public static class Message {
         private String topic;
+        private String condition;
         private Notification notification;
         private Data data;
 
-        public Message(String topic, Notification notification, Data data) {
+        public Message(String topic, String condition, Notification notification, Data data) {
             this.topic = topic;
+            this.condition = condition;
             this.notification = notification;
             this.data = data;
         }

@@ -301,6 +301,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             user.getDisplayName(),
                             String.valueOf(user.getCampusId()),
                             String.valueOf(cursusId),
+                            user.getCampusName(),
                             imageUri,
                             getMealsQuantity()
                     );
@@ -313,6 +314,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
                             user.getDisplayName(),
                             String.valueOf(user.getCampusId()),
                             String.valueOf(cursusId),
+                            user.getCampusName(),
                             "",
                             getMealsQuantity()
                     );
