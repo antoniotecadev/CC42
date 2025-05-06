@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,6 +28,7 @@ import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
+import com.antonioteca.cc42.utility.StarUtils;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -72,14 +72,15 @@ public class DetailsMealFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setColorCoalitionStar();
-        MealsUtils.reduceStarSize(context, binding.starRatingDone, 30, 30);
+        StarUtils.setColorCoalitionStar(binding.starRating, user);
+        StarUtils.reduceStarSize(context, binding.starRatingDone, 30, 30);
         NavController navController = Navigation.findNavController(view);
         DetailsMealFragmentArgs args = DetailsMealFragmentArgs.fromBundle(requireArguments());
         Meal meal = args.getDetailsMeal();
         mealId = meal.getId();
         cursusId = args.getCursusId();
-        mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), mealId)
+
+        mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), "meals", mealId)
                 .observe(getViewLifecycleOwner(),
                         ratingValues -> {
                             String averageRating = ratingValues.get(1).toString().replace(",", "."); // média da avaliação total sem ser arrendodando ex: 4.5
@@ -114,20 +115,24 @@ public class DetailsMealFragment extends Fragment {
                             binding.numberOfRatings.setText(numberOfRatings + " " + getString(R.string.ratings));
                             binding.averageRating.setText(averageRating);
                         });
+
         if (cursusId == 0) {
             binding.fabGenerateQrCode.setVisibility(View.GONE);
             binding.fabOpenSubscriptionList.setVisibility(View.GONE);
         }
+
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             if (actionBar != null)
                 actionBar.setTitle(meal.getType() + " (" + meal.getQuantity() + ")");
         }
+
         String colorCoalition = user.coalition.getColor();
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
             binding.progressBarMeal.setIndeterminateTintList(colorStateList);
         }
+
         binding.textViewType.setText(meal.getType());
         binding.textViewName.setText(meal.getName());
         binding.textViewDescription.setText(meal.getDescription());
@@ -167,65 +172,27 @@ public class DetailsMealFragment extends Fragment {
             if (ratingAverage == null)
                 rating = selectedRating;
             if (isOnClick) {
-                resetStars(); // Reseta todas as estrelas
+                StarUtils.resetStars(starRatingBinding); // Reseta todas as estrelas
                 loading.isLoading = true;
                 binding.progressBarMeal.setVisibility(View.VISIBLE);
             }
-            MealsUtils.selectedRating(starRatingBinding, selectedRating);
+            StarUtils.selectedRating(starRatingBinding, selectedRating);
             if (isOnClick) {
-                mealViewModel.rateMeal(
+                mealViewModel.rate(
                         context,
                         firebaseDatabase,
                         loading,
                         binding.progressBarMeal,
                         String.valueOf(user.getCampusId()),
-                        String.valueOf(cursusId), mealId,
+                        String.valueOf(cursusId),
+                        mealId,
                         String.valueOf(user.getUid()),
-                        selectedRating);
+                        selectedRating,
+                        "meals");
             } else if (ratingAverage != null) {
-                starHalf(starRatingBinding, ratingAverage, selectedRating/*ratingAverageRounded*/);
+                StarUtils.starHalf(starRatingBinding, ratingAverage, selectedRating/*ratingAverageRounded*/);
             }
         }
-    }
-
-    private void starHalf(StarRatingBinding starRatingBinding, double ratingAverage, int ratingAverageRounded) {
-        // Preenche parcialmente a próxima estrela (opcional)
-        double result = Math.abs(ratingAverage - ratingAverageRounded);
-        if (result > 0.0) {
-            ImageView nextStar = null;
-            boolean isEquals = (int) ratingAverage == ratingAverageRounded;
-            if (isEquals)
-                ratingAverageRounded += 1;
-            if (ratingAverageRounded == 1) nextStar = starRatingBinding.star1;
-            else if (ratingAverageRounded == 2) nextStar = starRatingBinding.star2;
-            else if (ratingAverageRounded == 3) nextStar = starRatingBinding.star3;
-            else if (ratingAverageRounded == 4) nextStar = starRatingBinding.star4;
-            else if (ratingAverageRounded == 5) nextStar = starRatingBinding.star5;
-
-            if (nextStar != null) {
-                // Define uma imagem de estrela parcialmente preenchida (se disponível)
-                nextStar.setImageResource(R.drawable.baseline_star_half_40); // Exemplo de ícone de meia estrela
-            }
-        }
-    }
-
-    private void resetStars() {
-        binding.starRating.star1.setImageResource(R.drawable.baseline_star_border_40);
-        binding.starRating.star2.setImageResource(R.drawable.baseline_star_border_40);
-        binding.starRating.star3.setImageResource(R.drawable.baseline_star_border_40);
-        binding.starRating.star4.setImageResource(R.drawable.baseline_star_border_40);
-        binding.starRating.star5.setImageResource(R.drawable.baseline_star_border_40);
-    }
-
-    private void setColorCoalitionStar() {
-        int color;
-        String colorCoalition = user.coalition.getColor();
-        color = Color.parseColor(Objects.requireNonNullElse(colorCoalition, "#FF039BE5"));
-        binding.starRating.star1.setColorFilter(color);
-        binding.starRating.star2.setColorFilter(color);
-        binding.starRating.star3.setColorFilter(color);
-        binding.starRating.star4.setColorFilter(color);
-        binding.starRating.star5.setColorFilter(color);
     }
 
     @Override

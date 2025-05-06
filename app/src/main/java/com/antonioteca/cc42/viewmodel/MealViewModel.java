@@ -85,9 +85,9 @@ public class MealViewModel extends ViewModel {
         return pathImageMutableLiveData;
     }
 
-    public LiveData<List<Object>> getRatingValuesLiveData(Context context, FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId) {
+    public LiveData<List<Object>> getRatingValuesLiveData(Context context, FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String type, String typeId) {
         if (ratingValuesMutableLiveData == null) {
-            getRateMeal(context, firebaseDatabase, campusId, cursusId, mealId);
+            getRateMeal(context, firebaseDatabase, campusId, cursusId, type, typeId);
             ratingValuesMutableLiveData = new MutableLiveData<>();
         }
         return ratingValuesMutableLiveData;
@@ -508,34 +508,35 @@ public class MealViewModel extends ViewModel {
         return lastPart.replaceAll("\\.[a-zA-Z0-9]+$", "");
     }
 
-    public void rateMeal(
+    public void rate(
             Context context,
             @NonNull FirebaseDatabase firebaseDatabase,
             Loading loading,
-            ProgressBar progressBarMeal,
+            ProgressBar progressBar,
             String campusId,
             String cursusId,
-            String mealId,
+            String typeId,
             String userId,
-            int rating
+            int rating,
+            String type
     ) {
         // Referência para a refeição específica
         DatabaseReference mealRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
                 .child("cursus")
                 .child(cursusId)
-                .child("meals")
-                .child(mealId);
+                .child(type)
+                .child(typeId);
 
         mealRef.child("ratings").child(userId).setValue(rating)
                 .addOnSuccessListener(aVoid -> {
                     loading.isLoading = false;
-                    progressBarMeal.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(View.INVISIBLE);
                     Util.showAlertDialogMessage(context, LayoutInflater.from(context), "" + rating, context.getString(R.string.rating_submitted_successfully), "#4CAF50", null, null);
                 })
                 .addOnFailureListener(e -> {
                     loading.isLoading = false;
-                    progressBarMeal.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(View.INVISIBLE);
                     Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), e.getMessage(), "#E53935", null, null);
                 });
     }
@@ -545,15 +546,16 @@ public class MealViewModel extends ViewModel {
             FirebaseDatabase firebaseDatabase,
             String campusId,
             String cursusId,
-            String mealId
+            String type,
+            String typeId
     ) {
         // Referência para a refeição específica
         mealRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
                 .child("cursus")
                 .child(cursusId)
-                .child("meals")
-                .child(mealId);
+                .child(type)
+                .child(typeId);
 
         valueEventListener = new ValueEventListener() {
             @Override

@@ -12,6 +12,7 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewSubscriptionListBinding;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.utility.MealsUtils;
+import com.antonioteca.cc42.utility.StarUtils;
 import com.antonioteca.cc42.utility.Util;
 
 import java.util.ArrayList;
@@ -110,8 +111,8 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
         if (user.ratingValue > 0)
-            MealsUtils.selectedRating(holder.binding.starRatingDone, user.ratingValue);
-        MealsUtils.reduceStarSize(context, holder.binding.starRatingDone, 20, 20);
+            StarUtils.selectedRating(holder.binding.starRatingDone, user.ratingValue);
+        StarUtils.reduceStarSize(context, holder.binding.starRatingDone, 20, 20);
         if (user.isSubscription() != null && user.isSubscription()) {
             holder.binding.textViewSubscription.setTextColor(greenColor);
             holder.binding.textViewSubscription.setText(context.getString(R.string.text_signed));

@@ -77,32 +77,4 @@ public class MealsUtils {
         binding.textViewNotFoundMeals.setVisibility(viewT);
         binding.recyclerViewMeal.setVisibility(viewR);
     }
-
-    public static void selectedRating(StarRatingBinding starRatingBinding, int selectedRating) {
-        // Preenche as estrelas com base na avaliação selecionada
-        if (selectedRating >= 1)
-            starRatingBinding.star1.setImageResource(R.drawable.baseline_filled_star_40);
-        if (selectedRating >= 2)
-            starRatingBinding.star2.setImageResource(R.drawable.baseline_filled_star_40);
-        if (selectedRating >= 3)
-            starRatingBinding.star3.setImageResource(R.drawable.baseline_filled_star_40);
-        if (selectedRating >= 4)
-            starRatingBinding.star4.setImageResource(R.drawable.baseline_filled_star_40);
-        if (selectedRating >= 5)
-            starRatingBinding.star5.setImageResource(R.drawable.baseline_filled_star_40);
-    }
-
-    public static void reduceStarSize(Context context, StarRatingBinding starRatingBinding, int newWidth, int newHeight) {
-        ImageView[] stars = new ImageView[]{
-                starRatingBinding.star1,
-                starRatingBinding.star2,
-                starRatingBinding.star3,
-                starRatingBinding.star4,
-                starRatingBinding.star5
-        };
-
-        for (ImageView star : stars) {
-            Util.setWidthHeightImageView(context, newWidth, newHeight, star);
-        }
-    }
 }
