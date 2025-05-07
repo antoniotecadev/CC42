@@ -1,13 +1,28 @@
 package com.antonioteca.cc42.utility;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.StarRatingBinding;
 import com.antonioteca.cc42.model.User;
+import com.antonioteca.cc42.ui.meal.RatingProgressAdapter;
+import com.antonioteca.cc42.ui.meal.RatingProgressItem;
+import com.antonioteca.cc42.viewmodel.MealViewModel;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class StarUtils {
@@ -78,5 +93,120 @@ public class StarUtils {
             starRatingBinding.star4.setImageResource(R.drawable.baseline_filled_star_40);
         if (selectedRating >= 5)
             starRatingBinding.star5.setImageResource(R.drawable.baseline_filled_star_40);
+    }
+
+    // Método para lidar com o clique nas estrelas
+    public static int fillStars(StarRatingBinding starRatingBinding,
+                                int selectedRating,
+                                Double ratingAverage,
+                                boolean isOnClick,
+                                Context context,
+                                Loading loading,
+                                long userId,
+                                int campusId,
+                                int cursusId,
+                                String type,
+                                String typeId,
+                                int rating,
+                                FirebaseDatabase firebaseDatabase,
+                                ProgressBar progressBar,
+                                MealViewModel mealViewModel) {
+        if (rating != selectedRating && !loading.isLoading) {
+            if (ratingAverage == null)
+                rating = selectedRating;
+            if (isOnClick) {
+                StarUtils.resetStars(starRatingBinding); // Reseta todas as estrelas
+                loading.isLoading = true;
+                progressBar.setVisibility(View.VISIBLE);
+            }
+            StarUtils.selectedRating(starRatingBinding, selectedRating);
+            if (isOnClick) {
+                mealViewModel.rate(
+                        context,
+                        firebaseDatabase,
+                        loading,
+                        progressBar,
+                        String.valueOf(campusId),
+                        String.valueOf(cursusId),
+                        type,
+                        typeId,
+                        String.valueOf(userId),
+                        selectedRating
+                );
+            } else if (ratingAverage != null) {
+                StarUtils.starHalf(starRatingBinding, ratingAverage, selectedRating/*ratingAverageRounded*/);
+            }
+        }
+        return (rating);
+    }
+
+    @SuppressLint("SetTextI18n")
+    @NonNull
+    public static HashMap<?, ?> getRate(
+            Context context,
+            long userId,
+            String userLogin,
+            @NonNull List<Object> ratingValues,
+            StarRatingBinding starRatingDone,
+            StarRatingBinding starRating,
+            TextView textViewTapToRate,
+            TextView textViewNumberOfRatings,
+            TextView textViewAverageRating,
+            RecyclerView recyclerViewRating,
+            Loading loading,
+            int campusId,
+            int cursusId,
+            String type,
+            String typeId,
+            int rating,
+            FirebaseDatabase firebaseDatabase,
+            ProgressBar progressBar,
+            MealViewModel mealViewModel
+    ) {
+        String averageRating = ratingValues.get(1).toString().replace(",", "."); // média da avaliação total sem ser arrendodando ex: 4.5
+        HashMap<?, ?> ratingCounts = (HashMap<?, ?>) ratingValues.get(2); // Total de avaliação para cada estrela
+        int numberOfRatings = (int) ratingValues.get(3); // Total de números de avaliações geral de uma refeição
+        HashMap<?, ?> ratingValuesUsers = (HashMap<?, ?>) ratingValues.get(4); // Avaliações de cada usuário
+        Integer ratingValueUser = (Integer) ratingValuesUsers.get(String.valueOf(userId)); // Avaliação do usuário actual
+
+        // ratingValues.get(0): média da avaliação total arrendodando ex: 5
+        fillStars(starRatingDone, (int) ratingValues.get(0), Double.valueOf(averageRating), false, context, loading, userId, campusId, cursusId, type, typeId, rating, firebaseDatabase, progressBar, mealViewModel);
+        if (ratingValueUser != null) {
+            textViewTapToRate.setTextColor(context.getResources().getColor(R.color.green));
+            fillStars(starRating,
+                    ratingValueUser,
+                    null,
+                    false,
+                    context,
+                    loading,
+                    userId,
+                    campusId,
+                    cursusId,
+                    type,
+                    typeId,
+                    rating,
+                    firebaseDatabase,
+                    progressBar,
+                    mealViewModel);
+            textViewTapToRate.setText(userLogin);
+            starRating.star1.setClickable(false);
+            starRating.star2.setClickable(false);
+            starRating.star3.setClickable(false);
+            starRating.star4.setClickable(false);
+            starRating.star5.setClickable(false);
+        }
+
+        List<RatingProgressItem> ratingProgressItems = new ArrayList<>();
+        for (int i = 1; i <= ratingCounts.size(); i++) { // i: estrela
+            int ratingCount = (int) ratingCounts.get(i); // Total de avaliação para estrela
+            int percentage = (ratingCount * 100 / numberOfRatings);
+            ratingProgressItems.add(new RatingProgressItem(ratingCount, percentage));
+        }
+        RatingProgressAdapter adapter = new RatingProgressAdapter(ratingProgressItems);
+        recyclerViewRating.setLayoutManager(new LinearLayoutManager(context));
+        recyclerViewRating.setAdapter(adapter);
+        textViewNumberOfRatings.setText(numberOfRatings + " " + context.getString(R.string.ratings));
+        textViewAverageRating.setText(averageRating);
+        return ratingValuesUsers;
     }
 }

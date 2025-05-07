@@ -515,10 +515,10 @@ public class MealViewModel extends ViewModel {
             ProgressBar progressBar,
             String campusId,
             String cursusId,
+            String type,
             String typeId,
             String userId,
-            int rating,
-            String type
+            int rating
     ) {
         // Referência para a refeição específica
         DatabaseReference mealRef = firebaseDatabase.getReference("campus")
