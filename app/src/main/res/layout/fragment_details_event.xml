@@ -148,6 +148,7 @@
             layout="@layout/star_rating" />
 
         <FrameLayout
+            android:id="@+id/starRatingDoneContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center">

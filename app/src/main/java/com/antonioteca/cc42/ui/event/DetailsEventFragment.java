@@ -36,6 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class DetailsEventFragment extends Fragment {
     private User user;
@@ -114,6 +115,14 @@ public class DetailsEventFragment extends Fragment {
         binding.textViewLocation.setText(event.getLocation());
         binding.textViewPeople.setText(event.getNbr_subscribers() + " / " + event.getMax_people());
         setMarkdownText(binding.textViewDescription, event.getDescription());
+
+        if (System.currentTimeMillis() < Objects.requireNonNullElse(eventDateEnd, new Date()).getTime()) {
+            binding.starRatingDone.getRoot().setVisibility(View.GONE);
+            binding.starRatingDoneContainer.setVisibility(View.GONE);
+            binding.numberOfRatings.setVisibility(View.GONE);
+            binding.textViewTapToRate.setVisibility(View.GONE);
+            binding.starRating.getRoot().setVisibility(View.GONE);
+        }
 
         mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), type, eventId)
                 .observe(getViewLifecycleOwner(),
