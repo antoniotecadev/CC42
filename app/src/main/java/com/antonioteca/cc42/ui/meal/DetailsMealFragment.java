@@ -78,7 +78,7 @@ public class DetailsMealFragment extends Fragment {
         int campusId = user.getCampusId();
         int cursusId = args.getCursusId();
 
-        mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, binding.progressBarMeal, String.valueOf(user.getCampusId()), String.valueOf(cursusId), type, mealId)
+        mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, binding.progressBarMeal, String.valueOf(campusId), String.valueOf(cursusId), type, mealId)
                 .observe(getViewLifecycleOwner(),
                         ratingValues -> {
                             if (ratingValues.isEmpty()) {
@@ -140,7 +140,7 @@ public class DetailsMealFragment extends Fragment {
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
                 rating = 0; // Para poder mostrar a classificação, ao voltar <-
-                DetailsMealFragmentDirections.ActionDetailsMealFragmentToQrCodeFragment actionDetailsMealFragmentToQrCodeFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToQrCodeFragment("meal" + meal.getId() + "#" + user.getUid(), meal.getName(), Objects.requireNonNullElse(meal.getDescription(), ""), user.getCampusId(), cursusId);
+                DetailsMealFragmentDirections.ActionDetailsMealFragmentToQrCodeFragment actionDetailsMealFragmentToQrCodeFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToQrCodeFragment("meal" + meal.getId() + "#" + user.getUid(), meal.getName(), Objects.requireNonNullElse(meal.getDescription(), ""), campusId, cursusId);
                 navController.navigate(actionDetailsMealFragmentToQrCodeFragment);
             } catch (IllegalArgumentException e) {
                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
