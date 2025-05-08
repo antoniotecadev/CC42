@@ -125,7 +125,7 @@ public class DetailsEventFragment extends Fragment {
             binding.starRating.getRoot().setVisibility(View.GONE);
         }
 
-        mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), type, eventId)
+        mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, binding.progressBarEvent, String.valueOf(user.getCampusId()), String.valueOf(cursusId), type, eventId)
                 .observe(getViewLifecycleOwner(),
                         ratingValues -> {
                             if (ratingValues.isEmpty()) {
@@ -152,6 +152,7 @@ public class DetailsEventFragment extends Fragment {
                                         firebaseDatabase,
                                         binding.progressBarEvent,
                                         mealViewModel);
+                            binding.progressBarEvent.setVisibility(View.INVISIBLE);
                         });
 
         // Configura os cliques das estrelas
@@ -160,7 +161,6 @@ public class DetailsEventFragment extends Fragment {
         binding.starRating.star3.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 3, null, true, context, loading, userId, campusId, cursusId, type, eventId, rating, firebaseDatabase, binding.progressBarEvent, mealViewModel));
         binding.starRating.star4.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 4, null, true, context, loading, userId, campusId, cursusId, type, eventId, rating, firebaseDatabase, binding.progressBarEvent, mealViewModel));
         binding.starRating.star5.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 5, null, true, context, loading, userId, campusId, cursusId, type, eventId, rating, firebaseDatabase, binding.progressBarEvent, mealViewModel));
-
 
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {

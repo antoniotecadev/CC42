@@ -85,9 +85,10 @@ public class MealViewModel extends ViewModel {
         return pathImageMutableLiveData;
     }
 
-    public LiveData<List<Object>> getRatingValuesLiveData(Context context, FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String type, String typeId) {
+    public LiveData<List<Object>> getRatingValuesLiveData(Context context, FirebaseDatabase firebaseDatabase, ProgressBar progressBar, String campusId, String cursusId, String type, String typeId) {
         if (ratingValuesMutableLiveData == null) {
-            getRateMeal(context, firebaseDatabase, campusId, cursusId, type, typeId);
+            progressBar.setVisibility(View.VISIBLE);
+            getRateMeal(context, firebaseDatabase, progressBar, campusId, cursusId, type, typeId);
             ratingValuesMutableLiveData = new MutableLiveData<>();
         }
         return ratingValuesMutableLiveData;
@@ -541,9 +542,10 @@ public class MealViewModel extends ViewModel {
                 });
     }
 
-    public void getRateMeal(
+    private void getRateMeal(
             Context context,
             FirebaseDatabase firebaseDatabase,
+            ProgressBar progressBar,
             String campusId,
             String cursusId,
             String type,
@@ -595,6 +597,7 @@ public class MealViewModel extends ViewModel {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                progressBar.setVisibility(View.INVISIBLE);
                 Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), error.getMessage(), "#E53935", null, null);
             }
         };

@@ -70,28 +70,44 @@
                     android:id="@+id/starRatingDone"
                     layout="@layout/star_rating" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <FrameLayout
+                    android:id="@+id/starRatingDoneContainer"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:layout_gravity="center">
 
-                    <TextView
-                        android:id="@+id/averageRating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:text="@string/_0"
-                        android:textColor="@color/textColorPrimary"
-                        android:textSize="48sp"
-                        android:textStyle="bold" />
+                    <ProgressBar
+                        android:id="@+id/progressBarMeal"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_gravity="center"
+                        android:indeterminate="true"
+                        android:indeterminateTint="@color/light_blue_900"
+                        android:visibility="invisible" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerViewRating"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        tools:listitem="@layout/item_rating_progress" />
-                </LinearLayout>
+                        android:layout_gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/averageRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:text="@string/_0"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="48sp"
+                            android:textStyle="bold" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerViewRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:listitem="@layout/item_rating_progress" />
+                    </LinearLayout>
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/numberOfRatings"
@@ -140,15 +156,6 @@
                     android:textColor="@android:color/darker_gray"
                     android:textSize="12sp" />
             </LinearLayout>
-
-            <ProgressBar
-                android:id="@+id/progressBarMeal"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:indeterminate="true"
-                android:indeterminateTint="@color/light_blue_900"
-                android:visibility="invisible" />
         </androidx.cardview.widget.CardView>
 
 

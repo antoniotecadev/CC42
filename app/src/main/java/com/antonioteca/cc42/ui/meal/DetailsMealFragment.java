@@ -76,7 +76,7 @@ public class DetailsMealFragment extends Fragment {
         int campusId = user.getCampusId();
         int cursusId = args.getCursusId();
 
-        mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), type, mealId)
+        mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, binding.progressBarMeal, String.valueOf(user.getCampusId()), String.valueOf(cursusId), type, mealId)
                 .observe(getViewLifecycleOwner(),
                         ratingValues -> {
                             if (ratingValues.isEmpty()) {
@@ -103,6 +103,7 @@ public class DetailsMealFragment extends Fragment {
                                         firebaseDatabase,
                                         binding.progressBarMeal,
                                         mealViewModel);
+                            binding.progressBarMeal.setVisibility(View.INVISIBLE);
                         });
 
         if (cursusId == 0) {
