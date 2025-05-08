@@ -213,6 +213,7 @@
 
         <include
             android:id="@+id/starRating"
+            android:visibility="gone"
             layout="@layout/star_rating" />
 
         <View

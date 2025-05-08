@@ -172,7 +172,9 @@ public class StarUtils {
         // ratingValues.get(0): média da avaliação total arrendodando ex: 5
         fillStars(starRatingDone, (int) ratingValues.get(0), Double.valueOf(averageRating), false, context, loading, userId, campusId, cursusId, type, typeId, rating, firebaseDatabase, progressBar, mealViewModel);
         if (ratingValueUser != null) {
+            textViewTapToRate.setText(type.equals("events") ? R.string.text_present : R.string.text_signed);
             textViewTapToRate.setTextColor(context.getResources().getColor(R.color.green));
+            starRating.getRoot().setVisibility(View.VISIBLE);
             fillStars(starRating,
                     ratingValueUser,
                     null,
@@ -188,12 +190,14 @@ public class StarUtils {
                     firebaseDatabase,
                     progressBar,
                     mealViewModel);
-            textViewTapToRate.setText(userLogin);
             starRating.star1.setClickable(false);
             starRating.star2.setClickable(false);
             starRating.star3.setClickable(false);
             starRating.star4.setClickable(false);
             starRating.star5.setClickable(false);
+        } else {
+            textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
+            textViewTapToRate.setText(type.equals("events") ? R.string.text_absent : R.string.text_unsigned);
         }
 
         List<RatingProgressItem> ratingProgressItems = new ArrayList<>();

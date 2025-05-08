@@ -589,7 +589,8 @@ public class MealViewModel extends ViewModel {
                     decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
                     String formattedAverage = decimalFormat.format(averageRating);
                     ratingValuesMutableLiveData.setValue(Arrays.asList(roundedRating, formattedAverage, ratingCounts, numberOfRatings, ratingValuesUsers));
-                }
+                } else
+                    ratingValuesMutableLiveData.setValue(new ArrayList<>());
             }
 
             @Override

@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsMealBinding;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Meal;
@@ -77,26 +78,32 @@ public class DetailsMealFragment extends Fragment {
 
         mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), type, mealId)
                 .observe(getViewLifecycleOwner(),
-                        ratingValues -> ratingValuesUsers = StarUtils.getRate(
-                                context,
-                                userId,
-                                user.getLogin(),
-                                ratingValues,
-                                binding.starRatingDone,
-                                binding.starRating,
-                                binding.textViewTapToRate,
-                                binding.numberOfRatings,
-                                binding.averageRating,
-                                binding.recyclerViewRating,
-                                loading,
-                                campusId,
-                                cursusId,
-                                type,
-                                mealId,
-                                rating,
-                                firebaseDatabase,
-                                binding.progressBarMeal,
-                                mealViewModel));
+                        ratingValues -> {
+                            if (ratingValues.isEmpty()) {
+                                binding.textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
+                                binding.textViewTapToRate.setText(R.string.text_unsigned);
+                            } else
+                                ratingValuesUsers = StarUtils.getRate(
+                                        context,
+                                        userId,
+                                        user.getLogin(),
+                                        ratingValues,
+                                        binding.starRatingDone,
+                                        binding.starRating,
+                                        binding.textViewTapToRate,
+                                        binding.numberOfRatings,
+                                        binding.averageRating,
+                                        binding.recyclerViewRating,
+                                        loading,
+                                        campusId,
+                                        cursusId,
+                                        type,
+                                        mealId,
+                                        rating,
+                                        firebaseDatabase,
+                                        binding.progressBarMeal,
+                                        mealViewModel);
+                        });
 
         if (cursusId == 0) {
             binding.fabGenerateQrCode.setVisibility(View.GONE);
