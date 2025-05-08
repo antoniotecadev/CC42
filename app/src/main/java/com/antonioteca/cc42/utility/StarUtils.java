@@ -207,10 +207,20 @@ public class StarUtils {
             ratingProgressItems.add(new RatingProgressItem(ratingCount, percentage));
         }
         RatingProgressAdapter adapter = new RatingProgressAdapter(ratingProgressItems);
-        recyclerViewRating.setLayoutManager(new LinearLayoutManager(context));
         recyclerViewRating.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         textViewNumberOfRatings.setText(numberOfRatings + " " + context.getString(R.string.ratings));
         textViewAverageRating.setText(averageRating);
         return ratingValuesUsers;
+    }
+
+    public static void loadStarZero(Context context, RecyclerView recyclerView) {
+        List<RatingProgressItem> ratingProgressItems = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            ratingProgressItems.add(new RatingProgressItem(0, 0));
+        }
+        RatingProgressAdapter adapter = new RatingProgressAdapter(ratingProgressItems);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setAdapter(adapter);
     }
 }

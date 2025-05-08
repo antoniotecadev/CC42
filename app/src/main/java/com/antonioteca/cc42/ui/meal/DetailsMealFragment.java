@@ -65,8 +65,10 @@ public class DetailsMealFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        StarUtils.loadStarZero(context, binding.recyclerViewRating);
         StarUtils.setColorCoalitionStar(binding.starRating, user);
         StarUtils.reduceStarSize(context, binding.starRatingDone, 30, 30);
+
         NavController navController = Navigation.findNavController(view);
         DetailsMealFragmentArgs args = DetailsMealFragmentArgs.fromBundle(requireArguments());
         Meal meal = args.getDetailsMeal();
