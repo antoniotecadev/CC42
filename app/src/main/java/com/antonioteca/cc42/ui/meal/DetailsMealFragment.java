@@ -73,6 +73,8 @@ public class DetailsMealFragment extends Fragment {
         DetailsMealFragmentArgs args = DetailsMealFragmentArgs.fromBundle(requireArguments());
         Meal meal = args.getDetailsMeal();
         String type = "meals";
+        String mealName = meal.getName();
+        String mealDescription = meal.getDescription();
         long userId = user.getUid();
         String mealId = meal.getId();
         int campusId = user.getCampusId();
@@ -126,8 +128,8 @@ public class DetailsMealFragment extends Fragment {
         }
 
         binding.textViewType.setText(meal.getType());
-        binding.textViewName.setText(meal.getName());
-        binding.textViewDescription.setText(meal.getDescription());
+        binding.textViewName.setText(mealName);
+        binding.textViewDescription.setText(mealDescription);
         binding.textViewDate.setText(meal.getCreatedDate());
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, true);
         // Configura os cliques das estrelas
@@ -140,7 +142,7 @@ public class DetailsMealFragment extends Fragment {
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
                 rating = 0; // Para poder mostrar a classificação, ao voltar <-
-                DetailsMealFragmentDirections.ActionDetailsMealFragmentToQrCodeFragment actionDetailsMealFragmentToQrCodeFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToQrCodeFragment("meal" + meal.getId() + "#" + user.getUid(), meal.getName(), Objects.requireNonNullElse(meal.getDescription(), ""), campusId, cursusId);
+                DetailsMealFragmentDirections.ActionDetailsMealFragmentToQrCodeFragment actionDetailsMealFragmentToQrCodeFragment = DetailsMealFragmentDirections.actionDetailsMealFragmentToQrCodeFragment("meal" + mealId + "#" + userId, mealName, Objects.requireNonNullElse(mealDescription, ""), campusId, cursusId);
                 navController.navigate(actionDetailsMealFragmentToQrCodeFragment);
             } catch (IllegalArgumentException e) {
                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();

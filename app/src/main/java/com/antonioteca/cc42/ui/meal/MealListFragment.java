@@ -5,6 +5,9 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -12,11 +15,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Cursu;
@@ -25,8 +30,10 @@ import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
+import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -69,13 +76,14 @@ public class MealListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         MealListFragmentArgs args = MealListFragmentArgs.fromBundle(getArguments());
         Cursu cursu = args.getCursu();
+        int campusId = user.getCampusId();
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             if (actionBar != null)
                 actionBar.setTitle(String.valueOf(cursu.getName()));
         }
 
-        mealsRef = firebaseDatabase.getReference("campus").child(String.valueOf(user.getCampusId()))
+        mealsRef = firebaseDatabase.getReference("campus").child(String.valueOf(campusId))
                 .child("cursus")
                 .child(String.valueOf(cursu.getId()))
                 .child("meals");
@@ -97,7 +105,8 @@ public class MealListFragment extends Fragment {
                 mealViewModel,
                 firebaseDatabase,
                 getLayoutInflater(),
-                user.getCampusId(),
+                user.getUid(),
+                campusId,
                 cursu.getId());
         binding.recyclerViewMeal.setAdapter(mealAdapter);
 
@@ -150,6 +159,25 @@ public class MealListFragment extends Fragment {
                 mealAdapter.updatePathImage(idMeal, pathImage);
             }
         });
+
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_meal, menu);
+                menu.findItem(R.id.action_view_qr_code_meals).setOnMenuItemClickListener(item -> {
+                    if (!mealAdapter.listMealQrCode.isEmpty()) {
+                        Util.showModalQrCode(context, mealAdapter.listMealQrCode, 0);
+                    } else
+                        Snackbar.make(view, R.string.meals_not_found, Snackbar.LENGTH_LONG).show();
+                    return true;
+                });
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                return false;
+            }
+        }, getViewLifecycleOwner());
     }
 
     @Override

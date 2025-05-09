@@ -1,6 +1,8 @@
 package com.antonioteca.cc42.ui.meal;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -18,10 +20,13 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewMealListBinding;
 import com.antonioteca.cc42.model.Meal;
+import com.antonioteca.cc42.model.MealQrCode;
 import com.antonioteca.cc42.network.NotificationFirebase.Notification;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
+import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -31,6 +36,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterViewHolder> {
+    public final List<MealQrCode> listMealQrCode = new ArrayList<>();
+    public final List<String> idMealQrCode = new ArrayList<>();
     private final List<Meal> mealList = new ArrayList<>();
     private final FirebaseDatabase firebaseDatabase;
     private final LayoutInflater layoutInflater;
@@ -42,13 +49,15 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
     private final Loading loading;
     private final int campusId;
     private final int cursusId;
+    private final long userId;
 
-    public MealAdapter(Context context, Loading loading, FragmentMealBinding binding, DatabaseReference mealsRef, MealViewModel mealViewModel, FirebaseDatabase firebaseDatabase, LayoutInflater layoutInflater, int campusId, int cursusId) {
+    public MealAdapter(Context context, Loading loading, FragmentMealBinding binding, DatabaseReference mealsRef, MealViewModel mealViewModel, FirebaseDatabase firebaseDatabase, LayoutInflater layoutInflater, long uid, int campusId, int cursusId) {
         this.loading = loading;
         this.binding = binding;
         this.mealsRef = mealsRef;
         this.mealViewModel = mealViewModel;
         this.context = context;
+        this.userId = uid;
         this.campusId = campusId;
         this.cursusId = cursusId;
         this.layoutInflater = layoutInflater;
@@ -85,6 +94,15 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             MenuItem menuItemEdit = contextMenu.add(view.getContext().getString(R.string.edit_meal));
             MenuItem menuItemDelete = contextMenu.add(view.getContext().getString(R.string.delete_meal));
             MenuItem menuItemNotify = contextMenu.add(view.getContext().getString(R.string.notify_meal));
+            MenuItem menuItemAddQrCode = contextMenu.add("Add Qr Code");
+            MenuItem menuItemDelQrCode = contextMenu.add("Del Qr Code");
+            if (idMealQrCode.contains(meal.getId())) {
+                menuItemAddQrCode.setVisible(false);
+                menuItemDelQrCode.setVisible(true);
+            } else {
+                menuItemAddQrCode.setVisible(true);
+                menuItemDelQrCode.setVisible(false);
+            }
             menuItemEdit.setOnMenuItemClickListener(item -> {
                 MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal = MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(false, cursusId).setMeal(meal);
                 Navigation.findNavController(view).navigate(actionNavMealToDialogFragmentCreateMeal);
@@ -128,6 +146,29 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                         Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
                     }
                 });
+                return true;
+            });
+            menuItemAddQrCode.setOnMenuItemClickListener(item -> {
+                Bitmap bitmapQrCode = Util.generateQrCodeWithLogo(context, "meal" + meal.getId() + "#" + userId);
+                if (bitmapQrCode != null) {
+                    holder.itemView.setBackgroundColor(Color.parseColor("#FFE6FBD0"));
+                    idMealQrCode.add(meal.getId());
+                    listMealQrCode.add(new MealQrCode(meal.getId(), meal.getName(), meal.getDescription(), campusId, cursusId, bitmapQrCode));
+                    Snackbar.make(view, meal.getName(), Snackbar.LENGTH_LONG).show();
+                } else
+                    Snackbar.make(view, R.string.msg_qr_code_invalid, Snackbar.LENGTH_LONG).show();
+                return true;
+            });
+            menuItemDelQrCode.setOnMenuItemClickListener(item -> {
+                holder.itemView.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                idMealQrCode.remove(meal.getId());
+                for (MealQrCode mealQrCodo : listMealQrCode) {
+                    if (meal.getId().equals(mealQrCodo.id())) {
+                        listMealQrCode.remove(mealQrCodo);
+                        break;
+                    }
+                }
+                Snackbar.make(view, meal.getName(), Snackbar.LENGTH_LONG).show();
                 return true;
             });
         });
