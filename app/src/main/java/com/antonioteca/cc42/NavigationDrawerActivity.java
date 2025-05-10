@@ -91,7 +91,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private Bundle args;
     private MenuProvider menuProvider;
     private FloatingActionButton fabOpenCameraScannerQrCode;
-    private ProgressBar progressBarMarkAttendance;
+    private ProgressBar progressBar;
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
     private NavController navController;
@@ -135,7 +135,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         fabOpenCameraScannerQrCode = binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode;
-        progressBarMarkAttendance = binding.appBarNavigationDrawer.progressBarMarkAttendance;
+        progressBar = binding.appBarNavigationDrawer.progressBar;
 
         String topic = "/topics/meals_" + campusId + "_";
 
@@ -215,7 +215,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
             // fabOpenCameraScannerQrCode.setBackgroundTintList(colorStateList); // Opcional
-            progressBarMarkAttendance.setIndeterminateTintList(colorStateList);
+            progressBar.setIndeterminateTintList(colorStateList);
             navigationView.setItemTextColor(colorStateList);
             navigationView.setItemIconTintList(colorStateList);
         }
@@ -321,7 +321,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 String resultQrCode = resultContents.replace("cc42event", "");
                 String[] partsQrCode = resultQrCode.split("#", 2);
                 if (partsQrCode.length == 2) {
-                    Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                    Util.setVisibleProgressBar(progressBar, fabOpenCameraScannerQrCode, sharedViewModel);
                     DaoEventFirebase.markAttendance(
                             firebaseDatabase,
                             partsQrCode[0], /* id event*/
@@ -334,7 +334,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                             urlImageUser,
                             context,
                             getLayoutInflater(),
-                            progressBarMarkAttendance,
+                            progressBar,
                             fabOpenCameraScannerQrCode,
                             sharedViewModel,
                             null
@@ -345,7 +345,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 String resultQrCode = resultContents.replace("cc42meal", "");
                 String[] partsQrCode = resultQrCode.split("#", 2);
                 if (partsQrCode.length == 2) {
-                    Util.setVisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                    Util.setVisibleProgressBar(progressBar, fabOpenCameraScannerQrCode, sharedViewModel);
                     DaoSusbscriptionFirebase.subscription(
                             firebaseDatabase,
                             partsQrCode[0], /* id meal*/
@@ -358,7 +358,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                             urlImageUser,
                             context,
                             getLayoutInflater(),
-                            progressBarMarkAttendance,
+                            progressBar,
                             fabOpenCameraScannerQrCode,
                             sharedViewModel,
                             null
