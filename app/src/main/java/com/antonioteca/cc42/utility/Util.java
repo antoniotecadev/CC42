@@ -151,7 +151,7 @@ public class Util {
             hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
             hints.put(EncodeHintType.MARGIN, 1); // Margem mínima
             // Gerar QR code
-            BitMatrix bitMatrix = new MultiFormatWriter().encode("cc42" + content, BarcodeFormat.QR_CODE, 600, 600, hints);
+            BitMatrix bitMatrix = new MultiFormatWriter().encode(AESUtil.encrypt("cc42" + content), BarcodeFormat.QR_CODE, 600, 600, hints);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             Bitmap qrCode = barcodeEncoder.createBitmap(bitMatrix);
             // Criar bitmap para desenhar (com espaço central)

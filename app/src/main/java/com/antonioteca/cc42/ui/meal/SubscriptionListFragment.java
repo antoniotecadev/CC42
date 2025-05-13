@@ -123,6 +123,7 @@ public class SubscriptionListFragment extends Fragment {
                             Util.setVisibleProgressBar(progressBarSubscription, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
                             DaoSusbscriptionFirebase.subscription(
                                     firebaseDatabase,
+                                    null,
                                     String.valueOf(meal.getId()),
                                     null,
                                     partsQrCode[0], /* id */

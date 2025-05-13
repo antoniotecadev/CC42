@@ -32,12 +32,15 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterViewHolder> {
     public final List<MealQrCode> listMealQrCode = new ArrayList<>();
     public final List<String> idMealQrCode = new ArrayList<>();
+    private final Set<Integer> selectedPositions = new HashSet<>();
     private final List<Meal> mealList = new ArrayList<>();
     private final FirebaseDatabase firebaseDatabase;
     private final LayoutInflater layoutInflater;
@@ -78,6 +81,12 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             loading.isLoading = true;
             loadMoreMeals();
         }
+
+        if (selectedPositions.contains(position))
+            holder.itemView.setBackgroundColor(Color.LTGRAY);
+        else
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+
         Meal meal = mealList.get(position);
         holder.binding.textViewType.setText(meal.getType());
         holder.binding.textViewName.setText(meal.getName());
@@ -151,7 +160,10 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             menuItemAddQrCode.setOnMenuItemClickListener(item -> {
                 Bitmap bitmapQrCode = Util.generateQrCodeWithLogo(context, "meal" + meal.getId() + "#" + userId);
                 if (bitmapQrCode != null) {
-                    holder.itemView.setBackgroundColor(Color.parseColor("#FFE6FBD0"));
+                    if (!selectedPositions.contains(position)) {
+                        selectedPositions.add(position);
+                        notifyItemChanged(position);
+                    }
                     idMealQrCode.add(meal.getId());
                     listMealQrCode.add(new MealQrCode(meal.getId(), meal.getName(), meal.getDescription(), campusId, cursusId, bitmapQrCode));
                     Snackbar.make(view, meal.getName(), Snackbar.LENGTH_LONG).show();
@@ -160,7 +172,10 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                 return true;
             });
             menuItemDelQrCode.setOnMenuItemClickListener(item -> {
-                holder.itemView.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                if (selectedPositions.contains(position)) {
+                    selectedPositions.remove(position);
+                    notifyItemChanged(position);
+                }
                 idMealQrCode.remove(meal.getId());
                 for (MealQrCode mealQrCodo : listMealQrCode) {
                     if (meal.getId().equals(mealQrCodo.id())) {

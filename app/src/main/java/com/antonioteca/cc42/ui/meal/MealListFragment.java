@@ -1,6 +1,8 @@
 package com.antonioteca.cc42.ui.meal;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,31 +13,45 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.dao.daofarebase.DaoSusbscriptionFirebase;
 import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Cursu;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
+import com.antonioteca.cc42.utility.AESUtil;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.zxing.client.android.BeepManager;
+import com.journeyapps.barcodescanner.BarcodeCallback;
+import com.journeyapps.barcodescanner.BarcodeResult;
+import com.journeyapps.barcodescanner.DecoratedBarcodeView;
+import com.journeyapps.barcodescanner.ScanOptions;
+import com.journeyapps.barcodescanner.camera.CameraSettings;
 
 import java.util.List;
 
@@ -43,14 +59,26 @@ public class MealListFragment extends Fragment {
 
 
     private User user;
+    private int cursusId;
     private Context context;
     private Loading loading;
+    private Integer cameraId;
+    private View inflatedViewStub;
+    private BeepManager beepManager;
+    private ScanOptions scanOptions;
     private MealAdapter mealAdapter;
+    private FragmentActivity activity;
     private DatabaseReference mealsRef;
     private FragmentMealBinding binding;
     private MealViewModel mealViewModel;
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
+    private DecoratedBarcodeView decoratedBarcodeView;
+    private FloatingActionButton floatingActionButton;
+
+    final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
+    final long[] lastClickTime = {0};
+    final boolean[] isFlashLightOn = {false};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,10 +86,14 @@ public class MealListFragment extends Fragment {
         loading = new Loading();
         context = requireContext();
         user = new User(context);
+        activity = requireActivity();
+        scanOptions = new ScanOptions();
         user.coalition = new Coalition(context);
+        beepManager = new BeepManager(activity);
+        floatingActionButton = new FloatingActionButton(context);
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         mealViewModel = new ViewModelProvider(this).get(MealViewModel.class);
-        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        sharedViewModel = new ViewModelProvider(activity).get(SharedViewModel.class);
     }
 
     @Override
@@ -77,11 +109,58 @@ public class MealListFragment extends Fragment {
         MealListFragmentArgs args = MealListFragmentArgs.fromBundle(getArguments());
         Cursu cursu = args.getCursu();
         int campusId = user.getCampusId();
+        this.cursusId = cursu.getId();
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             if (actionBar != null)
                 actionBar.setTitle(String.valueOf(cursu.getName()));
         }
+
+        scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
+        scanOptions.setPrompt(getString(R.string.align_camera_qr_code));
+        scanOptions.setOrientationLocked(false);
+        scanOptions.setCameraId(0);
+        scanOptions.setBeepEnabled(true);
+        scanOptions.setBarcodeImageEnabled(false); // Não capturar e retornar a imagem do código scaneado
+
+        inflatedViewStub = binding.viewStub.inflate();
+        inflatedViewStub.setVisibility(View.GONE);
+
+        decoratedBarcodeView = inflatedViewStub.findViewById(R.id.decoratedBarcodeView);
+
+        decoratedBarcodeView.initializeFromIntent(scanOptions.createScanIntent(context));
+        decoratedBarcodeView.decodeContinuous(callback);
+
+        inflatedViewStub.setOnLongClickListener(v -> {
+            if (isFlashLightOn[0]) {
+                isFlashLightOn[0] = false;
+                decoratedBarcodeView.setTorchOff();
+            } else {
+                isFlashLightOn[0] = true;
+                decoratedBarcodeView.setTorchOn();
+            }
+            return true;
+        });
+
+        inflatedViewStub.setOnClickListener(v -> {
+            long clickTime = System.currentTimeMillis();
+            if (clickTime - lastClickTime[0] < DOUBLE_CLICK_TIME_DELTA) {
+                closeCamera();
+            }
+            lastClickTime[0] = clickTime;
+        });
+
+        decoratedBarcodeView.setTorchListener(new DecoratedBarcodeView.TorchListener() {
+            @Override
+            public void onTorchOn() {
+                Snackbar.make(requireView(), R.string.on_flashlight, Snackbar.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onTorchOff() {
+                Snackbar.make(requireView(), R.string.off_flashlight, Snackbar.LENGTH_LONG).show();
+            }
+        });
 
         mealsRef = firebaseDatabase.getReference("campus").child(String.valueOf(campusId))
                 .child("cursus")
@@ -112,16 +191,10 @@ public class MealListFragment extends Fragment {
 
         String colorCoalition = user.coalition.getColor();
         if (colorCoalition != null) {
-            int color = Color.parseColor(colorCoalition);
+//            int color = Color.parseColor(colorCoalition);
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
-            binding.btnCreateMeal.setBackgroundColor(color);
             binding.progressBarMeal.setIndeterminateTintList(colorStateList);
         }
-        binding.btnCreateMeal.setOnClickListener(v -> {
-            MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal =
-                    MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(true, cursu.getId());
-            Navigation.findNavController(v).navigate(actionNavMealToDialogFragmentCreateMeal);
-        });
 
         mealViewModel.getMealList(context, binding, mealsRef, null).observe(getViewLifecycleOwner(), meals -> {
             if (!meals.isEmpty() && meals.get(0) != null) {
@@ -160,7 +233,7 @@ public class MealListFragment extends Fragment {
             }
         });
 
-        requireActivity().addMenuProvider(new MenuProvider() {
+        activity.addMenuProvider(new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_meal, menu);
@@ -169,6 +242,25 @@ public class MealListFragment extends Fragment {
                         Util.showModalQrCode(context, mealAdapter.listMealQrCode, 0);
                     } else
                         Snackbar.make(view, R.string.meals_not_found, Snackbar.LENGTH_LONG).show();
+                    return true;
+                });
+                menu.findItem(R.id.action_view_qr_code_meals_scanner).setOnMenuItemClickListener(item -> {
+                    if (!mealAdapter.listMealQrCode.isEmpty()) {
+                        if (decoratedBarcodeView.isShown())
+                            closeCamera();
+                        else
+                            new AlertDialog.Builder(context)
+                                    .setTitle(R.string.scanner)
+                                    .setItems(R.array.array_scanner_qr_code_options, (dialog, cameraId) -> openCameraScannerQrCodeSubscriptio(cameraId)).setPositiveButton(R.string.close, (dialog, which) -> dialog.dismiss())
+                                    .show();
+                    } else
+                        Snackbar.make(view, R.string.meals_not_found, Snackbar.LENGTH_LONG).show();
+                    return true;
+                });
+                menu.findItem(R.id.action_view_create_meal).setOnMenuItemClickListener(item -> {
+                    MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal =
+                            MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(true, cursu.getId());
+                    Navigation.findNavController(view).navigate(actionNavMealToDialogFragmentCreateMeal);
                     return true;
                 });
             }
@@ -180,9 +272,113 @@ public class MealListFragment extends Fragment {
         }, getViewLifecycleOwner());
     }
 
+    private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            result -> {
+                if (result)
+                    openCamera(this.cameraId);
+                else
+                    Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_camera_denied), context, null);
+            });
+
+    private void openCameraScannerQrCodeSubscriptio(int cameraId) {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+            this.cameraId = cameraId;
+            activityResultLauncher.launch(Manifest.permission.CAMERA);
+        } else {
+            if (decoratedBarcodeView.isShown())
+                closeCamera();
+            else
+                openCamera(cameraId);
+        }
+    }
+
+    private void openCamera(int cameraId) {
+        decoratedBarcodeView.pause();
+        decoratedBarcodeView.getBarcodeView().setCameraSettings(createCameraSettings(cameraId));
+        decoratedBarcodeView.resume();
+        inflatedViewStub.setVisibility(View.VISIBLE);
+    }
+
+    private CameraSettings createCameraSettings(int cameraId) {
+        CameraSettings cameraSettings = new CameraSettings();
+        cameraSettings.setRequestedCameraId(cameraId);
+        return cameraSettings;
+    }
+
+    private void closeCamera() {
+        inflatedViewStub.setVisibility(View.GONE);
+        if (decoratedBarcodeView.isShown()) {
+            if (isFlashLightOn[0]) {
+                isFlashLightOn[0] = false;
+                decoratedBarcodeView.setTorchOff();
+            }
+            decoratedBarcodeView.pause();
+        }
+    }
+
+    private final BarcodeCallback callback = new BarcodeCallback() {
+        @Override
+        public void barcodeResult(BarcodeResult barcodeResult) {
+            decoratedBarcodeView.pause();
+            Util.startVibration(context);
+            beepManager.playBeepSoundAndVibrate();
+            if (barcodeResult.getText().isEmpty()) {
+                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
+            } else {
+                String result = AESUtil.decrypt(barcodeResult.getText());
+                if (result != null && result.startsWith("cc42user")) {
+                    String resultQrCode = result.replace("cc42user", "");
+                    String[] partsQrCode = resultQrCode.split("#", 6);
+                    if (partsQrCode.length == 6) {
+                        if (!mealAdapter.listMealQrCode.isEmpty()) {
+                            binding.progressBarMeal.setVisibility(View.VISIBLE);
+                            DaoSusbscriptionFirebase.subscription(
+                                    firebaseDatabase,
+                                    mealAdapter.listMealQrCode,
+                                    null,
+                                    null,
+                                    partsQrCode[0], /* userId */
+                                    partsQrCode[1], /* login */
+                                    partsQrCode[2], /* displayName */
+                                    String.valueOf(cursusId),
+                                    partsQrCode[4], /* campusId */
+                                    partsQrCode[5], /* UrlImageUser */
+                                    context,
+                                    getLayoutInflater(),
+                                    binding.progressBarMeal,
+                                    floatingActionButton,
+                                    sharedViewModel,
+                                    () -> decoratedBarcodeView.resume()
+                            );
+                        } else {
+                            Snackbar.make(requireView(), R.string.meals_not_found, Snackbar.LENGTH_LONG).show();
+                            decoratedBarcodeView.resume();
+                        }
+                    } else
+                        Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
+                } else
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
+            }
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        decoratedBarcodeView.resume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        decoratedBarcodeView.pause();
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        closeCamera();
         binding = null;
     }
 }

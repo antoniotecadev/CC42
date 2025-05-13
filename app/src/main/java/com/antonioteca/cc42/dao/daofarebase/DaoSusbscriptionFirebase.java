@@ -7,6 +7,7 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.model.MealQrCode;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -17,6 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DaoSusbscriptionFirebase {
@@ -24,6 +26,7 @@ public class DaoSusbscriptionFirebase {
     // Assinar
     public static void subscription(
             FirebaseDatabase firebaseDatabase,
+            List<MealQrCode> listMealQrCode,
             String mealId,
             String userStaffId,
             String userId,
@@ -44,7 +47,7 @@ public class DaoSusbscriptionFirebase {
                 .child("cursus")
                 .child(cursusId)
                 .child("meals")
-                .child(mealId)
+                .child(mealId == null ? listMealQrCode.get(0).id() : mealId)
                 .child("subscriptions");
         // Verifica se o usuário já assinou
         subscriptionsRef.child(String.valueOf(userId)).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -56,7 +59,11 @@ public class DaoSusbscriptionFirebase {
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", urlImageUser, runnableResumeCamera);
                 } else {
                     Map<String, Object> update = new HashMap<>();
-                    update.put("cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/" + userId, true);
+                    if (mealId == null)
+                        for (MealQrCode mealQrCode : listMealQrCode)
+                            update.put("cursus/" + cursusId + "/meals/" + mealQrCode.id() + "/subscriptions/" + userId, true);
+                    else
+                        update.put("cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/" + userId, true);
 
                     DatabaseReference campusReference = firebaseDatabase.getReference("campus")
                             .child(campusId);

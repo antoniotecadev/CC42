@@ -14,4 +14,8 @@
         <item>es</item>
         <item>fr</item>
     </string-array>
+    <string-array name="array_scanner_qr_code_options">
+        <item>@string/camera_back</item>
+        <item>@string/camera_front</item>
+    </string-array>
 </resources>

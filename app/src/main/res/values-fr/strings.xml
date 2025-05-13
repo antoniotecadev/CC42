@@ -176,6 +176,8 @@
     <string name="meal_time_range">Intervalle des repas</string>
     <string name="meal_time_range_summary_on">Afficher</string>
     <string name="meal_time_range_summary_off">Cacher</string>
+    <string name="camera_back">Caméra arrière</string>
+    <string name="camera_front">Caméra avant</string>
     <string-array name="meals_carbohydrates_title">
         <item>Riz</item>
         <item>Pâtes</item>

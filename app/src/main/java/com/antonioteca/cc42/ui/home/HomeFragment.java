@@ -75,6 +75,7 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         userLogin = user.getLogin();
+        String userImage = user.getImage();
         displayName = user.getDisplayName();
 
         binding.recyclerviewEventsList.setHasFixedSize(true);
@@ -88,7 +89,7 @@ public class HomeFragment extends Fragment {
         binding.fabGenerateQrCodeUser.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(v);
             if (navController.getCurrentDestination() != null && navController.getCurrentDestination().getId() != R.id.qrCodeFragment) {
-                String content = "user" + user.getUid() + "#" + userLogin + "#" + displayName + "#" + user.getCursusId() + "#" + user.getCampusId();
+                String content = "user" + user.getUid() + "#" + userLogin + "#" + displayName + "#" + user.getCursusId() + "#" + user.getCampusId() + "#" + userImage;
                 HomeFragmentDirections.ActionNavHomeToQrCodeFragment actionNavHomeToQrCodeFragment =
                         HomeFragmentDirections.actionNavHomeToQrCodeFragment(content, userLogin, displayName, 0, 0);
                 Navigation.findNavController(v).navigate(actionNavHomeToQrCodeFragment);

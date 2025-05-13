@@ -176,6 +176,8 @@
     <string name="meal_time_range">Meal time range</string>
     <string name="meal_time_range_summary_on">Show</string>
     <string name="meal_time_range_summary_off">Hide</string>
+    <string name="camera_back">Back Camera</string>
+    <string name="camera_front">Front Camera</string>
     <string-array name="meals_carbohydrates_title">
         <item>Rice</item>
         <item>Pasta</item>

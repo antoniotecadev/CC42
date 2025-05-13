@@ -55,19 +55,19 @@ public class QrCodeFragment extends Fragment {
         String content = args.getContent();
         String title = args.getTitle(); /* login user | kind event | meal name*/
         String description = args.getDescription(); /* displayName user | name event | meal description */
-        String campusId = String.valueOf(args.getCampusId());
-        String cursusId = String.valueOf(args.getCursusId());
+        int campusId = args.getCampusId();
+        int cursusId = args.getCursusId();
         String[] parts = content.split("#");
-        String userStaffId = parts[parts.length - 1];
+        String userStaffId = campusId == 0 && cursusId == 0 ? "0" : parts[parts.length - 1];
         Bitmap bitmapQrCode = generateQrCodeWithLogo(view.getContext(), content);
         binding.textViewTitle.setText(title);
         binding.textViewDescription.setText(description);
         binding.imageViewQrCode.setImageBitmap(bitmapQrCode);
 
         ref = firebaseDatabase.getReference("campus")
-                .child(campusId)
+                .child(String.valueOf(campusId))
                 .child("cursus")
-                .child(cursusId)
+                .child(String.valueOf(cursusId))
                 .child("infoTmpUserEventMeal")
                 .child(userStaffId);
 

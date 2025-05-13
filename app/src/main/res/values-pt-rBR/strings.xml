@@ -176,6 +176,8 @@
     <string name="meal_time_range">Intervalo das refeições</string>
     <string name="meal_time_range_summary_on">Mostrar</string>
     <string name="meal_time_range_summary_off">Ocultar</string>
+    <string name="camera_back">Câmera Traseira</string>
+    <string name="camera_front">Câmera Frontal</string>
     <string-array name="meals_carbohydrates_title">
         <item>Arroz</item>
         <item>Massas</item>
