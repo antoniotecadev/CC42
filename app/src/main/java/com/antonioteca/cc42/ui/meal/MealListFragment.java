@@ -321,7 +321,6 @@ public class MealListFragment extends Fragment {
         @Override
         public void barcodeResult(BarcodeResult barcodeResult) {
             decoratedBarcodeView.pause();
-            Util.startVibration(context);
             beepManager.playBeepSoundAndVibrate();
             if (barcodeResult.getText().isEmpty()) {
                 Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());

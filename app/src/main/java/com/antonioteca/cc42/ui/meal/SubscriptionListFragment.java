@@ -45,6 +45,7 @@ import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.repository.UserRepository;
+import com.antonioteca.cc42.utility.AESUtil;
 import com.antonioteca.cc42.utility.EndlessScrollListener;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.PdfCreator;
@@ -107,17 +108,17 @@ public class SubscriptionListFragment extends Fragment {
 
     private final BarcodeCallback callback = new BarcodeCallback() {
         @Override
-        public void barcodeResult(BarcodeResult result) {
+        public void barcodeResult(BarcodeResult barcodeResult) {
             decoratedBarcodeView.pause();
-            Util.startVibration(context);
             beepManager.playBeepSoundAndVibrate();
-            if (result.getText().isEmpty()) {
+            if (barcodeResult.getText().isEmpty()) {
                 Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
             } else {
-                if (result.getText().startsWith("cc42user")) {
-                    String resultQrCode = result.getText().replace("cc42user", "");
-                    String[] partsQrCode = resultQrCode.split("#", 5);
-                    if (partsQrCode.length == 5) {
+                String result = AESUtil.decrypt(barcodeResult.getText());
+                if (result != null && result.startsWith("cc42user")) {
+                    String resultQrCode = result.replace("cc42user", "");
+                    String[] partsQrCode = resultQrCode.split("#", 6);
+                    if (partsQrCode.length == 6) {
                         String urlImageUser = subscriptionListAdapter.containsUser(Long.parseLong(partsQrCode[0]));
                         if (urlImageUser != null) {
                             Util.setVisibleProgressBar(progressBarSubscription, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
