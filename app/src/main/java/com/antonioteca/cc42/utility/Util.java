@@ -16,9 +16,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.Settings;
@@ -283,10 +282,26 @@ public class Util {
                 dialog.dismiss();
             });
             if (Objects.equals(title, context.getString(R.string.sucess))) {
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    runnableResumeCamera.run();
-                    dialog.dismiss();
-                }, 3000);
+                // Crie um CountDownTimer com duração total de 5 segundos (5000 milissegundos)
+                // e um intervalo de 1 segundo (1000 milissegundos) para ticks.
+                new CountDownTimer(5000, 1000) {
+
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        // Este método é chamado a cada intervalo (tick).
+                        // Atualize o TextView com o tempo restante.
+                        modalTitle.setText(context.getString(R.string.sucess) + "\n" + millisUntilFinished / 1000);
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        // Este método é chamado quando o contador termina.
+                        // Atualize o TextView para 0 ou qualquer mensagem final.
+                        modalTitle.setText(context.getString(R.string.sucess) + "\n" + "0");
+                        runnableResumeCamera.run();
+                        dialog.dismiss();
+                    }
+                }.start(); // Inicie o contador.
             }
         }
     }
