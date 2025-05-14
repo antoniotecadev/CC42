@@ -37,7 +37,7 @@ public class DaoSusbscriptionFirebase {
             String urlImageUser,
             Context context,
             LayoutInflater layoutInflater,
-            ProgressBar progressBarMarkAttendance,
+            ProgressBar progressBarSubscription,
             FloatingActionButton fabOpenCameraScannerQrCode,
             SharedViewModel sharedViewModel,
             Runnable runnableResumeCamera
@@ -54,7 +54,7 @@ public class DaoSusbscriptionFirebase {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                    Util.setInvisibleProgressBar(progressBarSubscription, fabOpenCameraScannerQrCode, sharedViewModel);
                     String message = displayName + "\n" + context.getString(R.string.msg_you_already_subscription);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", urlImageUser, runnableResumeCamera);
                 } else {
@@ -73,12 +73,12 @@ public class DaoSusbscriptionFirebase {
                                 if (userStaffId != null)
                                     Util.sendInfoTmpUserEventMeal(userStaffId, firebaseDatabase, campusId, cursusId, displayName, urlImageUser);
                                 sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
-                                Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                                Util.setInvisibleProgressBar(progressBarSubscription, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = displayName + "\n" + context.getString(R.string.msg_sucess_subscription);
                                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", urlImageUser, runnableResumeCamera);
                             })
                             .addOnFailureListener(e -> {
-                                Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                                Util.setInvisibleProgressBar(progressBarSubscription, fabOpenCameraScannerQrCode, sharedViewModel);
                                 String message = context.getString(R.string.msg_error_subscription) + ": " + e.getMessage();
                                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", urlImageUser, runnableResumeCamera);
                             });
@@ -87,7 +87,7 @@ public class DaoSusbscriptionFirebase {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Util.setInvisibleProgressBar(progressBarMarkAttendance, fabOpenCameraScannerQrCode, sharedViewModel);
+                Util.setInvisibleProgressBar(progressBarSubscription, fabOpenCameraScannerQrCode, sharedViewModel);
                 String message = context.getString(R.string.msg_error_check_subscription) + ": " + error.toException();
                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", urlImageUser, runnableResumeCamera);
             }
