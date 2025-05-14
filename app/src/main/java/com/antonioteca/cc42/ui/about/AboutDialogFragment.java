@@ -31,7 +31,7 @@ public class AboutDialogFragment extends DialogFragment {
         });
 
         binding.githubLink.setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/antonioteca"));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/antoniotecadev"));
             startActivity(browserIntent);
         });
 
