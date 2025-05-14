@@ -60,6 +60,7 @@ import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.ui.setting.ThemePreferences;
+import com.antonioteca.cc42.utility.AESUtil;
 import com.antonioteca.cc42.utility.GlideApp;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
@@ -311,14 +312,15 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         barScanOptionsActivityResultLauncher.launch(scanOptions);
     }
 
-    private final ActivityResultLauncher<ScanOptions> barScanOptionsActivityResultLauncher = registerForActivityResult(new ScanContract(), result -> {
-        String resultContents = result.getContents();
-        if (resultContents == null) return;
-        if (resultContents.isEmpty()) {
+    private final ActivityResultLauncher<ScanOptions> barScanOptionsActivityResultLauncher = registerForActivityResult(new ScanContract(), scanIntentResult -> {
+        String barcodeResult = scanIntentResult.getContents();
+        if (barcodeResult == null) return;
+        if (barcodeResult.isEmpty()) {
             Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, null);
         } else {
-            if (resultContents.startsWith("cc42event")) {
-                String resultQrCode = resultContents.replace("cc42event", "");
+            String result = AESUtil.decrypt(barcodeResult);
+            if (result != null && result.startsWith("cc42event")) {
+                String resultQrCode = result.replace("cc42event", "");
                 String[] partsQrCode = resultQrCode.split("#", 2);
                 if (partsQrCode.length == 2) {
                     Util.setVisibleProgressBar(progressBar, fabOpenCameraScannerQrCode, sharedViewModel);
@@ -341,8 +343,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     );
                 } else
                     Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, null);
-            } else if (resultContents.startsWith("cc42meal")) {
-                String resultQrCode = resultContents.replace("cc42meal", "");
+            } else if (result != null && result.startsWith("cc42meal")) {
+                String resultQrCode = result.replace("cc42meal", "");
                 String[] partsQrCode = resultQrCode.split("#", 2);
                 if (partsQrCode.length == 2) {
                     Util.setVisibleProgressBar(progressBar, fabOpenCameraScannerQrCode, sharedViewModel);
