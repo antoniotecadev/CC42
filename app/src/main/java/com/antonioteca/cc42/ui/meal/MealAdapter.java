@@ -41,7 +41,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
     public final List<MealQrCode> listMealQrCode = new ArrayList<>();
     public final List<String> idMealQrCode = new ArrayList<>();
     private final Set<Integer> selectedPositions = new HashSet<>();
-    private final List<Meal> mealList = new ArrayList<>();
+    public final List<Meal> mealList = new ArrayList<>();
     private final FirebaseDatabase firebaseDatabase;
     private final LayoutInflater layoutInflater;
     private final FragmentMealBinding binding;

@@ -172,8 +172,11 @@ public class MealListFragment extends Fragment {
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             MealsUtils.setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
-            mealAdapter.clean();
+            mealAdapter.idMealQrCode.clear();
+            mealAdapter.listMealQrCode.clear();
+            mealAdapter.mealList.clear();
             mealViewModel.mealList.clear();
+            mealAdapter.notifyDataSetChanged();
             mealViewModel.loadMeals(context, binding, mealsRef, null);
         });
 
