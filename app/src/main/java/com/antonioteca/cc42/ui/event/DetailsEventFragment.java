@@ -37,6 +37,7 @@ import com.antonioteca.cc42.ui.meal.RatingProgressAdapter;
 import com.antonioteca.cc42.ui.meal.RatingProgressItem;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.StarUtils;
+import com.antonioteca.cc42.viewmodel.EventViewModel;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -53,6 +54,7 @@ public class DetailsEventFragment extends Fragment {
     private Loading loading;
     private HashMap<?, ?> ratingValuesUsers;
     private MealViewModel mealViewModel;
+    private EventViewModel eventViewModel;
     private FirebaseDatabase firebaseDatabase;
     private FragmentDetailsEventBinding binding;
 
@@ -65,6 +67,7 @@ public class DetailsEventFragment extends Fragment {
         user.coalition = new Coalition(context);
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         mealViewModel = new ViewModelProvider(this).get(MealViewModel.class);
+        eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
     }
 
     @SuppressLint("SetTextI18n")
@@ -78,6 +81,8 @@ public class DetailsEventFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+
         int color;
         StarUtils.loadStarZero(context, binding.recyclerViewRating);
         StarUtils.setColorCoalitionStar(binding.starRating, user);
@@ -90,6 +95,12 @@ public class DetailsEventFragment extends Fragment {
         String eventId = String.valueOf(event.getId());
         int campusId = user.getCampusId();
         int cursusId = event.getCursus_ids().get(0);
+
+        eventViewModel.getUserIsPresent(context, getLayoutInflater(), firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), eventId, String.valueOf(userId))
+                .observe(getViewLifecycleOwner(), userIspresent -> {
+                    if (userIspresent)
+                        binding.starRating.getRoot().setVisibility(View.VISIBLE);
+                });
 
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();

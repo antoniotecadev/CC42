@@ -201,7 +201,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
 
     public void loadMoreMeals() {
         if (lastKey != null) {
-            mealViewModel.loadMeals(context, binding, mealsRef, lastKey);
+            mealViewModel.loadMeals(context, binding, mealsRef, lastKey, userId);
         }
     }
 

@@ -75,6 +75,7 @@ public class DetailsMealFragment extends Fragment {
         String type = "meals";
         String mealName = meal.getName();
         String mealDescription = meal.getDescription();
+        boolean isSubscribed = meal.isSubscribed();
         long userId = user.getUid();
         String mealId = meal.getId();
         int campusId = user.getCampusId();
@@ -83,6 +84,8 @@ public class DetailsMealFragment extends Fragment {
         mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, binding.progressBarMeal, String.valueOf(campusId), String.valueOf(cursusId), type, mealId)
                 .observe(getViewLifecycleOwner(),
                         ratingValues -> {
+                            if (isSubscribed)
+                                binding.starRating.getRoot().setVisibility(View.VISIBLE);
                             if (ratingValues.isEmpty()) {
                                 binding.textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
                                 binding.textViewTapToRate.setText(R.string.text_unsigned);

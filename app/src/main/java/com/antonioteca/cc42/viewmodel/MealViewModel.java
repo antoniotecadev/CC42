@@ -94,11 +94,11 @@ public class MealViewModel extends ViewModel {
         return ratingValuesMutableLiveData;
     }
 
-    public LiveData<List<Meal>> getMealList(Context context, FragmentMealBinding binding, DatabaseReference mealsRef, String startAtKey) {
+    public LiveData<List<Meal>> getMealList(Context context, FragmentMealBinding binding, DatabaseReference mealsRef, String startAtKey, long userId) {
         if (mealListMutableLiveData == null) {
             mealListMutableLiveData = new MutableLiveData<>();
             binding.progressBarMeal.setVisibility(View.VISIBLE);
-            loadMeals(context, binding, mealsRef, startAtKey);
+            loadMeals(context, binding, mealsRef, startAtKey, userId);
         } else if (mealListMutableLiveData.getValue() != null && !this.mealList.isEmpty()) {
             mealListMutableLiveData.getValue().clear();
             List<Meal> mealList = new ArrayList<>(this.mealList);
@@ -108,7 +108,7 @@ public class MealViewModel extends ViewModel {
         return mealListMutableLiveData;
     }
 
-    public void loadMeals(Context context, FragmentMealBinding binding, @NonNull DatabaseReference mealsRef, String startAtKey) {
+    public void loadMeals(Context context, FragmentMealBinding binding, @NonNull DatabaseReference mealsRef, String startAtKey, long userId) {
         Query query = mealsRef.orderByKey();
         if (startAtKey != null) {
             query = query.endBefore(startAtKey).limitToLast(15);
@@ -123,6 +123,17 @@ public class MealViewModel extends ViewModel {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Meal meal = dataSnapshot.getValue(Meal.class);
                         mealList.add(meal);
+                        DataSnapshot subscription = dataSnapshot.child("subscriptions");
+                        if (subscription.exists()) {
+                            for (DataSnapshot snapshotId : subscription.getChildren()) {
+                                String key = snapshotId.getKey();
+                                if (key != null && key.equals(String.valueOf(userId))) {
+                                    assert meal != null;
+                                    meal.setSubscribed(true);
+                                    break;
+                                }
+                            }
+                        }
                     }
                     Collections.reverse(mealList);
                     MealsUtils.setupVisibility(binding, View.INVISIBLE, false, View.INVISIBLE, View.VISIBLE);
@@ -131,7 +142,7 @@ public class MealViewModel extends ViewModel {
                     String message = context.getString(R.string.meals_not_found);
                     Util.showAlertDialogBuild(context.getString(R.string.warning), message, context, () -> {
                         MealsUtils.setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.INVISIBLE);
-                        loadMeals(context, binding, mealsRef, startAtKey);
+                        loadMeals(context, binding, mealsRef, startAtKey, userId);
                     });
                 }
                 mealListMutableLiveData.setValue(mealList);
@@ -143,7 +154,7 @@ public class MealViewModel extends ViewModel {
                     String message = context.getString(R.string.error_load_data) + ": " + error.getMessage();
                     Util.showAlertDialogBuild(context.getString(R.string.err), message, context, () -> {
                         MealsUtils.setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.INVISIBLE);
-                        loadMeals(context, binding, mealsRef, startAtKey);
+                        loadMeals(context, binding, mealsRef, startAtKey, userId);
                     });
                 }
                 mealListMutableLiveData.setValue(new ArrayList<>());

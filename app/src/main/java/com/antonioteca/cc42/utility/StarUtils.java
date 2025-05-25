@@ -174,7 +174,6 @@ public class StarUtils {
         if (ratingValueUser != null) {
             textViewTapToRate.setText(type.equals("events") ? R.string.text_present : R.string.text_signed);
             textViewTapToRate.setTextColor(context.getResources().getColor(R.color.green));
-            starRating.getRoot().setVisibility(View.VISIBLE);
             fillStars(starRating,
                     ratingValueUser,
                     null,

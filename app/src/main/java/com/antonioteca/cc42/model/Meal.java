@@ -15,6 +15,7 @@ public class Meal implements Parcelable {
     private String createdDate;
     private String pathImage;
     private String createdBy;
+    private transient boolean subscribed;
 
     public Meal() {
     }
@@ -41,6 +42,7 @@ public class Meal implements Parcelable {
         rating = in.readInt();
         createdDate = in.readString();
         createdBy = in.readString();
+        subscribed = in.readBoolean();
     }
 
     @Override
@@ -54,6 +56,7 @@ public class Meal implements Parcelable {
         dest.writeInt(rating);
         dest.writeString(createdDate);
         dest.writeString(createdBy);
+        dest.writeBoolean(subscribed);
     }
 
     @Override
@@ -84,6 +87,7 @@ public class Meal implements Parcelable {
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
@@ -130,5 +134,13 @@ public class Meal implements Parcelable {
 
     public String getCreatedBy() {
         return createdBy;
+    }
+
+    public boolean isSubscribed() {
+        return subscribed;
+    }
+
+    public void setSubscribed(boolean subscribed) {
+        this.subscribed = subscribed;
     }
 }

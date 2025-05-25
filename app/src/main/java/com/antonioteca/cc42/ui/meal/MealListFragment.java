@@ -109,6 +109,7 @@ public class MealListFragment extends Fragment {
         MealListFragmentArgs args = MealListFragmentArgs.fromBundle(getArguments());
         Cursu cursu = args.getCursu();
         int campusId = user.getCampusId();
+        long userId = user.getUid();
         this.cursusId = cursu.getId();
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
@@ -177,7 +178,7 @@ public class MealListFragment extends Fragment {
             mealAdapter.mealList.clear();
             mealViewModel.mealList.clear();
             mealAdapter.notifyDataSetChanged();
-            mealViewModel.loadMeals(context, binding, mealsRef, null);
+            mealViewModel.loadMeals(context, binding, mealsRef, null, userId);
         });
 
         mealAdapter = new MealAdapter(context,
@@ -199,7 +200,7 @@ public class MealListFragment extends Fragment {
             binding.progressBarMeal.setIndeterminateTintList(colorStateList);
         }
 
-        mealViewModel.getMealList(context, binding, mealsRef, null).observe(getViewLifecycleOwner(), meals -> {
+        mealViewModel.getMealList(context, binding, mealsRef, null, userId).observe(getViewLifecycleOwner(), meals -> {
             if (!meals.isEmpty() && meals.get(0) != null) {
                 mealAdapter.updateMealList(meals, meals.get(meals.size() - 1).getId());
                 mealViewModel.mealList.addAll(meals);
