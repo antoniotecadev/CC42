@@ -54,6 +54,7 @@ public class MealViewModel extends ViewModel {
     public List<Meal> mealList = new ArrayList<>();
     private DatabaseReference mealRef;
     private ValueEventListener valueEventListener;
+    private MutableLiveData<Boolean> isSubscribed;
     private MutableLiveData<Meal> createdMealMutableLiveData;
     private MutableLiveData<Meal> updatedMealMutableLiveData;
     private MutableLiveData<EventObserver<Meal>> deleteMealMutableLiveData;
@@ -106,6 +107,14 @@ public class MealViewModel extends ViewModel {
             mealListMutableLiveData.postValue(mealList);
         }
         return mealListMutableLiveData;
+    }
+
+    public LiveData<Boolean> getUserIsSubscribed(Context context, LayoutInflater layoutInflater, FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId, String userId) {
+        if (isSubscribed == null) {
+            isSubscribed = new MutableLiveData<>();
+            getUserSubscribed(context, layoutInflater, firebaseDatabase, campusId, cursusId, mealId, userId);
+        }
+        return isSubscribed;
     }
 
     public void loadMeals(Context context, FragmentMealBinding binding, @NonNull DatabaseReference mealsRef, String startAtKey, long userId) {
@@ -613,6 +622,37 @@ public class MealViewModel extends ViewModel {
             }
         };
         mealRef.child("ratings").addValueEventListener(valueEventListener);
+    }
+
+    private void getUserSubscribed(Context context, LayoutInflater layoutInflater, FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId, String userId) {
+        DatabaseReference subscriptionsRef = firebaseDatabase.getReference("campus")
+                .child(campusId)
+                .child("cursus")
+                .child(cursusId)
+                .child("meals")
+                .child(mealId)
+                .child("subscriptions");
+
+        subscriptionsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        String key = dataSnapshot.getKey();
+                        if (key != null && key.equals(String.valueOf(userId))) {
+                            isSubscribed.setValue(true);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                String message = context.getString(R.string.msg_error_check_attendance_event) + ": " + error.toException();
+                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
+            }
+        });
     }
 
     @Override

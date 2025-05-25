@@ -113,9 +113,14 @@ public class DetailsMealFragment extends Fragment {
                             binding.progressBarMeal.setVisibility(View.INVISIBLE);
                         });
 
-        if (cursusId == 0) {
+        if (meal.isNotification) {
             binding.fabGenerateQrCode.setVisibility(View.GONE);
             binding.fabOpenSubscriptionList.setVisibility(View.GONE);
+            mealViewModel.getUserIsSubscribed(context, getLayoutInflater(), firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), mealId, String.valueOf(userId))
+                    .observe(getViewLifecycleOwner(), isSubscribed1 -> {
+                        if (isSubscribed1)
+                            binding.starRating.getRoot().setVisibility(View.VISIBLE);
+                    });
         }
 
         if (getActivity() != null) {

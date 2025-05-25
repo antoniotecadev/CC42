@@ -16,6 +16,7 @@ public class Meal implements Parcelable {
     private String pathImage;
     private String createdBy;
     private transient boolean subscribed;
+    public transient boolean isNotification;
 
     public Meal() {
     }
