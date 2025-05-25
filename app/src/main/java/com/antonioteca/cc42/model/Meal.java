@@ -42,7 +42,7 @@ public class Meal implements Parcelable {
         rating = in.readInt();
         createdDate = in.readString();
         createdBy = in.readString();
-        subscribed = in.readBoolean();
+        subscribed = in.readByte() != 0;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Meal implements Parcelable {
         dest.writeInt(rating);
         dest.writeString(createdDate);
         dest.writeString(createdBy);
-        dest.writeBoolean(subscribed);
+        dest.writeByte((byte) (subscribed ? 1 : 0));
     }
 
     @Override
