@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -93,6 +94,15 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         holder.binding.textViewDescription.setText(meal.getDescription());
         holder.binding.txtViewQuantity.setText(String.valueOf(meal.getQuantity()));
         holder.binding.textViewDateCreated.setText(meal.getCreatedDate());
+        if (meal.isSubscribed()) {
+            int greenColor = ContextCompat.getColor(context, R.color.green);
+            holder.binding.txtViewSubscription.setTextColor(greenColor);
+            holder.binding.txtViewSubscription.setText(R.string.text_signed);
+        } else {
+            int redColor = ContextCompat.getColor(context, R.color.red);
+            holder.binding.txtViewSubscription.setTextColor(redColor);
+            holder.binding.txtViewSubscription.setText(R.string.text_unsigned);
+        }
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal, false);
         holder.itemView.setOnClickListener(v -> {
             MealListFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment = MealListFragmentDirections.actionNavMealToDetailsMealFragment(meal, cursusId);
