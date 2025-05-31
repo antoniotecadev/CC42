@@ -46,6 +46,7 @@ public class UserViewModel extends ViewModel {
     private final CompositeDisposable compositeDisposable;
     private final UserRepository userRepository;
 
+    private MutableLiveData<List<User>> userList;
     private MutableLiveData<User> userMutableLiveData;
     private MutableLiveData<List<User>> userListMutableLiveData;
     private MutableLiveData<List<String>> userIdsListMutableLiveData;
@@ -59,26 +60,42 @@ public class UserViewModel extends ViewModel {
         this.userRepository = userRepository;
     }
 
+    public MutableLiveData<List<User>> getUserList() {
+        if (userList == null)
+            userList = new MutableLiveData<>();
+        return userList;
+    }
+
     public LiveData<User> getUser() {
         if (userMutableLiveData == null)
             userMutableLiveData = new MutableLiveData<>();
         return userMutableLiveData;
     }
 
-    public LiveData<List<User>> getUsersEventLiveData(Context context, long eventId, Loading l, @NonNull ProgressBar progressBar) {
+    public LiveData<List<User>> getUsersEventLiveData(Context context, long eventId, Loading l, @NonNull ProgressBar progressBar, Bundle savedInstanceState) {
+        List<User> userList = this.getUserList().getValue();
         if (userListMutableLiveData == null) {
             userListMutableLiveData = new MutableLiveData<>();
             progressBar.setVisibility(View.VISIBLE);
             getUsersEvent(eventId, l, context);
+        } else if (savedInstanceState != null && userList != null && !userList.isEmpty()) {
+            if (userListMutableLiveData.getValue() != null)
+                userListMutableLiveData.getValue().clear();
+            userListMutableLiveData.postValue(userList);
         }
         return userListMutableLiveData;
     }
 
-    public LiveData<List<User>> getUsersSubscriptionLiveData(Context context, int cursusId, Loading l, @NonNull ProgressBar progressBar) {
+    public LiveData<List<User>> getUsersSubscriptionLiveData(Context context, int cursusId, Loading l, @NonNull ProgressBar progressBar, Bundle savedInstanceState) {
+        List<User> userList = this.getUserList().getValue();
         if (userListMutableLiveData == null) {
             userListMutableLiveData = new MutableLiveData<>();
             progressBar.setVisibility(View.VISIBLE);
             getUsersSubscription(cursusId, l, context);
+        } else if (savedInstanceState != null && userList != null && !userList.isEmpty()) {
+            if (userListMutableLiveData.getValue() != null)
+                userListMutableLiveData.getValue().clear();
+            userListMutableLiveData.postValue(userList);
         }
         return userListMutableLiveData;
     }
