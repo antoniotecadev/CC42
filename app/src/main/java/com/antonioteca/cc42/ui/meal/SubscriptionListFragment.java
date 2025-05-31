@@ -148,10 +148,6 @@ public class SubscriptionListFragment extends Fragment {
                     Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
             }
         }
-
-        @Override
-        public void possibleResultPoints(List<ResultPoint> resultPoints) {
-        }
     };
 
     private void activityResultContractsViewer(Boolean result) {
