@@ -145,7 +145,7 @@ public class StarUtils {
     public static HashMap<?, ?> getRate(
             Context context,
             long userId,
-            String userLogin,
+            boolean userIspresentOrIsSubscribed,
             @NonNull List<Object> ratingValues,
             StarRatingBinding starRatingDone,
             StarRatingBinding starRating,
@@ -195,8 +195,10 @@ public class StarUtils {
             starRating.star4.setClickable(false);
             starRating.star5.setClickable(false);
         } else {
-            textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
-            textViewTapToRate.setText(type.equals("events") ? R.string.text_absent : R.string.text_unsigned);
+            if (!userIspresentOrIsSubscribed) {
+                textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
+                textViewTapToRate.setText(type.equals("events") ? R.string.text_absent : R.string.text_unsigned);
+            }
         }
 
         List<RatingProgressItem> ratingProgressItems = new ArrayList<>();

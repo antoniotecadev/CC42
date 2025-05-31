@@ -52,6 +52,7 @@ public class DetailsEventFragment extends Fragment {
     private int rating = 0;
     private Context context;
     private Loading loading;
+    private boolean userIspresent;
     private HashMap<?, ?> ratingValuesUsers;
     private MealViewModel mealViewModel;
     private EventViewModel eventViewModel;
@@ -98,6 +99,7 @@ public class DetailsEventFragment extends Fragment {
 
         eventViewModel.getUserIsPresent(context, getLayoutInflater(), firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), eventId, String.valueOf(userId))
                 .observe(getViewLifecycleOwner(), userIspresent -> {
+                    this.userIspresent = userIspresent;
                     if (userIspresent)
                         binding.starRating.getRoot().setVisibility(View.VISIBLE);
                 });
@@ -149,13 +151,15 @@ public class DetailsEventFragment extends Fragment {
                 .observe(getViewLifecycleOwner(),
                         ratingValues -> {
                             if (ratingValues.isEmpty()) {
-                                binding.textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
-                                binding.textViewTapToRate.setText(R.string.text_absent);
+                                if (!userIspresent) {
+                                    binding.textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
+                                    binding.textViewTapToRate.setText(R.string.text_absent);
+                                }
                             } else
                                 ratingValuesUsers = StarUtils.getRate(
                                         context,
                                         userId,
-                                        user.getLogin(),
+                                        userIspresent,
                                         ratingValues,
                                         binding.starRatingDone,
                                         binding.starRating,

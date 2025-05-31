@@ -87,13 +87,15 @@ public class DetailsMealFragment extends Fragment {
                             if (isSubscribed)
                                 binding.starRating.getRoot().setVisibility(View.VISIBLE);
                             if (ratingValues.isEmpty()) {
-                                binding.textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
-                                binding.textViewTapToRate.setText(R.string.text_unsigned);
+                                if (!isSubscribed) {
+                                    binding.textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
+                                    binding.textViewTapToRate.setText(R.string.text_unsigned);
+                                }
                             } else
                                 ratingValuesUsers = StarUtils.getRate(
                                         context,
                                         userId,
-                                        user.getLogin(),
+                                        isSubscribed,
                                         ratingValues,
                                         binding.starRatingDone,
                                         binding.starRating,
