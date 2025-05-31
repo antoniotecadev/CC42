@@ -309,8 +309,8 @@ public class SubscriptionListFragment extends Fragment {
                 subscriptionListAdapter.updateSubscriptionUser(userIds);
             subscriptionListAdapter.isMarkAttendance = false;
             setNumberUserChip();
-            if (ratingValuesUsers != null)
-                subscriptionListAdapter.updateRatingValueUser(ratingValuesUsers);
+//            if (ratingValuesUsers != null)
+//                subscriptionListAdapter.updateRatingValueUser(ratingValuesUsers);
             userViewModel.getUserList().postValue(subscriptionListAdapter.getUserList());
             setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
         });
