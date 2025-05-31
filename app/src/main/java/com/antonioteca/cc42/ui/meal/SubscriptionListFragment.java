@@ -148,10 +148,6 @@ public class SubscriptionListFragment extends Fragment {
                     Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
             }
         }
-
-        @Override
-        public void possibleResultPoints(List<ResultPoint> resultPoints) {
-        }
     };
 
     private void activityResultContractsViewer(Boolean result) {
@@ -296,7 +292,7 @@ public class SubscriptionListFragment extends Fragment {
             }
         });
 
-        userViewModel.getUsersSubscriptionLiveData(context, cursusId, l, progressBarSubscription, savedInstanceState).observe(getViewLifecycleOwner(), users -> {
+        userViewModel.getUsersSubscriptionLiveData(context, cursusId, l, progressBarSubscription).observe(getViewLifecycleOwner(), users -> {
             if (!users.isEmpty() && users.get(0) != null) {
                 subscriptionListAdapter.updateUserList(users, context);
                 binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
@@ -311,7 +307,6 @@ public class SubscriptionListFragment extends Fragment {
             setNumberUserChip();
             if (ratingValuesUsers != null)
                 subscriptionListAdapter.updateRatingValueUser(ratingValuesUsers);
-            userViewModel.getUserList().postValue(subscriptionListAdapter.getUserList());
             setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
         });
 
@@ -428,7 +423,7 @@ public class SubscriptionListFragment extends Fragment {
         sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> {
             binding.fabOpenCameraScannerQrCodeBack.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
             binding.fabOpenCameraScannerQrCodeFront.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
-            binding.recyclerviewSubscriptionList.setOnTouchListener((v, event) -> disabled);
+            //binding.recyclerviewSubscriptionList.setOnTouchListener((v, event) -> disabled);
         });
     }
 

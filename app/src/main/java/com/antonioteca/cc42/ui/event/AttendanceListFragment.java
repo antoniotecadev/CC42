@@ -304,9 +304,8 @@ public class AttendanceListFragment extends Fragment {
             }
         });
 
-        userViewModel.getUsersEventLiveData(context, eventId, l, progressBarMarkAttendance, savedInstanceState).observe(getViewLifecycleOwner(), users -> {
+        userViewModel.getUsersEventLiveData(context, eventId, l, progressBarMarkAttendance).observe(getViewLifecycleOwner(), users -> {
             if (!users.isEmpty() && users.get(0) != null) {
-                //setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 attendanceListAdapter.updateUserList(users, context);
                 binding.recyclerviewAttendanceList.setAdapter(attendanceListAdapter);
             } else
@@ -318,7 +317,6 @@ public class AttendanceListFragment extends Fragment {
             if (!userIds.isEmpty() && userIds.get(0) != null)
                 attendanceListAdapter.updateAttendanceUser(userIds);
             setNumberUserChip();
-            userViewModel.getUserList().postValue(attendanceListAdapter.getUserList());
             setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
         });
 
@@ -440,7 +438,7 @@ public class AttendanceListFragment extends Fragment {
         sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> {
             binding.fabOpenCameraScannerQrCodeBack.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
             binding.fabOpenCameraScannerQrCodeFront.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
-            binding.recyclerviewAttendanceList.setOnTouchListener((v, event) -> disabled);
+            //binding.recyclerviewAttendanceList.setOnTouchListener((v, event) -> disabled);
         });
     }
 

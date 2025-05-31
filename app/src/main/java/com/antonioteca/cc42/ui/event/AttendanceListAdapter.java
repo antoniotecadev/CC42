@@ -6,11 +6,13 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewAttendanceListBinding;
 import com.antonioteca.cc42.model.User;
+import com.antonioteca.cc42.model.UserDiffCallback;
 import com.antonioteca.cc42.utility.Util;
 
 import java.util.ArrayList;
@@ -29,10 +31,16 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
 
     public void updateUserList(List<User> newUserList, Context context) {
         this.context = context;
-        int positionStart = getItemCount(); // Posição onde os novos itens começarão
-        this.userList.addAll(newUserList);  // Adiciona novos usuários à lista existente
         this.userListFull = new ArrayList<>(this.userList);
-        notifyItemRangeChanged(positionStart, newUserList.size()); // Notificar apenas a faixa adicionada
+        // Calcule a diferença
+        UserDiffCallback diffCallback = new UserDiffCallback(new ArrayList<>(this.userList), newUserList); // Passe cópias
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+        this.userList.addAll(newUserList);
+        // Despache as atualizações para o RecyclerView.
+        // Isso irá chamar os métodos notifyItemInserted, notifyItemRemoved,
+        // notifyItemMoved, ou notifyItemChanged (com ou sem payload)
+        // apenas para os itens que realmente mudaram.
+        diffResult.dispatchUpdatesTo(this);
     }
 
     public void updateAttendanceUser(List<String> usersIdsWithMarkedPresence) {

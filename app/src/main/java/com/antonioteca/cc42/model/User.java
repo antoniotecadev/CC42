@@ -9,6 +9,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Classe que representam os dados da aplicação
@@ -17,7 +18,7 @@ import java.util.List;
 public class User {
 
     @SerializedName("id")
-    public long uid;
+    public Long uid;
 
     public String email;
     public String login;
@@ -164,6 +165,24 @@ public class User {
 
     public void setSubscribedToTopicMealNotification(boolean value) {
         editor.putBoolean("subscribedToTopicMealNotification", value);
+    }
+
+    // equals e hashCode são cruciais para DiffUtil.areContentsTheSame
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(uid, user.uid) && // Garante que o ID também seja comparado
+                Objects.equals(present, user.present) &&
+                Objects.equals(subscription, user.subscription);
+        // Compare todos os campos relevantes para o conteúdo visual
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uid, present, subscription);
+        // Use os mesmos campos do equals
     }
 }
 
