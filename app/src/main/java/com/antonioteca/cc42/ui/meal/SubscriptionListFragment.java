@@ -232,11 +232,14 @@ public class SubscriptionListFragment extends Fragment {
         binding.recyclerviewSubscriptionList.setHasFixedSize(true);
         binding.recyclerviewSubscriptionList.setLayoutManager(new LinearLayoutManager(context));
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
-            setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
-            l.currentPage = 1;
-            activeScrollListener();
-            subscriptionListAdapter.clean();
-            userViewModel.getUsersSubscription(cursusId, l, context);
+            if (subscriptionListAdapter.isMarkAttendance || subscriptionListAdapter.getItemCount() < 0) {
+                setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
+                l.currentPage = 1;
+                activeScrollListener();
+                subscriptionListAdapter.clean();
+                userViewModel.getUsersSubscription(cursusId, l, context);
+            } else
+                binding.swipeRefreshLayout.setRefreshing(false);
         });
 
         scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
@@ -304,6 +307,7 @@ public class SubscriptionListFragment extends Fragment {
             Toast.makeText(context, R.string.msg_checking_subscription, Toast.LENGTH_LONG).show();
             if (!userIds.isEmpty() && userIds.get(0) != null)
                 subscriptionListAdapter.updateSubscriptionUser(userIds);
+            subscriptionListAdapter.isMarkAttendance = false;
             setNumberUserChip();
             if (ratingValuesUsers != null)
                 subscriptionListAdapter.updateRatingValueUser(ratingValuesUsers);

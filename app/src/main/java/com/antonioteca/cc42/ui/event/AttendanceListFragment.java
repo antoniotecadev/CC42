@@ -244,11 +244,14 @@ public class AttendanceListFragment extends Fragment {
         binding.recyclerviewAttendanceList.setLayoutManager(new LinearLayoutManager(context));
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
-            setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
-            l.currentPage = 1;
-            activeScrollListener();
-            attendanceListAdapter.clean();
-            userViewModel.getUsersEvent(eventId, l, context);
+            if (attendanceListAdapter.isMarkAttendance || attendanceListAdapter.getItemCount() < 0) {
+                setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
+                l.currentPage = 1;
+                activeScrollListener();
+                attendanceListAdapter.clean();
+                userViewModel.getUsersEvent(eventId, l, context);
+            } else
+                binding.swipeRefreshLayout.setRefreshing(false);
         });
 
         scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
@@ -318,6 +321,7 @@ public class AttendanceListFragment extends Fragment {
             if (!userIds.isEmpty() && userIds.get(0) != null)
                 attendanceListAdapter.updateAttendanceUser(userIds);
             setNumberUserChip();
+            attendanceListAdapter.isMarkAttendance = false;
             userViewModel.getUserList().postValue(attendanceListAdapter.getUserList());
             setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
         });
