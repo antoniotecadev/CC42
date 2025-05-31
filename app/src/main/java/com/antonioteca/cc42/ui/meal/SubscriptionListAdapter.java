@@ -54,7 +54,7 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
 
     public void updateSubscriptionUserSingle(Long uid) {
         for (int i = 0; i < getItemCount(); i++) {
-            if (this.userList.get(i).uid == uid) {
+            if (Objects.equals(this.userList.get(i).uid, uid)) {
                 this.userList.get(i).setSubscription(true);
                 notifyItemChanged(i);
                 break;
