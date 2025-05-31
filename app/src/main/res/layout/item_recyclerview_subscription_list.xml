@@ -48,22 +48,22 @@
             android:textColor="@color/textColorPrimary"
             android:textSize="10sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/starRatingContainer"
+            app:layout_constraintEnd_toStartOf="@+id/textViewSubscription"
             app:layout_constraintStart_toEndOf="@+id/imageViewUser"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/starRatingContainer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:layout_constraintEnd_toStartOf="@+id/textViewSubscription"
-            app:layout_constraintTop_toTopOf="parent">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/starRatingContainer"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="12dp"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/textViewSubscription"-->
+<!--            app:layout_constraintTop_toTopOf="parent">-->
 
-            <include
-                android:id="@+id/starRatingDone"
-                layout="@layout/star_rating" />
-        </LinearLayout>
+<!--            <include-->
+<!--                android:id="@+id/starRatingDone"-->
+<!--                layout="@layout/star_rating" />-->
+<!--        </LinearLayout>-->
 
         <TextView
             android:id="@+id/textViewSubscription"

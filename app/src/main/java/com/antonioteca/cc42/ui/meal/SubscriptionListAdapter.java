@@ -117,9 +117,9 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         imageUrl = user.getUrlImageUser();
         holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
-        if (user.ratingValue > 0)
-            StarUtils.selectedRating(holder.binding.starRatingDone, user.ratingValue);
-        StarUtils.reduceStarSize(context, holder.binding.starRatingDone, 20, 20);
+//        if (user.ratingValue > 0) Avaliação do usuario
+//            StarUtils.selectedRating(holder.binding.starRatingDone, user.ratingValue);
+//        StarUtils.reduceStarSize(context, holder.binding.starRatingDone, 20, 20);
         if (user.isSubscription() != null && user.isSubscription()) {
             holder.binding.textViewSubscription.setTextColor(greenColor);
             holder.binding.textViewSubscription.setText(context.getString(R.string.text_signed));
