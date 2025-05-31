@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
@@ -16,8 +15,6 @@ import com.antonioteca.cc42.factory.TokenViewModelFactory;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.Token;
-import com.antonioteca.cc42.model.User;
-import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.network.NetworkConstants;
 import com.antonioteca.cc42.repository.TokenRepository;
@@ -51,55 +48,40 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Util.showAlertDialogBuild(getString(R.string.err), e.getMessage(), MainActivity.this, null);
         }
-        tokenViewModel.getHttpSatus().observe(this, new Observer<HttpStatus>() {
-            @Override
-            public void onChanged(HttpStatus httpStatus) {
-                if (initOnNewIntent) {
-                    if (httpStatus == HttpStatus.OK)
-                        userViewModel.getUser(MainActivity.this);
-                    else
-                        Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), MainActivity.this, null);
-                }
-            }
-        });
-
-        tokenViewModel.getHttpException().observe(this, new Observer<HttpException>() {
-            @Override
-            public void onChanged(HttpException httpException) {
-                if (initOnNewIntent)
-                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), MainActivity.this, null);
-            }
-        });
-
-        userViewModel.getUser().observe(this, new Observer<User>() {
-            @Override
-            public void onChanged(User user) {
-                if (initOnNewIntent) {
-                    if (user != null) {
-                        if (userViewModel.saveUser(user))
-                            redirectToHome();
-                        else
-                            Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_err_save_sess_user), MainActivity.this, null);
-                    } else
-                        Util.showAlertDialogBuild(String.valueOf(HttpStatus.NOT_FOUND.getCode()), HttpStatus.NOT_FOUND.getDescription(), MainActivity.this, null);
-                }
-            }
-        });
-
-        userViewModel.getHttpSatus().observe(this, new Observer<HttpStatus>() {
-            @Override
-            public void onChanged(HttpStatus httpStatus) {
-                if (initOnNewIntent)
+        tokenViewModel.getHttpSatus().observe(this, httpStatus -> {
+            if (initOnNewIntent) {
+                if (httpStatus == HttpStatus.OK)
+                    userViewModel.getUser(MainActivity.this);
+                else
                     Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), MainActivity.this, null);
             }
         });
 
-        userViewModel.getHttpException().observe(this, new Observer<HttpException>() {
-            @Override
-            public void onChanged(HttpException httpException) {
-                if (initOnNewIntent)
-                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), MainActivity.this, null);
+        tokenViewModel.getHttpException().observe(this, httpException -> {
+            if (initOnNewIntent)
+                Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), MainActivity.this, null);
+        });
+
+        userViewModel.getUser().observe(this, user -> {
+            if (initOnNewIntent) {
+                if (user != null) {
+                    if (userViewModel.saveUser(user))
+                        redirectToHome();
+                    else
+                        Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_err_save_sess_user), MainActivity.this, null);
+                } else
+                    Util.showAlertDialogBuild(String.valueOf(HttpStatus.NOT_FOUND.getCode()), HttpStatus.NOT_FOUND.getDescription(), MainActivity.this, null);
             }
+        });
+
+        userViewModel.getHttpSatus().observe(this, httpStatus -> {
+            if (initOnNewIntent)
+                Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), MainActivity.this, null);
+        });
+
+        userViewModel.getHttpException().observe(this, httpException -> {
+            if (initOnNewIntent)
+                Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), MainActivity.this, null);
         });
     }
 
@@ -167,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
                 handleNotificationIntent(intent);
             } catch (Exception e) {
                 Util.showAlertDialogBuild(getString(R.string.err), e.getMessage(), MainActivity.this, null);
-                e.printStackTrace();
             }
         }
     }
