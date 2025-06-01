@@ -75,8 +75,7 @@ public class Token {
     }
 
     public boolean isTokenExpired(Long tokenExpirationTime) {
-        long expirationTime = tokenExpirationTime;
-        return System.currentTimeMillis() > expirationTime;
+        return System.currentTimeMillis() > tokenExpirationTime;
     }
 
     public void getRefreshTokenUserSave(Context context, CallBackToken callBackToken) {

@@ -81,7 +81,7 @@ public class User {
         return commit(); // ou editor.apply() se preferir.
     }
 
-    public long getUid() {
+    public Long getUid() {
         return preferences.getLong("uid", 0);
     }
 
