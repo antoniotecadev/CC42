@@ -81,10 +81,11 @@
         android:visibility="invisible" />
 
     <TextView
-        android:id="@+id/textViewTotalPages"
+        android:id="@+id/textViewTotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:text="@string/_0"
         android:textSize="34sp"
         android:textStyle="bold" />
 

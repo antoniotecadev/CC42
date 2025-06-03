@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -170,11 +169,15 @@ public class PdfCreator {
     }
 
     @Nullable
-    public static File createPdfSubscriptionList(Context context, Meal meal, int numberUserUnsubscription, int numberUserSubscription, List<User> userList, ProgressBar progressBar) {
+    public static File createPdfSubscriptionList(
+            Context context, Activity activity,
+            Meal meal,
+            int numberUserUnsubscription, int numberUserSubscription,
+            List<User> userList,
+            CircularProgressIndicator progressIndicator, TextView textViewTotal) {
         File folder = createFolder(context, "MealSubscriptionList");
         if (folder == null)
             return null;
-//        Caminho do arquivo PDF
         File file = new File(folder, "meal_subscription_list.pdf");
         try {
             PdfWriter writer = new PdfWriter(new FileOutputStream(file));
@@ -252,14 +255,18 @@ public class PdfCreator {
                 } else if (user.isSubscription() != null && !user.isSubscription()) {
                     table.addCell(new Paragraph(context.getString(R.string.text_unsigned)).setFontColor(red, 100));
                 }
-                int progress = (int) (((i + 1) / (float) totalUsers) * 100);
-                progressBar.setProgress(progress);
+                int sum = i + 1;
+                int progress = (int) ((sum / (float) totalUsers) * 100);
+                activity.runOnUiThread(() -> {
+                    progressIndicator.setProgress(progress);
+                    textViewTotal.setText(String.valueOf(sum));
+                });
             }
             document.add(table);
             document.close();
             return file;
         } catch (Exception e) {
-            Util.showAlertDialogBuild("PDF", context.getString(R.string.pdf_not_created) + e.getMessage(), context, null);
+            activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null));
             return null;
         }
     }
@@ -447,7 +454,7 @@ public class PdfCreator {
             document.close();
             return file;
         } catch (Exception e) {
-            Util.showAlertDialogBuild("PDF", context.getString(R.string.pdf_not_created) + e.getMessage(), context, null);
+            activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null));
             return null;
         }
     }

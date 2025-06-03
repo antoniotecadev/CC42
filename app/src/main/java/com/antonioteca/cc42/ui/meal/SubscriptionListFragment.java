@@ -55,7 +55,6 @@ import com.antonioteca.cc42.utility.PdfViewer;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.antonioteca.cc42.viewmodel.UserViewModel;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.zxing.client.android.BeepManager;
@@ -171,7 +170,7 @@ public class SubscriptionListFragment extends Fragment {
             if (userList.isEmpty()) {
                 Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
             } else {
-                File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList(), binding.progressBarSubscription);
+                File filePdf = PdfCreator.createPdfSubscriptionList(context, requireActivity(), meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList(), binding.progressindicator, binding.textViewTotal);
                 if (filePdf != null)
                     PdfSharer.sharePdf(context, filePdf);
             }
@@ -415,7 +414,7 @@ public class SubscriptionListFragment extends Fragment {
                         if (userList.isEmpty()) {
                             Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
                         } else {
-                            File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, userList, binding.progressBarSubscription);
+                            File filePdf = PdfCreator.createPdfSubscriptionList(context, requireActivity(), meal, numberUserUnsubscription, numberUserSubscription, userList, binding.progressindicator, binding.textViewTotal);
                             if (filePdf != null)
                                 PdfSharer.sharePdf(context, filePdf);
                         }
@@ -437,14 +436,21 @@ public class SubscriptionListFragment extends Fragment {
                 .setTitle(R.string.list_print)
                 .setItems(R.array.array_subscriptions_list_qr_code_options, (dialog, selected) -> {
                     if (selected == 0) {
-                        File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList(), binding.progressBarSubscription);
-                        if (filePdf != null)
-                            PdfViewer.openPdf(context, filePdf);
+                        binding.progressindicator.setVisibility(View.VISIBLE);
+                        ExecutorService executor = Executors.newSingleThreadExecutor();
+                        executor.execute(() -> {
+                            File filePdf = PdfCreator.createPdfSubscriptionList(context, requireActivity(), meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList(), binding.progressindicator, binding.textViewTotal);
+                            if (filePdf != null)
+                                PdfViewer.openPdf(context, filePdf);
+                            else
+                                activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
+                            requireActivity().runOnUiThread(() -> binding.progressindicator.setVisibility(View.GONE));
+                        });
                     } else {
                         binding.progressindicator.setVisibility(View.VISIBLE);
                         ExecutorService executor = Executors.newSingleThreadExecutor();
                         executor.execute(() -> {
-                            List<File> filePdf = PdfCreator.createMultiplePdfQrCodes(requireActivity(), userList, campusId, cursusId, binding.progressindicator, binding.textViewTotalPages);
+                            List<File> filePdf = PdfCreator.createMultiplePdfQrCodes(requireActivity(), userList, campusId, cursusId, binding.progressindicator, binding.textViewTotal);
                             if (!filePdf.isEmpty()) {
                                 File fileMergePdf = PdfCreator.mergePdfs(context, filePdf);
                                 if (fileMergePdf != null)
