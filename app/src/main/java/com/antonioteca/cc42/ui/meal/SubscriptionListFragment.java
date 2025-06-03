@@ -444,7 +444,7 @@ public class SubscriptionListFragment extends Fragment {
                         binding.progressindicator.setVisibility(View.VISIBLE);
                         ExecutorService executor = Executors.newSingleThreadExecutor();
                         executor.execute(() -> {
-                            List<File> filePdf = PdfCreator.createMultiplePdfQrCodes(requireActivity(), userList, campusId, cursusId, binding.progressindicator);
+                            List<File> filePdf = PdfCreator.createMultiplePdfQrCodes(requireActivity(), userList, campusId, cursusId, binding.progressindicator, binding.textViewTotalPages);
                             if (!filePdf.isEmpty()) {
                                 File fileMergePdf = PdfCreator.mergePdfs(context, filePdf);
                                 if (fileMergePdf != null)

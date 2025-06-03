@@ -80,6 +80,14 @@
         android:indeterminateTint="@color/light_blue_900"
         android:visibility="invisible" />
 
+    <TextView
+        android:id="@+id/textViewTotalPages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="34sp"
+        android:textStyle="bold" />
+
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressindicator"
         android:layout_width="100dp"

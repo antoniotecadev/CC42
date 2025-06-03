@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -326,7 +327,7 @@ public class PdfCreator {
     }
 
     @NonNull
-    public static List<File> createMultiplePdfQrCodes(Activity activity, @NonNull List<User> userList, int campusId, int cursusId, CircularProgressIndicator progressBar) {
+    public static List<File> createMultiplePdfQrCodes(Activity activity, @NonNull List<User> userList, int campusId, int cursusId, CircularProgressIndicator progressBar, TextView textViewTotalPages) {
         Context context = activity.getBaseContext();
         final int BLOCK_SIZE = 60;
         List<File> pdfFiles = new ArrayList<>();
@@ -335,7 +336,11 @@ public class PdfCreator {
         int totalPages = (int) Math.ceil((double) totalUsers / BLOCK_SIZE);
 
         for (int pageIndex = 0; pageIndex < totalPages; pageIndex++) {
-            activity.runOnUiThread(() -> progressBar.setProgress(0));
+            final int index = pageIndex;
+            activity.runOnUiThread(() -> {
+                progressBar.setProgress(0);
+                textViewTotalPages.setText(String.valueOf(totalPages - index));
+            });
             int start = pageIndex * BLOCK_SIZE;
             int end = Math.min(start + BLOCK_SIZE, totalUsers);
             List<User> subList = userList.subList(start, end);
@@ -344,7 +349,10 @@ public class PdfCreator {
             File pdfFile = createSinglePdfQrCode(context, subList, campusId, cursusId, pageIndex + 1, activity, progressBar); // index + 1 para começar do 1
             if (pdfFile != null) {
                 pdfFiles.add(pdfFile);
-                activity.runOnUiThread(() -> Toast.makeText(context, pdfFile.getName(), Toast.LENGTH_SHORT).show());
+                activity.runOnUiThread(() -> {
+                    textViewTotalPages.setText(String.valueOf(0));
+                    Toast.makeText(context, pdfFile.getName(), Toast.LENGTH_SHORT).show();
+                });
             }
         }
         return pdfFiles;
