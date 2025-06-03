@@ -80,6 +80,21 @@
         android:indeterminateTint="@color/light_blue_900"
         android:visibility="invisible" />
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressindicator"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="0"
+        android:visibility="invisible"
+        app:indicatorColor="@color/light_blue_900"
+        app:indicatorInset="4dp"
+        app:indicatorSize="100dp"
+        app:trackColor="@color/black_overlay"
+        app:trackThickness="8dp" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabOpenCameraScannerQrCodeBack"
         android:layout_width="wrap_content"
