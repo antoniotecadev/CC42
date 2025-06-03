@@ -1,9 +1,12 @@
 package com.antonioteca.cc42.utility;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,6 +14,7 @@ import androidx.annotation.Nullable;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
@@ -25,11 +29,14 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.utils.PdfMerger;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
@@ -37,10 +44,14 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PdfCreator {
@@ -158,7 +169,7 @@ public class PdfCreator {
     }
 
     @Nullable
-    public static File createPdfSubscriptionList(Context context, Meal meal, int numberUserUnsubscription, int numberUserSubscription, List<User> userList) {
+    public static File createPdfSubscriptionList(Context context, Meal meal, int numberUserUnsubscription, int numberUserSubscription, List<User> userList, ProgressBar progressBar) {
         File folder = createFolder(context, "MealSubscriptionList");
         if (folder == null)
             return null;
@@ -228,7 +239,9 @@ public class PdfCreator {
             table.addHeaderCell(new Paragraph(context.getString(R.string.full_name)).setBold());
             table.addHeaderCell(new Paragraph(context.getString(R.string.login)).setBold());
             table.addHeaderCell(new Paragraph(context.getString(R.string.subscription)).setBold());
-            for (int i = 0; i < userList.size(); i++) {
+
+            int totalUsers = userList.size();
+            for (int i = 0; i < totalUsers; i++) {
                 User user = userList.get(i);
                 table.addCell(new Paragraph(String.valueOf(i + 1)));
                 table.addCell(new Paragraph(user.displayName));
@@ -238,6 +251,8 @@ public class PdfCreator {
                 } else if (user.isSubscription() != null && !user.isSubscription()) {
                     table.addCell(new Paragraph(context.getString(R.string.text_unsigned)).setFontColor(red, 100));
                 }
+                int progress = (int) (((i + 1) / (float) totalUsers) * 100);
+                progressBar.setProgress(progress);
             }
             document.add(table);
             document.close();
@@ -283,30 +298,177 @@ public class PdfCreator {
         }
 
         @Override
-            public void handleEvent(com.itextpdf.kernel.events.Event event) {
-                PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
-                PdfPage page = documentEvent.getPage();
-                Rectangle pageSize = page.getPageSize();
-                PdfCanvas pdfCanvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), page.getDocument()); // desenhar antes do conteúdo principal
+        public void handleEvent(com.itextpdf.kernel.events.Event event) {
+            PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
+            PdfPage page = documentEvent.getPage();
+            Rectangle pageSize = page.getPageSize();
+            PdfCanvas pdfCanvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), page.getDocument()); // desenhar antes do conteúdo principal
 
-                float offsetX = -100f; // Ajuste para mover à esquerda (negativo)
-                float offsetY = 0f; // Para deslocar na vertical
-                float imageWidth = pageSize.getWidth() / 2;
-                float imageHeight = pageSize.getHeight() / 2;
+            float offsetX = -100f; // Ajuste para mover à esquerda (negativo)
+            float offsetY = 0f; // Para deslocar na vertical
+            float imageWidth = pageSize.getWidth() / 2;
+            float imageHeight = pageSize.getHeight() / 2;
 
-                //Definir transparencia
-                pdfCanvas.saveState();
-                PdfExtGState extGState = new PdfExtGState();
-                extGState.setFillOpacity(0.15f);
-                pdfCanvas.setExtGState(extGState);
+            //Definir transparencia
+            pdfCanvas.saveState();
+            PdfExtGState extGState = new PdfExtGState();
+            extGState.setFillOpacity(0.15f);
+            pdfCanvas.setExtGState(extGState);
 
-                pdfCanvas.addImageFittedIntoRectangle(imageData,
-                        new Rectangle(
-                                ((pageSize.getHeight() - imageWidth) / 2) + offsetX, // Deslocar para esquerda
-                                ((pageSize.getHeight() - imageHeight) / 2) + offsetY,
-                                imageWidth, imageHeight),
-                        false);
-                pdfCanvas.restoreState();
+            pdfCanvas.addImageFittedIntoRectangle(imageData,
+                    new Rectangle(
+                            ((pageSize.getHeight() - imageWidth) / 2) + offsetX, // Deslocar para esquerda
+                            ((pageSize.getHeight() - imageHeight) / 2) + offsetY,
+                            imageWidth, imageHeight),
+                    false);
+            pdfCanvas.restoreState();
+        }
+    }
+
+    @NonNull
+    public static List<File> createMultiplePdfQrCodes(Activity activity, @NonNull List<User> userList, int campusId, int cursusId, CircularProgressIndicator progressBar) {
+        Context context = activity.getBaseContext();
+        final int BLOCK_SIZE = 60;
+        List<File> pdfFiles = new ArrayList<>();
+
+        int totalUsers = userList.size();
+        int totalPages = (int) Math.ceil((double) totalUsers / BLOCK_SIZE);
+
+        for (int pageIndex = 0; pageIndex < totalPages; pageIndex++) {
+            activity.runOnUiThread(() -> progressBar.setProgress(0));
+            int start = pageIndex * BLOCK_SIZE;
+            int end = Math.min(start + BLOCK_SIZE, totalUsers);
+            List<User> subList = userList.subList(start, end);
+
+            // Gere o PDF para este bloco
+            File pdfFile = createSinglePdfQrCode(context, subList, campusId, cursusId, pageIndex + 1, activity, progressBar); // index + 1 para começar do 1
+            if (pdfFile != null) {
+                pdfFiles.add(pdfFile);
+                activity.runOnUiThread(() -> Toast.makeText(context, pdfFile.getName(), Toast.LENGTH_SHORT).show());
             }
         }
+        return pdfFiles;
+    }
+
+    public static File createSinglePdfQrCode(Context context, List<User> userList, int campusId, int cursusId, int pageNumber, Activity activity, CircularProgressIndicator progressBar) {
+        File folder = createFolder(context, "QrCodeList");
+        if (folder == null)
+            return null;
+//        Caminho do arquivo PDF
+        File file = new File(folder, "qrcode_list_" + pageNumber + ".pdf");
+        try {
+            PdfWriter writer = new PdfWriter(new FileOutputStream(file));
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf, PageSize.A4);
+            document.setMargins(20, 20, 20, 20);
+            // Rodapé
+            pdf.addEventHandler(PdfDocumentEvent.END_PAGE, event -> {
+                PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
+                PdfPage page = documentEvent.getPage();
+                PdfCanvas pdfCanvas = new PdfCanvas(page);
+                Rectangle pageSize = page.getPageSize(); // Área do rodapé onde o contúdo será renderizado
+                Rectangle footerArea = new Rectangle(pageSize.getLeft()/*X inicial*/, pageSize.getBottom()/*Y inicial*/, pageSize.getWidth(), 20);
+                Canvas canvas = new Canvas(pdfCanvas, footerArea, true);
+                canvas.showTextAligned(new Paragraph(context.getString(R.string.page) + pdf.getPageNumber(page)).setFontSize(6f), pageSize.getWidth() / 2, 10, TextAlignment.CENTER);
+                canvas.close();
+            });
+
+            Table table = new Table(UnitValue.createPercentArray(new float[]{33.33f, 33.33f, 33.33f}))
+                    .useAllAvailableWidth();
+
+            Paragraph qrCode = new Paragraph("Qr Code");
+            qrCode.setTextAlignment(TextAlignment.CENTER);
+
+            for (int i = 0; i < 3; i++)
+                table.addHeaderCell(qrCode);
+
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            int count = 0;
+            int totalUsers = userList.size();
+            for (User user : userList) {
+                // Célula para conter o nome e o QR code
+                Cell userCell = new Cell();
+                userCell.setTextAlignment(TextAlignment.CENTER); // Centralizar o conteúdo da célula
+
+                // Adicionar nome do usuário
+                Paragraph userNameParagraph = new Paragraph(user.login)
+                        .setBold()
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setMarginBottom(5); // Espaço entre o nome e o QR code
+                userCell.add(userNameParagraph);
+
+                String content = "user" + user.uid + "#" + user.login + "#" + user.displayName + "#" + cursusId + "#" + campusId + "#" + user.getUrlImageUser();
+                Bitmap qrBitmap = Util.generateQrCodeWhithoutLogo(context, content, barcodeEncoder);
+
+                if (qrBitmap != null) {
+                    try {
+                        // Resetar o stream antes de usar de novo
+                        stream.reset();
+                        // Converter Bitmap para byte array
+                        qrBitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
+                        byte[] bitmapData = stream.toByteArray();
+                        qrBitmap.recycle(); // Liberar a memória do Bitmap
+
+                        // Criar imagem iText a partir do byte array
+                        Image qrCodeImage = new Image(ImageDataFactory.create(bitmapData))
+                                .setWidth(UnitValue.createPercentValue(90)) // Ajuste o tamanho
+                                .setHorizontalAlignment(com.itextpdf.layout.properties.HorizontalAlignment.CENTER);
+                        userCell.add(qrCodeImage);
+                    } catch (Exception e) {
+                        userCell.add(new Paragraph("Erro ao gerar QR").setTextAlignment(TextAlignment.CENTER));
+                    }
+                } else {
+                    // Lidar com o caso de bitmap nulo (e.g., logar, adicionar uma célula de erro)
+                    userCell.add(new Paragraph("QR Indisponível").setTextAlignment(TextAlignment.CENTER));
+                }
+
+                table.addCell(userCell);
+                count++;
+                int progress = (int) ((count / (float) totalUsers) * 100); // Atualiza barra de progresso
+                activity.runOnUiThread(() -> progressBar.setProgress(progress));
+            }
+            // Se o número de usuários não for múltiplo de 3, adicione células vazias para completar a última linha
+            int remainingCells = 3 - (count % 3);
+            if (remainingCells < 3) {
+                for (int i = 0; i < remainingCells; i++) {
+                    table.addCell(new Cell().setBorder(null)); // Célula vazia sem borda
+                }
+            }
+            document.add(table);
+            document.close();
+            return file;
+        } catch (Exception e) {
+            Util.showAlertDialogBuild("PDF", context.getString(R.string.pdf_not_created) + e.getMessage(), context, null);
+            return null;
+        }
+    }
+
+    public static File mergePdfs(Context context, List<File> pdfFiles) {
+        File folder = createFolder(context, "QrCodeList");
+        if (folder == null)
+            return null;
+        File mergedFile = new File(folder, "qrcode_list.pdf");
+        PdfDocument pdfDocument = null;
+        try {
+            pdfDocument = new PdfDocument(new PdfWriter(mergedFile));
+        } catch (FileNotFoundException e) {
+            return null;
+        }
+        PdfMerger merger = new PdfMerger(pdfDocument);
+
+        for (File file : pdfFiles) {
+            PdfDocument srcDoc;
+            try {
+                srcDoc = new PdfDocument(new PdfReader(file));
+            } catch (IOException e) {
+                return null;
+            }
+            merger.merge(srcDoc, 1, srcDoc.getNumberOfPages());
+            srcDoc.close(); // Libera a memória
+        }
+
+        pdfDocument.close(); // Salva o documento final
+        return mergedFile;
+    }
 }

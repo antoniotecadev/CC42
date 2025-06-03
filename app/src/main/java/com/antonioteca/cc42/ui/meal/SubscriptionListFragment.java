@@ -23,6 +23,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
@@ -54,9 +55,9 @@ import com.antonioteca.cc42.utility.PdfViewer;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.antonioteca.cc42.viewmodel.UserViewModel;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.BeepManager;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
@@ -67,6 +68,8 @@ import com.journeyapps.barcodescanner.camera.CameraSettings;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SubscriptionListFragment extends Fragment {
 
@@ -74,6 +77,7 @@ public class SubscriptionListFragment extends Fragment {
     private Meal meal;
     private Loading l;
     private Context context;
+    private Integer campusId;
     private Integer cursusId;
     private Integer cameraId;
     private Activity activity;
@@ -153,13 +157,10 @@ public class SubscriptionListFragment extends Fragment {
     private void activityResultContractsViewer(Boolean result) {
         if (result) {
             List<User> userList = subscriptionListAdapter.getUserList();
-            if (userList.isEmpty()) {
+            if (userList.isEmpty())
                 Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
-            } else {
-                File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList());
-                if (filePdf != null)
-                    PdfViewer.openPdf(context, filePdf);
-            }
+            else
+                printListSubscriptions(userList);
         } else
             Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_print), context, null);
     }
@@ -170,7 +171,7 @@ public class SubscriptionListFragment extends Fragment {
             if (userList.isEmpty()) {
                 Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
             } else {
-                File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList());
+                File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList(), binding.progressBarSubscription);
                 if (filePdf != null)
                     PdfSharer.sharePdf(context, filePdf);
             }
@@ -222,6 +223,7 @@ public class SubscriptionListFragment extends Fragment {
         activeScrollListener();
         SubscriptionListFragmentArgs args = SubscriptionListFragmentArgs.fromBundle(requireArguments());
         meal = args.getMeal();
+        campusId = user.getCampusId();
         cursusId = args.getCursusId();
         HashMap<?, ?> ratingValuesUsers = (HashMap<?, ?>) args.getRatingValuesUsers();
         if (getActivity() != null) {
@@ -258,9 +260,10 @@ public class SubscriptionListFragment extends Fragment {
         decoratedBarcodeView.decodeContinuous(callback);
 
         progressBarSubscription = binding.progressBarSubscription;
-        if (colorCoalition != null)
+        if (colorCoalition != null) {
+            binding.progressindicator.setIndicatorColor(Color.parseColor(colorCoalition));
             progressBarSubscription.setIndeterminateTintList(ColorStateList.valueOf(Color.parseColor(colorCoalition)));
-
+        }
         binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(v -> openCameraScannerQrCodeSubscriptio(0));
         binding.fabOpenCameraScannerQrCodeFront.setOnClickListener(v -> openCameraScannerQrCodeSubscriptio(1));
 
@@ -396,13 +399,10 @@ public class SubscriptionListFragment extends Fragment {
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     if (isExternalStorageManager) {
                         List<User> userList = subscriptionListAdapter.getUserList();
-                        if (userList.isEmpty()) {
+                        if (userList.isEmpty())
                             Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
-                        } else {
-                            File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, userList);
-                            if (filePdf != null)
-                                PdfViewer.openPdf(context, filePdf);
-                        }
+                        else
+                            printListSubscriptions(userList);
                     }
                 } else if (itemId == R.id.action_list_share) {
                     boolean isExternalStorageManager = Util.launchPermissionDocument(
@@ -415,7 +415,7 @@ public class SubscriptionListFragment extends Fragment {
                         if (userList.isEmpty()) {
                             Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
                         } else {
-                            File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, userList);
+                            File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, userList, binding.progressBarSubscription);
                             if (filePdf != null)
                                 PdfSharer.sharePdf(context, filePdf);
                         }
@@ -430,6 +430,34 @@ public class SubscriptionListFragment extends Fragment {
             binding.fabOpenCameraScannerQrCodeFront.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
             binding.recyclerviewSubscriptionList.setOnTouchListener((v, event) -> disabled);
         });
+    }
+
+    private void printListSubscriptions(List<User> userList) {
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.list_print)
+                .setItems(R.array.array_subscriptions_list_qr_code_options, (dialog, selected) -> {
+                    if (selected == 0) {
+                        File filePdf = PdfCreator.createPdfSubscriptionList(context, meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList(), binding.progressBarSubscription);
+                        if (filePdf != null)
+                            PdfViewer.openPdf(context, filePdf);
+                    } else {
+                        binding.progressindicator.setVisibility(View.VISIBLE);
+                        ExecutorService executor = Executors.newSingleThreadExecutor();
+                        executor.execute(() -> {
+                            List<File> filePdf = PdfCreator.createMultiplePdfQrCodes(requireActivity(), userList, campusId, cursusId, binding.progressindicator);
+                            if (!filePdf.isEmpty()) {
+                                File fileMergePdf = PdfCreator.mergePdfs(context, filePdf);
+                                if (fileMergePdf != null)
+                                    PdfViewer.openPdf(context, fileMergePdf);
+                                else
+                                    activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
+                            } else
+                                activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
+                            requireActivity().runOnUiThread(() -> binding.progressindicator.setVisibility(View.GONE));
+                        });
+                    }
+                }).setPositiveButton(R.string.close, (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
     RecyclerView.OnScrollListener onScrollListener = new EndlessScrollListener() {
