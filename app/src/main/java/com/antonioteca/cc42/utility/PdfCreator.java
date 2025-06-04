@@ -407,6 +407,7 @@ public class PdfCreator {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             int count = 0;
             int totalUsers = userList.size();
+            int sizeInPx = Util.getSizeInPx(context);
             for (User user : userList) {
                 // Célula para conter o nome e o QR code
                 Cell userCell = new Cell();
@@ -420,7 +421,7 @@ public class PdfCreator {
                 userCell.add(userNameParagraph);
 
                 String content = "user" + user.uid + "#" + user.login + "#" + user.displayName + "#" + cursusId + "#" + campusId + "#" + user.getUrlImageUser();
-                Bitmap qrBitmap = Util.generateQrCodeWhithoutLogo(context, content, barcodeEncoder);
+                Bitmap qrBitmap = Util.generateQrCodeWhithoutLogo(context, content, barcodeEncoder, sizeInPx);
 
                 if (qrBitmap != null) {
                     try {

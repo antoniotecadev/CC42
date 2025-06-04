@@ -59,7 +59,7 @@ public class QrCodeFragment extends Fragment {
         int cursusId = args.getCursusId();
         String[] parts = content.split("#");
         String userStaffId = campusId == 0 && cursusId == 0 ? "0" : parts[parts.length - 1];
-        Bitmap bitmapQrCode = Util.generateQrCodeWhithoutLogo(view.getContext(), content, new BarcodeEncoder());
+        Bitmap bitmapQrCode = Util.generateQrCodeWhithoutLogo(view.getContext(), content, new BarcodeEncoder(), Util.getSizeInPx(context));
         binding.textViewTitle.setText(title);
         binding.textViewDescription.setText(description);
         binding.imageViewQrCode.setImageBitmap(bitmapQrCode);

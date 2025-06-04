@@ -131,14 +131,21 @@ public class Util {
         markwon.setMarkdown(textView, markdownText);
     }
 
-    public static Bitmap generateQrCodeWhithoutLogo(Context context, String content, BarcodeEncoder barcodeEncoder) {
+    public static Bitmap generateQrCodeWhithoutLogo(Context context, String content, BarcodeEncoder barcodeEncoder, int sizeInPx) {
         Bitmap bitmap = null;
         try {
-            bitmap = barcodeEncoder.encodeBitmap(AESUtil.encrypt("cc42" + content), BarcodeFormat.QR_CODE, 600, 600);
+            bitmap = barcodeEncoder.encodeBitmap(AESUtil.encrypt("cc42" + content), BarcodeFormat.QR_CODE, sizeInPx, sizeInPx);
         } catch (Exception e) {
             showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null);
         }
         return bitmap;
+    }
+
+    public static int getSizeInPx(Context context) {
+        int sizeIndp = 400;
+        float scale = context.getResources().getDisplayMetrics().density;
+        // Conersão dp -> px
+        return (int) (sizeIndp * scale + 0.5f);
     }
 
     public static Bitmap generateQrCodeWithLogo(Context context, String content) {

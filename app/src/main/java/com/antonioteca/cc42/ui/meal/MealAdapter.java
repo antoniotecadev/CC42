@@ -55,7 +55,8 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
     private final int campusId;
     private final int cursusId;
     private final long userId;
-    private BarcodeEncoder barcodeEncoder;
+    private final int sizeInPx;
+    private final BarcodeEncoder barcodeEncoder;
 
     public MealAdapter(Context context, Loading loading, FragmentMealBinding binding, DatabaseReference mealsRef, MealViewModel mealViewModel, FirebaseDatabase firebaseDatabase, LayoutInflater layoutInflater, long uid, int campusId, int cursusId) {
         this.loading = loading;
@@ -68,6 +69,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         this.cursusId = cursusId;
         this.layoutInflater = layoutInflater;
         this.firebaseDatabase = firebaseDatabase;
+        this.sizeInPx = Util.getSizeInPx(context);
         this.barcodeEncoder = new BarcodeEncoder();
     }
 
@@ -171,7 +173,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                 return true;
             });
             menuItemAddQrCode.setOnMenuItemClickListener(item -> {
-                Bitmap bitmapQrCode = Util.generateQrCodeWhithoutLogo(context, "meal" + meal.getId() + "#" + userId, barcodeEncoder);
+                Bitmap bitmapQrCode = Util.generateQrCodeWhithoutLogo(context, "meal" + meal.getId() + "#" + userId, barcodeEncoder, sizeInPx);
                 if (bitmapQrCode != null) {
                     if (!selectedPositions.contains(position)) {
                         selectedPositions.add(position);
