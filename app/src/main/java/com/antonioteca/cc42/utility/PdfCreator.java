@@ -1,6 +1,5 @@
 package com.antonioteca.cc42.utility;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.model.Meal;
@@ -70,11 +70,10 @@ public class PdfCreator {
     }
 
     @Nullable
-    public static File createPdfAttendanceList(Context context, String eventKind, String eventName, String eventDate, int numberUserAbsent, int numberUserPresent, List<User> userList) {
+    public static File createPdfAttendanceList(Context context, FragmentActivity fragmentActivity, String eventKind, String eventName, String eventDate, int numberUserAbsent, int numberUserPresent, List<User> userList, CircularProgressIndicator progressIndicator, TextView textViewTotal) {
         File folder = createFolder(context, "AttendanceList");
         if (folder == null)
             return null;
-//        Caminho do arquivo PDF
         File file = new File(folder, "event_attendance_list.pdf");
         try {
             PdfWriter writer = new PdfWriter(new FileOutputStream(file));
@@ -82,7 +81,7 @@ public class PdfCreator {
             Document document = new Document(pdf, PageSize.A4);
             document.setMargins(20, 20, 20, 20);
             // Evento marca d'agua
-            pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new ImageWatermarkEvent(getImageDataFromDrawable(context)));
+            // pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new ImageWatermarkEvent(getImageDataFromDrawable(context)));
             // Rodapé
             pdf.addEventHandler(PdfDocumentEvent.END_PAGE, event -> {
                 PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
@@ -140,7 +139,8 @@ public class PdfCreator {
             table.addHeaderCell(new Paragraph(context.getString(R.string.full_name)).setBold());
             table.addHeaderCell(new Paragraph(context.getString(R.string.login)).setBold());
             table.addHeaderCell(new Paragraph(context.getString(R.string.attendance)).setBold());
-            for (int i = 0; i < userList.size(); i++) {
+            int totalUsers = userList.size();
+            for (int i = 0; i < totalUsers; i++) {
                 User user = userList.get(i);
                 table.addCell(new Paragraph(String.valueOf(i + 1)));
                 table.addCell(new Paragraph(user.displayName));
@@ -150,12 +150,18 @@ public class PdfCreator {
                 } else if (user.isPresent() != null && !user.isPresent()) {
                     table.addCell(new Paragraph(context.getString(R.string.text_absent)).setFontColor(red, 100));
                 }
+                int sum = i + 1;
+                int progress = (int) ((sum / (float) totalUsers) * 100);
+                fragmentActivity.runOnUiThread(() -> {
+                    progressIndicator.setProgress(progress);
+                    textViewTotal.setText(String.valueOf(sum));
+                });
             }
             document.add(table);
             document.close();
             return file;
         } catch (Exception e) {
-            Util.showAlertDialogBuild("PDF", context.getString(R.string.pdf_not_created) + e.getMessage(), context, null);
+            fragmentActivity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null));
             return null;
         }
     }
@@ -170,7 +176,7 @@ public class PdfCreator {
 
     @Nullable
     public static File createPdfSubscriptionList(
-            Context context, Activity activity,
+            Context context, FragmentActivity fragmentActivity,
             Meal meal,
             int numberUserUnsubscription, int numberUserSubscription,
             List<User> userList,
@@ -257,7 +263,7 @@ public class PdfCreator {
                 }
                 int sum = i + 1;
                 int progress = (int) ((sum / (float) totalUsers) * 100);
-                activity.runOnUiThread(() -> {
+                fragmentActivity.runOnUiThread(() -> {
                     progressIndicator.setProgress(progress);
                     textViewTotal.setText(String.valueOf(sum));
                 });
@@ -266,7 +272,7 @@ public class PdfCreator {
             document.close();
             return file;
         } catch (Exception e) {
-            activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null));
+            fragmentActivity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null));
             return null;
         }
     }
@@ -334,8 +340,8 @@ public class PdfCreator {
     }
 
     @NonNull
-    public static List<File> createMultiplePdfQrCodes(Activity activity, @NonNull List<User> userList, int campusId, int cursusId, CircularProgressIndicator progressBar, TextView textViewTotalPages) {
-        Context context = activity.getBaseContext();
+    public static List<File> createMultiplePdfQrCodes(FragmentActivity fragmentActivity, @NonNull List<User> userList, int campusId, int cursusId, CircularProgressIndicator progressBar, TextView textViewTotalPages) {
+        Context context = fragmentActivity.getBaseContext();
         final int BLOCK_SIZE = 60;
         List<File> pdfFiles = new ArrayList<>();
 
@@ -344,7 +350,7 @@ public class PdfCreator {
 
         for (int pageIndex = 0; pageIndex < totalPages; pageIndex++) {
             final int index = pageIndex;
-            activity.runOnUiThread(() -> {
+            fragmentActivity.runOnUiThread(() -> {
                 progressBar.setProgress(0);
                 textViewTotalPages.setText(String.valueOf(totalPages - index));
             });
@@ -353,10 +359,10 @@ public class PdfCreator {
             List<User> subList = userList.subList(start, end);
 
             // Gere o PDF para este bloco
-            File pdfFile = createSinglePdfQrCode(context, subList, campusId, cursusId, pageIndex + 1, activity, progressBar); // index + 1 para começar do 1
+            File pdfFile = createSinglePdfQrCode(context, subList, campusId, cursusId, pageIndex + 1, fragmentActivity, progressBar); // index + 1 para começar do 1
             if (pdfFile != null) {
                 pdfFiles.add(pdfFile);
-                activity.runOnUiThread(() -> {
+                fragmentActivity.runOnUiThread(() -> {
                     textViewTotalPages.setText(String.valueOf(0));
                     Toast.makeText(context, pdfFile.getName(), Toast.LENGTH_SHORT).show();
                 });
@@ -365,7 +371,7 @@ public class PdfCreator {
         return pdfFiles;
     }
 
-    public static File createSinglePdfQrCode(Context context, List<User> userList, int campusId, int cursusId, int pageNumber, Activity activity, CircularProgressIndicator progressBar) {
+    public static File createSinglePdfQrCode(Context context, List<User> userList, int campusId, int cursusId, int pageNumber, FragmentActivity fragmentActivity, CircularProgressIndicator progressBar) {
         File folder = createFolder(context, "QrCodeList");
         if (folder == null)
             return null;
@@ -441,7 +447,7 @@ public class PdfCreator {
                 table.addCell(userCell);
                 count++;
                 int progress = (int) ((count / (float) totalUsers) * 100); // Atualiza barra de progresso
-                activity.runOnUiThread(() -> progressBar.setProgress(progress));
+                fragmentActivity.runOnUiThread(() -> progressBar.setProgress(progress));
             }
             // Se o número de usuários não for múltiplo de 3, adicione células vazias para completar a última linha
             int remainingCells = 3 - (count % 3);
@@ -454,11 +460,12 @@ public class PdfCreator {
             document.close();
             return file;
         } catch (Exception e) {
-            activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null));
+            fragmentActivity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null));
             return null;
         }
     }
 
+    @Nullable
     public static File mergePdfs(Context context, List<File> pdfFiles) {
         File folder = createFolder(context, "QrCodeList");
         if (folder == null)

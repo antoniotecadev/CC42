@@ -70,6 +70,29 @@
         android:visibility="gone"
         tools:ignore="RtlCompat" />
 
+    <TextView
+        android:id="@+id/textViewTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="34sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressindicator"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="0"
+        android:visibility="invisible"
+        app:indicatorColor="@color/light_blue_900"
+        app:indicatorInset="4dp"
+        app:indicatorSize="100dp"
+        app:trackColor="@color/black_overlay"
+        app:trackThickness="8dp" />
+
     <ProgressBar
         android:id="@+id/progressBarMarkAttendance"
         android:layout_width="100dp"

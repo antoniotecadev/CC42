@@ -159,7 +159,7 @@ public class SubscriptionListFragment extends Fragment {
             if (userList.isEmpty())
                 Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
             else
-                printAndShareListSubscriptions(userList, true, R.string.list_print);
+                printAndShareSubscriptionsList(userList, true, R.string.list_print);
         } else
             Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_print), context, null);
     }
@@ -167,10 +167,10 @@ public class SubscriptionListFragment extends Fragment {
     private void activityResultContractsSharer(Boolean result) {
         if (result) {
             List<User> userList = subscriptionListAdapter.getUserList();
-            if (userList.isEmpty()) {
+            if (userList.isEmpty())
                 Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
-            } else
-                printAndShareListSubscriptions(userList, false, R.string.list_share);
+            else
+                printAndShareSubscriptionsList(userList, false, R.string.list_share);
         } else
             Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_share), context, null);
     }
@@ -398,7 +398,7 @@ public class SubscriptionListFragment extends Fragment {
                         if (userList.isEmpty())
                             Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
                         else
-                            printAndShareListSubscriptions(userList, true, R.string.list_print);
+                            printAndShareSubscriptionsList(userList, true, R.string.list_print);
                     }
                 } else if (itemId == R.id.action_list_share) {
                     boolean isExternalStorageManager = Util.launchPermissionDocument(
@@ -411,7 +411,7 @@ public class SubscriptionListFragment extends Fragment {
                         if (userList.isEmpty())
                             Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
                         else
-                            printAndShareListSubscriptions(userList, false, R.string.list_share);
+                            printAndShareSubscriptionsList(userList, false, R.string.list_share);
                     }
                 }
                 return NavigationUI.onNavDestinationSelected(menuItem, navController);
@@ -425,7 +425,7 @@ public class SubscriptionListFragment extends Fragment {
         });
     }
 
-    private void printAndShareListSubscriptions(List<User> userList, boolean isPrint, int title) {
+    private void printAndShareSubscriptionsList(List<User> userList, boolean isPrint, int title) {
         new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setItems(R.array.array_subscriptions_list_qr_code_options, (dialog, selected) -> {
@@ -443,6 +443,7 @@ public class SubscriptionListFragment extends Fragment {
                                 activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
                             requireActivity().runOnUiThread(() -> {
                                 binding.textViewTotal.setText("");
+                                binding.progressindicator.setProgress(0);
                                 binding.progressindicator.setVisibility(View.GONE);
                             });
                         });
@@ -464,6 +465,7 @@ public class SubscriptionListFragment extends Fragment {
                                 activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
                             requireActivity().runOnUiThread(() -> {
                                 binding.textViewTotal.setText("");
+                                binding.progressindicator.setProgress(0);
                                 binding.progressindicator.setVisibility(View.GONE);
                             });
                         });

@@ -22,6 +22,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -62,6 +63,8 @@ import com.journeyapps.barcodescanner.camera.CameraSettings;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AttendanceListFragment extends Fragment {
 
@@ -167,13 +170,10 @@ public class AttendanceListFragment extends Fragment {
     private void activityResultContractsViewer(Boolean result) {
         if (result) {
             List<User> userList = attendanceListAdapter.getUserList();
-            if (userList.isEmpty()) {
+            if (userList.isEmpty())
                 Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_attendance_list_empty), context, null);
-            } else {
-                File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
-                if (filePdf != null)
-                    PdfViewer.openPdf(context, filePdf);
-            }
+            else
+                printAndShareAttendanceList(userList, true, R.string.list_print);
         } else
             Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_print), context, null);
     }
@@ -181,13 +181,10 @@ public class AttendanceListFragment extends Fragment {
     private void activityResultContractsSharer(Boolean result) {
         if (result) {
             List<User> userList = attendanceListAdapter.getUserList();
-            if (userList.isEmpty()) {
+            if (userList.isEmpty())
                 Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_attendance_list_empty), context, null);
-            } else {
-                File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, attendanceListAdapter.getUserList());
-                if (filePdf != null)
-                    PdfSharer.sharePdf(context, filePdf);
-            }
+            else
+                printAndShareAttendanceList(userList, false, R.string.list_share);
         } else
             Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_share), context, null);
     }
@@ -270,9 +267,10 @@ public class AttendanceListFragment extends Fragment {
         decoratedBarcodeView.decodeContinuous(callback);
 
         ProgressBar progressBarMarkAttendance = binding.progressBarMarkAttendance;
-        if (colorCoalition != null)
+        if (colorCoalition != null) {
+            binding.progressindicator.setIndicatorColor(Color.parseColor(colorCoalition));
             progressBarMarkAttendance.setIndeterminateTintList(ColorStateList.valueOf(Color.parseColor(colorCoalition)));
-
+        }
         binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(v -> openCameraScannerQrCodeEvent(0));
         binding.fabOpenCameraScannerQrCodeFront.setOnClickListener(v -> openCameraScannerQrCodeEvent(1));
 
@@ -412,13 +410,10 @@ public class AttendanceListFragment extends Fragment {
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     if (isExternalStorageManager) {
                         List<User> userList = attendanceListAdapter.getUserList();
-                        if (userList.isEmpty()) {
+                        if (userList.isEmpty())
                             Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_attendance_list_empty), context, null);
-                        } else {
-                            File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, userList);
-                            if (filePdf != null)
-                                PdfViewer.openPdf(context, filePdf);
-                        }
+                        else
+                            printAndShareAttendanceList(userList, true, R.string.list_print);
                     }
                 } else if (itemId == R.id.action_list_share) {
                     boolean isExternalStorageManager = Util.launchPermissionDocument(
@@ -428,13 +423,10 @@ public class AttendanceListFragment extends Fragment {
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     if (isExternalStorageManager) {
                         List<User> userList = attendanceListAdapter.getUserList();
-                        if (userList.isEmpty()) {
+                        if (userList.isEmpty())
                             Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_attendance_list_empty), context, null);
-                        } else {
-                            File filePdf = PdfCreator.createPdfAttendanceList(context, eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, userList);
-                            if (filePdf != null)
-                                PdfSharer.sharePdf(context, filePdf);
-                        }
+                        else
+                            printAndShareAttendanceList(userList, false, R.string.list_share);
                     }
                 }
                 return NavigationUI.onNavDestinationSelected(menuItem, navController);
@@ -446,6 +438,32 @@ public class AttendanceListFragment extends Fragment {
             binding.fabOpenCameraScannerQrCodeFront.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
             binding.recyclerviewAttendanceList.setOnTouchListener((v, event) -> disabled);
         });
+    }
+
+    private void printAndShareAttendanceList(List<User> userList, boolean isPrint, int title) {
+        new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setItems(new String[]{getString(R.string.msg_attendance_list)}, (dialog, selected) -> {
+                    if (selected == 0) {
+                        binding.progressindicator.setVisibility(View.VISIBLE);
+                        ExecutorService executor = Executors.newSingleThreadExecutor();
+                        executor.execute(() -> {
+                            File filePdf = PdfCreator.createPdfAttendanceList(context, requireActivity(), eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, userList, binding.progressindicator, binding.textViewTotal);
+                            if (filePdf != null) {
+                                if (isPrint)
+                                    PdfViewer.openPdf(context, filePdf);
+                                else
+                                    PdfSharer.sharePdf(context, filePdf);
+                            } else
+                                activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
+                            requireActivity().runOnUiThread(() -> {
+                                binding.textViewTotal.setText("");
+                                binding.progressindicator.setProgress(0);
+                                binding.progressindicator.setVisibility(View.GONE);
+                            });
+                        });
+                    }
+                }).setPositiveButton(R.string.close, (dialog, which) -> dialog.dismiss()).show();
     }
 
     // ScrollListener para detectar quando carregar mais dados
