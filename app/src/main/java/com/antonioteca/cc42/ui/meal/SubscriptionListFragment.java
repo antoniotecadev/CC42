@@ -159,7 +159,7 @@ public class SubscriptionListFragment extends Fragment {
             if (userList.isEmpty())
                 Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
             else
-                printListSubscriptions(userList);
+                printAndShareListSubscriptions(userList, true, R.string.list_print);
         } else
             Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_print), context, null);
     }
@@ -169,11 +169,8 @@ public class SubscriptionListFragment extends Fragment {
             List<User> userList = subscriptionListAdapter.getUserList();
             if (userList.isEmpty()) {
                 Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
-            } else {
-                File filePdf = PdfCreator.createPdfSubscriptionList(context, requireActivity(), meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList(), binding.progressindicator, binding.textViewTotal);
-                if (filePdf != null)
-                    PdfSharer.sharePdf(context, filePdf);
-            }
+            } else
+                printAndShareListSubscriptions(userList, false, R.string.list_share);
         } else
             Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_share), context, null);
     }
@@ -401,7 +398,7 @@ public class SubscriptionListFragment extends Fragment {
                         if (userList.isEmpty())
                             Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
                         else
-                            printListSubscriptions(userList);
+                            printAndShareListSubscriptions(userList, true, R.string.list_print);
                     }
                 } else if (itemId == R.id.action_list_share) {
                     boolean isExternalStorageManager = Util.launchPermissionDocument(
@@ -411,13 +408,10 @@ public class SubscriptionListFragment extends Fragment {
                             Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     if (isExternalStorageManager) {
                         List<User> userList = subscriptionListAdapter.getUserList();
-                        if (userList.isEmpty()) {
+                        if (userList.isEmpty())
                             Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
-                        } else {
-                            File filePdf = PdfCreator.createPdfSubscriptionList(context, requireActivity(), meal, numberUserUnsubscription, numberUserSubscription, userList, binding.progressindicator, binding.textViewTotal);
-                            if (filePdf != null)
-                                PdfSharer.sharePdf(context, filePdf);
-                        }
+                        else
+                            printAndShareListSubscriptions(userList, false, R.string.list_share);
                     }
                 }
                 return NavigationUI.onNavDestinationSelected(menuItem, navController);
@@ -431,20 +425,26 @@ public class SubscriptionListFragment extends Fragment {
         });
     }
 
-    private void printListSubscriptions(List<User> userList) {
+    private void printAndShareListSubscriptions(List<User> userList, boolean isPrint, int title) {
         new AlertDialog.Builder(context)
-                .setTitle(R.string.list_print)
+                .setTitle(title)
                 .setItems(R.array.array_subscriptions_list_qr_code_options, (dialog, selected) -> {
                     if (selected == 0) {
                         binding.progressindicator.setVisibility(View.VISIBLE);
                         ExecutorService executor = Executors.newSingleThreadExecutor();
                         executor.execute(() -> {
                             File filePdf = PdfCreator.createPdfSubscriptionList(context, requireActivity(), meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList(), binding.progressindicator, binding.textViewTotal);
-                            if (filePdf != null)
-                                PdfViewer.openPdf(context, filePdf);
-                            else
+                            if (filePdf != null) {
+                                if (isPrint)
+                                    PdfViewer.openPdf(context, filePdf);
+                                else
+                                    PdfSharer.sharePdf(context, filePdf);
+                            } else
                                 activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
-                            requireActivity().runOnUiThread(() -> binding.progressindicator.setVisibility(View.GONE));
+                            requireActivity().runOnUiThread(() -> {
+                                binding.textViewTotal.setText("");
+                                binding.progressindicator.setVisibility(View.GONE);
+                            });
                         });
                     } else {
                         binding.progressindicator.setVisibility(View.VISIBLE);
@@ -453,13 +453,19 @@ public class SubscriptionListFragment extends Fragment {
                             List<File> filePdf = PdfCreator.createMultiplePdfQrCodes(requireActivity(), userList, campusId, cursusId, binding.progressindicator, binding.textViewTotal);
                             if (!filePdf.isEmpty()) {
                                 File fileMergePdf = PdfCreator.mergePdfs(context, filePdf);
-                                if (fileMergePdf != null)
-                                    PdfViewer.openPdf(context, fileMergePdf);
-                                else
+                                if (fileMergePdf != null) {
+                                    if (isPrint)
+                                        PdfViewer.openPdf(context, fileMergePdf);
+                                    else
+                                        PdfSharer.sharePdf(context, fileMergePdf);
+                                } else
                                     activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
                             } else
                                 activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
-                            requireActivity().runOnUiThread(() -> binding.progressindicator.setVisibility(View.GONE));
+                            requireActivity().runOnUiThread(() -> {
+                                binding.textViewTotal.setText("");
+                                binding.progressindicator.setVisibility(View.GONE);
+                            });
                         });
                     }
                 }).setPositiveButton(R.string.close, (dialog, which) -> dialog.dismiss())

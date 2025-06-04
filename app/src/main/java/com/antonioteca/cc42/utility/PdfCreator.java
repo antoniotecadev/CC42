@@ -185,7 +185,7 @@ public class PdfCreator {
             Document document = new Document(pdf, PageSize.A4);
             document.setMargins(20, 20, 20, 20);
             // Evento marca d'agua
-            pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new ImageWatermarkEvent(getImageDataFromDrawable(context)));
+            // pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new ImageWatermarkEvent(getImageDataFromDrawable(context)));
             // Rodapé
             pdf.addEventHandler(PdfDocumentEvent.END_PAGE, event -> {
                 PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
