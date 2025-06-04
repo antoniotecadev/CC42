@@ -52,7 +52,6 @@ public class DetailsEventFragment extends Fragment {
     private int rating = 0;
     private Context context;
     private Loading loading;
-    private boolean userIspresent;
     private HashMap<?, ?> ratingValuesUsers;
     private MealViewModel mealViewModel;
     private EventViewModel eventViewModel;
@@ -99,9 +98,12 @@ public class DetailsEventFragment extends Fragment {
 
         eventViewModel.getUserIsPresent(context, getLayoutInflater(), firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), eventId, String.valueOf(userId))
                 .observe(getViewLifecycleOwner(), userIspresent -> {
-                    this.userIspresent = userIspresent;
                     if (userIspresent)
                         binding.starRating.getRoot().setVisibility(View.VISIBLE);
+                    else {
+                        binding.textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
+                        binding.textViewTapToRate.setText(R.string.text_absent);
+                    }
                 });
 
         if (getActivity() != null) {
@@ -150,16 +152,11 @@ public class DetailsEventFragment extends Fragment {
         mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, binding.progressBarEvent, String.valueOf(user.getCampusId()), String.valueOf(cursusId), type, eventId)
                 .observe(getViewLifecycleOwner(),
                         ratingValues -> {
-                            if (ratingValues.isEmpty()) {
-                                if (!userIspresent) {
-                                    binding.textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
-                                    binding.textViewTapToRate.setText(R.string.text_absent);
-                                }
-                            } else
+                            if (!ratingValues.isEmpty())
                                 ratingValuesUsers = StarUtils.getRate(
                                         context,
                                         userId,
-                                        userIspresent,
+                                        false,
                                         ratingValues,
                                         binding.starRatingDone,
                                         binding.starRating,
