@@ -108,3 +108,22 @@
     public void set*(***);
     public *** get*();
 }
+
+# classe de modelo
+-keep class com.antonioteca.cc42.model.User { *; }
+-keep class com.antonioteca.cc42.model.Image { *; }
+-keep class com.antonioteca.cc42.model.ProjectUser { *; }
+-keep class com.antonioteca.cc42.model.Cursu { *; }
+-keep class com.antonioteca.cc42.model.Campus { *; }
+-keep class com.antonioteca.cc42.model.Event { *; }
+-keep class com.antonioteca.cc42.model.Token { *; }
+-keep class com.antonioteca.cc42.model.Coalition { *; }
+-keep class com.antonioteca.cc42.model.Subscription { *; }
+-keepattributes *Annotation*
+
+# Impede que classes anotadas com @Keep sejam minificadas
+-keep @androidx.annotation.Keep class * {*;}
+
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn org.slf4j.impl.StaticLoggerBinder
