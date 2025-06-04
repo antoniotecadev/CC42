@@ -97,7 +97,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         holder.binding.textViewType.setText(meal.getType());
         holder.binding.textViewName.setText(meal.getName());
         holder.binding.textViewDescription.setText(meal.getDescription());
-        holder.binding.txtViewQuantity.setText(String.valueOf(meal.getQuantity()));
+        holder.binding.txtViewQuantity.setText(meal.getQuantity() + "/" + meal.getNumberSubscribed());
         holder.binding.textViewDateCreated.setText(meal.getCreatedDate());
         if (meal.isSubscribed()) {
             int greenColor = ContextCompat.getColor(context, R.color.green);

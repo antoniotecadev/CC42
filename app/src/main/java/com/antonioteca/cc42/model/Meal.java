@@ -16,6 +16,7 @@ public class Meal implements Parcelable {
     private String pathImage;
     private String createdBy;
     private transient boolean subscribed;
+    private transient int numberSubscribed;
     public transient boolean isNotification;
 
     public Meal() {
@@ -39,6 +40,7 @@ public class Meal implements Parcelable {
         name = in.readString();
         description = in.readString();
         quantity = in.readInt();
+        numberSubscribed = in.readInt();
         pathImage = in.readString();
         rating = in.readInt();
         createdDate = in.readString();
@@ -53,6 +55,7 @@ public class Meal implements Parcelable {
         dest.writeString(name);
         dest.writeString(description);
         dest.writeInt(quantity);
+        dest.writeInt(numberSubscribed);
         dest.writeString(pathImage);
         dest.writeInt(rating);
         dest.writeString(createdDate);
@@ -143,5 +146,13 @@ public class Meal implements Parcelable {
 
     public void setSubscribed(boolean subscribed) {
         this.subscribed = subscribed;
+    }
+
+    public int getNumberSubscribed() {
+        return numberSubscribed;
+    }
+
+    public void setNumberSubscribed(int numberSubscribed) {
+        this.numberSubscribed = numberSubscribed;
     }
 }

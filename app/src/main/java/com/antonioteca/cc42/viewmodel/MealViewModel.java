@@ -131,18 +131,21 @@ public class MealViewModel extends ViewModel {
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Meal meal = dataSnapshot.getValue(Meal.class);
-                        mealList.add(meal);
                         DataSnapshot subscription = dataSnapshot.child("subscriptions");
+                        assert meal != null;
+                        meal.setNumberSubscribed((int) subscription.getChildrenCount());
+                        int quantity = meal.getQuantity() - meal.getNumberSubscribed();
+                        meal.setQuantity(Math.max(quantity, 0));
                         if (subscription.exists()) {
                             for (DataSnapshot snapshotId : subscription.getChildren()) {
                                 String key = snapshotId.getKey();
                                 if (key != null && key.equals(String.valueOf(userId))) {
-                                    assert meal != null;
                                     meal.setSubscribed(true);
                                     break;
                                 }
                             }
                         }
+                        mealList.add(meal);
                     }
                     Collections.reverse(mealList);
                     MealsUtils.setupVisibility(binding, View.INVISIBLE, false, View.INVISIBLE, View.VISIBLE);
