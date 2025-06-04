@@ -3,7 +3,6 @@ package com.antonioteca.cc42.ui.home;
 import static com.antonioteca.cc42.utility.DateUtils.getDaysUntil;
 import static com.antonioteca.cc42.utility.DateUtils.getFormattedDate;
 import static com.antonioteca.cc42.utility.DateUtils.parseDate;
-import static com.antonioteca.cc42.utility.Util.generateQrCodeWithLogo;
 import static com.antonioteca.cc42.utility.Util.showModalQrCode;
 
 import android.graphics.Bitmap;

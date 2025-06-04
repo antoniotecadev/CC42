@@ -1,6 +1,5 @@
 package com.antonioteca.cc42.ui.qrcode;
 
-import static com.antonioteca.cc42.utility.Util.generateQrCodeWithLogo;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -22,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 public class QrCodeFragment extends Fragment {
 
@@ -59,7 +59,7 @@ public class QrCodeFragment extends Fragment {
         int cursusId = args.getCursusId();
         String[] parts = content.split("#");
         String userStaffId = campusId == 0 && cursusId == 0 ? "0" : parts[parts.length - 1];
-        Bitmap bitmapQrCode = generateQrCodeWithLogo(view.getContext(), content);
+        Bitmap bitmapQrCode = Util.generateQrCodeWhithoutLogo(view.getContext(), content, new BarcodeEncoder());
         binding.textViewTitle.setText(title);
         binding.textViewDescription.setText(description);
         binding.imageViewQrCode.setImageBitmap(bitmapQrCode);

@@ -30,6 +30,7 @@ import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
     private final int campusId;
     private final int cursusId;
     private final long userId;
+    private BarcodeEncoder barcodeEncoder;
 
     public MealAdapter(Context context, Loading loading, FragmentMealBinding binding, DatabaseReference mealsRef, MealViewModel mealViewModel, FirebaseDatabase firebaseDatabase, LayoutInflater layoutInflater, long uid, int campusId, int cursusId) {
         this.loading = loading;
@@ -66,6 +68,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         this.cursusId = cursusId;
         this.layoutInflater = layoutInflater;
         this.firebaseDatabase = firebaseDatabase;
+        this.barcodeEncoder = new BarcodeEncoder();
     }
 
     @NonNull
@@ -168,7 +171,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                 return true;
             });
             menuItemAddQrCode.setOnMenuItemClickListener(item -> {
-                Bitmap bitmapQrCode = Util.generateQrCodeWithLogo(context, "meal" + meal.getId() + "#" + userId);
+                Bitmap bitmapQrCode = Util.generateQrCodeWhithoutLogo(context, "meal" + meal.getId() + "#" + userId, barcodeEncoder);
                 if (bitmapQrCode != null) {
                     if (!selectedPositions.contains(position)) {
                         selectedPositions.add(position);
