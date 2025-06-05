@@ -106,19 +106,22 @@ public class EventViewModel extends ViewModel {
         participantsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean present = false;
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         String key = dataSnapshot.getKey();
                         if (key != null && key.equals(String.valueOf(userId))) {
-                            isPresent.setValue(true);
+                            present = true;
                             break;
                         }
                     }
                 }
+                isPresent.setValue(present);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                isPresent.setValue(false);
                 String message = context.getString(R.string.msg_error_check_attendance_event) + ": " + error.toException();
                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
             }
