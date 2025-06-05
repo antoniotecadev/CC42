@@ -129,7 +129,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging'
 
     // Gerar Token OAuth
-    implementation 'com.google.auth:google-auth-library-oauth2-http:1.22.0'
+    implementation('com.google.auth:google-auth-library-oauth2-http:1.22.0') {
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
 
     //itext for genereted pdf
     implementation 'com.itextpdf:itext7-core:7.2.3'
