@@ -25,4 +25,10 @@
         android:icon="@drawable/ic_baseline_share_24"
         android:title="@string/list_share"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_list_export_csv"
+        android:icon="@drawable/baseline_import_export_24"
+        android:title="@string/list_export"
+        app:showAsAction="ifRoom" />
 </menu>

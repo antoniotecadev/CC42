@@ -436,9 +436,9 @@ public class SubscriptionListFragment extends Fragment {
                             File filePdf = PdfCreator.createPdfSubscriptionList(context, requireActivity(), meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList(), binding.progressindicator, binding.textViewTotal);
                             if (filePdf != null) {
                                 if (isPrint)
-                                    PdfViewer.openPdf(context, filePdf);
+                                    PdfViewer.openPdf(context, filePdf, "application/pdf", getString(R.string.msg_no_pdf_viewing_applications_were_found));
                                 else
-                                    PdfSharer.sharePdf(context, filePdf);
+                                    PdfSharer.sharePdf(context, filePdf, "application/pdf", context.getString(R.string.list_share));
                             } else
                                 activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
                             requireActivity().runOnUiThread(() -> {
@@ -456,9 +456,9 @@ public class SubscriptionListFragment extends Fragment {
                                 File fileMergePdf = PdfCreator.mergePdfs(context, filePdf);
                                 if (fileMergePdf != null) {
                                     if (isPrint)
-                                        PdfViewer.openPdf(context, fileMergePdf);
+                                        PdfViewer.openPdf(context, fileMergePdf, "application/pdf", getString(R.string.msg_no_pdf_viewing_applications_were_found));
                                     else
-                                        PdfSharer.sharePdf(context, fileMergePdf);
+                                        PdfSharer.sharePdf(context, fileMergePdf, "application/pdf", context.getString(R.string.list_share));
                                 } else
                                     activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
                             } else

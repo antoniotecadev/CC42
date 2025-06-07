@@ -12,24 +12,24 @@ import java.io.File;
 
 public class PdfViewer {
 
-    public static void openPdf(Context context, File pdfFile) {
-        if (!pdfFile.exists()) {
-            Util.showAlertDialogBuild("PDFViewer", context.getString(R.string.msg_file_pdf_not_found) + pdfFile.getAbsolutePath(), context, null);
+    public static void openPdf(Context context, File file, String typeApplication, String msgError) {
+        if (!file.exists()) {
+            Util.showAlertDialogBuild(context.getString(R.string.err), "File not exists!", context, null);
             return;
         }
 //        Criar um URI para arquivo PDF usando FileProvider (para segurança)
-        Uri pdfUri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", pdfFile);
+        Uri pdfUri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", file);
 
 //        Criar um Intent para visualizar o PDF
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(pdfUri, "application/pdf");
+        intent.setDataAndType(pdfUri, typeApplication);
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // Conceder permissão de leitura
 
 //        Verificar se há um aplicativo disponível para abrir o PDF
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(intent);
         } else {
-            Util.showAlertDialogBuild("PDFViewer", context.getString(R.string.msg_no_pdf_viewing_applications_were_found) + pdfFile.getAbsolutePath(), context, null);
+            Util.showAlertDialogBuild(context.getString(R.string.err),  msgError, context, null);
         }
     }
 }

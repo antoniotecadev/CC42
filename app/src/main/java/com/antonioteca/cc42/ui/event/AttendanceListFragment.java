@@ -44,6 +44,7 @@ import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.AESUtil;
+import com.antonioteca.cc42.utility.CsvExporter;
 import com.antonioteca.cc42.utility.EndlessScrollListener;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.PdfCreator;
@@ -428,6 +429,39 @@ public class AttendanceListFragment extends Fragment {
                         else
                             printAndShareAttendanceList(userList, false, R.string.list_share);
                     }
+                } else if (itemId == R.id.action_list_export_csv) {
+                    new AlertDialog.Builder(context)
+                            .setTitle(getString(R.string.list_export))
+                            .setItems(new String[]{getString(R.string.list_share), getString(R.string.list_print)}, (dialog, selected) -> {
+                                if (selected == 0) {
+                                    CsvExporter.exportUsersToCsv(context, attendanceListAdapter.getUserList(), "attendance_list", new CsvExporter.ExportCallback() {
+                                        @Override
+                                        public void onSuccess(File file) {
+                                            Util.showAlertDialogBuild(context.getString(R.string.list_export), "Lista exportada com sucessso !\n" + file.getAbsolutePath(), context, null);
+                                            PdfSharer.sharePdf(context, file, "application/vnd.ms-excel", context.getString(R.string.list_share));
+                                        }
+
+                                        @Override
+                                        public void onError(String error) {
+                                            Util.showAlertDialogBuild(context.getString(R.string.list_export), "Erro ao exportar a lista: " + error, context, null);
+                                        }
+                                    });
+                                } else if (selected == 1) {
+                                    CsvExporter.exportUsersToCsv(context, attendanceListAdapter.getUserList(), "attendance_list", new CsvExporter.ExportCallback() {
+                                        @Override
+                                        public void onSuccess(File file) {
+                                            Util.showAlertDialogBuild(context.getString(R.string.list_export), "Lista exportada com sucessso !\n" + file.getAbsolutePath(), context, null);
+                                            PdfViewer.openPdf(context, file, "application/vnd.ms-excel", "Application to open file not found!");
+                                        }
+
+                                        @Override
+                                        public void onError(String error) {
+                                            Util.showAlertDialogBuild(context.getString(R.string.list_export), "Erro ao exportar a lista: " + error, context, null);
+                                        }
+                                    });
+                                }
+                            }).setPositiveButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
+                            .show();
                 }
                 return NavigationUI.onNavDestinationSelected(menuItem, navController);
             }
@@ -451,9 +485,9 @@ public class AttendanceListFragment extends Fragment {
                             File filePdf = PdfCreator.createPdfAttendanceList(context, requireActivity(), eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, userList, binding.progressindicator, binding.textViewTotal);
                             if (filePdf != null) {
                                 if (isPrint)
-                                    PdfViewer.openPdf(context, filePdf);
+                                    PdfViewer.openPdf(context, filePdf, "application/pdf", getString(R.string.msg_no_pdf_viewing_applications_were_found));
                                 else
-                                    PdfSharer.sharePdf(context, filePdf);
+                                    PdfSharer.sharePdf(context, filePdf, "application/pdf", context.getString(R.string.list_share));
                             } else
                                 activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
                             requireActivity().runOnUiThread(() -> {

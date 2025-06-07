@@ -9,9 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-         />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -21,6 +19,26 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <!--    Android 14 (API 34)-->
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+
+    <queries>
+        <!-- Para permitir a verificação de aplicativos que podem visualizar PDFs -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="application/pdf" />
+        </intent>
+        <!-- Para permitir a verificação de aplicativos que podem visualizar arquivos CSV (se você também lida com eles) -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <!-- Ou use application/vnd.ms-excel para .xls,
+                 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet para .xlsx -->
+            <data android:mimeType="text/csv" />
+        </intent>
+        <!-- Para permitir a verificação de aplicativos que podem lidar com o compartilhamento (ACTION_SEND) -->
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="*/*" /> <!-- Seja específico se souber o tipo de arquivo que está compartilhando -->
+        </intent>
+    </queries>
 
     <application
         android:name=".network.MyApplicationCloudinary"

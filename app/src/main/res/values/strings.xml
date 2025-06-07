@@ -187,6 +187,7 @@
     <string name="meal_time_range_summary_off">Ocultar</string>
     <string name="camera_back">Câmera Traseira</string>
     <string name="camera_front">Câmera Frontal</string>
+    <string name="list_export">Export CSV</string>
     <string-array name="meals_carbohydrates_title">
         <item>Arroz</item>
         <item>Massas</item>
