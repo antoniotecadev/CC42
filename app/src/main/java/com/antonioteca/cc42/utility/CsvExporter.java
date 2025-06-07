@@ -37,7 +37,7 @@ public class CsvExporter {
         void onError(String error);
     }
 
-    public static void exportUsersToCsv(Context context, List<User> users, String baseFileName, ExportCallback callback) {
+    public static void exportUsersToCsv(Context context, List<User> users, String baseFileName, String eventName, String eventDate, ExportCallback callback) {
         // Usar um ExecutorService para rodar em background
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -51,6 +51,7 @@ public class CsvExporter {
 
             StringBuilder csvData = new StringBuilder();
             csvData.append(UTF8_BOM);
+            csvData.append(";").append(eventName).append(";").append(eventDate).append(";").append("\n\n");
             csvData.append(CSV_HEADER);
             int i = 1;
             for (User user : users) {

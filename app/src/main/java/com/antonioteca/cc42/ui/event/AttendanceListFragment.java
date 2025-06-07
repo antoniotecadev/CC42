@@ -434,7 +434,7 @@ public class AttendanceListFragment extends Fragment {
                             .setTitle(getString(R.string.list_export))
                             .setItems(new String[]{getString(R.string.list_share), getString(R.string.list_print)}, (dialog, selected) -> {
                                 if (selected == 0) {
-                                    CsvExporter.exportUsersToCsv(context, attendanceListAdapter.getUserList(), "attendance_list", new CsvExporter.ExportCallback() {
+                                    CsvExporter.exportUsersToCsv(context, attendanceListAdapter.getUserList(), "attendance_list", eventName, eventDate, new CsvExporter.ExportCallback() {
                                         @Override
                                         public void onSuccess(File file) {
                                             Util.showAlertDialogBuild(context.getString(R.string.list_export), "Lista exportada com sucessso !\n" + file.getAbsolutePath(), context, null);
@@ -447,7 +447,7 @@ public class AttendanceListFragment extends Fragment {
                                         }
                                     });
                                 } else if (selected == 1) {
-                                    CsvExporter.exportUsersToCsv(context, attendanceListAdapter.getUserList(), "attendance_list", new CsvExporter.ExportCallback() {
+                                    CsvExporter.exportUsersToCsv(context, attendanceListAdapter.getUserList(), "attendance_list", eventName, eventDate, new CsvExporter.ExportCallback() {
                                         @Override
                                         public void onSuccess(File file) {
                                             Util.showAlertDialogBuild(context.getString(R.string.list_export), "Lista exportada com sucessso !\n" + file.getAbsolutePath(), context, null);
