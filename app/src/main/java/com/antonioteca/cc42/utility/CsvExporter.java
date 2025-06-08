@@ -45,7 +45,7 @@ public class CsvExporter {
         executor.execute(() -> {
             // Background work here
             if (users == null || users.isEmpty()) {
-                handler.post(() -> callback.onError("Lista de usuários está vazia."));
+                handler.post(() -> callback.onError(context.getString(R.string.msg_attendance_list_empty)));
                 return;
             }
 
