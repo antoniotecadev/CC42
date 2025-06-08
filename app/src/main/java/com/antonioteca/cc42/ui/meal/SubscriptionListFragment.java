@@ -364,6 +364,7 @@ public class SubscriptionListFragment extends Fragment {
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_attendance_list, menu);
                 menu.findItem(R.id.action_list_reload).setVisible(false);
+                menu.findItem(R.id.action_list_export_csv).setVisible(false);
                 MenuItem menuItem = menu.findItem(R.id.action_search);
                 SearchView searchView = (SearchView) menuItem.getActionView();
                 searchView.setQueryHint(context.getString(R.string.name_login));
