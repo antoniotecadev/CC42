@@ -92,6 +92,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private Bundle args;
     private MenuProvider menuProvider;
     private FloatingActionButton fabOpenCameraScannerQrCode;
+    private String colorCoalition;
     private ProgressBar progressBar;
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
@@ -210,7 +211,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         user.coalition = new Coalition(this);
 
         Toolbar toolbar = binding.appBarNavigationDrawer.toolbar;
-        String colorCoalition = user.coalition.getColor();
+        colorCoalition = user.coalition.getColor();
         setColorCoalition(toolbar, colorCoalition);
 
         if (colorCoalition != null) {
@@ -494,6 +495,15 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (colorCoalition != null)
+            Util.setColorStatusBar(this, Color.parseColor(colorCoalition));
+        else
+            Util.setColorStatusBar(this, ContextCompat.getColor(context, R.color.light_blue_900));
     }
 
     @Override

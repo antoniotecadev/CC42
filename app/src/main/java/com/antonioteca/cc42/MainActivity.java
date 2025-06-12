@@ -1,6 +1,7 @@
 package com.antonioteca.cc42;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -130,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Util.setColorStatusBar(this, Color.parseColor("#AFC9F1"));
         int fragmentId = getIntent().getIntExtra("fragment_id", -1);
         if (fragmentId != -1)
             redirectToLogin(fragmentId);

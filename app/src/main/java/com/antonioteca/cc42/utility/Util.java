@@ -26,10 +26,13 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -104,7 +107,7 @@ public class Util {
             try {
                 viewGroup.setBackgroundColor(Color.parseColor(color));
             } catch (IllegalArgumentException e) {
-                e.printStackTrace();
+                Toast.makeText(viewGroup.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -415,5 +418,12 @@ public class Util {
             map.put("urlImageUser", urlImageUser);
             ref.updateChildren(map);
         }
+    }
+
+    public static void setColorStatusBar(Activity activity, int color) {
+        Window window = activity.getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); // Desactivar modo translúcido para usar um fundo sólido
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS); // Activar o controle total da aparência da status bar
+        window.setStatusBarColor(color);
     }
 }
