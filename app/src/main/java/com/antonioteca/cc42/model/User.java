@@ -67,7 +67,8 @@ public class User {
         editor.putString("login", user.login);
         editor.putString("display_name", user.displayName);
         editor.putString("url", user.url.trim());
-        editor.putString("image_link", user.image.link.trim());
+        if (user.image != null && user.image.link != null)
+            editor.putString("image_link", user.image.link.trim());
         editor.putInt("campus_id", user.campus.get(0).id);
         editor.putString("campus_name", user.campus.get(0).name.trim());
         if (!user.isStaff)
