@@ -1,5 +1,6 @@
 package com.antonioteca.cc42;
 
+import static com.antonioteca.cc42.network.FirebaseDataBaseInstance.fetchApiKeyFromDatabase;
 import static com.antonioteca.cc42.network.NetworkConstants.REQUEST_CODE_POST_NOTIFICATIONS;
 import static com.antonioteca.cc42.utility.Util.setAppLanguage;
 import static com.antonioteca.cc42.utility.Util.setColorCoalition;
@@ -67,6 +68,7 @@ import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.cloudinary.android.MediaManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.FirebaseDatabase;
@@ -75,6 +77,9 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class NavigationDrawerActivity extends AppCompatActivity {
 
@@ -107,8 +112,22 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_camera_denied), context, null);
             });
 
+    private void initCloudinary() {
+        fetchApiKeyFromDatabase("cloudinary", this, apiKey -> {
+            Map<String, String> config = new HashMap<>();
+            config.put("cloud_name", "cc42");
+            config.put("api_key", "926854887914134");
+            config.put("api_secret", apiKey);
+            MediaManager.init(this, config);
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        context = NavigationDrawerActivity.this;
+        User user = new User(context);
+        if (user.isStaff())
+            initCloudinary();
         // Aplicar o Tema ao Iniciar o App
         ThemePreferences themePreferences = new ThemePreferences(this);
         int themeMode = themePreferences.getThemeMode();
@@ -125,8 +144,6 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         handleNotificationIntent(getIntent());
 
         setSupportActionBar(binding.appBarNavigationDrawer.toolbar);
-        context = NavigationDrawerActivity.this;
-        User user = new User(context);
 
         uid = String.valueOf(user.getUid());
         userLogin = user.getLogin();

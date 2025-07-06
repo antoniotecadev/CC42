@@ -14,16 +14,16 @@ public class MyApplicationCloudinary extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        initCloudinary(this);
+        // initCloudinary(this);
     }
 
-    private void initCloudinary(Context context) {
-        fetchApiKeyFromDatabase("cloudinary", context, apiKey -> {
-            Map<String, String> config = new HashMap<>();
-            config.put("cloud_name", "cc42");
-            config.put("api_key", "926854887914134");
-            config.put("api_secret", apiKey);
-            MediaManager.init(this, config);
-        });
-    }
+//    private void initCloudinary(Context context) {
+//        fetchApiKeyFromDatabase("cloudinary", context, apiKey -> {
+//            Map<String, String> config = new HashMap<>();
+//            config.put("cloud_name", "cc42");
+//            config.put("api_key", "926854887914134");
+//            config.put("api_secret", apiKey);
+//            MediaManager.init(this, config);
+//        });
+//    }
 }

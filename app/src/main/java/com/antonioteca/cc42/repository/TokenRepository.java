@@ -4,6 +4,8 @@ import static com.antonioteca.cc42.network.FirebaseDataBaseInstance.fetchApiKeyF
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.antonioteca.cc42.dao.daoapi.DaoApiToken;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.network.NetworkConstants;
@@ -26,21 +28,21 @@ public class TokenRepository {
         token = new Token(context);
         daoApiToken = RetrofitClientApi.getApiService().create(DaoApiToken.class);
     }
+//    AO LOGAR NO CLIENTE
+//    public void getAccessTokenUser(String code, Context context, Callback<Token> callback) {
+//        fetchApiKeyFromDatabase("intra", context, apiKey -> {
+//            Call<Token> tokenCall = daoApiToken.getAccessToken(
+//                    "authorization_code",  // grant_type
+//                    NetworkConstants.UID, // client_id
+//                    apiKey, // client_secret
+//                    code,                           // code recebido
+//                    NetworkConstants.SCHEME_HOST    // redirect_uri
+//            );
+//            tokenCall.enqueue(callback); // Executar a chamada de forma assíncrona
+//        });
+//    }
 
-    public void getAccessTokenUser(String code, Context context, Callback<Token> callback) {
-        fetchApiKeyFromDatabase("intra", context, apiKey -> {
-            Call<Token> tokenCall = daoApiToken.getAccessToken(
-                    "authorization_code",  // grant_type
-                    NetworkConstants.UID, // client_id
-                    apiKey, // client_secret
-                    code,                           // code recebido
-                    NetworkConstants.SCHEME_HOST    // redirect_uri
-            );
-            tokenCall.enqueue(callback); // Executar a chamada de forma assíncrona
-        });
-    }
-
-    public boolean saveAcessToken(Token t) {
+    public boolean saveAcessToken(@NonNull Token t) {
         token.setAccessToken(t.accessToken);
         token.setRefreshToken(t.refreshToken);
         token.setTokenExpirationTime(t.tokenExpirationTime /* Segundos */);

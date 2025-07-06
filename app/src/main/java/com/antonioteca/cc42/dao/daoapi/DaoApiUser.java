@@ -1,27 +1,32 @@
 package com.antonioteca.cc42.dao.daoapi;
 
 import com.antonioteca.cc42.model.Coalition;
+import com.antonioteca.cc42.model.LoginResponse;
 import com.antonioteca.cc42.model.Subscription;
 import com.antonioteca.cc42.model.User;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface DaoApiUser {
 
-    @GET("/v2/me")
-    Call<User> getUser(@Header("Authorization") String accessToken);
-
-    @GET("/v2/users/{user_id}/coalitions")
-    Call<List<Coalition>> getCoalition(
-            @Path("user_id") long userId,
-            @Header("Authorization") String accessToken
-    );
+//    AO LOGAR NO CLIENTE
+//    @GET("/v2/me")
+//    Call<User> getUser(@Header("Authorization") String accessToken);
+//
+//    @GET("/v2/users/{user_id}/coalitions")
+//    Call<List<Coalition>> getCoalition(
+//            @Path("user_id") long userId,
+//            @Header("Authorization") String accessToken
+//    );
 
     //GET /v2/events/{event_id}/users?page[number]=1&page[size]=30
     @GET("/v2/events/{event_id}/users")
@@ -41,4 +46,7 @@ public interface DaoApiUser {
             @Query("page[number]") int pageNumber,  // Adiciona o número da página
             @Query("page[size]") int pageSize       // Adiciona o tamanho da página
     );
+
+    @POST("api/loginWithIntra42Code")
+    Call<LoginResponse> loginWithIntra42Code(@Body Map<String, String> body);
 }

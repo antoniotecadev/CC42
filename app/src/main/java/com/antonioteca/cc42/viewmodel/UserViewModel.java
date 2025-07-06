@@ -2,6 +2,7 @@ package com.antonioteca.cc42.viewmodel;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -12,29 +13,36 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.antonioteca.cc42.R;
-import com.antonioteca.cc42.model.Coalition;
+import com.antonioteca.cc42.dao.daoapi.DaoApiUser;
+import com.antonioteca.cc42.model.LoginResponse;
 import com.antonioteca.cc42.model.Subscription;
-import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
+import com.antonioteca.cc42.repository.TokenRepository;
 import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.EventObserver;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.Util;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A camada que interage com o Repositório para buscar dados e preparar essas informações para a View.
@@ -177,51 +185,52 @@ public class UserViewModel extends ViewModel {
                 }));
     }*/
 
-    public boolean saveUser(User user) {
-        return userRepository.saveUser(user);
-    }
+//    QUANDO LOGAR NO CLIENTE
+//    public boolean saveUser(User user) {
+//        return userRepository.saveUser(user);
+//    }
 
-    public void getUser(Context context) {
-        userRepository.getUser(new Callback<>() {
-            @Override
-            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                if (response.isSuccessful()) {
-                    User user = response.body();
-                    if (user == null)
-                        return;
-                    userRepository.getCoalition(user.uid, new Callback<>() {
-                        @Override
-                        public void onResponse(@NonNull Call<List<Coalition>> call, @NonNull Response<List<Coalition>> response) {
-                            if (response.isSuccessful()) {
-                                List<Coalition> coalitions = response.body();
-                                if (coalitions != null && !coalitions.isEmpty()) {
-                                    Coalition coalition = coalitions.get(0);
-                                    user.setCoalition(coalition);
-                                }
-                            }
-                            userMutableLiveData.postValue(user);
-                        }
-
-                        @Override
-                        public void onFailure(@NonNull Call<List<Coalition>> call, @NonNull Throwable throwable) {
-                            userMutableLiveData.postValue(user);
-                        }
-                    });
-                } else {
-                    new Token(context).clear();
-                    HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
-                    httpStatusMutableLiveData.postValue(httpStatus);
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<User> call, @NonNull Throwable throwable) {
-                new Token(context).clear();
-                HttpException httpException = HttpException.handleException(throwable, context);
-                httpExceptionMutableLiveData.postValue(httpException);
-            }
-        });
-    }
+//    public void getUser(Context context) {
+//        userRepository.getUser(new Callback<>() {
+//            @Override
+//            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+//                if (response.isSuccessful()) {
+//                    User user = response.body();
+//                    if (user == null)
+//                        return;
+//                    userRepository.getCoalition(user.uid, new Callback<>() {
+//                        @Override
+//                        public void onResponse(@NonNull Call<List<Coalition>> call, @NonNull Response<List<Coalition>> response) {
+//                            if (response.isSuccessful()) {
+//                                List<Coalition> coalitions = response.body();
+//                                if (coalitions != null && !coalitions.isEmpty()) {
+//                                    Coalition coalition = coalitions.get(0);
+//                                    user.setCoalition(coalition);
+//                                }
+//                            }
+//                            userMutableLiveData.postValue(user);
+//                        }
+//
+//                        @Override
+//                        public void onFailure(@NonNull Call<List<Coalition>> call, @NonNull Throwable throwable) {
+//                            userMutableLiveData.postValue(user);
+//                        }
+//                    });
+//                } else {
+//                    new Token(context).clear();
+//                    HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
+//                    httpStatusMutableLiveData.postValue(httpStatus);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull Call<User> call, @NonNull Throwable throwable) {
+//                new Token(context).clear();
+//                HttpException httpException = HttpException.handleException(throwable, context);
+//                httpExceptionMutableLiveData.postValue(httpException);
+//            }
+//        });
+//    }
 
     public void getUsersEvent(long eventId, Loading l, Context context) {
         l.isLoading = true;
@@ -428,6 +437,63 @@ public class UserViewModel extends ViewModel {
             }
         });
     }
+
+    public void loginWithIntra42Code(String code, String redirectUri, Context context, Callback<LoginResponse> callback) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://check-cadet.vercel.app/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        DaoApiUser daoApiUser = retrofit.create(DaoApiUser.class);
+
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("code", code);
+        requestBody.put("redirectUri", redirectUri);
+
+        daoApiUser.loginWithIntra42Code(requestBody).enqueue(new retrofit2.Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+                if (!response.isSuccessful() || response.body() == null) {
+                    callback.onFailure(call, new Exception("Resposta inválida do servidor."));
+                    return;
+                }
+
+                LoginResponse loginData = response.body();
+
+                Log.e("Login", new Gson().toJson(loginData));
+                Log.e("Login", new Gson().toJson(response.body()));
+                if (loginData.firebaseToken == null || loginData.user == null) {
+                    callback.onFailure(call, new Exception("Resposta incompleta do servidor."));
+                    return;
+                }
+
+                FirebaseAuth.getInstance().signInWithCustomToken(loginData.firebaseToken)
+                        .addOnCompleteListener(task -> {
+                            if (!task.isSuccessful()) {
+                                Util.showAlertDialogBuild(context.getString(R.string.err), "Falha ao logar no Firebase.", context, null);
+                                callback.onFailure(call, new Exception("Falha ao logar no Firebase."));
+                                return;
+                            }
+                            TokenRepository token = new TokenRepository(context);
+                            if (userRepository.saveUser(loginData.user)) {
+                                if (token.saveAcessToken(loginData.token)) {
+                                    callback.onResponse(call, response);
+                                    return;
+                                }
+                                callback.onFailure(call, new Exception("Falha ao salvar token."));
+                            } else
+                                callback.onFailure(call, new Exception("Falha ao salvar usuário."));
+                        });
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
+                Log.e("Login", "Erro ao logar com Intra42: " + t.getMessage());
+                Util.showAlertDialogBuild(context.getString(R.string.err), "Falha ao autenticar com Intra 42.", context, null);
+            }
+        });
+    }
+
 
     @Override
     protected void onCleared() {

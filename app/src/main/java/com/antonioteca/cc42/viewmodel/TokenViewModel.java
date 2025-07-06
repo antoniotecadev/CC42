@@ -60,23 +60,24 @@ public class TokenViewModel extends ViewModel {
         httpExceptionMutableLiveData.postValue(httpException);
     }
 
-    public void getAccessTokenUser(String code, Context context) {
-
-        tokenRepository.getAccessTokenUser(code, context, new Callback<Token>() {
-            @Override
-            public void onResponse(@NonNull Call<Token> call, @NonNull Response<Token> response) {
-                responseToken(response);
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Token> call, @NonNull Throwable throwable) {
-                failure(throwable, context);
-            }
-        });
-    }
+//    QUANDO O LOGIN FOR NO CLIENTE
+//    public void getAccessTokenUser(String code, Context context) {
+//
+//        tokenRepository.getAccessTokenUser(code, context, new Callback<Token>() {
+//            @Override
+//            public void onResponse(@NonNull Call<Token> call, @NonNull Response<Token> response) {
+//                responseToken(response);
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull Call<Token> call, @NonNull Throwable throwable) {
+//                failure(throwable, context);
+//            }
+//        });
+//    }
 
     public void getRefreshTokenUser(String refreshToken, Context context) {
-        tokenRepository.getRefreshTokenUser(refreshToken, context, new Callback<Token>() {
+        tokenRepository.getRefreshTokenUser(refreshToken, context, new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<Token> call, @NonNull Response<Token> response) {
                 responseToken(response);

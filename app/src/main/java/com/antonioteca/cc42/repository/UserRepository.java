@@ -76,15 +76,16 @@ public class UserRepository {
         return this.user.saveUser(user, user.coalition);
     }
 
-    public void getUser(Callback<User> callback) {
-        Call<User> userCall = daoApiUser.getUser("Bearer " + token.getAccessToken());
-        userCall.enqueue(callback);
-    }
-
-    public void getCoalition(long userId, Callback<List<Coalition>> callback) {
-        Call<List<Coalition>> coalitionCall = daoApiUser.getCoalition(userId, "Bearer " + token.getAccessToken());
-        coalitionCall.enqueue(callback);
-    }
+//    AO LOGAR NO CLIENTE
+//    public void getUser(Callback<User> callback) {
+//        Call<User> userCall = daoApiUser.getUser("Bearer " + token.getAccessToken());
+//        userCall.enqueue(callback);
+//    }
+//
+//    public void getCoalition(long userId, Callback<List<Coalition>> callback) {
+//        Call<List<Coalition>> coalitionCall = daoApiUser.getCoalition(userId, "Bearer " + token.getAccessToken());
+//        coalitionCall.enqueue(callback);
+//    }
 
     public void loadUsersEventPaginated(long eventId, @NonNull Loading l, Callback<List<User>> callback) {
         if (token.isTokenExpired(token.getTokenExpirationTime())) {

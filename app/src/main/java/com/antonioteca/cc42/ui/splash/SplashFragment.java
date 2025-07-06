@@ -22,7 +22,6 @@ import com.antonioteca.cc42.databinding.FragmentSplashBinding;
 import com.antonioteca.cc42.factory.TokenViewModelFactory;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Token;
-import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.repository.TokenRepository;
@@ -67,7 +66,7 @@ public class SplashFragment extends Fragment {
             public void onChanged(HttpStatus httpStatus) {
                 if (!isSplashActive) {
                     if (httpStatus == HttpStatus.OK)
-                        userViewModel.getUser(context);
+                        redirectToHome();
                     else
                         redirectToLogin();
                 }
@@ -83,21 +82,21 @@ public class SplashFragment extends Fragment {
                 }
             }
         });
-
-        userViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
-            @Override
-            public void onChanged(User user) {
-                if (!isSplashActive) {
-                    if (user != null) {
-                        if (userViewModel.saveUser(user))
-                            redirectToHome();
-                        else
-                            redirectToLogin();
-                    } else
-                        redirectToLogin();
-                }
-            }
-        });
+//        QUANDO LOGAR NO CLIENTE
+//        userViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+//            @Override
+//            public void onChanged(User user) {
+//                if (!isSplashActive) {
+//                    if (user != null) {
+//                        if (userViewModel.saveUser(user))
+//                            redirectToHome();
+//                        else
+//                            redirectToLogin();
+//                    } else
+//                        redirectToLogin();
+//                }
+//            }
+//        });
 
         userViewModel.getHttpSatus().observe(getViewLifecycleOwner(), new Observer<HttpStatus>() {
             @Override
@@ -151,9 +150,9 @@ public class SplashFragment extends Fragment {
             if (token.getAccessToken() == null || refreshToken == null)
                 redirectToLogin();
             else if (token.isTokenExpired(token.getTokenExpirationTime()))
-                tokenViewModel.getRefreshTokenUser(refreshToken, context);
+                redirectToLogin();
             else
-                redirectToHome();
+                redirectToLogin();
         }, 5000);
     }
 

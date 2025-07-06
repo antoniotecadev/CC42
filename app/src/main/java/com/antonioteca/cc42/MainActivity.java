@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -14,6 +15,7 @@ import androidx.navigation.Navigation;
 import com.antonioteca.cc42.databinding.ActivityMainBinding;
 import com.antonioteca.cc42.factory.TokenViewModelFactory;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
+import com.antonioteca.cc42.model.LoginResponse;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.network.HttpStatus;
@@ -24,10 +26,13 @@ import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.TokenViewModel;
 import com.antonioteca.cc42.viewmodel.UserViewModel;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity {
 
     private Token token;
-    private TokenViewModel tokenViewModel;
     private UserViewModel userViewModel;
 
     private boolean initOnNewIntent = false;
@@ -42,38 +47,39 @@ public class MainActivity extends AppCompatActivity {
         UserRepository userRepository = new UserRepository(this);
         TokenViewModelFactory tokenViewModelFactory = new TokenViewModelFactory(tokenRepository);
         UserViewModelFactory userViewModelFactory = new UserViewModelFactory(userRepository);
-        tokenViewModel = new ViewModelProvider(this, tokenViewModelFactory).get(TokenViewModel.class);
+        TokenViewModel tokenViewModel = new ViewModelProvider(this, tokenViewModelFactory).get(TokenViewModel.class);
         userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
         try {
             handleNotificationIntent(getIntent());
         } catch (Exception e) {
             Util.showAlertDialogBuild(getString(R.string.err), e.getMessage(), MainActivity.this, null);
         }
-        tokenViewModel.getHttpSatus().observe(this, httpStatus -> {
-            if (initOnNewIntent) {
-                if (httpStatus == HttpStatus.OK)
-                    userViewModel.getUser(MainActivity.this);
-                else
-                    Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), MainActivity.this, null);
-            }
-        });
+//        QUANDO LOGAR NO CLIENTE
+//        tokenViewModel.getHttpSatus().observe(this, httpStatus -> {
+//            if (initOnNewIntent) {
+//                if (httpStatus == HttpStatus.OK)
+//                    userViewModel.getUser(MainActivity.this);
+//                else
+//                    Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), MainActivity.this, null);
+//            }
+//        });
 
         tokenViewModel.getHttpException().observe(this, httpException -> {
             if (initOnNewIntent)
                 Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), MainActivity.this, null);
         });
-
-        userViewModel.getUser().observe(this, user -> {
-            if (initOnNewIntent) {
-                if (user != null) {
-                    if (userViewModel.saveUser(user))
-                        redirectToHome();
-                    else
-                        Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_err_save_sess_user), MainActivity.this, null);
-                } else
-                    Util.showAlertDialogBuild(String.valueOf(HttpStatus.NOT_FOUND.getCode()), HttpStatus.NOT_FOUND.getDescription(), MainActivity.this, null);
-            }
-        });
+//        QUANDO LOGAR NO CLIENTE
+//        userViewModel.getUser().observe(this, user -> {
+//            if (initOnNewIntent) {
+//                if (user != null) {
+//                    if (userViewModel.saveUser(user))
+//                        redirectToHome();
+//                    else
+//                        Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_err_save_sess_user), MainActivity.this, null);
+//                } else
+//                    Util.showAlertDialogBuild(String.valueOf(HttpStatus.NOT_FOUND.getCode()), HttpStatus.NOT_FOUND.getDescription(), MainActivity.this, null);
+//            }
+//        });
 
         userViewModel.getHttpSatus().observe(this, httpStatus -> {
             if (initOnNewIntent)
@@ -145,7 +151,18 @@ public class MainActivity extends AppCompatActivity {
         if (uri != null && uri.toString().startsWith(NetworkConstants.SCHEME_HOST)) {
             initOnNewIntent = true;
             String code = uri.getQueryParameter(NetworkConstants.CODE);
-            tokenViewModel.getAccessTokenUser(code, this);
+            userViewModel.loginWithIntra42Code(code, NetworkConstants.SCHEME_HOST, this, new Callback<>() {
+                @Override
+                public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
+                    if (response.isSuccessful())
+                        redirectToHome();
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable throwable) {
+                    Util.showAlertDialogBuild(getString(R.string.err), throwable.getMessage(), MainActivity.this, null);
+                }
+            });
         } else {
             try {
                 handleNotificationIntent(intent);
