@@ -1,7 +1,6 @@
 package com.antonioteca.cc42.viewmodel;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -63,7 +62,7 @@ public class TokenViewModel extends ViewModel {
 
     public void getAccessTokenUser(String code, Context context) {
 
-        tokenRepository.getAccessTokenUser(code, new Callback<Token>() {
+        tokenRepository.getAccessTokenUser(code, context, new Callback<Token>() {
             @Override
             public void onResponse(@NonNull Call<Token> call, @NonNull Response<Token> response) {
                 responseToken(response);
@@ -77,7 +76,7 @@ public class TokenViewModel extends ViewModel {
     }
 
     public void getRefreshTokenUser(String refreshToken, Context context) {
-        tokenRepository.getRefreshTokenUser(refreshToken, new Callback<Token>() {
+        tokenRepository.getRefreshTokenUser(refreshToken, context, new Callback<Token>() {
             @Override
             public void onResponse(@NonNull Call<Token> call, @NonNull Response<Token> response) {
                 responseToken(response);

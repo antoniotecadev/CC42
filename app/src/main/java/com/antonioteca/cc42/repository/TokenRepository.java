@@ -20,17 +20,14 @@ import retrofit2.Callback;
 public class TokenRepository {
 
     private final Token token;
-    private final Context context;
     private final DaoApiToken daoApiToken;
 
-
     public TokenRepository(Context context) {
-        this.context = context;
         token = new Token(context);
         daoApiToken = RetrofitClientApi.getApiService().create(DaoApiToken.class);
     }
 
-    public void getAccessTokenUser(String code, Callback<Token> callback) {
+    public void getAccessTokenUser(String code, Context context, Callback<Token> callback) {
         fetchApiKeyFromDatabase("intra", context, apiKey -> {
             Call<Token> tokenCall = daoApiToken.getAccessToken(
                     "authorization_code",  // grant_type
@@ -50,7 +47,7 @@ public class TokenRepository {
         return token.commit();
     }
 
-    public void getRefreshTokenUser(String refreshToken, Callback<Token> callback) {
+    public void getRefreshTokenUser(String refreshToken, Context context, Callback<Token> callback) {
         fetchApiKeyFromDatabase("intra", context, apiKey -> {
             Call<Token> call = daoApiToken.getRefreshToken(
                     "refresh_token",

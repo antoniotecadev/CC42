@@ -80,7 +80,7 @@ public class Token {
 
     public void getRefreshTokenUserSave(Context context, CallBackToken callBackToken) {
         TokenRepository tokenRepository = new TokenRepository(context);
-        tokenRepository.getRefreshTokenUser(getRefreshToken(), new Callback<>() {
+        tokenRepository.getRefreshTokenUser(getRefreshToken(), context, new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<Token> call, @NonNull Response<Token> response) {
                 if (response.isSuccessful()) {
