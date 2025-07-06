@@ -150,9 +150,9 @@ public class SplashFragment extends Fragment {
             if (token.getAccessToken() == null || refreshToken == null)
                 redirectToLogin();
             else if (token.isTokenExpired(token.getTokenExpirationTime()))
-                redirectToLogin();
+                tokenViewModel.getRefreshTokenUser(refreshToken, context);
             else
-                redirectToLogin();
+                redirectToHome();
         }, 5000);
     }
 
