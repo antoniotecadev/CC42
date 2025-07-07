@@ -83,7 +83,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             this.binding = binding;
             int[] colors = {
                     Color.parseColor(colorCoalition),
-                    Color.parseColor("#333333"),
+                    Color.parseColor("#222222"),
             };
 
             GradientDrawable gradientDrawable = new GradientDrawable(
