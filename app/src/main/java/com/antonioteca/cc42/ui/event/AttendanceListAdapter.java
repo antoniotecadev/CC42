@@ -114,7 +114,7 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
             holder.binding.textViewPresent.setTextColor(redColor);
             holder.binding.textViewPresent.setText(context.getString(R.string.text_absent));
         }
-        holder.itemView.setOnClickListener(v -> {
+        holder.binding.cardViewRegisteredUser.setOnClickListener(v -> {
             if (user.isPresent() != null)
                 Util.showModalUserDetails(context, user.login, user.displayName, imageUrl, holder.binding.textViewPresent.getText().toString(), user.isPresent());
         });

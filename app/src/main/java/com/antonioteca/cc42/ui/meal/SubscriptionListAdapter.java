@@ -129,7 +129,7 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
             holder.binding.textViewSubscription.setTextColor(redColor);
             holder.binding.textViewSubscription.setText(context.getString(R.string.text_unsigned));
         }
-        holder.itemView.setOnClickListener(v -> {
+        holder.binding.cardViewRegisteredUser.setOnClickListener(v -> {
             if (user.isSubscription() != null)
                 Util.showModalUserDetails(context, user.login, user.displayName, imageUrl, holder.binding.textViewSubscription.getText().toString(), user.isSubscription());
         });
