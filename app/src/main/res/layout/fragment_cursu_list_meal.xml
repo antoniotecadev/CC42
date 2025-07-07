@@ -38,7 +38,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="70dp"
-        app:backgroundTint="@color/white"
+        app:backgroundTint="@color/light_white"
         app:fabCustomSize="50dp"
         app:maxImageSize="25dp"
         app:srcCompat="@drawable/ic_baseline_my_location_24" />
@@ -50,7 +50,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        app:backgroundTint="@color/white"
+        app:backgroundTint="@color/light_white"
         app:fabCustomSize="50dp"
         app:maxImageSize="25dp"
         app:srcCompat="@drawable/ic_baseline_manage_search_24" />

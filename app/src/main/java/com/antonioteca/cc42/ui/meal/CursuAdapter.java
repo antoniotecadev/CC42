@@ -47,7 +47,7 @@ public class CursuAdapter extends RecyclerView.Adapter<CursuAdapter.CursuViewHol
         if (colorIcon != 0)
             holder.binding.imageViewCursu.setColorFilter(colorIcon);
         holder.binding.textViewName.setText(cursu.getName());
-        holder.binding.textViewId.setText(String.valueOf(cursu.getId()));
+//        holder.binding.textViewId.setText(String.valueOf(cursu.getId()));
         holder.itemView.setOnClickListener(v -> {
             CursuListMealFragmentDirections.ActionNavCursuListMealToNavMeal actionNavCursuListMealToNavMeal =
                     CursuListMealFragmentDirections.actionNavCursuListMealToNavMeal(cursu);
