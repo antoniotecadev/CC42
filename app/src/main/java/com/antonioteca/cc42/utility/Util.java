@@ -291,7 +291,7 @@ public class Util {
             if (Objects.equals(title, context.getString(R.string.sucess))) {
                 // Crie um CountDownTimer com duração total de 5 segundos (5000 milissegundos)
                 // e um intervalo de 1 segundo (1000 milissegundos) para ticks.
-                new CountDownTimer(5000, 1000) {
+                new CountDownTimer(3000, 1000) {
 
                     @Override
                     public void onTick(long millisUntilFinished) {

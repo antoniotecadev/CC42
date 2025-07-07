@@ -383,6 +383,16 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     );
                 } else
                     Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, null);
+            } else if (result != null && result.startsWith("cc42user")) {
+                String resultQrCode = result.replace("cc42user", "");
+                String[] partsQrCode = resultQrCode.split("#", 6);
+                if (partsQrCode.length == 6) {
+                    String userLogin = partsQrCode[1];
+                    String userDisplayName = partsQrCode[2];
+                    String urlImageUser = partsQrCode[5].trim();
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), userLogin, userDisplayName, "#4CAF50", urlImageUser, null);
+                } else
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, null);
             } else
                 Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, null);
         }
@@ -423,7 +433,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     }
 
     @SuppressLint("MissingPermission")
-    private static void showNotification(String title, String body, Bitmap image, RemoteMessage message, Context context, String imageUrl) { // Primeiro plano
+    private static void showNotification(String title, String body, Bitmap image, RemoteMessage
+            message, Context context, String imageUrl) { // Primeiro plano
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
@@ -488,7 +499,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
             // Verificar se a permissão foi concedida
