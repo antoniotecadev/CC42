@@ -178,6 +178,13 @@ public class MealListFragment extends Fragment {
             mealViewModel.loadMeals(context, binding, mealsRef, null, userId);
         });
 
+        String colorCoalition = user.coalition.getColor();
+        if (colorCoalition != null) {
+//            int color = Color.parseColor(colorCoalition);
+            ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
+            binding.progressBarMeal.setIndeterminateTintList(colorStateList);
+        }
+
         mealAdapter = new MealAdapter(context,
                 loading,
                 binding,
@@ -189,13 +196,6 @@ public class MealListFragment extends Fragment {
                 campusId,
                 cursu.getId());
         binding.recyclerViewMeal.setAdapter(mealAdapter);
-
-        String colorCoalition = user.coalition.getColor();
-        if (colorCoalition != null) {
-//            int color = Color.parseColor(colorCoalition);
-            ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
-            binding.progressBarMeal.setIndeterminateTintList(colorStateList);
-        }
 
         mealViewModel.getMealList(context, binding, mealsRef, null, userId).observe(getViewLifecycleOwner(), meals -> {
             if (!meals.isEmpty() && meals.get(0) != null) {

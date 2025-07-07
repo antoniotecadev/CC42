@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -29,6 +30,8 @@ import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.utility.StarUtils;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
@@ -45,6 +48,8 @@ public class DetailsMealFragment extends Fragment {
     private MealViewModel mealViewModel;
     private FirebaseDatabase firebaseDatabase;
     private FragmentDetailsMealBinding binding;
+    RoundedCorners roundedCorners = new RoundedCorners(5);
+    RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_60);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,7 +148,7 @@ public class DetailsMealFragment extends Fragment {
         binding.textViewDescription.setText(mealDescription);
         binding.textViewDate.setText(DateUtils.formatDate(DateUtils.parseDate(meal.getCreatedDate())));
         binding.textViewQuantity.setText(context.getString(R.string.quantity) + ": " + meal.getQuantity());
-        MealsUtils.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, true);
+        MealsUtils.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, roundedCorners, requestOptions);
         // Configura os cliques das estrelas
         binding.starRating.star1.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 1, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));
         binding.starRating.star2.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 2, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));

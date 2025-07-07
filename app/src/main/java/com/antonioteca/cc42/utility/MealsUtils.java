@@ -8,9 +8,7 @@ import androidx.preference.PreferenceManager;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentMealBinding;
-import com.antonioteca.cc42.databinding.StarRatingBinding;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 
@@ -63,11 +61,11 @@ public class MealsUtils {
         return time * 60 + minute;
     }
 
-    public static void loadingImageMeal(Context context, String imageUrl, ImageView imageView, boolean isDetails) {
+    public static void loadingImageMeal(Context context, String imageUrl, ImageView imageView, RoundedCorners roundedCorners, RequestOptions requestOptions) {
         Glide.with(context)
                 .load(imageUrl)
-                .transform(isDetails ? new RoundedCorners(30) : new CircleCrop())
-                .apply(new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_60))
+                .transform(roundedCorners)
+                .apply(requestOptions)
                 .into(imageView);
     }
 

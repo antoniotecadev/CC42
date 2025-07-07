@@ -3,6 +3,7 @@ package com.antonioteca.cc42.ui.meal;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -27,6 +28,8 @@ import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -57,6 +60,9 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
     private final long userId;
     private final int sizeInPx;
     private final BarcodeEncoder barcodeEncoder;
+
+    private final RoundedCorners roundedCorners = new RoundedCorners(5);
+    private final RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_60);
 
     public MealAdapter(Context context, Loading loading, FragmentMealBinding binding, DatabaseReference mealsRef, MealViewModel mealViewModel, FirebaseDatabase firebaseDatabase, LayoutInflater layoutInflater, long uid, int campusId, int cursusId) {
         this.loading = loading;
@@ -94,22 +100,16 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
         Meal meal = mealList.get(position);
-        holder.binding.textViewType.setText(meal.getType());
         holder.binding.textViewName.setText(meal.getName());
         holder.binding.textViewDescription.setText(meal.getDescription());
-        holder.binding.txtViewQuantity.setText(meal.getQuantity() + "/" + meal.getNumberSubscribed());
-        holder.binding.textViewDateCreated.setText(meal.getCreatedDate());
+        holder.binding.textViewType.setText(meal.getType() + " " + meal.getCreatedDate() + " " + meal.getQuantity() + "/" + meal.getNumberSubscribed());
         if (meal.isSubscribed()) {
             int greenColor = ContextCompat.getColor(context, R.color.green);
             holder.binding.txtViewSubscription.setTextColor(greenColor);
             holder.binding.txtViewSubscription.setText(R.string.text_signed);
-        } else {
-            int redColor = ContextCompat.getColor(context, R.color.red);
-            holder.binding.txtViewSubscription.setTextColor(redColor);
-            holder.binding.txtViewSubscription.setText(R.string.text_unsigned);
         }
-        MealsUtils.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal, false);
-        holder.itemView.setOnClickListener(v -> {
+        MealsUtils.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal, roundedCorners, requestOptions);
+        holder.binding.constraintLayoutMeal.setOnClickListener(v -> {
             MealListFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment = MealListFragmentDirections.actionNavMealToDetailsMealFragment(meal, cursusId);
             Navigation.findNavController(v).navigate(actionNavMealToDetailsMealFragment);
         });
