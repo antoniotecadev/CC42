@@ -83,26 +83,13 @@ public class CursuListMealFragment extends Fragment {
         });
 
         final boolean[] isClick = {false};
-        binding.floatingActionButtonSearchCursuUserDown.setOnClickListener(v -> {
+        binding.floatingActionButtonSearchCursuIdUserDown.setOnClickListener(v -> {
             if (!isClick[0]) {
                 isClick[0] = true;
-                binding.floatingActionButtonSearchCursuUserDown.setColorFilter(ContextCompat.getColor(context, R.color.green));
-                binding.recyclerviewCursuList.smoothScrollToPosition((cursuAdapter.getItemCount() - cursusId) + 4);
-            } else {
-                isClick[0] = false;
-                binding.floatingActionButtonSearchCursuUserDown.setColorFilter(ContextCompat.getColor(context, R.color.black));
-                binding.recyclerviewCursuList.smoothScrollToPosition(0);
-            }
-        });
-
-        final boolean[] click = {false};
-        binding.floatingActionButtonSearchCursuIdUserDown.setOnClickListener(v -> {
-            if (!click[0]) {
-                click[0] = true;
                 binding.floatingActionButtonSearchCursuIdUserDown.setColorFilter(ContextCompat.getColor(context, R.color.green));
                 cursuAdapter.filter(String.valueOf(cursusId), isStaff);
             } else {
-                click[0] = false;
+                isClick[0] = false;
                 binding.floatingActionButtonSearchCursuIdUserDown.setColorFilter(ContextCompat.getColor(context, R.color.black));
                 cursuAdapter.filter("", isStaff);
             }
