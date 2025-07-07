@@ -295,8 +295,10 @@ public class SubscriptionListFragment extends Fragment {
 
         userViewModel.getUsersSubscriptionLiveData(context, cursusId, l, progressBarSubscription, savedInstanceState).observe(getViewLifecycleOwner(), users -> {
             if (!users.isEmpty() && users.get(0) != null) {
+                setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 subscriptionListAdapter.updateUserList(users, context);
                 binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
+                setNumberUserChip();
             } else
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
         });
@@ -306,10 +308,9 @@ public class SubscriptionListFragment extends Fragment {
             if (!userIds.isEmpty() && userIds.get(0) != null)
                 subscriptionListAdapter.updateSubscriptionUser(userIds);
             subscriptionListAdapter.isMarkAttendance = false;
-            setNumberUserChip();
 //            if (ratingValuesUsers != null)
 //                subscriptionListAdapter.updateRatingValueUser(ratingValuesUsers);
-            userViewModel.getUserList().postValue(subscriptionListAdapter.getUserList());
+//            userViewModel.getUserList().postValue(subscriptionListAdapter.getUserList());
             setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
         });
 
@@ -418,11 +419,11 @@ public class SubscriptionListFragment extends Fragment {
             }
         };
         requireActivity().addMenuProvider(menuProvider, getViewLifecycleOwner());
-        sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> {
-            binding.fabOpenCameraScannerQrCodeBack.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
-            binding.fabOpenCameraScannerQrCodeFront.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
-            binding.recyclerviewSubscriptionList.setOnTouchListener((v, event) -> disabled);
-        });
+//        sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> {
+//            binding.fabOpenCameraScannerQrCodeBack.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
+//            binding.fabOpenCameraScannerQrCodeFront.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
+//            binding.recyclerviewSubscriptionList.setOnTouchListener((v, event) -> disabled);
+//        });
     }
 
     private void printAndShareSubscriptionsList(List<User> userList, boolean isPrint, int title) {
@@ -478,10 +479,10 @@ public class SubscriptionListFragment extends Fragment {
         @Override
         public void onLoadMore() {
             if (!l.isLoading && l.hasNextPage) {
-                Toast.makeText(context, R.string.msg_loading_more_data, Toast.LENGTH_LONG).show();
+//                Toast.makeText(context, R.string.msg_loading_more_data, Toast.LENGTH_LONG).show();
                 userViewModel.getUsersSubscription(cursusId, l, context);
             } else {
-                Toast.makeText(context, R.string.synchronization, Toast.LENGTH_LONG).show();
+//                Toast.makeText(context, R.string.synchronization, Toast.LENGTH_LONG).show();
                 userViewModel.synchronizedSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
                 desactiveScrollListener();
             }
@@ -489,19 +490,20 @@ public class SubscriptionListFragment extends Fragment {
     };
 
     private void setNumberUserChip() {
-        numberUserUnsubscription = subscriptionListAdapter.getNumberUser(false);
-        numberUserSubscription = subscriptionListAdapter.getNumberUser(true);
-        binding.chipUnsubscription.setText(String.valueOf(numberUserUnsubscription));
-        binding.chipSubscription.setText(String.valueOf(numberUserSubscription));
+        int[] numberUser = subscriptionListAdapter.getNumberUser();
+        this.numberUserUnsubscription = numberUser[0];
+        this.numberUserSubscription = numberUser[1];
+        binding.chipUnsubscription.setText(String.valueOf(numberUserSubscription));
+        binding.chipSubscription.setText(String.valueOf(numberUserUnsubscription));
     }
 
     private void activeScrollListener() {
-        sharedViewModel.setDisabledRecyclerView(true);
+        //sharedViewModel.setDisabledRecyclerView(true);
         binding.recyclerviewSubscriptionList.addOnScrollListener(onScrollListener);
     }
 
     private void desactiveScrollListener() {
-        sharedViewModel.setDisabledRecyclerView(false);
+        //sharedViewModel.setDisabledRecyclerView(false);
         binding.recyclerviewSubscriptionList.removeOnScrollListener(onScrollListener);
     }
 

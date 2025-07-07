@@ -307,9 +307,10 @@ public class AttendanceListFragment extends Fragment {
 
         userViewModel.getUsersEventLiveData(context, eventId, l, progressBarMarkAttendance, savedInstanceState).observe(getViewLifecycleOwner(), users -> {
             if (!users.isEmpty() && users.get(0) != null) {
-                //setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
+                setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 attendanceListAdapter.updateUserList(users, context);
                 binding.recyclerviewAttendanceList.setAdapter(attendanceListAdapter);
+                setNumberUserChip();
             } else
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
         });
@@ -318,9 +319,8 @@ public class AttendanceListFragment extends Fragment {
             Toast.makeText(context, R.string.msg_checking_attendance, Toast.LENGTH_LONG).show();
             if (!userIds.isEmpty() && userIds.get(0) != null)
                 attendanceListAdapter.updateAttendanceUser(userIds);
-            setNumberUserChip();
             attendanceListAdapter.isMarkAttendance = false;
-            userViewModel.getUserList().postValue(attendanceListAdapter.getUserList());
+            //userViewModel.getUserList().postValue(attendanceListAdapter.getUserList());
             setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
         });
 
@@ -466,11 +466,11 @@ public class AttendanceListFragment extends Fragment {
             }
         };
         requireActivity().addMenuProvider(menuProvider, getViewLifecycleOwner());
-        sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> {
-            binding.fabOpenCameraScannerQrCodeBack.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
-            binding.fabOpenCameraScannerQrCodeFront.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
-            binding.recyclerviewAttendanceList.setOnTouchListener((v, event) -> disabled);
-        });
+//        sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> {
+//            binding.fabOpenCameraScannerQrCodeBack.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
+//            binding.fabOpenCameraScannerQrCodeFront.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
+//            binding.recyclerviewAttendanceList.setOnTouchListener((v, event) -> disabled);
+//        });
     }
 
     private void printAndShareAttendanceList(List<User> userList, boolean isPrint, int title) {
@@ -504,10 +504,10 @@ public class AttendanceListFragment extends Fragment {
         @Override
         public void onLoadMore() {
             if (!l.isLoading && l.hasNextPage) {
-                Toast.makeText(context, R.string.msg_loading_more_data, Toast.LENGTH_LONG).show();
+//                Toast.makeText(context, R.string.msg_loading_more_data, Toast.LENGTH_LONG).show();
                 userViewModel.getUsersEvent(eventId, l, context);  // Carregar mais usuários
             } else {
-                Toast.makeText(context, R.string.synchronization, Toast.LENGTH_LONG).show();
+//                Toast.makeText(context, R.string.synchronization, Toast.LENGTH_LONG).show();
                 userViewModel.synchronizedAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
                 desactiveScrollListener();
             }
@@ -515,19 +515,20 @@ public class AttendanceListFragment extends Fragment {
     };
 
     private void setNumberUserChip() {
-        numberUserAbsent = attendanceListAdapter.getNumberUser(false);
-        numberUserPresent = attendanceListAdapter.getNumberUser(true);
+        int[] numberUser = attendanceListAdapter.getNumberUser();
+        this.numberUserAbsent = numberUser[0];
+        this.numberUserPresent = numberUser[1];
         binding.chipAbsent.setText(String.valueOf(numberUserAbsent));
         binding.chipPresent.setText(String.valueOf(numberUserPresent));
     }
 
     private void activeScrollListener() {
-        sharedViewModel.setDisabledRecyclerView(true);
+        //sharedViewModel.setDisabledRecyclerView(true);
         binding.recyclerviewAttendanceList.addOnScrollListener(onScrollListener);
     }
 
     private void desactiveScrollListener() {
-        sharedViewModel.setDisabledRecyclerView(false);
+        //sharedViewModel.setDisabledRecyclerView(false);
         binding.recyclerviewAttendanceList.removeOnScrollListener(onScrollListener);
     }
 
@@ -567,7 +568,7 @@ public class AttendanceListFragment extends Fragment {
         }
     }
 
-    private void setupVisibility(FragmentAttendanceListBinding binding, int viewP,
+    private void setupVisibility(@NonNull FragmentAttendanceListBinding binding, int viewP,
                                  boolean refreshing, int viewT, int viewR) {
         binding.progressBarMarkAttendance.setVisibility(viewP);
         binding.swipeRefreshLayout.setRefreshing(refreshing);

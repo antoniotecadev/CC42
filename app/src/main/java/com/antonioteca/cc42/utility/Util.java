@@ -245,13 +245,13 @@ public class Util {
     }
 
     public static void setVisibleProgressBar(ProgressBar progressBar, SharedViewModel sharedViewModel) {
-        sharedViewModel.setDisabledRecyclerView(true);
         progressBar.setVisibility(View.VISIBLE);
+//        sharedViewModel.setDisabledRecyclerView(true);
     }
 
     public static void setInvisibleProgressBar(ProgressBar progressBar, SharedViewModel sharedViewModel) {
         progressBar.setVisibility(View.INVISIBLE);
-        sharedViewModel.setDisabledRecyclerView(false);
+//        sharedViewModel.setDisabledRecyclerView(false);
     }
 
     public static void showAlertDialogMessage(Context context,
