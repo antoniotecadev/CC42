@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -106,7 +107,8 @@ public class HomeFragment extends Fragment {
             binding.progressBar.setIndeterminateTintList(colorStateList);
             binding.textViewCoalition.setTextColor(color);
             binding.textViewFullName.setTextColor(color);
-        }
+        } else
+            colorCoalition = String.format("#%06X", (0xFFFFFF) & ContextCompat.getColor(context, R.color.light_blue_900));
         CollapsingToolbarLayout collapsingToolbarLayout = binding.collapsingToolbarLayout;
         collapsingToolbarLayout.setTitle(user.getLogin());
         String imageUrlCoalition = user.coalition.getImageUrl();
@@ -126,10 +128,11 @@ public class HomeFragment extends Fragment {
                     });
         }
 
+        String finalColorCoalition = colorCoalition;
         eventViewModel.getEventsList(context, binding.progressBar).observe(getViewLifecycleOwner(), eventList -> {
             if (!eventList.isEmpty() && eventList.get(0) != null) {
                 setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
-                eventAdapter = new EventAdapter(eventList);
+                eventAdapter = new EventAdapter(eventList, finalColorCoalition);
                 binding.recyclerviewEventsList.setAdapter(eventAdapter);
                 // Aplicar a animação de layout
                 // runLayoutAnimation(binding.recyclerviewEventsList, context);
