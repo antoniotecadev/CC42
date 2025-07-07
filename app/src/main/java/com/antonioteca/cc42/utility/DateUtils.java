@@ -18,6 +18,11 @@ public class DateUtils {
         return null;
     }
 
+    public static String formatDate(Date date) {
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+        return outputFormat.format(date);
+    }
+
     // Função para extrair o dia, o mês e a hora
     public static String getFormattedDate(Date date, String pattern) {
         // day = Extrair o dia (23, 24, etc)

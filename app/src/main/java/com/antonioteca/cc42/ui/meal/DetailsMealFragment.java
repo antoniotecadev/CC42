@@ -24,6 +24,7 @@ import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
+import com.antonioteca.cc42.utility.DateUtils;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.utility.StarUtils;
@@ -140,7 +141,7 @@ public class DetailsMealFragment extends Fragment {
         binding.textViewType.setText(meal.getType());
         binding.textViewName.setText(mealName);
         binding.textViewDescription.setText(mealDescription);
-        binding.textViewDate.setText(meal.getCreatedDate());
+        binding.textViewDate.setText(DateUtils.formatDate(DateUtils.parseDate(meal.getCreatedDate())));
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, true);
         // Configura os cliques das estrelas
         binding.starRating.star1.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 1, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));

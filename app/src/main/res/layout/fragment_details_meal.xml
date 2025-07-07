@@ -33,12 +33,6 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <View
-                    android:id="@+id/dividerHeader"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="?android:attr/listDivider" />
-
                 <!-- Título -->
                 <TextView
                     android:id="@+id/textViewName"
@@ -46,25 +40,48 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:paddingBottom="4dp"
-                    android:textSize="16sp"
-                    android:textStyle="italic" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/textViewDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:paddingBottom="12dp"
-                    android:textSize="14sp" />
+                    android:layout_marginBottom="12dp"
+                    android:textSize="12sp" />
 
                 <ImageView
                     android:id="@+id/imageViewMeal"
                     android:layout_width="match_parent"
-                    android:layout_height="400dp"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:paddingBottom="12dp"
-                    android:scaleType="centerCrop"
                     android:src="@drawable/ic_baseline_restaurant_60" />
+
+                <!-- Rodapé -->
+                <TextView
+                    android:id="@+id/textViewDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="6dp">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <include
                     android:id="@+id/starRatingDone"
@@ -88,7 +105,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
                             android:text="@string/_0"
-                            android:textColor="@color/textColorPrimary"
+                            android:textColor="@color/light_blue_900"
                             android:textSize="48sp"
                             android:textStyle="bold" />
 
@@ -113,16 +130,27 @@
                     android:id="@+id/numberOfRatings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
                     android:layout_marginBottom="8dp"
                     android:gravity="center"
-                    android:text="@string/_0"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:text="@string/_0" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.cardview.widget.CardView>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="?android:attr/listDivider" />
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="6dp">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <TextView
                     android:id="@+id/textViewTapToRate"
@@ -139,25 +167,8 @@
                     android:id="@+id/starRating"
                     layout="@layout/star_rating"
                     android:visibility="gone" />
-
-                <View
-                    android:id="@+id/dividerFooter"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="?android:attr/listDivider" />
-
-                <!-- Rodapé -->
-                <TextView
-                    android:id="@+id/textViewDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:paddingTop="12dp"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="12sp" />
-            </LinearLayout>
+            </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.cardview.widget.CardView>
-
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
@@ -168,24 +179,22 @@
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabGenerateQrCode"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
                 android:layout_marginEnd="8dp"
-                app:backgroundTint="@color/white"
-                app:fabCustomSize="100dp"
-                app:maxImageSize="50dp"
+                app:backgroundTint="@color/light_white"
+                app:fabCustomSize="90dp"
+                app:maxImageSize="40dp"
                 app:srcCompat="@drawable/ic_baseline_qr_code_2_100" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabOpenSubscriptionList"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="8dp"
-                app:backgroundTint="@color/white"
-                app:fabCustomSize="100dp"
-                app:maxImageSize="50dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginStart="16dp"
+                app:backgroundTint="@color/light_white"
+                app:fabCustomSize="90dp"
+                app:maxImageSize="40dp"
                 app:srcCompat="@drawable/ic_baseline_app_registration_100" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>

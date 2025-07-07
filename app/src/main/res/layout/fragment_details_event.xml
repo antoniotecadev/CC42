@@ -45,7 +45,7 @@
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textColor="@android:color/white"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -127,101 +127,148 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
-                        android:textColor="@color/white"
                         android:textSize="11sp" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </HorizontalScrollView>
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <TextView
-            android:id="@+id/textViewDescription"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-light"
-            android:lineSpacingExtra="8sp"
-            android:padding="10dp"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="12sp" />
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="6dp">
 
-        <include
-            android:id="@+id/starRatingDone"
-            layout="@layout/star_rating" />
-
-        <FrameLayout
-            android:id="@+id/starRatingDoneContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
-
-            <LinearLayout
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/averageRating"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/_0"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="48sp"
+                    android:fontFamily="sans-serif-light"
+                    android:lineSpacingExtra="8sp"
+                    android:text="Descrição"
+                    android:textColor="@color/light_blue_900"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewRating"
+                <TextView
+                    android:id="@+id/textViewDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="sans-serif-light"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="14sp" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="6dp">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <include
+                    android:id="@+id/starRatingDone"
+                    layout="@layout/star_rating" />
+
+                <FrameLayout
+                    android:id="@+id/starRatingDoneContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:listitem="@layout/item_rating_progress" />
-            </LinearLayout>
+                    android:layout_gravity="center">
 
-            <ProgressBar
-                android:id="@+id/progressBarEvent"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:indeterminate="true"
-                android:indeterminateTint="@color/light_blue_900"
-                android:visibility="invisible" />
-        </FrameLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/numberOfRatings"
+                        <TextView
+                            android:id="@+id/averageRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:text="@string/_0"
+                            android:textColor="@color/light_blue_900"
+                            android:textSize="48sp"
+                            android:textStyle="bold" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerViewRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:listitem="@layout/item_rating_progress" />
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/progressBarEvent"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_gravity="center"
+                        android:indeterminate="true"
+                        android:indeterminateTint="@color/light_blue_900"
+                        android:visibility="invisible" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/numberOfRatings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="@string/_0" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:gravity="center"
-            android:text="@string/_0"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="6dp">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider" />
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <TextView
-            android:id="@+id/textViewTapToRate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingVertical="8dp"
-            android:text="@string/tap_to_rate"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/textViewTapToRate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingVertical="8dp"
+                    android:text="@string/tap_to_rate"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-        <include
-            android:id="@+id/starRating"
-            android:visibility="gone"
-            layout="@layout/star_rating" />
+                <include
+                    android:id="@+id/starRating"
+                    layout="@layout/star_rating"
+                    android:visibility="gone" />
 
-        <View
-            android:id="@+id/dividerFooter"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.cardview.widget.CardView>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
@@ -232,24 +279,23 @@
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabGenerateQrCode"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
                 android:layout_gravity="center"
-                android:layout_marginEnd="8dp"
-                app:backgroundTint="@color/white"
-                app:fabCustomSize="100dp"
-                app:maxImageSize="50dp"
+                android:layout_marginEnd="16dp"
+                app:backgroundTint="@color/light_white"
+                app:fabCustomSize="90dp"
+                app:maxImageSize="40dp"
                 app:srcCompat="@drawable/ic_baseline_qr_code_2_100" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabOpenAttendanceList"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="8dp"
-                app:backgroundTint="@color/white"
-                app:fabCustomSize="100dp"
-                app:maxImageSize="50dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginStart="16dp"
+                app:backgroundTint="@color/light_white"
+                app:fabCustomSize="90dp"
+                app:maxImageSize="40dp"
                 app:srcCompat="@drawable/ic_baseline_app_registration_100" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
