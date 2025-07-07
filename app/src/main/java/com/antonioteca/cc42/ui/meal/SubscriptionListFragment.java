@@ -124,7 +124,7 @@ public class SubscriptionListFragment extends Fragment {
                     if (partsQrCode.length == 6) {
                         String urlImageUser = subscriptionListAdapter.containsUser(Long.parseLong(partsQrCode[0]));
                         if (urlImageUser != null) {
-                            Util.setVisibleProgressBar(progressBarSubscription, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
+                            Util.setVisibleProgressBar(progressBarSubscription, sharedViewModel);
                             DaoSusbscriptionFirebase.subscription(
                                     firebaseDatabase,
                                     null,
@@ -139,7 +139,6 @@ public class SubscriptionListFragment extends Fragment {
                                     context,
                                     layoutInflater,
                                     progressBarSubscription,
-                                    binding.fabOpenCameraScannerQrCodeBack,
                                     sharedViewModel,
                                     () -> decoratedBarcodeView.resume()
                             );

@@ -69,7 +69,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.cloudinary.android.MediaManager;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -96,7 +95,6 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private Context context;
     private Bundle args;
     private MenuProvider menuProvider;
-    private FloatingActionButton fabOpenCameraScannerQrCode;
     private String colorCoalition;
     private ProgressBar progressBar;
     private SharedViewModel sharedViewModel;
@@ -126,8 +124,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         context = NavigationDrawerActivity.this;
         User user = new User(context);
-        if (user.isStaff())
-            initCloudinary();
+//        if (user.isStaff())
+//            initCloudinary();
         // Aplicar o Tema ao Iniciar o App
         ThemePreferences themePreferences = new ThemePreferences(this);
         int themeMode = themePreferences.getThemeMode();
@@ -153,7 +151,6 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
-        fabOpenCameraScannerQrCode = binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode;
         progressBar = binding.appBarNavigationDrawer.progressBar;
 
         String topic = "/topics/meals_" + campusId + "_";
@@ -194,13 +191,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             }
         };
 
-        fabOpenCameraScannerQrCode.setOnClickListener(view -> {
-            if (ContextCompat.checkSelfPermission(view.getContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-                activityResultLauncher.launch(android.Manifest.permission.CAMERA);
-            } else {
-                openCameraScannerQrCodeEvent(new ScanOptions());
-            }
-        });
+        binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setOnClickListener(this::scannedQrCode);
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
@@ -216,10 +207,10 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         navController.addOnDestinationChangedListener((navCont, navDestination, bundle) -> {
             if (navDestination.getId() == R.id.nav_home) {
                 addMenuProvider(menuProvider, this);
-                fabOpenCameraScannerQrCode.setVisibility(View.VISIBLE);
+                binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setVisibility(View.VISIBLE);
             } else {
                 removeMenuProvider(menuProvider);
-                fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
+                binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
             }
         });
         // Obter o NavigationView
@@ -273,6 +264,14 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         asNotificationPermission();
         createNotificationChannel();
         setRequestPermissionLauncherNotification(context, REQUEST_CODE_POST_NOTIFICATIONS);
+    }
+
+    private void scannedQrCode(@NonNull View view) {
+        if (ContextCompat.checkSelfPermission(view.getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+            activityResultLauncher.launch(Manifest.permission.CAMERA);
+        } else {
+            openCameraScannerQrCodeEvent(new ScanOptions());
+        }
     }
 
     private void asNotificationPermission() {
@@ -341,7 +340,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 String resultQrCode = result.replace("cc42event", "");
                 String[] partsQrCode = resultQrCode.split("#", 2);
                 if (partsQrCode.length == 2) {
-                    Util.setVisibleProgressBar(progressBar, fabOpenCameraScannerQrCode, sharedViewModel);
+                    Util.setVisibleProgressBar(progressBar, sharedViewModel);
                     DaoEventFirebase.markAttendance(
                             firebaseDatabase,
                             partsQrCode[0], /* id event*/
@@ -355,7 +354,6 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                             context,
                             getLayoutInflater(),
                             progressBar,
-                            fabOpenCameraScannerQrCode,
                             sharedViewModel,
                             null
                     );
@@ -365,7 +363,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 String resultQrCode = result.replace("cc42meal", "");
                 String[] partsQrCode = resultQrCode.split("#", 2);
                 if (partsQrCode.length == 2) {
-                    Util.setVisibleProgressBar(progressBar, fabOpenCameraScannerQrCode, sharedViewModel);
+                    Util.setVisibleProgressBar(progressBar, sharedViewModel);
                     DaoSusbscriptionFirebase.subscription(
                             firebaseDatabase,
                             null,
@@ -380,7 +378,6 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                             context,
                             getLayoutInflater(),
                             progressBar,
-                            fabOpenCameraScannerQrCode,
                             sharedViewModel,
                             null
                     );

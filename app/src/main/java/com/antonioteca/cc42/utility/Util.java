@@ -244,15 +244,13 @@ public class Util {
                 .into(imageViewUserRegistered);
     }
 
-    public static void setVisibleProgressBar(ProgressBar progressBar, FloatingActionButton floatingActionButton, SharedViewModel sharedViewModel) {
+    public static void setVisibleProgressBar(ProgressBar progressBar, SharedViewModel sharedViewModel) {
         sharedViewModel.setDisabledRecyclerView(true);
         progressBar.setVisibility(View.VISIBLE);
-        floatingActionButton.setVisibility(View.INVISIBLE);
     }
 
-    public static void setInvisibleProgressBar(ProgressBar progressBar, FloatingActionButton floatingActionButton, SharedViewModel sharedViewModel) {
+    public static void setInvisibleProgressBar(ProgressBar progressBar, SharedViewModel sharedViewModel) {
         progressBar.setVisibility(View.INVISIBLE);
-        floatingActionButton.setVisibility(View.VISIBLE);
         sharedViewModel.setDisabledRecyclerView(false);
     }
 

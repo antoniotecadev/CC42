@@ -42,7 +42,6 @@ import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -74,7 +73,6 @@ public class MealListFragment extends Fragment {
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
     private DecoratedBarcodeView decoratedBarcodeView;
-    private FloatingActionButton floatingActionButton;
 
     final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
     final long[] lastClickTime = {0};
@@ -90,7 +88,6 @@ public class MealListFragment extends Fragment {
         scanOptions = new ScanOptions();
         user.coalition = new Coalition(context);
         beepManager = new BeepManager(activity);
-        floatingActionButton = new FloatingActionButton(context);
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         mealViewModel = new ViewModelProvider(this).get(MealViewModel.class);
         sharedViewModel = new ViewModelProvider(activity).get(SharedViewModel.class);
@@ -350,7 +347,6 @@ public class MealListFragment extends Fragment {
                                     context,
                                     getLayoutInflater(),
                                     binding.progressBarMeal,
-                                    floatingActionButton,
                                     sharedViewModel,
                                     () -> decoratedBarcodeView.resume()
                             );

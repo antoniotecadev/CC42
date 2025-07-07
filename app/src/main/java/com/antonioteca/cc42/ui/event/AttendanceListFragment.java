@@ -139,7 +139,7 @@ public class AttendanceListFragment extends Fragment {
                                 );
                             } else {*/
                             // Armazenamento directo para nuvem
-                            Util.setVisibleProgressBar(binding.progressBarMarkAttendance, binding.fabOpenCameraScannerQrCodeBack, sharedViewModel);
+                            Util.setVisibleProgressBar(binding.progressBarMarkAttendance, sharedViewModel);
                             DaoEventFirebase.markAttendance(
                                     firebaseDatabase,
                                     String.valueOf(eventId),
@@ -153,7 +153,6 @@ public class AttendanceListFragment extends Fragment {
                                     context,
                                     layoutInflater,
                                     binding.progressBarMarkAttendance,
-                                    binding.fabOpenCameraScannerQrCodeBack,
                                     sharedViewModel,
                                     () -> decoratedBarcodeView.resume()
                             );
