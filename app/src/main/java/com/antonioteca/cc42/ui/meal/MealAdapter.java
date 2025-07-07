@@ -3,7 +3,6 @@ package com.antonioteca.cc42.ui.meal;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -113,7 +112,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             MealListFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment = MealListFragmentDirections.actionNavMealToDetailsMealFragment(meal, cursusId);
             Navigation.findNavController(v).navigate(actionNavMealToDetailsMealFragment);
         });
-        holder.itemView.setOnCreateContextMenuListener((contextMenu, view, contextMenuInfo) -> {
+        holder.binding.constraintLayoutMeal.setOnCreateContextMenuListener((contextMenu, view, contextMenuInfo) -> {
             contextMenu.setHeaderTitle(meal.getName());
             MenuItem menuItemEdit = contextMenu.add(view.getContext().getString(R.string.edit_meal));
             MenuItem menuItemDelete = contextMenu.add(view.getContext().getString(R.string.delete_meal));
@@ -164,7 +163,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                     meal.setType(meal.getType() + ": " + spinner.getSelectedItem().toString());
                     try {
                         String topicStudent = "meals_" + campusId + "_" + cursusId;
-                        Notification.sendNotificationForTopic(context, layoutInflater, meal, cursusId, topicStudent, null);
+                        Notification.sendFCMNotification(context, layoutInflater, meal, cursusId, topicStudent, null);
                         dialog.dismiss();
                     } catch (IOException e) {
                         Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();

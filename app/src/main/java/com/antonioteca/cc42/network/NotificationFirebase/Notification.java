@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.dao.daoapi.DaoApiMeal;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
@@ -22,37 +23,70 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Notification {
 
-    public static void  sendNotificationForTopic(Context context, LayoutInflater layoutInflater, Meal meal, int cursusId, String topic, String condition) throws IOException {
-        AccessTokenGenerator.getAccessToken(context, accessToken -> {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://fcm.googleapis.com/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+    public static void sendFCMNotification(Context context, LayoutInflater layoutInflater, Meal meal, int cursusId, String topic, String condition) throws IOException {
+        FCMessage.Notification notification = new FCMessage.Notification(meal.getType(), meal.getName(), meal.getPathImage());
+        FCMessage.Data data = new FCMessage.Data(meal.getId(), meal.getCreatedBy(), meal.getCreatedDate(), String.valueOf(meal.getQuantity()), String.valueOf(cursusId), "DetailsMealFragment", meal.getDescription(), notification);
+        FCMessage.Message message = new FCMessage.Message(topic, condition, notification, data);
+        FCMessage fcmMessage = new FCMessage(message);
 
-            FCMService service = retrofit.create(FCMService.class);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://check-cadet.vercel.app/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-            FCMessage.Notification notification = new FCMessage.Notification(meal.getType(), meal.getName(), meal.getPathImage());
-            FCMessage.Data data = new FCMessage.Data(meal.getId(), meal.getCreatedBy(), meal.getCreatedDate(), String.valueOf(meal.getQuantity()), String.valueOf(cursusId), "DetailsMealFragment", meal.getDescription(), notification);
-            FCMessage.Message message = new FCMessage.Message(topic, condition, notification, data);
-            FCMessage fcmMessage = new FCMessage(message);
+        DaoApiMeal daoApiMeal = retrofit.create(DaoApiMeal.class);
 
-            Call<Void> call = service.sendMessage("Bearer " + accessToken, fcmMessage);
-            call.enqueue(new Callback<>() {
-                @Override
-                public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                    if (!response.isSuccessful()) {
-                        HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
-                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpStatus.getDescription(), "#E53935", null, null);
-                    } else
-                        Toast.makeText(context, R.string.notification_sent, Toast.LENGTH_LONG).show();
-                }
+        daoApiMeal.sendFCMNotification(fcmMessage).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (!response.isSuccessful()) {
+                    HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpStatus.getDescription(), "#E53935", null, null);
+                } else
+                    Toast.makeText(context, R.string.notification_sent, Toast.LENGTH_LONG).show();
+            }
 
-                @Override
-                public void onFailure(@NonNull Call<Void> call, @NonNull Throwable throwable) {
-                    HttpException httpException = HttpException.handleException(throwable, context);
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpException.getDescription(), "#E53935", null, null);
-                }
-            });
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable throwable) {
+                HttpException httpException = HttpException.handleException(throwable, context);
+                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpException.getDescription(), "#E53935", null, null);
+            }
         });
+
     }
+
+//      QUANDO FOR PARA ENVIAR APARTIR DO CLIENTE - NÃO É SEGURO UTILIZAR - APENAS PARA TESTES
+//    public static void sendNotificationForTopic(Context context, LayoutInflater layoutInflater, Meal meal, int cursusId, String topic, String condition) throws IOException {
+//        AccessTokenGenerator.getAccessToken(context, accessToken -> {
+//            Retrofit retrofit = new Retrofit.Builder()
+//                    .baseUrl("https://fcm.googleapis.com/")
+//                    .addConverterFactory(GsonConverterFactory.create())
+//                    .build();
+//
+//            FCMService service = retrofit.create(FCMService.class);
+//
+//            FCMessage.Notification notification = new FCMessage.Notification(meal.getType(), meal.getName(), meal.getPathImage());
+//            FCMessage.Data data = new FCMessage.Data(meal.getId(), meal.getCreatedBy(), meal.getCreatedDate(), String.valueOf(meal.getQuantity()), String.valueOf(cursusId), "DetailsMealFragment", meal.getDescription(), notification);
+//            FCMessage.Message message = new FCMessage.Message(topic, condition, notification, data);
+//            FCMessage fcmMessage = new FCMessage(message);
+//
+//            Call<Void> call = service.sendMessage("Bearer " + accessToken, fcmMessage);
+//            call.enqueue(new Callback<>() {
+//                @Override
+//                public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+//                    if (!response.isSuccessful()) {
+//                        HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
+//                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpStatus.getDescription(), "#E53935", null, null);
+//                    } else
+//                        Toast.makeText(context, R.string.notification_sent, Toast.LENGTH_LONG).show();
+//                }
+//
+//                @Override
+//                public void onFailure(@NonNull Call<Void> call, @NonNull Throwable throwable) {
+//                    HttpException httpException = HttpException.handleException(throwable, context);
+//                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpException.getDescription(), "#E53935", null, null);
+//                }
+//            });
+//        });
+//    }
 }
