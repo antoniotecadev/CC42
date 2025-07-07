@@ -129,7 +129,7 @@ public class DetailsMealFragment extends Fragment {
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             if (actionBar != null)
-                actionBar.setTitle(meal.getType() + " (" + meal.getQuantity() + ")");
+                actionBar.setTitle(meal.getType());
         }
 
         String colorCoalition = user.coalition.getColor();
@@ -142,6 +142,7 @@ public class DetailsMealFragment extends Fragment {
         binding.textViewName.setText(mealName);
         binding.textViewDescription.setText(mealDescription);
         binding.textViewDate.setText(DateUtils.formatDate(DateUtils.parseDate(meal.getCreatedDate())));
+        binding.textViewQuantity.setText(context.getString(R.string.quantity) + ": " + meal.getQuantity());
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, true);
         // Configura os cliques das estrelas
         binding.starRating.star1.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 1, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));
