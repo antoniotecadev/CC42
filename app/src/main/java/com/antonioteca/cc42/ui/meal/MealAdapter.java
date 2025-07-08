@@ -163,7 +163,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                     meal.setType(meal.getType() + ": " + spinner.getSelectedItem().toString());
                     try {
                         String topicStudent = "meals_" + campusId + "_" + cursusId;
-                        Notification.sendFCMNotification(context, layoutInflater, meal, cursusId, topicStudent, null);
+                        Notification.sendFCMNotification(context, layoutInflater, meal, String.valueOf(campusId), String.valueOf(cursusId), topicStudent, null);
                         dialog.dismiss();
                     } catch (IOException e) {
                         Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();

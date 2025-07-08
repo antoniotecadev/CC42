@@ -1,6 +1,7 @@
 package com.antonioteca.cc42.network.NotificationFirebase;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.Toast;
 
@@ -11,9 +12,13 @@ import com.antonioteca.cc42.dao.daoapi.DaoApiMeal;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
+import com.antonioteca.cc42.network.NotificationExpo.ExpoNotificationPayload;
+import com.antonioteca.cc42.network.NotificationExpo.NotificationSender;
 import com.antonioteca.cc42.utility.Util;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,9 +28,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Notification {
 
-    public static void sendFCMNotification(Context context, LayoutInflater layoutInflater, Meal meal, int cursusId, String topic, String condition) throws IOException {
+    public static void sendFCMNotification(Context context, LayoutInflater layoutInflater, @NonNull Meal meal, String campusId, String cursusId, String topic, String condition) throws IOException {
         FCMessage.Notification notification = new FCMessage.Notification(meal.getType(), meal.getName(), meal.getPathImage());
-        FCMessage.Data data = new FCMessage.Data(meal.getId(), meal.getCreatedBy(), meal.getCreatedDate(), String.valueOf(meal.getQuantity()), String.valueOf(cursusId), "DetailsMealFragment", meal.getDescription(), notification);
+        FCMessage.Data data = new FCMessage.Data(meal.getId(), meal.getCreatedBy(), meal.getCreatedDate(), String.valueOf(meal.getQuantity()), cursusId, "DetailsMealFragment", meal.getDescription(), notification);
         FCMessage.Message message = new FCMessage.Message(topic, condition, notification, data);
         FCMessage fcmMessage = new FCMessage(message);
 
@@ -53,6 +58,12 @@ public class Notification {
             }
         });
 
+        Map<String, Object> dataExtra = new HashMap<>();
+        dataExtra.put("data", data);
+        Log.d("Notification", "meal.getPathImage(): " + meal.getPathImage());
+        NotificationSender notificationSender = new NotificationSender();
+        ExpoNotificationPayload payload = new ExpoNotificationPayload(meal.getType(), meal.getName(), dataExtra, meal.getPathImage().trim());
+        notificationSender.sendExpoNotificationToGroup(campusId, cursusId, payload);
     }
 
 //      QUANDO FOR PARA ENVIAR APARTIR DO CLIENTE - NÃO É SEGURO UTILIZAR - APENAS PARA TESTES
