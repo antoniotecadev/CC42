@@ -124,8 +124,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         context = NavigationDrawerActivity.this;
         User user = new User(context);
-//        if (user.isStaff())
-//            initCloudinary();
+        if (user.isStaff())
+            initCloudinary();
         // Aplicar o Tema ao Iniciar o App
         ThemePreferences themePreferences = new ThemePreferences(this);
         int themeMode = themePreferences.getThemeMode();
