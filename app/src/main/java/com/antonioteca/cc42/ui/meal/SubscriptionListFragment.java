@@ -209,6 +209,10 @@ public class SubscriptionListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentSubscriptionListBinding.inflate(inflater, container, false);
+        if (!user.isStaff()) {
+            binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.GONE);
+            binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.GONE);
+        }
         return binding.getRoot();
     }
 

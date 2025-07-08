@@ -66,6 +66,7 @@ public class MealListFragment extends Fragment {
     private BeepManager beepManager;
     private ScanOptions scanOptions;
     private MealAdapter mealAdapter;
+    private MenuProvider menuProvider;
     private FragmentActivity activity;
     private DatabaseReference mealsRef;
     private FragmentMealBinding binding;
@@ -234,7 +235,7 @@ public class MealListFragment extends Fragment {
             }
         });
 
-        activity.addMenuProvider(new MenuProvider() {
+        menuProvider = new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_meal, menu);
@@ -270,7 +271,11 @@ public class MealListFragment extends Fragment {
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 return false;
             }
-        }, getViewLifecycleOwner());
+        };
+        if (user.isStaff())
+            activity.addMenuProvider(menuProvider, getViewLifecycleOwner());
+        else
+            activity.removeMenuProvider(menuProvider);
     }
 
     private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(

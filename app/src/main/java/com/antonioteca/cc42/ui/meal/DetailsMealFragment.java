@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -65,6 +64,10 @@ public class DetailsMealFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentDetailsMealBinding.inflate(inflater, container, false);
+        if (!user.isStaff()) {
+            binding.fabGenerateQrCode.setVisibility(View.GONE);
+            binding.fabOpenSubscriptionList.setVisibility(View.GONE);
+        }
         return binding.getRoot();
     }
 

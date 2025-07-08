@@ -1,5 +1,7 @@
 package com.antonioteca.cc42.utility;
 
+import androidx.annotation.NonNull;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -18,9 +20,14 @@ public class DateUtils {
         return null;
     }
 
+    @NonNull
     public static String formatDate(Date date) {
-        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-        return outputFormat.format(date);
+        try {
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            return outputFormat.format(date);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     // Função para extrair o dia, o mês e a hora

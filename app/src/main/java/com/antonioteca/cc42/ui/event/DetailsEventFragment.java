@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,8 +23,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsEventBinding;
@@ -33,18 +30,14 @@ import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Event;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
-import com.antonioteca.cc42.ui.meal.RatingProgressAdapter;
-import com.antonioteca.cc42.ui.meal.RatingProgressItem;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.StarUtils;
 import com.antonioteca.cc42.viewmodel.EventViewModel;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 public class DetailsEventFragment extends Fragment {
@@ -75,6 +68,10 @@ public class DetailsEventFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentDetailsEventBinding.inflate(inflater, container, false);
+        if (!user.isStaff()) {
+            binding.fabGenerateQrCode.setVisibility(View.GONE);
+            binding.fabOpenAttendanceList.setVisibility(View.GONE);
+        }
         return binding.getRoot();
     }
 
