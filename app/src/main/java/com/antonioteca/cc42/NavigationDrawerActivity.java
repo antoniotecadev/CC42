@@ -70,6 +70,7 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.cloudinary.android.MediaManager;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -309,6 +310,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private void removeSessionUser(Context context) {
         new User(context).clear();
         new Token(context).clear();
+        FirebaseAuth.getInstance().signOut();
         redirectToLogin(context);
     }
 
