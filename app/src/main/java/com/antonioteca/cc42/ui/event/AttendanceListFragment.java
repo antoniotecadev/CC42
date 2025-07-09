@@ -244,19 +244,13 @@ public class AttendanceListFragment extends Fragment {
         binding.recyclerviewAttendanceList.setHasFixedSize(true);
         binding.recyclerviewAttendanceList.setLayoutManager(new LinearLayoutManager(context));
 
-        userViewModel.getIdsUsersAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
-        userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
-            if (!userIds.isEmpty() && userIds.get(0) != null)
-                this.userIds = userIds;
-        });
-
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             if (attendanceListAdapter.isMarkAttendance || attendanceListAdapter.getItemCount() < 0) {
                 setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
                 l.currentPage = 1;
                 activeScrollListener();
                 attendanceListAdapter.clean();
-                userViewModel.getUsersEvent(eventId, l, context);
+                userViewModel.getIdsUsersAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
             } else
                 binding.swipeRefreshLayout.setRefreshing(false);
         });
@@ -315,7 +309,13 @@ public class AttendanceListFragment extends Fragment {
             }
         });
 
-        userViewModel.getUsersEventLiveData(context, eventId, l, progressBarMarkAttendance, savedInstanceState).observe(getViewLifecycleOwner(), users -> {
+        userViewModel.getIdsUsersAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
+        userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
+            this.userIds = userIds;
+            userViewModel.getUsersEventLiveData(context, eventId, l, progressBarMarkAttendance);
+        });
+
+        userViewModel.getUsersEventLiveData().observe(getViewLifecycleOwner(), users -> {
             if (!users.isEmpty() && users.get(0) != null) {
                 setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 attendanceListAdapter.updateUserList(users, context);
@@ -407,7 +407,7 @@ public class AttendanceListFragment extends Fragment {
                     l.currentPage = 1;
                     activeScrollListener();
                     attendanceListAdapter.clean();
-                    userViewModel.getUsersEvent(eventId, l, context);
+                    userViewModel.getIdsUsersAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
                 } else if (itemId == R.id.action_list_print) {
                     boolean isExternalStorageManager = Util.launchPermissionDocument(
                             context,

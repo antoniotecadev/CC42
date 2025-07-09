@@ -232,19 +232,13 @@ public class SubscriptionListFragment extends Fragment {
         binding.recyclerviewSubscriptionList.setHasFixedSize(true);
         binding.recyclerviewSubscriptionList.setLayoutManager(new LinearLayoutManager(context));
 
-        userViewModel.getUserIdsSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
-        userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
-            if (!userIds.isEmpty() && userIds.get(0) != null)
-                this.userIds = userIds;
-        });
-
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             if (subscriptionListAdapter.isMarkAttendance || subscriptionListAdapter.getItemCount() < 0) {
                 setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
                 l.currentPage = 1;
                 activeScrollListener();
                 subscriptionListAdapter.clean();
-                userViewModel.getUsersSubscription(cursusId, l, context);
+                userViewModel.getUserIdsSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
             } else
                 binding.swipeRefreshLayout.setRefreshing(false);
         });
@@ -303,7 +297,13 @@ public class SubscriptionListFragment extends Fragment {
             }
         });
 
-        userViewModel.getUsersSubscriptionLiveData(context, cursusId, l, progressBarSubscription, savedInstanceState).observe(getViewLifecycleOwner(), users -> {
+        userViewModel.getUserIdsSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
+        userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
+            this.userIds = userIds;
+            userViewModel.getUsersSubscriptionLiveData(context, cursusId, l, progressBarSubscription);
+        });
+
+        userViewModel.getUsersSubscriptionLiveData().observe(getViewLifecycleOwner(), users -> {
             if (!users.isEmpty() && users.get(0) != null) {
                 setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 subscriptionListAdapter.updateUserList(users, context);
