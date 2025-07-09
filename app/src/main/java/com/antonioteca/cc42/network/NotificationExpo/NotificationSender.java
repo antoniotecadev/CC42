@@ -120,7 +120,7 @@ public class NotificationSender {
             }
         });
         // Espera até que ambas as buscas no Firebase sejam concluídas (ou timeout)
-        boolean finish = (!latch.await(60, TimeUnit.SECONDS));// Timeout de 30 segundos
+        boolean finish = (!latch.await(60, TimeUnit.SECONDS));// Timeout de 60 segundos
         if (!finish)
             Log.w(TAG, "Timeout ao buscar tokens do Firebase.");
         return allTokens;
