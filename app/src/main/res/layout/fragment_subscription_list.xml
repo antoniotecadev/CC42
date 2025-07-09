@@ -109,6 +109,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:layout_margin="16dp"
+        android:clickable="true"
+        android:focusable="true"
         app:backgroundTint="@color/light_white"
         app:srcCompat="@drawable/ic_baseline_qr_code_scanner_100" />
 
@@ -118,6 +120,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        android:clickable="true"
+        android:focusable="true"
         app:backgroundTint="@color/light_white"
         app:srcCompat="@drawable/ic_baseline_qr_code_100" />
 
