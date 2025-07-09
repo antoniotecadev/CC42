@@ -82,7 +82,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             super(binding.getRoot());
             this.binding = binding;
             int[] colors = {
-                    Color.parseColor("#222222"),
+                    Color.parseColor("#444444"),
                     Color.parseColor(colorCoalition),
             };
 
