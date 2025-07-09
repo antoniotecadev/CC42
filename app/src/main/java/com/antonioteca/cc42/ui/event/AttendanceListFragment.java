@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -200,6 +199,7 @@ public class AttendanceListFragment extends Fragment {
 
     private final ActivityResultLauncher<String> requestPermissionLauncherSharer = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), this::activityResultContractsSharer);
+    private List<String> userIds;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -243,6 +243,12 @@ public class AttendanceListFragment extends Fragment {
         eventDate = args.getDataEvent();
         binding.recyclerviewAttendanceList.setHasFixedSize(true);
         binding.recyclerviewAttendanceList.setLayoutManager(new LinearLayoutManager(context));
+
+        userViewModel.getIdsUsersAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
+        userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
+            if (!userIds.isEmpty() && userIds.get(0) != null)
+                this.userIds = userIds;
+        });
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             if (attendanceListAdapter.isMarkAttendance || attendanceListAdapter.getItemCount() < 0) {
@@ -314,24 +320,20 @@ public class AttendanceListFragment extends Fragment {
                 setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 attendanceListAdapter.updateUserList(users, context);
                 binding.recyclerviewAttendanceList.setAdapter(attendanceListAdapter);
-                setNumberUserChip();
+                if (!userIds.isEmpty() && userIds.get(0) != null) {
+                    attendanceListAdapter.updateAttendanceUser(userIds);
+                    setNumberUserChip();
+                }
+                attendanceListAdapter.isMarkAttendance = false;
             } else
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
-        });
-
-        userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
-            Toast.makeText(context, R.string.msg_checking_attendance, Toast.LENGTH_LONG).show();
-            if (!userIds.isEmpty() && userIds.get(0) != null)
-                attendanceListAdapter.updateAttendanceUser(userIds);
-            attendanceListAdapter.isMarkAttendance = false;
-            //userViewModel.getUserList().postValue(attendanceListAdapter.getUserList());
-            setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
         });
 
         sharedViewModel.getUserIdLiveData().observe(getViewLifecycleOwner(), userId -> {
             if (userId > 0) {
                 attendanceListAdapter.updateAttendanceUserSingle(userId);
                 binding.chipPresent.setText(String.valueOf(numberUserPresent + 1));
+                binding.chipAbsent.setText(String.valueOf(numberUserAbsent - 1));
             }
         });
 
@@ -512,7 +514,6 @@ public class AttendanceListFragment extends Fragment {
                 userViewModel.getUsersEvent(eventId, l, context);  // Carregar mais usuários
             } else {
 //                Toast.makeText(context, R.string.synchronization, Toast.LENGTH_LONG).show();
-                userViewModel.synchronizedAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
                 desactiveScrollListener();
             }
         }
@@ -520,10 +521,10 @@ public class AttendanceListFragment extends Fragment {
 
     private void setNumberUserChip() {
         int[] numberUser = attendanceListAdapter.getNumberUser();
-        this.numberUserAbsent = numberUser[0];
-        this.numberUserPresent = numberUser[1];
-        binding.chipAbsent.setText(String.valueOf(numberUserAbsent));
+        this.numberUserPresent = numberUser[0];
+        this.numberUserAbsent = numberUser[1];
         binding.chipPresent.setText(String.valueOf(numberUserPresent));
+        binding.chipAbsent.setText(String.valueOf(numberUserAbsent));
     }
 
     private void activeScrollListener() {

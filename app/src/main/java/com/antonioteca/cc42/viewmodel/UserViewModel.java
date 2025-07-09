@@ -259,7 +259,7 @@ public class UserViewModel extends ViewModel {
         });
     }
 
-    public void synchronizedAttendanceList(FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, Context context, LayoutInflater layoutInflater) {
+    public void getIdsUsersAttendanceList(@NonNull FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, Context context, LayoutInflater layoutInflater) {
         DatabaseReference participantsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
                 .child("cursus")
@@ -411,7 +411,7 @@ public class UserViewModel extends ViewModel {
         });
     }
 
-    public void synchronizedSubscriptionList(FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId, Context context, LayoutInflater layoutInflater) {
+    public void getUserIdsSubscriptionList(FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId, Context context, LayoutInflater layoutInflater) {
         DatabaseReference subscriptionsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
                 .child("cursus")

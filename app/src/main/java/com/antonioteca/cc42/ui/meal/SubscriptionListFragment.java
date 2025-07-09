@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -65,7 +64,6 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import com.journeyapps.barcodescanner.camera.CameraSettings;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -186,6 +184,8 @@ public class SubscriptionListFragment extends Fragment {
     private final ActivityResultLauncher<String> requestPermissionLauncherSharer = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), this::activityResultContractsSharer);
 
+    List<String> userIds;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -224,7 +224,6 @@ public class SubscriptionListFragment extends Fragment {
         meal = args.getMeal();
         campusId = user.getCampusId();
         cursusId = args.getCursusId();
-        HashMap<?, ?> ratingValuesUsers = (HashMap<?, ?>) args.getRatingValuesUsers();
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             if (actionBar != null)
@@ -232,6 +231,13 @@ public class SubscriptionListFragment extends Fragment {
         }
         binding.recyclerviewSubscriptionList.setHasFixedSize(true);
         binding.recyclerviewSubscriptionList.setLayoutManager(new LinearLayoutManager(context));
+
+        userViewModel.getUserIdsSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
+        userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
+            if (!userIds.isEmpty() && userIds.get(0) != null)
+                this.userIds = userIds;
+        });
+
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             if (subscriptionListAdapter.isMarkAttendance || subscriptionListAdapter.getItemCount() < 0) {
                 setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
@@ -302,26 +308,20 @@ public class SubscriptionListFragment extends Fragment {
                 setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 subscriptionListAdapter.updateUserList(users, context);
                 binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
-                setNumberUserChip();
+                if (!userIds.isEmpty() && userIds.get(0) != null) {
+                    subscriptionListAdapter.updateSubscriptionUser(userIds);
+                    setNumberUserChip();
+                }
+                subscriptionListAdapter.isMarkAttendance = false;
             } else
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
-        });
-
-        userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
-            Toast.makeText(context, R.string.msg_checking_subscription, Toast.LENGTH_LONG).show();
-            if (!userIds.isEmpty() && userIds.get(0) != null)
-                subscriptionListAdapter.updateSubscriptionUser(userIds);
-            subscriptionListAdapter.isMarkAttendance = false;
-//            if (ratingValuesUsers != null)
-//                subscriptionListAdapter.updateRatingValueUser(ratingValuesUsers);
-//            userViewModel.getUserList().postValue(subscriptionListAdapter.getUserList());
-            setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
         });
 
         sharedViewModel.getUserIdLiveData().observe(getViewLifecycleOwner(), userId -> {
             if (userId > 0) {
                 subscriptionListAdapter.updateSubscriptionUserSingle(userId);
                 binding.chipSubscription.setText(String.valueOf(numberUserSubscription + 1));
+                binding.chipUnsubscription.setText(String.valueOf(numberUserUnsubscription - 1));
             }
         });
 
@@ -487,7 +487,6 @@ public class SubscriptionListFragment extends Fragment {
                 userViewModel.getUsersSubscription(cursusId, l, context);
             } else {
 //                Toast.makeText(context, R.string.synchronization, Toast.LENGTH_LONG).show();
-                userViewModel.synchronizedSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
                 desactiveScrollListener();
             }
         }
@@ -495,10 +494,10 @@ public class SubscriptionListFragment extends Fragment {
 
     private void setNumberUserChip() {
         int[] numberUser = subscriptionListAdapter.getNumberUser();
-        this.numberUserUnsubscription = numberUser[0];
-        this.numberUserSubscription = numberUser[1];
-        binding.chipUnsubscription.setText(String.valueOf(numberUserSubscription));
-        binding.chipSubscription.setText(String.valueOf(numberUserUnsubscription));
+        this.numberUserSubscription = numberUser[0];
+        this.numberUserUnsubscription = numberUser[1];
+        binding.chipSubscription.setText(String.valueOf(numberUserSubscription));
+        binding.chipUnsubscription.setText(String.valueOf(numberUserUnsubscription));
     }
 
     private void activeScrollListener() {

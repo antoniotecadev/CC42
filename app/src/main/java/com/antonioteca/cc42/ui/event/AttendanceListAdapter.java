@@ -131,17 +131,17 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
     }
 
     public int[] getNumberUser() {
+        int size0 = 0;
         int size1 = 0;
-        int size2 = 0;
 
         for (User user : getUserList()) {
             if (user.isPresent() != null && user.isPresent()) {
-                size1 += 1;
+                size0 += 1;
             } else {
-                size2 += 1;
+                size1 += 1;
             }
         }
-        return new int[]{size1, size2};
+        return new int[]{size0, size1};
     }
 
     public static class AttendanceListViewHolder extends RecyclerView.ViewHolder {
