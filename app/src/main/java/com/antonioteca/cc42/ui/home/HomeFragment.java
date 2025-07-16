@@ -132,14 +132,15 @@ public class HomeFragment extends Fragment {
 
         String finalColorCoalition = colorCoalition;
         eventViewModel.getEventsList(context, binding.progressBar).observe(getViewLifecycleOwner(), eventList -> {
+            setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
             if (!eventList.isEmpty() && eventList.get(0) != null) {
-                setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 eventAdapter = new EventAdapter(eventList, finalColorCoalition);
                 binding.recyclerviewEventsList.setAdapter(eventAdapter);
                 // Aplicar a animação de layout
                 // runLayoutAnimation(binding.recyclerviewEventsList, context);
-            } else
-                setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
+            }
+            //else
+            //  setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
         });
 
         eventViewModel.getHttpSatus().observe(getViewLifecycleOwner(), event -> {
