@@ -199,7 +199,7 @@ public class SubscriptionListFragment extends Fragment {
         colorCoalition = new Coalition(context).getColor();
         subscriptionListAdapter = new SubscriptionListAdapter();
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
-        sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         UserRepository userRepository = new UserRepository(context);
         UserViewModelFactory userViewModelFactory = new UserViewModelFactory(userRepository);
         userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
@@ -363,6 +363,39 @@ public class SubscriptionListFragment extends Fragment {
             }
         });
 
+        sharedViewModel.getUserFaceIdLiveData().observe(getViewLifecycleOwner(), event -> {
+            if (event != null) {
+                String userId = event.getContentIfNotHandled();
+                if (userId != null) {
+                    beepManager.playBeepSoundAndVibrate();
+                    String[] userData = subscriptionListAdapter.containsUserFaceID(Long.parseLong(userId));
+                    String displayName = userData[0];
+                    String urlImageUser = userData[1];
+                    if (urlImageUser != null && !displayName.isEmpty()) {
+                        Util.setVisibleProgressBar(progressBarSubscription, sharedViewModel);
+                        DaoSusbscriptionFirebase.subscription(
+                                firebaseDatabase,
+                                null,
+                                String.valueOf(meal.getId()),
+                                null,
+                                userId, /* id */
+                                "", /* login */
+                                displayName, /* displayName */
+                                String.valueOf(cursusId), /* cursusId */
+                                String.valueOf(campusId), /* campusId */
+                                urlImageUser,
+                                context,
+                                layoutInflater,
+                                progressBarSubscription,
+                                sharedViewModel,
+                                () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true)
+                        );
+                    } else
+                        Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), displayName + "\n" + getString(R.string.msg_user_not_fount_list), "#FDD835", urlImageUser, () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true));
+                }
+            }
+        });
+
         menuProvider = new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -392,7 +425,15 @@ public class SubscriptionListFragment extends Fragment {
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 NavController navController = Navigation.findNavController(activity, R.id.nav_host_fragment_content_navigation_drawer);
                 int itemId = menuItem.getItemId();
-                if (itemId == R.id.action_list_print) {
+                if (itemId == R.id.action_register_face_id_camera_front) {
+                    SubscriptionListFragmentDirections.ActionSubscriptionListFragmentToFaceRecognitionFragment actionSubscriptionListFragmentToFaceRecognitionFragment
+                            = SubscriptionListFragmentDirections.actionSubscriptionListFragmentToFaceRecognitionFragment(false, 1, String.valueOf(user.getCampusId()), String.valueOf(cursusId));
+                    Navigation.findNavController(view).navigate(actionSubscriptionListFragmentToFaceRecognitionFragment);
+                } else if (itemId == R.id.action_register_face_id_camera_back) {
+                    SubscriptionListFragmentDirections.ActionSubscriptionListFragmentToFaceRecognitionFragment actionSubscriptionListFragmentToFaceRecognitionFragment
+                            = SubscriptionListFragmentDirections.actionSubscriptionListFragmentToFaceRecognitionFragment(false, 0, String.valueOf(user.getCampusId()), String.valueOf(cursusId));
+                    Navigation.findNavController(view).navigate(actionSubscriptionListFragmentToFaceRecognitionFragment);
+                } else if (itemId == R.id.action_list_print) {
                     boolean isExternalStorageManager = Util.launchPermissionDocument(
                             context,
                             requestIntentPermissionLauncherViewer,

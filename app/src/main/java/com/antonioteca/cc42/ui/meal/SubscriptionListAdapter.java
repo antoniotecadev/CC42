@@ -103,6 +103,15 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         return null;
     }
 
+    public String[] containsUserFaceID(long userId) {
+        for (User user : getUserList()) {
+            if (user.uid == userId) {
+                return new String[]{user.displayName, Objects.requireNonNullElse(user.getUrlImageUser(), "")};
+            }
+        }
+        return new String[]{"", null};
+    }
+
     @NonNull
     @Override
     public SubscriptionListAdapter.SubscriptionListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

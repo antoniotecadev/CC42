@@ -35,6 +35,9 @@
         <action
             android:id="@+id/action_detailsEventFragment_to_qrCodeFragment"
             app:destination="@id/qrCodeFragment" />
+        <action
+            android:id="@+id/action_detailsEventFragment_to_faceRecognitionFragment"
+            app:destination="@id/faceRecognitionFragment" />
     </fragment>
     <fragment
         android:id="@+id/attendanceListFragment"
@@ -54,6 +57,9 @@
             android:name="nameEvent"
             app:argType="string" />
         <argument android:name="dataEvent" />
+        <action
+            android:id="@+id/action_attendanceListFragment_to_faceRecognitionFragment"
+            app:destination="@id/faceRecognitionFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_meal"
@@ -103,6 +109,9 @@
         <action
             android:id="@+id/action_detailsMealFragment_to_qrCodeFragment"
             app:destination="@id/qrCodeFragment" />
+        <action
+            android:id="@+id/action_detailsMealFragment_to_faceRecognitionFragment"
+            app:destination="@id/faceRecognitionFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_cursu_list_meal"
@@ -127,8 +136,11 @@
         <argument
             android:name="ratingValuesUsers"
             android:defaultValue="@null"
-            app:nullable="true"
-            app:argType="java.util.HashMap" />
+            app:argType="java.util.HashMap"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_subscriptionListFragment_to_faceRecognitionFragment"
+            app:destination="@id/faceRecognitionFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -166,4 +178,22 @@
         android:name="com.antonioteca.cc42.ui.about.AboutDialogFragment"
         android:label="fragment_about_dialog"
         tools:layout="@layout/fragment_about_dialog" />
+    <dialog
+        android:id="@+id/faceRecognitionFragment"
+        android:name="com.antonioteca.cc42.facerecognition.FaceRecognitionFragment"
+        android:label="Face ID"
+        tools:layout="@layout/fragment_face_recognition">
+        <argument
+            android:name="register"
+            app:argType="boolean" />
+        <argument
+            android:name="cameraId"
+            app:argType="integer" />
+        <argument
+            android:name="campusId"
+            app:argType="string" />
+        <argument
+            android:name="cursusId"
+            app:argType="string" />
+    </dialog>
 </navigation>

@@ -22,6 +22,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.text.Html;
+import android.text.InputType;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +48,6 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ImageQrCodeBinding;
 import com.antonioteca.cc42.model.MealQrCode;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.zxing.BarcodeFormat;
@@ -82,8 +84,12 @@ public class Util {
         if (runnableTryAgain == null)
             builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
         else {
-            builder.setNeutralButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
-            builder.setPositiveButton(R.string.list_reload, (dialogInterface, i) -> runnableTryAgain.run());
+            if (message.equalsIgnoreCase("Face ID registado com sucesso"))
+                builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> runnableTryAgain.run());
+            else {
+                builder.setNeutralButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
+                builder.setPositiveButton(R.string.list_reload, (dialogInterface, i) -> runnableTryAgain.run());
+            }
         }
         builder.show();
     }
@@ -424,4 +430,57 @@ public class Util {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS); // Activar o controle total da aparência da status bar
         window.setStatusBarColor(color);
     }
+
+    public static void showImageDialog(Context context, String title, Bitmap bitmap, Runnable runnableCancel, UserIDListener userIDListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LinearLayout linearLayout = new LinearLayout(context);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+        EditText editText = new EditText(context);
+        editText.setHint("ID do usuário");
+        editText.setSingleLine(true);
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        LinearLayout.LayoutParams editParam = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        editParam.setMargins(16, 0, 16, 0);
+        editText.setLayoutParams(editParam);
+        linearLayout.addView(editText);
+
+        ImageView imageView = new ImageView(context);
+        imageView.setImageBitmap(bitmap);
+        imageView.setAdjustViewBounds(true);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        linearLayout.addView(imageView);
+
+        builder.setTitle(title);
+        builder.setView(linearLayout);
+        builder.setIcon(R.drawable.ic_baseline_remember_me_24);
+        builder.setNeutralButton(context.getString(R.string.cancel), (dialog, which) -> {
+            if (runnableCancel != null)
+                runnableCancel.run();
+            dialog.dismiss();
+        });
+        builder.setPositiveButton(context.getString(R.string.register_face_id), null);
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dlg -> {
+            Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(v -> {
+                if (editText.getText().toString().trim().isEmpty()) {
+                    editText.requestFocus();
+                    editText.setError("Digite ID do usuário");
+                } else {
+                    userIDListener.onInputuserId(editText.getText().toString().trim());
+                    dialog.dismiss();
+                }
+            });
+        });
+        dialog.show();
+    }
+
+    public interface UserIDListener {
+        void onInputuserId(String userId);
+    }
+
 }

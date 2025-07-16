@@ -1,12 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_baseline_search_24"
         android:title="@string/search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
+
+    <item
+        android:id="@+id/registerFaceIDFragment"
+        android:icon="@drawable/ic_baseline_remember_me_24"
+        android:title="@string/face_id"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/action_register_face_id_camera_front"
+                android:title="@string/camera_front"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_register_face_id_camera_back"
+                android:title="@string/camera_back"
+                app:showAsAction="never" />
+        </menu>
+    </item>
 
     <item
         android:id="@+id/action_list_reload"

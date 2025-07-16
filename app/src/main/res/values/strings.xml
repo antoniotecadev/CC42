@@ -287,4 +287,8 @@
         <item>Calulu</item>
         <item>Quizaca</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="register_face_id">Registar Face ID</string>
+    <string name="face_id">Face ID</string>
 </resources>

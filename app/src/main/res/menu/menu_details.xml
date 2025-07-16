@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/registerFaceIDFragment"
+        android:icon="@drawable/ic_baseline_remember_me_24"
+        android:orderInCategory="7"
+        android:title="@string/register_face_id"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/action_register_face_id_camera_front"
+                android:title="@string/camera_front"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_register_face_id_camera_back"
+                android:title="@string/camera_back"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+</menu>

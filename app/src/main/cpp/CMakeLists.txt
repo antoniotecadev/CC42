@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.22.1)
 # Since this is the top level CMakeLists.txt, the project name is also accessible
 # with ${CMAKE_PROJECT_NAME} (both CMake variables are in-sync within the top level
 # build script scope).
-project("cc42")
+project("cc42_native_libs")
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -25,14 +25,44 @@ project("cc42")
 # System.loadLibrary() and pass the name of the library defined here;
 # for GameActivity/NativeActivity derived applications, the same library name must be
 # used in the AndroidManifest.xml file.
-add_library(${CMAKE_PROJECT_NAME} SHARED
-    # List C/C++ source files with relative paths to this CMakeLists.txt.
-    cc42.cpp)
+#
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__ARM_NEON -mfpu=neon -mfloat-abi=softfp")
+
+# Bibliotecas nativas do Android
+find_library(log-lib log)
+find_library(jnigraphics-lib jnigraphics)
+
+# Biblioteca principal cc42 (caso uses)
+add_library(cc42 SHARED
+        cc42.cpp
+)
+
+# Biblioteca para conversão YUV → Bitmap
+add_library(yuv_utils SHARED
+        yuv_utils.cpp
+)
+
+add_library(face_matcher SHARED
+        face_matcher.cpp
+)
 
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this
 # build script, prebuilt third-party libraries, or Android system libraries.
-target_link_libraries(${CMAKE_PROJECT_NAME}
-    # List libraries link to the target library
-    android
-    log)
+
+# Linka bibliotecas ao cc42 (se necessário)
+target_link_libraries(cc42
+        # List libraries link to the target library
+        android
+        log)
+
+# Linka bibliotecas ao yuv_utils
+target_link_libraries(yuv_utils
+        # List libraries link to the target library
+        ${log-lib}
+        ${jnigraphics-lib}
+        android)
+
+target_link_libraries(face_matcher
+        ${log-lib}
+        android)

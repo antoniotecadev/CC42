@@ -21,6 +21,10 @@ android {
                 cppFlags ''
             }
         }
+
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
     }
 
     buildTypes {
@@ -53,6 +57,10 @@ android {
     }
 // Quando há arquivos duplicados em 'META-INF/DEPENDENCIES' durante a compilação do projecto no Gradle
     // Isso geralmente acontence quando diferentes dependências contêm o mesmo arquivo META INFO
+
+    aaptOptions { // Instrui o Android Build System para: Não comprimir os arquivos .tflite durante a criação do APK.
+        noCompress "tflite"
+    }
 }
 
 dependencies {
@@ -61,6 +69,7 @@ dependencies {
     def nav_version = "2.5.3"
     def retrofit_version = "2.11.0"
     def glide_version = "4.16.0"
+    def camerax_version = "1.4.2"
 
     implementation 'androidx.preference:preference:1.2.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -143,4 +152,18 @@ dependencies {
 
     // Cloudinary for storage Image
     implementation 'com.cloudinary:cloudinary-android:3.0.2'
+
+    // CameraX para captura de imagens
+    implementation "androidx.camera:camera-core:$camerax_version"
+    implementation "androidx.camera:camera-camera2:$camerax_version"
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
+    implementation "androidx.camera:camera-view:$camerax_version"
+
+    // ML Kit para detecção facial
+    implementation 'com.google.mlkit:face-detection:16.1.7'
+
+    // TensorFlow Lite para reconhecimento facial
+    implementation 'org.tensorflow:tensorflow-lite:2.12.0'
+    implementation 'org.tensorflow:tensorflow-lite-support:0.4.3'
+    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.4.3'
 }

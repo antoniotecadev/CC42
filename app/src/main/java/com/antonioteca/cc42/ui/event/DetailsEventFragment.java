@@ -12,6 +12,9 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -19,10 +22,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsEventBinding;
@@ -45,9 +50,9 @@ public class DetailsEventFragment extends Fragment {
     private int rating = 0;
     private Context context;
     private Loading loading;
-    private HashMap<?, ?> ratingValuesUsers;
     private MealViewModel mealViewModel;
     private EventViewModel eventViewModel;
+    private HashMap<?, ?> ratingValuesUsers;
     private FirebaseDatabase firebaseDatabase;
     private FragmentDetailsEventBinding binding;
 
@@ -184,8 +189,7 @@ public class DetailsEventFragment extends Fragment {
             try {
                 DetailsEventFragmentDirections.ActionDetailsEventFragmentToQrCodeFragment actionDetailsEventFragmentToQrCodeFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToQrCodeFragment("event" + event.getId() + "#" + user.getUid(), event.getKind(), event.getName(), user.getCampusId(), event.getCursus_ids().get(0));
                 navController.navigate(actionDetailsEventFragmentToQrCodeFragment);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
+            } catch (IllegalArgumentException ignored) {
             }
         });
 
@@ -193,10 +197,35 @@ public class DetailsEventFragment extends Fragment {
             try {
                 DetailsEventFragmentDirections.ActionDetailsEventFragmentToAttendanceListFragment actionDetailsEventFragmentToAttendanceListFragment = DetailsEventFragmentDirections.actionDetailsEventFragmentToAttendanceListFragment(event.getId(), event.getCursus_ids().get(0), event.getKind(), event.getName(), String.valueOf(binding.textViewDate.getText()));
                 navController.navigate(actionDetailsEventFragmentToAttendanceListFragment);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
+            } catch (IllegalArgumentException ignored) {
             }
         });
+
+        MenuProvider menuProvider = new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_details, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_navigation_drawer);
+                if (menuItem.getItemId() == R.id.action_register_face_id_camera_front) {
+                    DetailsEventFragmentDirections.ActionDetailsEventFragmentToFaceRecognitionFragment actionDetailsEventFragmentToFaceRecognitionFragment
+                            = DetailsEventFragmentDirections.actionDetailsEventFragmentToFaceRecognitionFragment(true, 1, String.valueOf(campusId), String.valueOf(cursusId));
+                    Navigation.findNavController(view).navigate(actionDetailsEventFragmentToFaceRecognitionFragment);
+                } else if (menuItem.getItemId() == R.id.action_register_face_id_camera_back) {
+                    DetailsEventFragmentDirections.ActionDetailsEventFragmentToFaceRecognitionFragment actionDetailsEventFragmentToFaceRecognitionFragment
+                            = DetailsEventFragmentDirections.actionDetailsEventFragmentToFaceRecognitionFragment(true, 0, String.valueOf(campusId), String.valueOf(cursusId));
+                    Navigation.findNavController(view).navigate(actionDetailsEventFragmentToFaceRecognitionFragment);
+                }
+                return NavigationUI.onNavDestinationSelected(menuItem, navController);
+            }
+        };
+        if (user.isStaff())
+            requireActivity().addMenuProvider(menuProvider, getViewLifecycleOwner());
+        else
+            requireActivity().removeMenuProvider(menuProvider);
     }
 
     @Override

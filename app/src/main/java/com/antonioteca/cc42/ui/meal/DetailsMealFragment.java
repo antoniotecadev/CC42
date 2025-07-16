@@ -5,6 +5,9 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -13,10 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsMealBinding;
@@ -178,6 +183,29 @@ public class DetailsMealFragment extends Fragment {
                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        MenuProvider menuProvider = new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu_details, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_navigation_drawer);
+                if (menuItem.getItemId() == R.id.action_register_face_id_camera_front) {
+                    DetailsMealFragmentDirections.ActionDetailsMealFragmentToFaceRecognitionFragment actionDetailsMealFragmentToFaceRecognitionFragment
+                            = DetailsMealFragmentDirections.actionDetailsMealFragmentToFaceRecognitionFragment(true, 1, String.valueOf(campusId), String.valueOf(cursusId));
+                    Navigation.findNavController(view).navigate(actionDetailsMealFragmentToFaceRecognitionFragment);
+                } else if (menuItem.getItemId() == R.id.action_register_face_id_camera_back) {
+                    DetailsMealFragmentDirections.ActionDetailsMealFragmentToFaceRecognitionFragment actionDetailsMealFragmentToFaceRecognitionFragment
+                            = DetailsMealFragmentDirections.actionDetailsMealFragmentToFaceRecognitionFragment(true, 0, String.valueOf(campusId), String.valueOf(cursusId));
+                    Navigation.findNavController(view).navigate(actionDetailsMealFragmentToFaceRecognitionFragment);
+                }
+                return NavigationUI.onNavDestinationSelected(menuItem, navController);
+            }
+        };
+        requireActivity().addMenuProvider(menuProvider, getViewLifecycleOwner());
     }
 
     @Override

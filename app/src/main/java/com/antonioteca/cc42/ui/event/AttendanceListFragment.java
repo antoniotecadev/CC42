@@ -110,7 +110,6 @@ public class AttendanceListFragment extends Fragment {
         @Override
         public void barcodeResult(BarcodeResult barcodeResult) {
             decoratedBarcodeView.pause();
-            Util.startVibration(context);
             beepManager.playBeepSoundAndVibrate();
             if (barcodeResult.getText().isEmpty()) {
                 Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
@@ -166,7 +165,7 @@ public class AttendanceListFragment extends Fragment {
         }
     };
 
-    private void activityResultContractsViewer(Boolean result) {
+    private void activityResultContractsViewer(@NonNull Boolean result) {
         if (result) {
             List<User> userList = attendanceListAdapter.getUserList();
             if (userList.isEmpty())
@@ -177,7 +176,7 @@ public class AttendanceListFragment extends Fragment {
             Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_print), context, null);
     }
 
-    private void activityResultContractsSharer(Boolean result) {
+    private void activityResultContractsSharer(@NonNull Boolean result) {
         if (result) {
             List<User> userList = attendanceListAdapter.getUserList();
             if (userList.isEmpty())
@@ -214,7 +213,7 @@ public class AttendanceListFragment extends Fragment {
         colorCoalition = new Coalition(context).getColor();
         attendanceListAdapter = new AttendanceListAdapter();
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
-        sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         UserRepository userRepository = new UserRepository(context);
         UserViewModelFactory userViewModelFactory = new UserViewModelFactory(userRepository);
         userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
@@ -375,6 +374,38 @@ public class AttendanceListFragment extends Fragment {
             }
         });
 
+        sharedViewModel.getUserFaceIdLiveData().observe(getViewLifecycleOwner(), event -> {
+            if (event != null) {
+                String userId = event.getContentIfNotHandled();
+                if (userId != null) {
+                    beepManager.playBeepSoundAndVibrate();
+                    String[] userData = attendanceListAdapter.containsUserFaceID(Long.parseLong(userId));
+                    String displayName = userData[0];
+                    String urlImageUser = userData[1];
+                    if (urlImageUser != null && !displayName.isEmpty()) {
+                        Util.setVisibleProgressBar(binding.progressBarMarkAttendance, sharedViewModel);
+                        DaoEventFirebase.markAttendance(
+                                firebaseDatabase,
+                                String.valueOf(eventId),
+                                null,
+                                user.getUid(),
+                                userId, /* userId */
+                                displayName, /* displayName */
+                                String.valueOf(cursuId), /* cursusId */
+                                String.valueOf(user.getCampusId()), /* campusId */
+                                urlImageUser,
+                                context,
+                                layoutInflater,
+                                binding.progressBarMarkAttendance,
+                                sharedViewModel,
+                                () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true)
+                        );
+                    } else
+                        Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), displayName + "\n" + getString(R.string.msg_user_unregistered), "#FDD835", urlImageUser, () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true));
+                }
+            }
+        });
+
         menuProvider = new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -402,7 +433,15 @@ public class AttendanceListFragment extends Fragment {
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 NavController navController = Navigation.findNavController(activity, R.id.nav_host_fragment_content_navigation_drawer);
                 int itemId = menuItem.getItemId();
-                if (itemId == R.id.action_list_reload) {
+                if (itemId == R.id.action_register_face_id_camera_front) {
+                    AttendanceListFragmentDirections.ActionAttendanceListFragmentToFaceRecognitionFragment actionAttendanceListFragmentToFaceRecognitionFragment
+                            = AttendanceListFragmentDirections.actionAttendanceListFragmentToFaceRecognitionFragment(false, 1, String.valueOf(user.getCampusId()), String.valueOf(cursuId));
+                    Navigation.findNavController(view).navigate(actionAttendanceListFragmentToFaceRecognitionFragment);
+                } else if (itemId == R.id.action_register_face_id_camera_back) {
+                    AttendanceListFragmentDirections.ActionAttendanceListFragmentToFaceRecognitionFragment actionAttendanceListFragmentToFaceRecognitionFragment
+                            = AttendanceListFragmentDirections.actionAttendanceListFragmentToFaceRecognitionFragment(false, 0, String.valueOf(user.getCampusId()), String.valueOf(cursuId));
+                    Navigation.findNavController(view).navigate(actionAttendanceListFragmentToFaceRecognitionFragment);
+                } else if (itemId == R.id.action_list_reload) {
                     setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
                     l.currentPage = 1;
                     activeScrollListener();
