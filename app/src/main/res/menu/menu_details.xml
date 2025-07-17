@@ -6,6 +6,7 @@
         android:icon="@drawable/ic_baseline_remember_me_24"
         android:orderInCategory="7"
         android:title="@string/register_face_id"
+        android:visible="false"
         app:showAsAction="ifRoom">
         <menu>
             <item

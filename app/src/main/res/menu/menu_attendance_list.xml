@@ -13,6 +13,7 @@
         android:id="@+id/registerFaceIDFragment"
         android:icon="@drawable/ic_baseline_remember_me_24"
         android:title="@string/face_id"
+        android:visible="false"
         app:showAsAction="ifRoom">
         <menu>
             <item
