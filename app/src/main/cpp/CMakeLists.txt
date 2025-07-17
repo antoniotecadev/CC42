@@ -25,9 +25,10 @@ project("cc42_native_libs")
 # System.loadLibrary() and pass the name of the library defined here;
 # for GameActivity/NativeActivity derived applications, the same library name must be
 # used in the AndroidManifest.xml file.
-#
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__ARM_NEON -mfpu=neon -mfloat-abi=softfp")
 
+if (CMAKE_ANDROID_ARCH_ABI STREQUAL "armeabi-v7a")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__ARM_NEON -mfpu=neon -mfloat-abi=softfp")
+endif ()
 # Bibliotecas nativas do Android
 find_library(log-lib log)
 find_library(jnigraphics-lib jnigraphics)
