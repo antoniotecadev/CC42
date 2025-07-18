@@ -26,7 +26,7 @@ public class TokenRepository {
 
     public TokenRepository(Context context) {
         token = new Token(context);
-        daoApiToken = RetrofitClientApi.getApiService().create(DaoApiToken.class);
+        daoApiToken = RetrofitClientApi.getApiService(context).create(DaoApiToken.class);
     }
 //    AO LOGAR NO CLIENTE
 //    public void getAccessTokenUser(String code, Context context, Callback<Token> callback) {

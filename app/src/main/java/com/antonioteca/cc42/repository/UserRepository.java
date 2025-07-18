@@ -43,7 +43,7 @@ public class UserRepository {
         token = new Token(context);
         /*WeakReference<Context> weakReference = new WeakReference<>(context);
         appDataBase = AppDataBase.getInstance(weakReference.get());*/
-        daoApiUser = RetrofitClientApi.getApiService().create(DaoApiUser.class);
+        daoApiUser = RetrofitClientApi.getApiService(context).create(DaoApiUser.class);
     }
 
     /*public Completable insert(LocalAttendanceList user) {

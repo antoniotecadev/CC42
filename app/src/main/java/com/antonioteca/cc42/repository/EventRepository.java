@@ -26,7 +26,7 @@ public class EventRepository {
         this.context = context;
         user = new User(context);
         token = new Token(context);
-        daoEvent = RetrofitClientApi.getApiService().create(DaoApiEvent.class);
+        daoEvent = RetrofitClientApi.getApiService(context).create(DaoApiEvent.class);
     }
 
     public void getEvents(Callback<List<Event>> callback) {

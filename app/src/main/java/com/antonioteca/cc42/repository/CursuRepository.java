@@ -25,7 +25,7 @@ public class CursuRepository {
     public CursuRepository(Context context) {
         this.context = context;
         token = new Token(context);
-        daoApiCursu = RetrofitClientApi.getApiService().create(DaoApiCursu.class);
+        daoApiCursu = RetrofitClientApi.getApiService(context).create(DaoApiCursu.class);
     }
 
     public void getCursus(@NonNull Callback<List<Cursu>> callback) {
