@@ -51,8 +51,8 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
         for (Event event : eventList) {
-            OffsetDateTime begin = OffsetDateTime.parse(event.getBegin_at());
-            if (begin.isAfter(now))
+            OffsetDateTime end = OffsetDateTime.parse(event.getEnd_at());
+            if (end.isAfter(now))
                 this.eventList.add(event);
             else
                 this.eventListEnd.add(event);
