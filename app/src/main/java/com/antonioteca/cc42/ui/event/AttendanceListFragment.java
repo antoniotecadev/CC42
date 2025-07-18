@@ -328,8 +328,9 @@ public class AttendanceListFragment extends Fragment {
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
         });
 
-        sharedViewModel.getUserIdLiveData().observe(getViewLifecycleOwner(), userId -> {
-            if (userId > 0) {
+        sharedViewModel.getUserIdLiveData().observe(getViewLifecycleOwner(), event -> {
+            if (event != null) {
+                Long userId = event.getContentIfNotHandled();
                 attendanceListAdapter.updateAttendanceUserSingle(userId);
                 binding.chipPresent.setText(String.valueOf(numberUserPresent + 1));
                 binding.chipAbsent.setText(String.valueOf(numberUserAbsent - 1));

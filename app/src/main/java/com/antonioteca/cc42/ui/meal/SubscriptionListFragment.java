@@ -317,8 +317,9 @@ public class SubscriptionListFragment extends Fragment {
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
         });
 
-        sharedViewModel.getUserIdLiveData().observe(getViewLifecycleOwner(), userId -> {
-            if (userId > 0) {
+        sharedViewModel.getUserIdLiveData().observe(getViewLifecycleOwner(), event -> {
+            if (event != null) {
+                Long userId = event.getContentIfNotHandled();
                 subscriptionListAdapter.updateSubscriptionUserSingle(userId);
                 binding.chipSubscription.setText(String.valueOf(numberUserSubscription + 1));
                 binding.chipUnsubscription.setText(String.valueOf(numberUserUnsubscription - 1));
