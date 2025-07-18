@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -203,6 +204,21 @@ public class SubscriptionListFragment extends Fragment {
         UserRepository userRepository = new UserRepository(context);
         UserViewModelFactory userViewModelFactory = new UserViewModelFactory(userRepository);
         userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
+
+        OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                if (decoratedBarcodeView.isShown()) {
+                    closeCamera();
+                } else {
+                    setEnabled(false); // Importante para não criar um loop infinito
+                    requireActivity().getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        };
+
+        // Adicione o callback ao dispatcher
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
     }
 
     @Override
