@@ -591,7 +591,6 @@ public class SubscriptionListFragment extends Fragment {
     }
 
     private void closeCamera() {
-        inflatedViewStub.setVisibility(View.GONE);
         if (decoratedBarcodeView.isShown()) {
             if (isFlashLightOn[0]) {
                 isFlashLightOn[0] = false;
@@ -599,6 +598,7 @@ public class SubscriptionListFragment extends Fragment {
             }
             decoratedBarcodeView.pause();
         }
+        inflatedViewStub.setVisibility(View.GONE);
     }
 
     private void setupVisibility(FragmentSubscriptionListBinding binding, int viewP,

@@ -617,7 +617,6 @@ public class AttendanceListFragment extends Fragment {
     }
 
     private void closeCamera() {
-        inflatedViewStub.setVisibility(View.GONE);
         if (decoratedBarcodeView.isShown()) {
             if (isFlashLightOn[0]) {
                 isFlashLightOn[0] = false;
@@ -625,6 +624,7 @@ public class AttendanceListFragment extends Fragment {
             }
             decoratedBarcodeView.pause();
         }
+        inflatedViewStub.setVisibility(View.GONE);
     }
 
     private void setupVisibility(@NonNull FragmentAttendanceListBinding binding, int viewP,
