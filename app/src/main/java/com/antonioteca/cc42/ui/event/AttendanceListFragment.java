@@ -287,6 +287,9 @@ public class AttendanceListFragment extends Fragment {
 
         ProgressBar progressBarMarkAttendance = binding.progressBarMarkAttendance;
         if (colorCoalition != null) {
+            ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
+            binding.fabOpenCameraScannerQrCodeBack.setBackgroundTintList(colorStateList);
+            binding.fabOpenCameraScannerQrCodeFront.setBackgroundTintList(colorStateList);
             binding.progressindicator.setIndicatorColor(Color.parseColor(colorCoalition));
             progressBarMarkAttendance.setIndeterminateTintList(ColorStateList.valueOf(Color.parseColor(colorCoalition)));
         }

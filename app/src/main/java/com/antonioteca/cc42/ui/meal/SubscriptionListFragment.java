@@ -276,6 +276,9 @@ public class SubscriptionListFragment extends Fragment {
 
         progressBarSubscription = binding.progressBarSubscription;
         if (colorCoalition != null) {
+            ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
+            binding.fabOpenCameraScannerQrCodeBack.setBackgroundTintList(colorStateList);
+            binding.fabOpenCameraScannerQrCodeFront.setBackgroundTintList(colorStateList);
             binding.progressindicator.setIndicatorColor(Color.parseColor(colorCoalition));
             progressBarSubscription.setIndeterminateTintList(ColorStateList.valueOf(Color.parseColor(colorCoalition)));
         }
