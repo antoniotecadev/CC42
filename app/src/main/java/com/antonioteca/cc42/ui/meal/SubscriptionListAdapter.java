@@ -13,32 +13,32 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewSubscriptionListBinding;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.model.UserDiffCallback;
-import com.antonioteca.cc42.utility.StarUtils;
 import com.antonioteca.cc42.utility.Util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionListAdapter.SubscriptionListViewHolder> {
 
     private Context context;
-    private List<User> userListFull;
     private final List<User> userList;
+    private final List<User> userListFilter;
+
     public boolean isMarkAttendance = false;
 
     public SubscriptionListAdapter() {
         this.userList = new ArrayList<>();
+        this.userListFilter = new ArrayList<>();
     }
 
     public void updateUserList(List<User> newUserList, Context context) {
         this.context = context;
-        this.userListFull = new ArrayList<>(this.userList);
         // Calcule a diferença
         UserDiffCallback diffCallback = new UserDiffCallback(new ArrayList<>(this.userList), newUserList); // Passe cópias
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
         this.userList.addAll(newUserList);
+        this.userListFilter.addAll(newUserList);
         // Despache as atualizações para o RecyclerView.
         // Isso irá chamar os métodos notifyItemInserted, notifyItemRemoved,
         // notifyItemMoved, ou notifyItemChanged (com ou sem payload)
@@ -47,8 +47,11 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
     }
 
     public void updateSubscriptionUser(List<String> usersIdsSubscription) {
+        boolean asigned;
         for (int i = 0; i < getItemCount(); i++) {
-            this.userList.get(i).setSubscription(usersIdsSubscription.contains(String.valueOf(this.userList.get(i).uid)));
+            asigned = usersIdsSubscription.contains(String.valueOf(this.userList.get(i).uid));
+            this.userList.get(i).setSubscription(asigned);
+            this.userListFilter.get(i).setSubscription(asigned);
             notifyItemChanged(i);
         }
     }
@@ -59,36 +62,60 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
                 isMarkAttendance = true;
                 this.userList.get(i).setSubscription(true);
                 notifyItemChanged(i);
+                this.userList.add(0, this.userList.get(i));
+                notifyItemInserted(0);
+                this.userListFilter.add(0, this.userList.get(i));
+                this.userList.remove(i);
+                notifyItemRemoved(i);
+                this.userListFilter.remove(i);
                 break;
             }
         }
     }
 
-    public void updateRatingValueUser(HashMap<?, ?> ratingValuesUsers) {
-        for (int i = 0; i < getItemCount(); i++) {
-            String uid = String.valueOf(this.userList.get(i).uid);
-            if (ratingValuesUsers.containsKey(uid)) {
-                this.userList.get(i).ratingValue = (int) ratingValuesUsers.get(uid);
-                notifyItemChanged(i);
-            }
-        }
-    }
+//    public void updateRatingValueUser(HashMap<?, ?> ratingValuesUsers) {
+//        for (int i = 0; i < getItemCount(); i++) {
+//            String uid = String.valueOf(this.userList.get(i).uid);
+//            if (ratingValuesUsers.containsKey(uid)) {
+//                this.userList.get(i).ratingValue = (int) ratingValuesUsers.get(uid);
+//                notifyItemChanged(i);
+//            }
+//        }
+//    }
 
     public void clean() {
         this.userList.clear();
         notifyItemRangeRemoved(0, getItemCount());
     }
 
-    public void filter(String text) {
+    public void filterSearch(String text) {
         this.userList.clear();
         if (text.isEmpty())
-            this.userList.addAll(userListFull);
-        else if (userListFull != null && !userListFull.isEmpty()) {
+            this.userList.addAll(userListFilter);
+        else if (!userListFilter.isEmpty()) {
             text = text.toLowerCase();
-            for (User user : userListFull) {
+            for (User user : userListFilter) {
                 if (user.login.toLowerCase().contains(text) || user.displayName.toLowerCase().contains(text)) {
                     userList.add(user);
                 }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void filterListStatus(Boolean status) {
+        this.userList.clear();
+        if (status == null)
+            this.userList.addAll(userListFilter);
+        else if (status) {
+            for (User user : userListFilter) {
+                if (user.isSubscription())
+                    userList.add(user);
+            }
+        } else {
+            for (User user : userListFilter) {
+                if (!user.isSubscription())
+                    userList.add(user);
             }
         }
         notifyDataSetChanged();

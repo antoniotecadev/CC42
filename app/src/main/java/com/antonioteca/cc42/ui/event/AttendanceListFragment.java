@@ -417,23 +417,37 @@ public class AttendanceListFragment extends Fragment {
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
-                        attendanceListAdapter.filter(query);
+                        attendanceListAdapter.filterSearch(query);
                         return false;
                     }
 
                     @Override
                     public boolean onQueryTextChange(String newText) {
-                        attendanceListAdapter.filter(newText);
+                        attendanceListAdapter.filterSearch(newText);
                         return false;
                     }
                 });
+
+                MenuItem menuItemPresents = menu.findItem(R.id.action_one_list);
+                menuItemPresents.setTitle("Presentes");
+                MenuItem menuItemAbsents = menu.findItem(R.id.action_two_list);
+                menuItemAbsents.setTitle("Ausentes");
+                MenuItem menuItemAll = menu.findItem(R.id.action_three_list);
+                menuItemAll.setTitle("Todos");
             }
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 NavController navController = Navigation.findNavController(activity, R.id.nav_host_fragment_content_navigation_drawer);
                 int itemId = menuItem.getItemId();
-                if (itemId == R.id.action_register_face_id_camera_front) {
+
+                if (itemId == R.id.action_one_list)
+                    attendanceListAdapter.filterListStatus(true);
+                else if (itemId == R.id.action_two_list)
+                    attendanceListAdapter.filterListStatus(false);
+                else if (itemId == R.id.action_three_list)
+                    attendanceListAdapter.filterListStatus(null);
+                else if (itemId == R.id.action_register_face_id_camera_front) {
                     AttendanceListFragmentDirections.ActionAttendanceListFragmentToFaceRecognitionFragment actionAttendanceListFragmentToFaceRecognitionFragment
                             = AttendanceListFragmentDirections.actionAttendanceListFragmentToFaceRecognitionFragment(false, 1, String.valueOf(user.getCampusId()), String.valueOf(cursuId));
                     Navigation.findNavController(view).navigate(actionAttendanceListFragmentToFaceRecognitionFragment);

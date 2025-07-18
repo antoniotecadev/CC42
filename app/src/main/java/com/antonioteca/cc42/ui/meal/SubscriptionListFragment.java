@@ -409,23 +409,36 @@ public class SubscriptionListFragment extends Fragment {
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
-                        subscriptionListAdapter.filter(query);
+                        subscriptionListAdapter.filterSearch(query);
                         return false;
                     }
 
                     @Override
                     public boolean onQueryTextChange(String newText) {
-                        subscriptionListAdapter.filter(newText);
+                        subscriptionListAdapter.filterSearch(newText);
                         return false;
                     }
                 });
+
+                MenuItem menuItemSubscription = menu.findItem(R.id.action_one_list);
+                menuItemSubscription.setTitle("Com assinaturas");
+                MenuItem menuItemUnSubscription = menu.findItem(R.id.action_two_list);
+                menuItemUnSubscription.setTitle("Sem assinaturas");
+                MenuItem menuItemAll = menu.findItem(R.id.action_three_list);
+                menuItemAll.setTitle("Todos");
             }
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 NavController navController = Navigation.findNavController(activity, R.id.nav_host_fragment_content_navigation_drawer);
                 int itemId = menuItem.getItemId();
-                if (itemId == R.id.action_register_face_id_camera_front) {
+                if (itemId == R.id.action_one_list)
+                    subscriptionListAdapter.filterListStatus(true);
+                else if (itemId == R.id.action_two_list)
+                    subscriptionListAdapter.filterListStatus(false);
+                else if (itemId == R.id.action_three_list)
+                    subscriptionListAdapter.filterListStatus(null);
+                else if (itemId == R.id.action_register_face_id_camera_front) {
                     SubscriptionListFragmentDirections.ActionSubscriptionListFragmentToFaceRecognitionFragment actionSubscriptionListFragmentToFaceRecognitionFragment
                             = SubscriptionListFragmentDirections.actionSubscriptionListFragmentToFaceRecognitionFragment(false, 1, String.valueOf(user.getCampusId()), String.valueOf(cursusId));
                     Navigation.findNavController(view).navigate(actionSubscriptionListFragmentToFaceRecognitionFragment);

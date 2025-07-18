@@ -22,21 +22,22 @@ import java.util.Objects;
 public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAdapter.AttendanceListViewHolder> {
 
     private Context context;
-    private List<User> userListFull;
     private final List<User> userList;
+    private final List<User> userListFilter;
     public boolean isMarkAttendance = false;
 
     public AttendanceListAdapter() {
         this.userList = new ArrayList<>();
+        this.userListFilter = new ArrayList<>();
     }
 
     public void updateUserList(List<User> newUserList, Context context) {
         this.context = context;
-        this.userListFull = new ArrayList<>(this.userList);
         // Calcule a diferença
         UserDiffCallback diffCallback = new UserDiffCallback(new ArrayList<>(this.userList), newUserList); // Passe cópias
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
         this.userList.addAll(newUserList);
+        this.userListFilter.addAll(newUserList);
         // Despache as atualizações para o RecyclerView.
         // Isso irá chamar os métodos notifyItemInserted, notifyItemRemoved,
         // notifyItemMoved, ou notifyItemChanged (com ou sem payload)
@@ -45,8 +46,11 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
     }
 
     public void updateAttendanceUser(List<String> usersIdsWithMarkedPresence) {
+        boolean present;
         for (int i = 0; i < getItemCount(); i++) {
-            this.userList.get(i).setPresent(usersIdsWithMarkedPresence.contains(String.valueOf(this.userList.get(i).uid)));
+            present = usersIdsWithMarkedPresence.contains(String.valueOf(this.userList.get(i).uid));
+            this.userList.get(i).setPresent(present);
+            this.userListFilter.get(i).setPresent(present);
             notifyItemChanged(i);
         }
     }
@@ -57,6 +61,12 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
                 isMarkAttendance = true;
                 this.userList.get(i).setPresent(true);
                 notifyItemChanged(i);
+                this.userList.add(0, this.userList.get(i));
+                notifyItemInserted(0);
+                this.userListFilter.add(0, this.userList.get(i));
+                this.userList.remove(i);
+                notifyItemRemoved(i);
+                this.userListFilter.remove(i);
                 break;
             }
         }
@@ -67,16 +77,34 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         notifyItemRangeRemoved(0, getItemCount());
     }
 
-    public void filter(String text) {
+    public void filterSearch(String text) {
         this.userList.clear();
         if (text.isEmpty())
-            this.userList.addAll(userListFull);
-        else if (userListFull != null && !userListFull.isEmpty()) {
+            this.userList.addAll(userListFilter);
+        else if (!userListFilter.isEmpty()) {
             text = text.toLowerCase();
-            for (User user : userListFull) {
+            for (User user : userListFilter) {
                 if (user.login.toLowerCase().contains(text) || user.displayName.toLowerCase().contains(text)) {
                     userList.add(user);
                 }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void filterListStatus(Boolean status) {
+        this.userList.clear();
+        if (status == null)
+            this.userList.addAll(userListFilter);
+        else if (status) {
+            for (User user : userListFilter) {
+                if (user.isPresent())
+                    userList.add(user);
+            }
+        } else {
+            for (User user : userListFilter) {
+                if (!user.isPresent())
+                    userList.add(user);
             }
         }
         notifyDataSetChanged();

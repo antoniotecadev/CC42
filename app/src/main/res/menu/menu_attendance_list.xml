@@ -28,6 +28,27 @@
     </item>
 
     <item
+        android:id="@+id/list"
+        android:icon="@drawable/baseline_checklist_24"
+        android:title="@string/list"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/action_one_list"
+                android:title=""
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_two_list"
+                android:title=""
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_three_list"
+                android:title=""
+                app:showAsAction="never" />
+        </menu>
+    </item>
+
+    <item
         android:id="@+id/action_list_reload"
         android:icon="@drawable/ic_baseline_sync_24"
         android:title="@string/list_reload"
