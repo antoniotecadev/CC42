@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_view_qr_code_meals"
-        android:icon="@drawable/ic_baseline_qr_code_100"
+        android:icon="@drawable/baseline_camera_front_24"
         android:title="@string/qr_code"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_view_qr_code_meals_scanner"
-        android:icon="@drawable/ic_baseline_qr_code_scanner_100"
+        android:icon="@drawable/baseline_camera_rear_24"
         android:title="@string/scanner"
         app:showAsAction="ifRoom" />
     <item

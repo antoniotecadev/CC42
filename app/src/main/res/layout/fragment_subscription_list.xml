@@ -112,7 +112,7 @@
         android:clickable="true"
         android:focusable="true"
         app:backgroundTint="@color/light_white"
-        app:srcCompat="@drawable/ic_baseline_qr_code_scanner_100" />
+        app:srcCompat="@drawable/baseline_camera_rear_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabOpenCameraScannerQrCodeFront"
@@ -123,6 +123,6 @@
         android:clickable="true"
         android:focusable="true"
         app:backgroundTint="@color/light_white"
-        app:srcCompat="@drawable/ic_baseline_qr_code_100" />
+        app:srcCompat="@drawable/baseline_camera_front_24" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
