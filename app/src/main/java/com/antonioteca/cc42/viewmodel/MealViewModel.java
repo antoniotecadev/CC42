@@ -517,8 +517,6 @@ public class MealViewModel extends ViewModel {
                 });
             } catch (IOException e) {
                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
-            } finally {
-                executorService.shutdown();
             }
         });
     }
@@ -663,5 +661,7 @@ public class MealViewModel extends ViewModel {
         super.onCleared();
         if (mealRef != null && valueEventListener != null)
             mealRef.removeEventListener(valueEventListener);
+        if (executorService != null && !executorService.isShutdown())
+            executorService.shutdown();
     }
 }
