@@ -18,7 +18,6 @@ import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.LoginResponse;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.Token;
-import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.network.NetworkConstants;
 import com.antonioteca.cc42.repository.TokenRepository;
 import com.antonioteca.cc42.repository.UserRepository;

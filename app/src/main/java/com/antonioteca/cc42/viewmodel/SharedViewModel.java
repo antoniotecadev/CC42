@@ -46,9 +46,9 @@ public class SharedViewModel extends ViewModel {
         return disabledMutableLiveData;
     }
 
-    public void setDisabledRecyclerView(boolean disabledRecyclerView) {
-        disabledMutableLiveData.setValue(disabledRecyclerView);
-    }
+//    public void setDisabledRecyclerView(boolean disabledRecyclerView) {
+//        disabledMutableLiveData.setValue(disabledRecyclerView);
+//    }
 
     public LiveData<EventObserver<Long>> getUserIdLiveData() {
         return longMutableLiveData;
@@ -62,13 +62,13 @@ public class SharedViewModel extends ViewModel {
         return faceIDMutableLiveData;
     }
 
-    public void setUserFaceIdLiveData(String userId) {
-        faceIDMutableLiveData.setValue(new EventObserver<>(userId));
-    }
+//    public void setUserFaceIdLiveData(String userId) {
+//        faceIDMutableLiveData.setValue(new EventObserver<>(userId));
+//    }
 
-    public LiveData<Boolean> getUserFaceIdContinueCaptureLiveData() {
-        return faceIDContinueCaptureMutableLiveData;
-    }
+//    public LiveData<Boolean> getUserFaceIdContinueCaptureLiveData() {
+//        return faceIDContinueCaptureMutableLiveData;
+//    }
 
     public void setUserFaceIdContinueCaptureLiveData(Boolean continueCaptureFaceID) {
         faceIDContinueCaptureMutableLiveData.setValue(continueCaptureFaceID);

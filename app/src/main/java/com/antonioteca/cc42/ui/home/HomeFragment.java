@@ -169,7 +169,7 @@ public class HomeFragment extends Fragment {
             }
         });
         sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> binding.recyclerviewEventsList.setOnTouchListener((v, event) -> disabled));
-        //requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), outApp(getActivity(), context));
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), outApp(getActivity(), context));
     }
 
     public static OnBackPressedCallback outApp(Activity activity, Context context) {
@@ -195,12 +195,12 @@ public class HomeFragment extends Fragment {
         binding.recyclerviewEventsList.setVisibility(viewR);
     }
 
-    private void runLayoutAnimation(RecyclerView recyclerView, Context context) {
-        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
-        recyclerView.setLayoutAnimation(animation);
-        recyclerView.getAdapter().notifyDataSetChanged();
-        recyclerView.scheduleLayoutAnimation();
-    }
+//    private void runLayoutAnimation(RecyclerView recyclerView, Context context) {
+//        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down);
+//        recyclerView.setLayoutAnimation(animation);
+//        recyclerView.getAdapter().notifyDataSetChanged();
+//        recyclerView.scheduleLayoutAnimation();
+//    }
 
     @Override
     public void onDestroyView() {

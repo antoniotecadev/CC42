@@ -37,10 +37,6 @@ public class EventViewModel extends ViewModel {
     private MutableLiveData<EventObserver<HttpStatus>> httpStatusMutableLiveData;
     private MutableLiveData<EventObserver<HttpException>> httpExceptionMutableLiveData;
 
-    public EventViewModel() {
-        eventRepository = null;
-    }
-
     public EventViewModel(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
     }

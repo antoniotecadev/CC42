@@ -10,29 +10,19 @@ import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.provider.Settings;
-import android.text.Html;
-import android.text.InputType;
-import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,10 +41,6 @@ import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.HashMap;
@@ -94,19 +80,19 @@ public class Util {
         builder.show();
     }
 
-    public static void showAlertDialogSynchronized(Context context, Runnable runnableTryAgain) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.warning);
-        builder.setMessage(R.string.msg_synchronization);
-        builder.setIcon(R.drawable.logo_42);
-        if (runnableTryAgain == null)
-            builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
-        else {
-            builder.setPositiveButton(R.string.synchronize, (dialogInterface, i) -> runnableTryAgain.run());
-            builder.setNeutralButton(R.string.later, (dialogInterface, i) -> dialogInterface.dismiss());
-        }
-        builder.show();
-    }
+//    public static void showAlertDialogSynchronized(Context context, Runnable runnableTryAgain) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        builder.setTitle(R.string.warning);
+//        builder.setMessage(R.string.msg_synchronization);
+//        builder.setIcon(R.drawable.logo_42);
+//        if (runnableTryAgain == null)
+//            builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
+//        else {
+//            builder.setPositiveButton(R.string.synchronize, (dialogInterface, i) -> runnableTryAgain.run());
+//            builder.setNeutralButton(R.string.later, (dialogInterface, i) -> dialogInterface.dismiss());
+//        }
+//        builder.show();
+//    }
 
     public static void setColorCoalition(ViewGroup viewGroup, String color) {
         if (color != null) {
@@ -118,19 +104,19 @@ public class Util {
         }
     }
 
-    public static void setFormattedText(TextView textView, String formattedText) {
-        Spanned result;
-
-        // Verifica a versão do Android para usar o método correto de Html.fromHtml
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            result = Html.fromHtml(formattedText, Html.FROM_HTML_MODE_LEGACY);
-        } else {
-            result = Html.fromHtml(formattedText);
-        }
-
-        // Define o texto formatado no TextView
-        textView.setText(result);
-    }
+//    public static void setFormattedText(TextView textView, String formattedText) {
+//        Spanned result;
+//
+//        // Verifica a versão do Android para usar o método correto de Html.fromHtml
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            result = Html.fromHtml(formattedText, Html.FROM_HTML_MODE_LEGACY);
+//        } else {
+//            result = Html.fromHtml(formattedText);
+//        }
+//
+//        // Define o texto formatado no TextView
+//        textView.setText(result);
+//    }
 
     public static void setMarkdownText(TextView textView, String markdownText) {
         // Inicializa o Markwon
@@ -157,44 +143,44 @@ public class Util {
         return (int) (sizeIndp * scale + 0.5f);
     }
 
-    public static Bitmap generateQrCodeWithLogo(Context context, String content) {
-        try {
-            // Configurar parâmetros do QR Code com alto nível de correção de erro
-            Map<EncodeHintType, Object> hints = new HashMap<>();
-            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H); // Nível H
-            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-            hints.put(EncodeHintType.MARGIN, 1); // Margem mínima
-            // Gerar QR code
-            BitMatrix bitMatrix = new MultiFormatWriter().encode(AESUtil.encrypt("cc42" + content), BarcodeFormat.QR_CODE, 600, 600, hints);
-            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap qrCode = barcodeEncoder.createBitmap(bitMatrix);
-            // Criar bitmap para desenhar (com espaço central)
-            // Combina o QR Code com o logotipo
-            Bitmap combinedBitmap = Bitmap.createBitmap(qrCode.getWidth(), qrCode.getHeight(), qrCode.getConfig());
-            Canvas canvas = new Canvas(combinedBitmap);
-            canvas.drawBitmap(qrCode, 0, 0, null);
-            // Obter o logotipo
-            Bitmap logo = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo_42);
-            if (logo != null) {
-                // Criar espaço para o logotipo
-                int logoSize = qrCode.getWidth() / 5;
-                int centerX = (qrCode.getWidth() - logoSize) / 2;
-                int centerY = (qrCode.getHeight() - logoSize) / 2;
-                Paint paint = new Paint();
-                paint.setColor(Color.WHITE);
-                paint.setStyle(Paint.Style.FILL);
-                canvas.drawRect(centerX, centerY, centerX + logoSize, centerY + logoSize, paint);
-                // Redimensionar logo
-                Bitmap resizedLogo = Bitmap.createScaledBitmap(logo, logoSize, logoSize, false);
-                // Desenhar logo sobre o espaço
-                canvas.drawBitmap(resizedLogo, centerX, centerY, null);
-            }
-            return combinedBitmap;
-        } catch (Exception e) {
-            showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null);
-            return null;
-        }
-    }
+//    public static Bitmap generateQrCodeWithLogo(Context context, String content) {
+//        try {
+//            // Configurar parâmetros do QR Code com alto nível de correção de erro
+//            Map<EncodeHintType, Object> hints = new HashMap<>();
+//            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H); // Nível H
+//            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+//            hints.put(EncodeHintType.MARGIN, 1); // Margem mínima
+//            // Gerar QR code
+//            BitMatrix bitMatrix = new MultiFormatWriter().encode(AESUtil.encrypt("cc42" + content), BarcodeFormat.QR_CODE, 600, 600, hints);
+//            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+//            Bitmap qrCode = barcodeEncoder.createBitmap(bitMatrix);
+//            // Criar bitmap para desenhar (com espaço central)
+//            // Combina o QR Code com o logotipo
+//            Bitmap combinedBitmap = Bitmap.createBitmap(qrCode.getWidth(), qrCode.getHeight(), qrCode.getConfig());
+//            Canvas canvas = new Canvas(combinedBitmap);
+//            canvas.drawBitmap(qrCode, 0, 0, null);
+//            // Obter o logotipo
+//            Bitmap logo = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo_42);
+//            if (logo != null) {
+//                // Criar espaço para o logotipo
+//                int logoSize = qrCode.getWidth() / 5;
+//                int centerX = (qrCode.getWidth() - logoSize) / 2;
+//                int centerY = (qrCode.getHeight() - logoSize) / 2;
+//                Paint paint = new Paint();
+//                paint.setColor(Color.WHITE);
+//                paint.setStyle(Paint.Style.FILL);
+//                canvas.drawRect(centerX, centerY, centerX + logoSize, centerY + logoSize, paint);
+//                // Redimensionar logo
+//                Bitmap resizedLogo = Bitmap.createScaledBitmap(logo, logoSize, logoSize, false);
+//                // Desenhar logo sobre o espaço
+//                canvas.drawBitmap(resizedLogo, centerX, centerY, null);
+//            }
+//            return combinedBitmap;
+//        } catch (Exception e) {
+//            showAlertDialogBuild(context.getString(R.string.err), e.getMessage(), context, null);
+//            return null;
+//        }
+//    }
 
     public static void showModalQrCode(Context context, List<MealQrCode> listMealQrCode, int index) {
         int size = listMealQrCode.size();
@@ -319,14 +305,14 @@ public class Util {
         }
     }
 
-    public static void startVibration(Context context) {
-        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        if (vibrator != null)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
-            else
-                vibrator.vibrate(200);
-    }
+//    public static void startVibration(Context context) {
+//        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+//        if (vibrator != null)
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+//                vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+//            else
+//                vibrator.vibrate(200);
+//    }
 
     private static void launchIntentPermission(boolean containsUri, Context context, ActivityResultLauncher<Intent> intentActivityResultLauncher) {
         Intent intent = new Intent();
@@ -390,11 +376,11 @@ public class Util {
             activity.recreate();
     }
 
-    private static void restartActivity(Activity activity) {
-        Intent intent = activity.getIntent();
-        activity.finish();
-        activity.startActivity(intent);
-    }
+//    private static void restartActivity(Activity activity) {
+//        Intent intent = activity.getIntent();
+//        activity.finish();
+//        activity.startActivity(intent);
+//    }
 
     public static void setWidthHeightImageView(Context context, int newWidth, int newHeight, ImageView imageView) {
         ViewGroup.LayoutParams params = imageView.getLayoutParams();
@@ -431,56 +417,56 @@ public class Util {
         window.setStatusBarColor(color);
     }
 
-    public static void showImageDialog(Context context, String title, Bitmap bitmap, Runnable runnableCancel, UserIDListener userIDListener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//    public static void showImageDialog(Context context, String title, Bitmap bitmap, Runnable runnableCancel, UserIDListener userIDListener) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//
+//        LinearLayout linearLayout = new LinearLayout(context);
+//        linearLayout.setOrientation(LinearLayout.VERTICAL);
+//
+//        EditText editText = new EditText(context);
+//        editText.setHint("ID do usuário");
+//        editText.setSingleLine(true);
+//        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+//        LinearLayout.LayoutParams editParam = new LinearLayout.LayoutParams(
+//                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+//        );
+//        editParam.setMargins(16, 0, 16, 0);
+//        editText.setLayoutParams(editParam);
+//        linearLayout.addView(editText);
+//
+//        ImageView imageView = new ImageView(context);
+//        imageView.setImageBitmap(bitmap);
+//        imageView.setAdjustViewBounds(true);
+//        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//        linearLayout.addView(imageView);
+//
+//        builder.setTitle(title);
+//        builder.setView(linearLayout);
+//        builder.setIcon(R.drawable.ic_baseline_remember_me_24);
+//        builder.setNeutralButton(context.getString(R.string.cancel), (dialog, which) -> {
+//            if (runnableCancel != null)
+//                runnableCancel.run();
+//            dialog.dismiss();
+//        });
+//        builder.setPositiveButton(context.getString(R.string.register_face_id), null);
+//        AlertDialog dialog = builder.create();
+//        dialog.setOnShowListener(dlg -> {
+//            Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//            button.setOnClickListener(v -> {
+//                if (editText.getText().toString().trim().isEmpty()) {
+//                    editText.requestFocus();
+//                    editText.setError("Digite ID do usuário");
+//                } else {
+//                    userIDListener.onInputuserId(editText.getText().toString().trim());
+//                    dialog.dismiss();
+//                }
+//            });
+//        });
+//        dialog.show();
+//    }
 
-        LinearLayout linearLayout = new LinearLayout(context);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-
-        EditText editText = new EditText(context);
-        editText.setHint("ID do usuário");
-        editText.setSingleLine(true);
-        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        LinearLayout.LayoutParams editParam = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-        );
-        editParam.setMargins(16, 0, 16, 0);
-        editText.setLayoutParams(editParam);
-        linearLayout.addView(editText);
-
-        ImageView imageView = new ImageView(context);
-        imageView.setImageBitmap(bitmap);
-        imageView.setAdjustViewBounds(true);
-        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        linearLayout.addView(imageView);
-
-        builder.setTitle(title);
-        builder.setView(linearLayout);
-        builder.setIcon(R.drawable.ic_baseline_remember_me_24);
-        builder.setNeutralButton(context.getString(R.string.cancel), (dialog, which) -> {
-            if (runnableCancel != null)
-                runnableCancel.run();
-            dialog.dismiss();
-        });
-        builder.setPositiveButton(context.getString(R.string.register_face_id), null);
-        AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(dlg -> {
-            Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            button.setOnClickListener(v -> {
-                if (editText.getText().toString().trim().isEmpty()) {
-                    editText.requestFocus();
-                    editText.setError("Digite ID do usuário");
-                } else {
-                    userIDListener.onInputuserId(editText.getText().toString().trim());
-                    dialog.dismiss();
-                }
-            });
-        });
-        dialog.show();
-    }
-
-    public interface UserIDListener {
-        void onInputuserId(String userId);
-    }
+//    public interface UserIDListener {
+//        void onInputuserId(String userId);
+//    }
 
 }
