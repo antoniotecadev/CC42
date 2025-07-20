@@ -26,12 +26,13 @@ project("cc42_native_libs")
 # for GameActivity/NativeActivity derived applications, the same library name must be
 # used in the AndroidManifest.xml file.
 
-if (CMAKE_ANDROID_ARCH_ABI STREQUAL "armeabi-v7a")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__ARM_NEON -mfpu=neon -mfloat-abi=softfp")
-endif ()
+#Para Reconhacimento facial
+#if (CMAKE_ANDROID_ARCH_ABI STREQUAL "armeabi-v7a")
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__ARM_NEON -mfpu=neon -mfloat-abi=softfp")
+#endif ()
 # Bibliotecas nativas do Android
 find_library(log-lib log)
-find_library(jnigraphics-lib jnigraphics)
+#find_library(jnigraphics-lib jnigraphics)
 
 # Biblioteca principal cc42 (caso uses)
 add_library(cc42 SHARED
@@ -39,13 +40,13 @@ add_library(cc42 SHARED
 )
 
 # Biblioteca para conversão YUV → Bitmap
-add_library(yuv_utils SHARED
-        yuv_utils.cpp
-)
+#add_library(yuv_utils SHARED
+#        yuv_utils.cpp
+#)
 
-add_library(face_matcher SHARED
-        face_matcher.cpp
-)
+#add_library(face_matcher SHARED
+#        face_matcher.cpp
+#)
 
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this
@@ -58,12 +59,12 @@ target_link_libraries(cc42
         log)
 
 # Linka bibliotecas ao yuv_utils
-target_link_libraries(yuv_utils
-        # List libraries link to the target library
-        ${log-lib}
-        ${jnigraphics-lib}
-        android)
-
-target_link_libraries(face_matcher
-        ${log-lib}
-        android)
+#target_link_libraries(yuv_utils
+#        # List libraries link to the target library
+#        ${log-lib}
+#        ${jnigraphics-lib}
+#        android)
+#
+#target_link_libraries(face_matcher
+#        ${log-lib}
+#        android)
