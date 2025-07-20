@@ -30,8 +30,8 @@ android {
 
     buildTypes {
         release {
-            shrinkResources false // Remoção de recursos não utilizados
-            minifyEnabled false // Minificação e obfuscação
+            shrinkResources true // Remoção de recursos não utilizados
+            minifyEnabled true // Minificação e obfuscação
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
