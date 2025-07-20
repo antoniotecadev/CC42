@@ -1,7 +1,6 @@
 package com.antonioteca.cc42.viewmodel;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +29,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,8 +93,8 @@ public class UserViewModel extends ViewModel {
     }
 
     public void getUsersSubscriptionLiveData(Context context, int cursusId, Loading l, @NonNull ProgressBar progressBar) {
-            progressBar.setVisibility(View.VISIBLE);
-            getUsersSubscription(cursusId, l, context);
+        progressBar.setVisibility(View.VISIBLE);
+        getUsersSubscription(cursusId, l, context);
     }
 
     public LiveData<List<User>> getUsersSubscriptionLiveData() {
@@ -450,14 +450,17 @@ public class UserViewModel extends ViewModel {
             @Override
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
                 if (!response.isSuccessful() || response.body() == null) {
-                    callback.onFailure(call, new Exception("Resposta inválida do servidor."));
+                    String error;
+                    try {
+                        error = response.errorBody() != null ? response.errorBody().string() : "Resposta inválida do servidor.";
+                        callback.onFailure(call, new Exception(new JSONObject(error).getString("error")));
+                    } catch (Exception ignored) {
+                    }
                     return;
                 }
 
                 LoginResponse loginData = response.body();
 
-                Log.e("Login", new Gson().toJson(loginData));
-                Log.e("Login", new Gson().toJson(response.body()));
                 if (loginData.firebaseToken == null || loginData.user == null) {
                     callback.onFailure(call, new Exception("Resposta incompleta do servidor."));
                     return;
