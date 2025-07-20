@@ -108,6 +108,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             });
         } else if (holder instanceof EventViewHolderFooter footerViewHolder) {
             TextView textView = footerViewHolder.view.findViewById(R.id.textViewFooter);
+            textView.setTextColor(Color.parseColor(colorCoalition));
             textView.setText(showEventListEnd ? "Ocultar eventos realizados" : "Ver eventos realizados");
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) textView.getLayoutParams();
             params.bottomMargin = dpToPx(70, textView.getContext()); // Defina a margem inferior em pixels
