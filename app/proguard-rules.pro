@@ -125,6 +125,12 @@
 # Impede que classes anotadas com @Keep sejam minificadas
 -keep @androidx.annotation.Keep class * {*;}
 
+# Manter as classes de modelo FCM e seus membros
+-keep class com.antonioteca.cc42.network.NotificationFirebase.FCMessage { *; }
+-keep class com.antonioteca.cc42.network.NotificationFirebase.FCMessage$Notification { *; }
+-keep class com.antonioteca.cc42.network.NotificationFirebase.FCMessage$Data { *; }
+-keep class com.antonioteca.cc42.network.NotificationFirebase.FCMessage$Message { *; }
+
 # Please add these rules to your existing keep rules in order to suppress warnings.
 # This is generated automatically by the Android Gradle plugin.
 -dontwarn org.slf4j.impl.StaticLoggerBinder
