@@ -178,6 +178,7 @@
     <string name="meal_time_range_summary_off">Cacher</string>
     <string name="camera_back">Caméra arrière</string>
     <string name="camera_front">Caméra avant</string>
+    <string name="hide_past_events">Masquer les événements passés</string>
     <string-array name="meals_carbohydrates_title">
         <item>Riz</item>
         <item>Pâtes</item>
@@ -277,4 +278,5 @@
         <item>Calulu</item>
         <item>Quizaca</item>
     </string-array>
+    <string name="view_past_events">Voir les événements passés</string>
 </resources>

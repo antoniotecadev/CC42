@@ -2,6 +2,7 @@ package com.antonioteca.cc42.ui.home;
 
 import static com.antonioteca.cc42.utility.Util.dpToPx;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import java.util.TimeZone;
 
 public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private Context context;
     private final String colorCoalition;
     private final List<Event> eventList = new ArrayList<>();
     private final List<Event> eventListEnd = new ArrayList<>();
@@ -46,7 +48,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TYPE_FOOTER = 1;
     }
 
-    public EventAdapter(@NonNull List<Event> eventList, String colorCoalition) {
+    public EventAdapter(@NonNull List<Event> eventList, String colorCoalition, Context context) {
 
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
@@ -58,6 +60,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 this.eventListEnd.add(event);
         }
         this.colorCoalition = colorCoalition;
+        this.context = context;
     }
 
     @NonNull
@@ -109,7 +112,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         } else if (holder instanceof EventViewHolderFooter footerViewHolder) {
             TextView textView = footerViewHolder.view.findViewById(R.id.textViewFooter);
             textView.setTextColor(Color.parseColor(colorCoalition));
-            textView.setText(showEventListEnd ? "Ocultar eventos realizados" : "Ver eventos realizados");
+            textView.setText(showEventListEnd ? context.getString(R.string.hide_past_events) : context.getString(R.string.view_past_events));
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) textView.getLayoutParams();
             params.bottomMargin = dpToPx(70, textView.getContext()); // Defina a margem inferior em pixels
             textView.setLayoutParams(params);

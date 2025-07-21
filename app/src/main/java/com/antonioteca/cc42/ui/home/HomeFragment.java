@@ -134,7 +134,7 @@ public class HomeFragment extends Fragment {
         eventViewModel.getEventsList(context, binding.progressBar).observe(getViewLifecycleOwner(), eventList -> {
             setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
             if (!eventList.isEmpty() && eventList.get(0) != null) {
-                eventAdapter = new EventAdapter(eventList, finalColorCoalition);
+                eventAdapter = new EventAdapter(eventList, finalColorCoalition, context);
                 binding.recyclerviewEventsList.setAdapter(eventAdapter);
                 // Aplicar a animação de layout
                 // runLayoutAnimation(binding.recyclerviewEventsList, context);
