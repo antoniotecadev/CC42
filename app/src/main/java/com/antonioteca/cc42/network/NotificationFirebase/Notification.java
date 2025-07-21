@@ -60,7 +60,6 @@ public class Notification {
 
         Map<String, Object> dataExtra = new HashMap<>();
         dataExtra.put("data", data);
-        Log.d("Notification", "meal.getPathImage(): " + meal.getPathImage());
         NotificationSender notificationSender = new NotificationSender();
         ExpoNotificationPayload payload = new ExpoNotificationPayload(meal.getType(), meal.getName(), dataExtra, meal.getPathImage().trim());
         notificationSender.sendExpoNotificationToGroup(campusId, cursusId, payload);
