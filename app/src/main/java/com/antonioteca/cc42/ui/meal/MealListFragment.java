@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -92,6 +93,21 @@ public class MealListFragment extends Fragment {
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         mealViewModel = new ViewModelProvider(this).get(MealViewModel.class);
         sharedViewModel = new ViewModelProvider(activity).get(SharedViewModel.class);
+
+        OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                if (decoratedBarcodeView.isShown()) {
+                    closeCamera();
+                } else {
+                    setEnabled(false); // Importante para não criar um loop infinito
+                    requireActivity().getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        };
+
+        // Adicione o callback ao dispatcher
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
     }
 
     @Override
@@ -313,7 +329,6 @@ public class MealListFragment extends Fragment {
     }
 
     private void closeCamera() {
-        inflatedViewStub.setVisibility(View.GONE);
         if (decoratedBarcodeView.isShown()) {
             if (isFlashLightOn[0]) {
                 isFlashLightOn[0] = false;
@@ -321,6 +336,7 @@ public class MealListFragment extends Fragment {
             }
             decoratedBarcodeView.pause();
         }
+        inflatedViewStub.setVisibility(View.GONE);
     }
 
     private final BarcodeCallback callback = new BarcodeCallback() {
