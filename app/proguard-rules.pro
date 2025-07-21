@@ -130,6 +130,7 @@
 -keep class com.antonioteca.cc42.network.NotificationFirebase.FCMessage$Notification { *; }
 -keep class com.antonioteca.cc42.network.NotificationFirebase.FCMessage$Data { *; }
 -keep class com.antonioteca.cc42.network.NotificationFirebase.FCMessage$Message { *; }
+-keep class com.antonioteca.cc42.network.NotificationExpo.ExpoNotificationPayload { *; }
 
 # Please add these rules to your existing keep rules in order to suppress warnings.
 # This is generated automatically by the Android Gradle plugin.
