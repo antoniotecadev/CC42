@@ -39,7 +39,9 @@
         app:summaryOn="@string/meal_time_range_summary_off" />
 
     <!-- Pequeno Almoço -->
-    <PreferenceCategory android:key="breakfast" app:title="@string/breakfast">
+    <PreferenceCategory
+        android:key="breakfast"
+        app:title="@string/breakfast">
         <Preference
             android:key="breakfast_start"
             android:summary="@string/set_breakfast_start_time"
@@ -51,7 +53,9 @@
     </PreferenceCategory>
 
     <!-- Almoço -->
-    <PreferenceCategory android:key="lunch" app:title="@string/lunch">
+    <PreferenceCategory
+        android:key="lunch"
+        app:title="@string/lunch">
         <Preference
             android:key="lunch_start"
             android:summary="@string/set_lunch_start_time"
@@ -63,7 +67,9 @@
     </PreferenceCategory>
 
     <!-- Jantar -->
-    <PreferenceCategory android:key="dinner" app:title="@string/dinner">
+    <PreferenceCategory
+        android:key="dinner"
+        app:title="@string/dinner">
         <Preference
             android:key="dinner_start"
             android:summary="@string/set_dinner_start_time"

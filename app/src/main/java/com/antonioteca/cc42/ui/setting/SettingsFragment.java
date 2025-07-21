@@ -35,13 +35,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         User user = new User(requireContext());
 
-        topic = "/topics/meals_" + user.getCampusId() + "_";
-
-        if (user.isStaff())
-            topic += user.getCampusName();
-        else
-            topic += user.getCursusId();
-
         PreferenceCategory breakfastCategory = findPreference("breakfast");
         PreferenceCategory lunchCategory = findPreference("lunch");
         PreferenceCategory dinnerCategory = findPreference("dinner");
@@ -52,6 +45,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         SwitchPreferenceCompat mealTimeRangeKey = findPreference("meal_time_range_key");
 
         ThemePreferences themePreferences = new ThemePreferences(requireContext());
+
+        topic = "/topics/meals_" + user.getCampusId() + "_";
+
+        if (user.isStaff())
+            topic += user.getCampusName();
+        else {
+            if (mealTimeRangeKey != null)
+                mealTimeRangeKey.setVisible(false);
+            topic += user.getCursusId();
+        }
 
         if (notificationKey != null) {
             FirebaseMessaging messaging = FirebaseMessaging.getInstance();
