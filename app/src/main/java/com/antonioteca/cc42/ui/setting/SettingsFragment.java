@@ -1,6 +1,7 @@
 package com.antonioteca.cc42.ui.setting;
 
 import static com.antonioteca.cc42.network.NetworkConstants.REQUEST_CODE_POST_NOTIFICATIONS;
+import static com.antonioteca.cc42.utility.Util.restartActivity;
 import static com.antonioteca.cc42.utility.Util.setAppLanguage;
 import static com.antonioteca.cc42.utility.Util.setRequestPermissionLauncherNotification;
 
@@ -106,6 +107,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                 // Reinicia a Activity para aplicar o novo tema
                 requireActivity().recreate();
+                // restartActivity(requireActivity());
                 return true;
             });
         }
