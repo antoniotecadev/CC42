@@ -374,13 +374,14 @@ public class Util {
         // Reiniciar a Activity para aplicar as mudanças
         if (isSettingsFragment)
             activity.recreate();
+            // restartActivity(activity);
     }
 
-//    private static void restartActivity(Activity activity) {
-//        Intent intent = activity.getIntent();
-//        activity.finish();
-//        activity.startActivity(intent);
-//    }
+    public static void restartActivity(Activity activity) {
+        Intent intent = activity.getIntent();
+        activity.finish();
+        activity.startActivity(intent);
+    }
 
     public static void setWidthHeightImageView(Context context, int newWidth, int newHeight, ImageView imageView) {
         ViewGroup.LayoutParams params = imageView.getLayoutParams();
