@@ -23,6 +23,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -79,6 +81,7 @@ public class AttendanceListFragment extends Fragment {
     private String eventDate;
     private Integer cameraId;
     private Activity activity;
+    private List<String> userIds;
     private int numberUserAbsent;
     private int numberUserPresent;
     private String colorCoalition;
@@ -120,8 +123,8 @@ public class AttendanceListFragment extends Fragment {
                     String resultQrCode = result.replace("cc42user", "");
                     String[] partsQrCode = resultQrCode.split("#", 6);
                     if (partsQrCode.length == 6) {
-                        String urlImageUser = attendanceListAdapter.containsUser(Long.parseLong(partsQrCode[0]));
-                        if (urlImageUser != null) {
+                        // String urlImageUser = attendanceListAdapter.containsUser(Long.parseLong(partsQrCode[0]));
+                        // if (urlImageUser != null) {
                             /*if (true) {
                                 LocalAttendanceList user = new LocalAttendanceList();
                                 user.userId = Long.parseLong(partsQrCode[0]);
@@ -137,27 +140,27 @@ public class AttendanceListFragment extends Fragment {
                                         () -> decoratedBarcodeView.resume()
                                 );
                             } else {*/
-                            // Armazenamento directo para nuvem
-                            Util.setVisibleProgressBar(binding.progressBarMarkAttendance, sharedViewModel);
-                            DaoEventFirebase.markAttendance(
-                                    firebaseDatabase,
-                                    String.valueOf(eventId),
-                                    null,
-                                    user.getUid(),
-                                    partsQrCode[0], /* userId */
-                                    partsQrCode[2], /* displayName */
-                                    partsQrCode[3], /* cursusId */
-                                    partsQrCode[4], /* campusId */
-                                    urlImageUser,
-                                    context,
-                                    layoutInflater,
-                                    binding.progressBarMarkAttendance,
-                                    sharedViewModel,
-                                    () -> decoratedBarcodeView.resume()
-                            );
-                            //}
-                        } else
-                            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), partsQrCode[2] + "\n" + getString(R.string.msg_user_unregistered), "#FDD835", partsQrCode[5], () -> decoratedBarcodeView.resume());
+                        // Armazenamento directo para nuvem
+                        Util.setVisibleProgressBar(binding.progressBarMarkAttendance, sharedViewModel);
+                        DaoEventFirebase.markAttendance(
+                                firebaseDatabase,
+                                String.valueOf(eventId),
+                                null,
+                                user.getUid(),
+                                partsQrCode[0], /* userId */
+                                partsQrCode[2], /* displayName */
+                                partsQrCode[3], /* cursusId */
+                                partsQrCode[4], /* campusId */
+                                partsQrCode[5], /* urlImageUser */
+                                context,
+                                layoutInflater,
+                                binding.progressBarMarkAttendance,
+                                sharedViewModel,
+                                () -> decoratedBarcodeView.resume()
+                        );
+                        //}
+                        // } else
+                        // Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), partsQrCode[2] + "\n" + getString(R.string.msg_user_unregistered), "#FDD835", partsQrCode[5], () -> decoratedBarcodeView.resume());
                     } else
                         Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
                 } else
@@ -199,7 +202,43 @@ public class AttendanceListFragment extends Fragment {
 
     private final ActivityResultLauncher<String> requestPermissionLauncherSharer = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), this::activityResultContractsSharer);
-    private List<String> userIds;
+
+    private Toolbar toolbar;
+    private AppCompatActivity activityApp;
+
+    private void toggleToolbarVisibity() {
+        if (toolbar.getVisibility() == View.VISIBLE) {
+            hideToolbar();
+        } else {
+            showToolbar();
+        }
+    }
+
+    private void hideToolbar() {
+//        Animation fade out
+        toolbar.animate()
+                .translationY(-toolbar.getHeight())
+                .setDuration(300)
+                .withEndAction(() -> toolbar.setVisibility(View.GONE))
+                .start();
+    }
+
+    private void showToolbar() {
+        toolbar.setVisibility(View.VISIBLE);
+        // Animation fade in
+        toolbar.animate()
+                .translationY(0)
+                .setDuration(300)
+                .start();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (getActivity() != null) {
+            activityApp = (AppCompatActivity) getActivity();
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -250,12 +289,16 @@ public class AttendanceListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         activeScrollListener();
+
         AttendanceListFragmentArgs args = AttendanceListFragmentArgs.fromBundle(requireArguments());
         eventId = args.getEventId();
         cursuId = args.getCursuId();
         eventKind = args.getKindEvent();
         eventName = args.getNameEvent();
         eventDate = args.getDataEvent();
+
+        toolbar = activityApp.findViewById(R.id.toolbar);
+
         binding.recyclerviewAttendanceList.setHasFixedSize(true);
         binding.recyclerviewAttendanceList.setLayoutManager(new LinearLayoutManager(context));
 
@@ -623,6 +666,7 @@ public class AttendanceListFragment extends Fragment {
     }
 
     private void openCamera(int cameraId) {
+        toggleToolbarVisibity();
         decoratedBarcodeView.pause();
         decoratedBarcodeView.getBarcodeView().setCameraSettings(createCameraSettings(cameraId));
         decoratedBarcodeView.resume();
@@ -642,6 +686,7 @@ public class AttendanceListFragment extends Fragment {
                 decoratedBarcodeView.setTorchOff();
             }
             decoratedBarcodeView.pause();
+            toggleToolbarVisibity();
         }
         inflatedViewStub.setVisibility(View.GONE);
     }

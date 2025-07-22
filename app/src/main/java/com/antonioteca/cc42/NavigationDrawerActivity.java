@@ -112,13 +112,17 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             });
 
     private void initCloudinary() {
-        fetchApiKeyFromDatabase("cloudinary", this, apiKey -> {
-            Map<String, String> config = new HashMap<>();
-            config.put("cloud_name", "cc42");
-            config.put("api_key", "926854887914134");
-            config.put("api_secret", apiKey);
-            MediaManager.init(this, config);
-        });
+        try {
+            MediaManager.get();
+        } catch (IllegalStateException e) {
+            fetchApiKeyFromDatabase("cloudinary", this, apiKey -> {
+                Map<String, String> config = new HashMap<>();
+                config.put("cloud_name", "cc42");
+                config.put("api_key", "926854887914134");
+                config.put("api_secret", apiKey);
+                MediaManager.init(this, config);
+            });
+        }
     }
 
     @Override
@@ -142,7 +146,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
         handleNotificationIntent(getIntent());
 
-        setSupportActionBar(binding.appBarNavigationDrawer.toolbar);
+        setSupportActionBar(binding.appBarNavigationDrawer.toolbar); // Replace ActionBa default
 
         uid = String.valueOf(user.getUid());
         userLogin = user.getLogin();

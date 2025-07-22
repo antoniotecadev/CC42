@@ -34,11 +34,15 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
 
     public void updateUserList(List<User> newUserList, Context context) {
         this.context = context;
-        // Calcule a diferença
-        UserDiffCallback diffCallback = new UserDiffCallback(new ArrayList<>(this.userList), newUserList); // Passe cópias
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+
+        List<User> oldList = new ArrayList<>(this.userList);
+
         this.userList.addAll(newUserList);
         this.userListFilter.addAll(newUserList);
+
+        // Calcule a diferença
+        UserDiffCallback diffCallback = new UserDiffCallback(oldList, newUserList); // Passe cópias
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
         // Despache as atualizações para o RecyclerView.
         // Isso irá chamar os métodos notifyItemInserted, notifyItemRemoved,
         // notifyItemMoved, ou notifyItemChanged (com ou sem payload)
