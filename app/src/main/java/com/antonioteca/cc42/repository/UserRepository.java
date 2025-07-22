@@ -102,7 +102,7 @@ public class UserRepository {
     private void extractedLoadUsersEventPaginated(long eventId, @NonNull Loading l, Callback<List<User>> callback) {
         String accessToken = "Bearer " + token.getAccessToken();
 
-        daoApiUser.getUsersEvent(eventId, accessToken, l.currentPage, 50).enqueue(new Callback<>() {
+        daoApiUser.getUsersEvent(eventId, accessToken, l.currentPage, 60).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<User>> call, @NonNull Response<List<User>> response) {
 
@@ -147,7 +147,7 @@ public class UserRepository {
     private void extractedLoadUserSubscriptionPaginated(int cursusId, @NonNull Loading l, Callback<List<Subscription>> callback) {
         String accessToken = "Bearer " + token.getAccessToken();
 
-        daoApiUser.getUsersSubscription(accessToken, cursusId, user.getCampusId(), true, l.currentPage, 50).enqueue(new Callback<>() {
+        daoApiUser.getUsersSubscription(accessToken, cursusId, user.getCampusId(), true, l.currentPage, 60).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<Subscription>> call, @NonNull Response<List<Subscription>> response) {
 
