@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -123,24 +122,24 @@ public class SubscriptionListFragment extends Fragment {
                     if (partsQrCode.length == 6) {
                         // String urlImageUser = subscriptionListAdapter.containsUser(Long.parseLong(partsQrCode[0]));
                         // if (urlImageUser != null) {
-                            Util.setVisibleProgressBar(progressBarSubscription, sharedViewModel);
-                            DaoSusbscriptionFirebase.subscription(
-                                    firebaseDatabase,
-                                    null,
-                                    String.valueOf(meal.getId()),
-                                    null,
-                                    partsQrCode[0], /* id */
-                                    partsQrCode[1], /* login */
-                                    partsQrCode[2], /* displayName */
-                                    String.valueOf(cursusId),
-                                    partsQrCode[4], /* campusId */
-                                    partsQrCode[5], /* urlImageUser */
-                                    context,
-                                    layoutInflater,
-                                    progressBarSubscription,
-                                    sharedViewModel,
-                                    () -> decoratedBarcodeView.resume()
-                            );
+                        Util.setVisibleProgressBar(progressBarSubscription, sharedViewModel);
+                        DaoSusbscriptionFirebase.subscription(
+                                firebaseDatabase,
+                                null,
+                                String.valueOf(meal.getId()),
+                                null,
+                                partsQrCode[0], /* id */
+                                partsQrCode[1], /* login */
+                                partsQrCode[2], /* displayName */
+                                String.valueOf(cursusId),
+                                partsQrCode[4], /* campusId */
+                                partsQrCode[5], /* urlImageUser */
+                                context,
+                                layoutInflater,
+                                progressBarSubscription,
+                                sharedViewModel,
+                                () -> decoratedBarcodeView.resume()
+                        );
                         // } else
                         //    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), partsQrCode[2] + "\n" + getString(R.string.msg_user_not_fount_list), "#FDD835", null, () -> decoratedBarcodeView.resume());
                     } else
@@ -230,9 +229,10 @@ public class SubscriptionListFragment extends Fragment {
             if (actionBar != null)
                 actionBar.setTitle(String.valueOf(meal.getName()));
         }
-        binding.recyclerviewSubscriptionList.setAnimation(null);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+        // binding.recyclerviewSubscriptionList.setAnimation(null);
         binding.recyclerviewSubscriptionList.setHasFixedSize(true);
-        binding.recyclerviewSubscriptionList.setLayoutManager(new LinearLayoutManager(context));
+        binding.recyclerviewSubscriptionList.setLayoutManager(linearLayoutManager);
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             if (subscriptionListAdapter.isMarkAttendance || subscriptionListAdapter.getItemCount() < 0) {
@@ -302,15 +302,15 @@ public class SubscriptionListFragment extends Fragment {
             }
         });
 
+        binding.progressBarSubscription.setVisibility(View.VISIBLE);
         userViewModel.getUserIdsSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
         userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
             this.userIds = userIds;
-            userViewModel.getUsersSubscriptionLiveData(context, cursusId, l, progressBarSubscription);
+            userViewModel.getUsersSubscription(cursusId, l, context);
         });
 
         userViewModel.getUsersSubscriptionLiveData().observe(getViewLifecycleOwner(), users -> {
             if (!users.isEmpty() && users.get(0) != null) {
-                setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 subscriptionListAdapter.updateUserList(users, context);
                 binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
                 if (!userIds.isEmpty() && userIds.get(0) != null) {
@@ -547,6 +547,7 @@ public class SubscriptionListFragment extends Fragment {
                 userViewModel.getUsersSubscription(cursusId, l, context);
             } else {
 //                Toast.makeText(context, R.string.synchronization, Toast.LENGTH_LONG).show();
+                setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 desactiveScrollListener();
             }
         }

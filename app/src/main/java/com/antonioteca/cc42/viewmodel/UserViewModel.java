@@ -23,6 +23,7 @@ import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.EventObserver;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.Util;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -90,11 +91,6 @@ public class UserViewModel extends ViewModel {
             userListMutableLiveData = new MutableLiveData<>();
         }
         return userListMutableLiveData;
-    }
-
-    public void getUsersSubscriptionLiveData(Context context, int cursusId, Loading l, @NonNull ProgressBar progressBar) {
-        progressBar.setVisibility(View.VISIBLE);
-        getUsersSubscription(cursusId, l, context);
     }
 
     public LiveData<List<User>> getUsersSubscriptionLiveData() {
@@ -373,7 +369,7 @@ public class UserViewModel extends ViewModel {
         });
     }*/
 
-    public void getUsersSubscription(int cursusId, Loading l, Context context) {
+    public void getUsersSubscription(int cursusId, @NonNull Loading l, Context context) {
         l.isLoading = true;
         userRepository.loadUserSubscriptionPaginated(cursusId, l, new Callback<>() {
             @Override
@@ -403,7 +399,7 @@ public class UserViewModel extends ViewModel {
         });
     }
 
-    public void getUserIdsSubscriptionList(FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId, Context context, LayoutInflater layoutInflater) {
+    public void getUserIdsSubscriptionList(@NonNull FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId, Context context, LayoutInflater layoutInflater) {
         DatabaseReference subscriptionsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
                 .child("cursus")
