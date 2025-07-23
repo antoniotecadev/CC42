@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -208,28 +207,10 @@ public class AttendanceListFragment extends Fragment {
 
     private void toggleToolbarVisibity() {
         if (toolbar.getVisibility() == View.VISIBLE) {
-            hideToolbar();
+            Util.hideToolbar(toolbar);
         } else {
-            showToolbar();
+            Util.showToolbar(toolbar);
         }
-    }
-
-    private void hideToolbar() {
-//        Animation fade out
-        toolbar.animate()
-                .translationY(-toolbar.getHeight())
-                .setDuration(300)
-                .withEndAction(() -> toolbar.setVisibility(View.GONE))
-                .start();
-    }
-
-    private void showToolbar() {
-        toolbar.setVisibility(View.VISIBLE);
-        // Animation fade in
-        toolbar.animate()
-                .translationY(0)
-                .setDuration(300)
-                .start();
     }
 
     @Override

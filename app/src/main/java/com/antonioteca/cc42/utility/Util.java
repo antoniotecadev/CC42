@@ -30,6 +30,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
@@ -411,11 +412,29 @@ public class Util {
         }
     }
 
-    public static void setColorStatusBar(Activity activity, int color) {
+    public static void setColorStatusBar(@NonNull Activity activity, int color) {
         Window window = activity.getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS); // Desactivar modo translúcido para usar um fundo sólido
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS); // Activar o controle total da aparência da status bar
         window.setStatusBarColor(color);
+    }
+
+    public static void hideToolbar(@NonNull Toolbar toolbar) {
+//        Animation fade out
+        toolbar.animate()
+                .translationY(-toolbar.getHeight())
+                .setDuration(300)
+                .withEndAction(() -> toolbar.setVisibility(View.GONE))
+                .start();
+    }
+
+    public static void showToolbar(@NonNull Toolbar toolbar) {
+        toolbar.setVisibility(View.VISIBLE);
+        // Animation fade in
+        toolbar.animate()
+                .translationY(0)
+                .setDuration(300)
+                .start();
     }
 
 //    public static void showImageDialog(Context context, String title, Bitmap bitmap, Runnable runnableCancel, UserIDListener userIDListener) {

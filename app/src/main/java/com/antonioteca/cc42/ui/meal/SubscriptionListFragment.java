@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -184,7 +185,26 @@ public class SubscriptionListFragment extends Fragment {
     private final ActivityResultLauncher<String> requestPermissionLauncherSharer = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), this::activityResultContractsSharer);
 
-    List<String> userIds;
+    private List<String> userIds;
+
+    private Toolbar toolbar;
+    private AppCompatActivity activityApp;
+
+    private void toggleToolbarVisibity() {
+        if (toolbar.getVisibility() == View.VISIBLE) {
+            Util.hideToolbar(toolbar);
+        } else {
+            Util.showToolbar(toolbar);
+        }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (getActivity() != null) {
+            activityApp = (AppCompatActivity) getActivity();
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -229,10 +249,9 @@ public class SubscriptionListFragment extends Fragment {
             if (actionBar != null)
                 actionBar.setTitle(String.valueOf(meal.getName()));
         }
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-        // binding.recyclerviewSubscriptionList.setAnimation(null);
+        toolbar = activityApp.findViewById(R.id.toolbar);
         binding.recyclerviewSubscriptionList.setHasFixedSize(true);
-        binding.recyclerviewSubscriptionList.setLayoutManager(linearLayoutManager);
+        binding.recyclerviewSubscriptionList.setLayoutManager(new LinearLayoutManager(context));
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             if (subscriptionListAdapter.isMarkAttendance || subscriptionListAdapter.getItemCount() < 0) {
@@ -584,6 +603,7 @@ public class SubscriptionListFragment extends Fragment {
     }
 
     private void openCamera(int cameraId) {
+        toggleToolbarVisibity();
         decoratedBarcodeView.pause();
         decoratedBarcodeView.getBarcodeView().setCameraSettings(createCameraSettings(cameraId));
         decoratedBarcodeView.resume();
@@ -603,6 +623,7 @@ public class SubscriptionListFragment extends Fragment {
                 decoratedBarcodeView.setTorchOff();
             }
             decoratedBarcodeView.pause();
+            toggleToolbarVisibity();
         }
         inflatedViewStub.setVisibility(View.GONE);
     }
