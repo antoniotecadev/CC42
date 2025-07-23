@@ -337,15 +337,15 @@ public class AttendanceListFragment extends Fragment {
             }
         });
 
+        progressBarMarkAttendance.setVisibility(View.VISIBLE);
         userViewModel.getIdsUsersAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
         userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
             this.userIds = userIds;
-            userViewModel.getUsersEventLiveData(context, eventId, l, progressBarMarkAttendance);
+            userViewModel.getUsersEvent(eventId, l, context);
         });
 
         userViewModel.getUsersEventLiveData().observe(getViewLifecycleOwner(), users -> {
             if (!users.isEmpty() && users.get(0) != null) {
-                setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 attendanceListAdapter.updateUserList(users, context);
                 binding.recyclerviewAttendanceList.setAdapter(attendanceListAdapter);
                 if (!userIds.isEmpty() && userIds.get(0) != null) {
@@ -597,6 +597,7 @@ public class AttendanceListFragment extends Fragment {
                 userViewModel.getUsersEvent(eventId, l, context);  // Carregar mais usuários
             } else {
 //                Toast.makeText(context, R.string.synchronization, Toast.LENGTH_LONG).show();
+                setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
                 desactiveScrollListener();
             }
         }

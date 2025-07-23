@@ -81,11 +81,6 @@ public class UserViewModel extends ViewModel {
         return userMutableLiveData;
     }
 
-    public void getUsersEventLiveData(Context context, long eventId, Loading l, @NonNull ProgressBar progressBar) {
-        progressBar.setVisibility(View.VISIBLE);
-        getUsersEvent(eventId, l, context);
-    }
-
     public LiveData<List<User>> getUsersEventLiveData() {
         if (userListMutableLiveData == null) {
             userListMutableLiveData = new MutableLiveData<>();
