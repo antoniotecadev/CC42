@@ -348,7 +348,7 @@ public class AttendanceListFragment extends Fragment {
             if (!users.isEmpty() && users.get(0) != null) {
                 attendanceListAdapter.updateUserList(users, context);
                 binding.recyclerviewAttendanceList.setAdapter(attendanceListAdapter);
-                if (!userIds.isEmpty() && userIds.get(0) != null) {
+                if (userIds != null && !userIds.isEmpty() && userIds.get(0) != null) {
                     attendanceListAdapter.updateAttendanceUser(userIds);
                     setNumberUserChip();
                 }

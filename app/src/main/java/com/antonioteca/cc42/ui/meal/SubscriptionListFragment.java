@@ -333,7 +333,7 @@ public class SubscriptionListFragment extends Fragment {
             if (!users.isEmpty() && users.get(0) != null) {
                 subscriptionListAdapter.updateUserList(users, context);
                 binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
-                if (!userIds.isEmpty() && userIds.get(0) != null) {
+                if (userIds != null && !userIds.isEmpty() && userIds.get(0) != null) {
                     subscriptionListAdapter.updateSubscriptionUser(userIds);
                     setNumberUserChip();
                 }
