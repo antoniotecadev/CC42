@@ -15,6 +15,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -536,6 +537,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             Util.setColorStatusBar(this, Color.parseColor(colorCoalition));
         else
             Util.setColorStatusBar(this, ContextCompat.getColor(context, R.color.light_blue_900));
+        // Bloqueia a orientação para retrato (ou a orientação desejada)
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     @Override

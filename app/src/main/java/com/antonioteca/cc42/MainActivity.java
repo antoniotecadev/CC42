@@ -1,6 +1,7 @@
 package com.antonioteca.cc42;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         int fragmentId = getIntent().getIntExtra("fragment_id", -1);
         if (fragmentId != -1)
             redirectToLogin(fragmentId);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     // capturar código de autorização do redirecionamento
