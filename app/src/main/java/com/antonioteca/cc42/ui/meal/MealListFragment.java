@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -67,7 +68,6 @@ public class MealListFragment extends Fragment {
     private BeepManager beepManager;
     private ScanOptions scanOptions;
     private MealAdapter mealAdapter;
-    private MenuProvider menuProvider;
     private FragmentActivity activity;
     private DatabaseReference mealsRef;
     private FragmentMealBinding binding;
@@ -79,6 +79,25 @@ public class MealListFragment extends Fragment {
     final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
     final long[] lastClickTime = {0};
     final boolean[] isFlashLightOn = {false};
+
+    private Toolbar toolbar;
+    private AppCompatActivity activityApp;
+
+    private void toggleToolbarVisibity() {
+        if (toolbar.getVisibility() == View.VISIBLE) {
+            Util.hideToolbar(toolbar);
+        } else {
+            Util.showToolbar(toolbar);
+        }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (getActivity() != null) {
+            activityApp = (AppCompatActivity) getActivity();
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -130,6 +149,8 @@ public class MealListFragment extends Fragment {
             if (actionBar != null)
                 actionBar.setTitle(String.valueOf(cursu.getName()));
         }
+
+        toolbar = activityApp.findViewById(R.id.toolbar);
 
         scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
         scanOptions.setPrompt(getString(R.string.align_camera_qr_code));
@@ -202,6 +223,8 @@ public class MealListFragment extends Fragment {
             binding.progressBarMeal.setIndeterminateTintList(colorStateList);
         }
 
+        binding.fabOpenCameraScannerQrCodeClose.setOnClickListener(v -> closeCamera());
+
         mealAdapter = new MealAdapter(context,
                 loading,
                 binding,
@@ -251,7 +274,7 @@ public class MealListFragment extends Fragment {
             }
         });
 
-        menuProvider = new MenuProvider() {
+        MenuProvider menuProvider = new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_meal, menu);
@@ -316,12 +339,15 @@ public class MealListFragment extends Fragment {
     }
 
     private void openCamera(int cameraId) {
+        toggleToolbarVisibity();
         decoratedBarcodeView.pause();
         decoratedBarcodeView.getBarcodeView().setCameraSettings(createCameraSettings(cameraId));
         decoratedBarcodeView.resume();
         inflatedViewStub.setVisibility(View.VISIBLE);
+        binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.VISIBLE);
     }
 
+    @NonNull
     private CameraSettings createCameraSettings(int cameraId) {
         CameraSettings cameraSettings = new CameraSettings();
         cameraSettings.setRequestedCameraId(cameraId);
@@ -335,8 +361,10 @@ public class MealListFragment extends Fragment {
                 decoratedBarcodeView.setTorchOff();
             }
             decoratedBarcodeView.pause();
+            toggleToolbarVisibity();
         }
         inflatedViewStub.setVisibility(View.GONE);
+        binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.GONE);
     }
 
     private final BarcodeCallback callback = new BarcodeCallback() {
