@@ -81,8 +81,6 @@ public class AttendanceListFragment extends Fragment {
     private Integer cameraId;
     private Activity activity;
     private List<String> userIds;
-    private int numberUserAbsent;
-    private int numberUserPresent;
     private String colorCoalition;
     private View inflatedViewStub;
     private BeepManager beepManager;
@@ -95,6 +93,9 @@ public class AttendanceListFragment extends Fragment {
     private FragmentAttendanceListBinding binding;
     private DecoratedBarcodeView decoratedBarcodeView;
     private AttendanceListAdapter attendanceListAdapter;
+
+    private int numberUserAbsent = 0;
+    private int numberUserPresent = 0;
 
     final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
     final long[] lastClickTime = {0};
@@ -111,7 +112,7 @@ public class AttendanceListFragment extends Fragment {
 
     private final BarcodeCallback callback = new BarcodeCallback() {
         @Override
-        public void barcodeResult(BarcodeResult barcodeResult) {
+        public void barcodeResult(@NonNull BarcodeResult barcodeResult) {
             decoratedBarcodeView.pause();
             beepManager.playBeepSoundAndVibrate();
             if (barcodeResult.getText().isEmpty()) {
@@ -361,8 +362,8 @@ public class AttendanceListFragment extends Fragment {
             if (event != null) {
                 Long userId = event.getContentIfNotHandled();
                 attendanceListAdapter.updateAttendanceUserSingle(userId);
-                binding.chipPresent.setText(String.valueOf(numberUserPresent + 1));
-                binding.chipAbsent.setText(String.valueOf(numberUserAbsent - 1));
+                binding.chipPresent.setText(String.valueOf(++numberUserPresent));
+                binding.chipAbsent.setText(String.valueOf(Math.max(--numberUserAbsent, 0)));
             }
         });
 

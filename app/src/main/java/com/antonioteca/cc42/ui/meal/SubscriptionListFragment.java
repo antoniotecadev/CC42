@@ -85,8 +85,6 @@ public class SubscriptionListFragment extends Fragment {
     private ScanOptions scanOptions;
     private MenuProvider menuProvider;
     private UserViewModel userViewModel;
-    private int numberUserSubscription;
-    private int numberUserUnsubscription;
     private LayoutInflater layoutInflater;
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
@@ -94,6 +92,9 @@ public class SubscriptionListFragment extends Fragment {
     private FragmentSubscriptionListBinding binding;
     private DecoratedBarcodeView decoratedBarcodeView;
     private SubscriptionListAdapter subscriptionListAdapter;
+
+    private int numberUserSubscription = 0;
+    private int numberUserUnsubscription = 0;
 
     final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
     final long[] lastClickTime = {0};
@@ -110,7 +111,7 @@ public class SubscriptionListFragment extends Fragment {
 
     private final BarcodeCallback callback = new BarcodeCallback() {
         @Override
-        public void barcodeResult(BarcodeResult barcodeResult) {
+        public void barcodeResult(@NonNull BarcodeResult barcodeResult) {
             decoratedBarcodeView.pause();
             beepManager.playBeepSoundAndVibrate();
             if (barcodeResult.getText().isEmpty()) {
@@ -346,8 +347,8 @@ public class SubscriptionListFragment extends Fragment {
             if (event != null) {
                 Long userId = event.getContentIfNotHandled();
                 subscriptionListAdapter.updateSubscriptionUserSingle(userId);
-                binding.chipSubscription.setText(String.valueOf(numberUserSubscription + 1));
-                binding.chipUnsubscription.setText(String.valueOf(numberUserUnsubscription - 1));
+                binding.chipSubscription.setText(String.valueOf(++numberUserSubscription));
+                binding.chipUnsubscription.setText(String.valueOf(Math.max(--numberUserUnsubscription, 0)));
             }
         });
 
