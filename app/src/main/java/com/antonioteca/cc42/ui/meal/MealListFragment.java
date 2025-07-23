@@ -116,9 +116,12 @@ public class MealListFragment extends Fragment {
         OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
-                if (decoratedBarcodeView.isShown()) {
+                if (inflatedViewStub != null && inflatedViewStub.getVisibility() == View.VISIBLE) {
                     closeCamera();
-                } else {
+                    return;
+                }
+
+                if (isEnabled()) { // Verifica se ainda está habilitado
                     setEnabled(false); // Importante para não criar um loop infinito
                     requireActivity().getOnBackPressedDispatcher().onBackPressed();
                 }

@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -224,6 +225,23 @@ public class SubscriptionListFragment extends Fragment {
         UserRepository userRepository = new UserRepository(context);
         UserViewModelFactory userViewModelFactory = new UserViewModelFactory(userRepository);
         userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* habilitado por padrão */) {
+            @Override
+            public void handleOnBackPressed() {
+
+                if (inflatedViewStub != null && inflatedViewStub.getVisibility() == View.VISIBLE) {
+                    closeCamera();
+                    return;
+                }
+
+                if (isEnabled()) { // Verifica se ainda está habilitado
+                    setEnabled(false); // Desabilita este callback para evitar um loop se chamado recursivamente
+                    requireActivity().getOnBackPressedDispatcher().onBackPressed(); // Propaga o evento
+                }
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override
