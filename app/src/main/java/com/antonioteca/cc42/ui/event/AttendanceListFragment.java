@@ -304,6 +304,7 @@ public class AttendanceListFragment extends Fragment {
         }
         binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(v -> openCameraScannerQrCodeEvent(0));
         binding.fabOpenCameraScannerQrCodeFront.setOnClickListener(v -> openCameraScannerQrCodeEvent(1));
+        binding.fabOpenCameraScannerQrCodeClose.setOnClickListener(v -> closeCamera());
 
         inflatedViewStub.setOnLongClickListener(v -> {
             if (isFlashLightOn[0]) {
@@ -637,6 +638,9 @@ public class AttendanceListFragment extends Fragment {
         decoratedBarcodeView.getBarcodeView().setCameraSettings(createCameraSettings(cameraId));
         decoratedBarcodeView.resume();
         inflatedViewStub.setVisibility(View.VISIBLE);
+        binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.GONE);
+        binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.GONE);
+        binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.VISIBLE);
     }
 
     private CameraSettings createCameraSettings(int cameraId) {
@@ -655,6 +659,9 @@ public class AttendanceListFragment extends Fragment {
             toggleToolbarVisibity();
         }
         inflatedViewStub.setVisibility(View.GONE);
+        binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.GONE);
+        binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.VISIBLE);
+        binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.VISIBLE);
     }
 
     private void setupVisibility(@NonNull FragmentAttendanceListBinding binding, int viewP,

@@ -115,6 +115,18 @@
         app:srcCompat="@drawable/baseline_camera_rear_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabOpenCameraScannerQrCodeClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="50dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:backgroundTint="@color/light_white"
+        app:srcCompat="@android:drawable/ic_delete" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabOpenCameraScannerQrCodeFront"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
