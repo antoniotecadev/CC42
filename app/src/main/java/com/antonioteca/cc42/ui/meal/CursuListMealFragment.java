@@ -101,7 +101,7 @@ public class CursuListMealFragment extends Fragment {
                 cursuAdapter = new CursuAdapter(context, cursus, color, cursusId);
                 binding.recyclerviewCursuList.setAdapter(cursuAdapter);
                 binding.chipNumberCursus.setText(String.valueOf(cursuAdapter.getItemCount()));
-                cursuAdapter.moveTopCursuUser();
+                cursuAdapter.filter(String.valueOf(cursusId), true);
             } else
                 setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
         });
