@@ -466,11 +466,11 @@ public class SubscriptionListFragment extends Fragment {
                 });
 
                 MenuItem menuItemSubscription = menu.findItem(R.id.action_one_list);
-                menuItemSubscription.setTitle("Com assinaturas");
+                menuItemSubscription.setTitle(context.getString(R.string.with_signs));
                 MenuItem menuItemUnSubscription = menu.findItem(R.id.action_two_list);
-                menuItemUnSubscription.setTitle("Sem assinaturas");
+                menuItemUnSubscription.setTitle(context.getString(R.string.without_signs));
                 MenuItem menuItemAll = menu.findItem(R.id.action_three_list);
-                menuItemAll.setTitle("Todos");
+                menuItemAll.setTitle(context.getString(R.string.all));
             }
 
             @Override

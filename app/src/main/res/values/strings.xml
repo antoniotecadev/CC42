@@ -294,4 +294,7 @@
     <string name="list">Lista</string>
     <string name="hide_past_events">Ocultar eventos realizados</string>
     <string name="view_past_events">Ver eventos realizados</string>
+    <string name="all">Todos</string>
+    <string name="with_signs">Com assinaturas</string>
+    <string name="without_signs">Sem assinaturas</string>
 </resources>

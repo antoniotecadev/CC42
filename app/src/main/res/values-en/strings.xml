@@ -279,4 +279,7 @@
         <item>Quizaca</item>
     </string-array>
     <string name="view_past_events">View past events</string>
+    <string name="all">All</string>
+    <string name="with_signs">With signatures</string>
+    <string name="without_signs">Without signatures</string>
 </resources>
