@@ -103,11 +103,23 @@
 # Uncomment for DexGuard only
 #-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
 
+# Mantenha a classe Meal, seu construtor padrão, e todos os seus membros públicos
+# (getters, setters, campos públicos se houver).
+# Isso também cobrirá o CREATOR do Parcelable.
 -keep class com.antonioteca.cc42.model.Meal {
-    public <init>();
-    public void set*(***);
-    public *** get*();
+    <init>(); # Construtor
+    *;       # Mantém todos os outros membros públicos
 }
+
+# Mantenha os nomes dos campos da classe Meal, pois o Firebase os usa para mapeamento.
+-keepnames class com.antonioteca.cc42.model.Meal
+
+# Protege classes necessárias do Firebase RealTime Database
+-keep class com.google.firebase.database.** { *; }
+-keep class com.google.firebase.FirebaseApp { *; }
+
+# Incluir também dependências do Google Play Service usadas pelo Firebase
+-keep class com.google.android.gms.** { *; }
 
 # classe de modelo
 -keep class com.antonioteca.cc42.model.User { *; }
@@ -124,6 +136,13 @@
 
 # Impede que classes anotadas com @Keep sejam minificadas
 -keep @androidx.annotation.Keep class * {*;}
+
+# Mantenha a sua implementação do FirebaseMessagingService
+-keep class com.antonioteca.cc42.NavigationDrawerActivity$MyFirebaseMessagingService { *; }
+
+# Mantenha suas classes de Activity que lidam com Intents
+-keep class com.antonioteca.cc42.MainActivity { *; }
+-keep class com.antonioteca.cc42.NavigationDrawerActivity { *; }
 
 # Manter as classes de modelo FCM e seus membros
 -keep class com.antonioteca.cc42.network.NotificationFirebase.FCMessage { *; }
