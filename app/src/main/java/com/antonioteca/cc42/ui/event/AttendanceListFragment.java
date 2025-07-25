@@ -22,6 +22,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -281,6 +282,12 @@ public class AttendanceListFragment extends Fragment {
         eventKind = args.getKindEvent();
         eventName = args.getNameEvent();
         eventDate = args.getDataEvent();
+
+        if (getActivity() != null) {
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null)
+                actionBar.setTitle(String.valueOf(eventName));
+        }
 
         toolbar = activityApp.findViewById(R.id.toolbar);
 
