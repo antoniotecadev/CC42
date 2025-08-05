@@ -313,4 +313,9 @@
     <string name="nfc_not_suport">NFC não suportado</string>
     <string name="reader_nfc">Ler NFC</string>
     <string name="aprox_pass">Aproxime o cartão.</string>
+    <string name="err_generate_qr_code">Erro ao gerar QR Code</string>
+    <string name="qr_code_unvailable">QR Code Indisponível</string>
+    <string name="list_export_sucess">Lista exportada com sucessso !\n</string>
+    <string name="err_export_list">"Erro ao exportar a lista: "</string>
+    <string name="list_export_success">Lista exportada com sucessso !\n</string>
 </resources>

@@ -300,4 +300,9 @@
     <string name="reader_nfc">Leer NFC</string>
     <string name="aprox_pass">Aproxime o cartão.</string>
     <string name="register_face_id">Registrar Face ID</string>
+    <string name="err_generate_qr_code">Error al generar QR Code</string>
+    <string name="qr_code_unvailable">Código QR no disponible</string>
+    <string name="list_export_sucess">¡Lista exportada con éxito!</string>
+    <string name="err_export_list">" Error al exportar la lista:"</string>
+    <string name="list_export_success">¡Lista exportada con éxito!</string>
 </resources>
