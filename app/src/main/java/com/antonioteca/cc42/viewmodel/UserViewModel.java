@@ -1,10 +1,7 @@
 package com.antonioteca.cc42.viewmodel;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -23,7 +20,6 @@ import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.EventObserver;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.Util;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -443,7 +439,7 @@ public class UserViewModel extends ViewModel {
                 if (!response.isSuccessful() || response.body() == null) {
                     String error;
                     try {
-                        error = response.errorBody() != null ? response.errorBody().string() : "Resposta inválida do servidor.";
+                        error = response.errorBody() != null ? response.errorBody().toString() : context.getString(R.string.invalid_response_server);
                         callback.onFailure(call, new Exception(new JSONObject(error).getString("error")));
                     } catch (Exception ignored) {
                     }
@@ -453,15 +449,14 @@ public class UserViewModel extends ViewModel {
                 LoginResponse loginData = response.body();
 
                 if (loginData.firebaseToken == null || loginData.user == null) {
-                    callback.onFailure(call, new Exception("Resposta incompleta do servidor."));
+                    callback.onFailure(call, new Exception(context.getString(R.string.incomplet_response_server)));
                     return;
                 }
 
                 FirebaseAuth.getInstance().signInWithCustomToken(loginData.firebaseToken)
                         .addOnCompleteListener(task -> {
                             if (!task.isSuccessful()) {
-                                Util.showAlertDialogBuild(context.getString(R.string.err), "Falha ao logar no Firebase.", context, null);
-                                callback.onFailure(call, new Exception("Falha ao logar no Firebase."));
+                                callback.onFailure(call, new Exception(context.getString(R.string.failed_login_firebase) + task.getException()));
                                 return;
                             }
                             TokenRepository token = new TokenRepository(context);
@@ -470,16 +465,15 @@ public class UserViewModel extends ViewModel {
                                     callback.onResponse(call, response);
                                     return;
                                 }
-                                callback.onFailure(call, new Exception("Falha ao salvar token."));
+                                callback.onFailure(call, new Exception(context.getString(R.string.failed_save_token)));
                             } else
-                                callback.onFailure(call, new Exception("Falha ao salvar usuário."));
+                                callback.onFailure(call, new Exception(context.getString(R.string.failed_save_user)));
                         });
             }
 
             @Override
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
-                Log.e("Login", "Erro ao logar com Intra42: " + t.getMessage());
-                Util.showAlertDialogBuild(context.getString(R.string.err), "Falha ao autenticar com Intra 42.", context, null);
+                Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.failed_authentication_intra) + t.getMessage(), context, null);
             }
         });
     }
