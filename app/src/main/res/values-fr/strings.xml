@@ -178,6 +178,7 @@
     <string name="meal_time_range_summary_off">Cacher</string>
     <string name="camera_back">Caméra arrière</string>
     <string name="camera_front">Caméra avant</string>
+    <string name="list">Liste</string>
     <string name="hide_past_events">Masquer les événements passés</string>
     <string-array name="meals_carbohydrates_title">
         <item>Riz</item>
@@ -282,4 +283,21 @@
     <string name="all">Tous</string>
     <string name="with_signs">Avec signatures</string>
     <string name="without_signs">Sans signatures</string>
+    <string name="msg_nfc_not_supported">Le NFC n\'est pas pris en charge sur cet appareil.</string>
+    <string name="msg_nfc_not_enabled">Veuillez activer le NFC dans les paramètres.</string>
+    <string name="invalid_response_server">Réponse invalide du serveur.</string>
+    <string name="incomplet_response_server">Réponse incomplète du serveur.</string>
+    <string name="failed_login_firebase">Échec de la connexion à Firebase :</string>
+    <string name="failed_save_token">Échec de l\'enregistrement du jeton.</string>
+    <string name="failed_save_user">Échec de l\'enregistrement de l\'utilisateur.</string>
+    <string name="failed_authentication_intra">Échec de l\'authentification avec Intra 42 :</string>
+    <string name="without_text">Pas de texte</string>
+    <string name="without_data">Pas de données</string>
+    <string name="erro_process_text_pass">Erreur lors du traitement du texte de la carte.</string>
+    <string name="not_found_text_pass">Aucun texte lisible n\'a été trouvé sur la carte.</string>
+    <string name="without_message_NDEF">Aucun message NDEF n\'a été trouvé.</string>
+    <string name="nfc_not_suport">NFC non pris en charge</string>
+    <string name="reader_nfc">Lire NFC</string>
+    <string name="aprox_pass">Approchez la carte.</string>
+    <string name="register_face_id">Enregistrer Face ID</string>
 </resources>

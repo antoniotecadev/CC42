@@ -290,11 +290,27 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="register_face_id">Registar Face ID</string>
-    <string name="face_id">Face ID</string>
+    <string name="face_id" translatable="false">Face ID</string>
     <string name="list">Lista</string>
     <string name="hide_past_events">Ocultar eventos realizados</string>
     <string name="view_past_events">Ver eventos realizados</string>
     <string name="all">Todos</string>
     <string name="with_signs">Com assinaturas</string>
     <string name="without_signs">Sem assinaturas</string>
+    <string name="msg_nfc_not_supported">NFC não é suportado neste dispositivo.</string>
+    <string name="msg_nfc_not_enabled">Por favor, habilite o NFC nas configurações.</string>
+    <string name="invalid_response_server">Resposta inválida do servidor.</string>
+    <string name="incomplet_response_server">Resposta incompleta do servidor.</string>
+    <string name="failed_login_firebase">"Falha ao logar no Firebase: "</string>
+    <string name="failed_save_token">Falha ao salvar token.</string>
+    <string name="failed_save_user">Falha ao salvar usuário.</string>
+    <string name="failed_authentication_intra">"Falha ao autenticar com Intra 42: "</string>
+    <string name="without_text">Sem texto</string>
+    <string name="without_data">Sem dados</string>
+    <string name="erro_process_text_pass">Erro ao processar o texto do cartão.</string>
+    <string name="not_found_text_pass">Nenhum texto legível foi encontrado no cartão.</string>
+    <string name="without_message_NDEF">Nenhuma mensagem NDEF foi encontrada.</string>
+    <string name="nfc_not_suport">NFC não suportado</string>
+    <string name="reader_nfc">Ler NFC</string>
+    <string name="aprox_pass">Aproxime o cartão.</string>
 </resources>

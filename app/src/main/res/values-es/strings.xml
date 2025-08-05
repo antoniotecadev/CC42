@@ -178,6 +178,7 @@
     <string name="meal_time_range_summary_off">Ocultar</string>
     <string name="camera_back">Cámara trasera</string>
     <string name="camera_front">Cámara frontal</string>
+    <string name="list">Lista</string>
     <string name="hide_past_events">Ocultar eventos pasados</string>
     <string-array name="meals_carbohydrates_title">
         <item>Arroz</item>
@@ -282,4 +283,21 @@
     <string name="all">Todos</string>
     <string name="with_signs">Con firmas</string>
     <string name="without_signs">Sin firmas</string>
+    <string name="msg_nfc_not_supported">NFC no es compatible en este dispositivo.</string>
+    <string name="msg_nfc_not_enabled">Por favor, habilite NFC en la configuración.</string>
+    <string name="invalid_response_server">Respuesta inválida del servidor.</string>
+    <string name="incomplet_response_server">Respuesta incompleta del servidor.</string>
+    <string name="failed_login_firebase">Error al iniciar sesión en Firebase:</string>
+    <string name="failed_save_token">Error al guardar el token.</string>
+    <string name="failed_save_user">Error al guardar el usuario.</string>
+    <string name="failed_authentication_intra">Error al autenticar con Intra 42:</string>
+    <string name="without_text">Sin texto</string>
+    <string name="without_data">Sin datos</string>
+    <string name="erro_process_text_pass">Error al procesar el texto de la tarjeta.</string>
+    <string name="not_found_text_pass">No se encontró texto legible en la tarjeta.</string>
+    <string name="without_message_NDEF">No se encontró ningún mensaje NDEF.</string>
+    <string name="nfc_not_suport">NFC no compatible</string>
+    <string name="reader_nfc">Leer NFC</string>
+    <string name="aprox_pass">Aproxime o cartão.</string>
+    <string name="register_face_id">Registrar Face ID</string>
 </resources>

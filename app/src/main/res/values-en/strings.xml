@@ -178,6 +178,7 @@
     <string name="meal_time_range_summary_off">Hide</string>
     <string name="camera_back">Back Camera</string>
     <string name="camera_front">Front Camera</string>
+    <string name="list">List</string>
     <string name="hide_past_events">Hide past events</string>
     <string-array name="meals_carbohydrates_title">
         <item>Rice</item>
@@ -282,4 +283,21 @@
     <string name="all">All</string>
     <string name="with_signs">With signatures</string>
     <string name="without_signs">Without signatures</string>
+    <string name="msg_nfc_not_supported">NFC is not supported on this device.</string>
+    <string name="msg_nfc_not_enabled">Please enable NFC in settings.</string>
+    <string name="invalid_response_server">Invalid server response.</string>
+    <string name="incomplet_response_server">Incomplete server response.</string>
+    <string name="failed_login_firebase">Failed to log in to Firebase:</string>
+    <string name="failed_save_token">Failed to save token.</string>
+    <string name="failed_save_user">Failed to save user.</string>
+    <string name="failed_authentication_intra">Failed to authenticate with Intra 42:</string>
+    <string name="without_text">No text</string>
+    <string name="without_data">No data</string>
+    <string name="erro_process_text_pass">Error processing card text.</string>
+    <string name="not_found_text_pass">No readable text was found on the card.</string>
+    <string name="without_message_NDEF">No NDEF message was found.</string>
+    <string name="nfc_not_suport">NFC not supported</string>
+    <string name="reader_nfc">Read NFC</string>
+    <string name="aprox_pass">Approach the card.</string>
+    <string name="register_face_id">Register Face ID</string>
 </resources>
