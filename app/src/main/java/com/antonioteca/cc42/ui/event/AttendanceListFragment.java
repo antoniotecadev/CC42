@@ -551,26 +551,26 @@ public class AttendanceListFragment extends Fragment {
                                     CsvExporter.exportUsersToCsv(context, attendanceListAdapter.getUserList(), "attendance_list", eventName, eventDate, new CsvExporter.ExportCallback() {
                                         @Override
                                         public void onSuccess(File file) {
-                                            Util.showAlertDialogBuild(context.getString(R.string.list_export), "Lista exportada com sucessso !\n" + file.getAbsolutePath(), context, null);
+                                            Util.showAlertDialogBuild(context.getString(R.string.list_export), getString(R.string.list_export_sucess) + file.getAbsolutePath(), context, null);
                                             PdfSharer.sharePdf(context, file, "application/vnd.ms-excel", context.getString(R.string.list_share));
                                         }
 
                                         @Override
                                         public void onError(String error) {
-                                            Util.showAlertDialogBuild(context.getString(R.string.list_export), "Erro ao exportar a lista: " + error, context, null);
+                                            Util.showAlertDialogBuild(context.getString(R.string.list_export), getString(R.string.err_export_list) + error, context, null);
                                         }
                                     });
                                 } else if (selected == 1) {
                                     CsvExporter.exportUsersToCsv(context, attendanceListAdapter.getUserList(), "attendance_list", eventName, eventDate, new CsvExporter.ExportCallback() {
                                         @Override
                                         public void onSuccess(File file) {
-                                            Util.showAlertDialogBuild(context.getString(R.string.list_export), "Lista exportada com sucessso !\n" + file.getAbsolutePath(), context, null);
+                                            Util.showAlertDialogBuild(context.getString(R.string.list_export), getString(R.string.list_export_success) + file.getAbsolutePath(), context, null);
                                             PdfViewer.openPdf(context, file, "application/vnd.ms-excel", "Application to open file not found!");
                                         }
 
                                         @Override
                                         public void onError(String error) {
-                                            Util.showAlertDialogBuild(context.getString(R.string.list_export), "Erro ao exportar a lista: " + error, context, null);
+                                            Util.showAlertDialogBuild(context.getString(R.string.list_export), getString(R.string.err_export_list) + error, context, null);
                                         }
                                     });
                                 }
