@@ -168,7 +168,9 @@ public class SubscriptionListFragment extends Fragment {
     public void nfcResult(@NonNull String QRCode) {
         beepManager.playBeepSoundAndVibrate();
         if (QRCode.isEmpty()) {
-            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
+            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null,
+                    () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
+            );
         } else {
             String result = AESUtil.decrypt(QRCode);
             if (result != null && result.startsWith("cc42user")) {
@@ -195,9 +197,13 @@ public class SubscriptionListFragment extends Fragment {
 
                     );
                 } else
-                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null,
+                            () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
+                    );
             } else
-                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
+                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null,
+                        () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
+                );
         }
     }
 

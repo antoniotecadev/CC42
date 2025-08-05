@@ -183,6 +183,46 @@ public class AttendanceListFragment extends Fragment {
         }
     };
 
+    public void nfcResult(@NonNull String QRCode) {
+        beepManager.playBeepSoundAndVibrate();
+        if (QRCode.isEmpty()) {
+            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null, () -> decoratedBarcodeView.resume());
+        } else {
+            String result = AESUtil.decrypt(QRCode);
+            if (result != null && result.startsWith("cc42user")) {
+                String resultQrCode = result.replace("cc42user", "");
+                String[] partsQrCode = resultQrCode.split("#", 6);
+                if (partsQrCode.length == 6) {
+                    // Armazenamento directo para nuvem
+                    Util.setVisibleProgressBar(binding.progressBarMarkAttendance, sharedViewModel);
+                    DaoEventFirebase.markAttendance(
+                            firebaseDatabase,
+                            String.valueOf(eventId),
+                            null,
+                            user.getUid(),
+                            partsQrCode[0], /* userId */
+                            partsQrCode[2], /* displayName */
+                            partsQrCode[3], /* cursusId */
+                            partsQrCode[4], /* campusId */
+                            partsQrCode[5], /* urlImageUser */
+                            context,
+                            layoutInflater,
+                            binding.progressBarMarkAttendance,
+                            sharedViewModel,
+                            () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
+                    );
+                } else
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null,
+                            () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
+                    );
+            } else
+                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null,
+                        () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
+                );
+        }
+    }
+
+
     private void activityResultContractsViewer(@NonNull Boolean result) {
         if (result) {
             List<User> userList = attendanceListAdapter.getUserList();
@@ -270,41 +310,6 @@ public class AttendanceListFragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-    }
-
-    public void nfcResult(@NonNull String QRCode) {
-        beepManager.playBeepSoundAndVibrate();
-        if (QRCode.isEmpty()) {
-            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
-        } else {
-            String result = AESUtil.decrypt(QRCode);
-            if (result != null && result.startsWith("cc42user")) {
-                String resultQrCode = result.replace("cc42user", "");
-                String[] partsQrCode = resultQrCode.split("#", 6);
-                if (partsQrCode.length == 6) {
-                    // Armazenamento directo para nuvem
-                    Util.setVisibleProgressBar(binding.progressBarMarkAttendance, sharedViewModel);
-                    DaoEventFirebase.markAttendance(
-                            firebaseDatabase,
-                            String.valueOf(eventId),
-                            null,
-                            user.getUid(),
-                            partsQrCode[0], /* userId */
-                            partsQrCode[2], /* displayName */
-                            partsQrCode[3], /* cursusId */
-                            partsQrCode[4], /* campusId */
-                            partsQrCode[5], /* urlImageUser */
-                            context,
-                            layoutInflater,
-                            binding.progressBarMarkAttendance,
-                            sharedViewModel,
-                            () -> decoratedBarcodeView.resume()
-                    );
-                } else
-                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
-            } else
-                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
-        }
     }
 
     @Override
