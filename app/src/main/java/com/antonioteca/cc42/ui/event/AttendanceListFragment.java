@@ -2,12 +2,18 @@ package com.antonioteca.cc42.ui.event;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,6 +56,7 @@ import com.antonioteca.cc42.utility.AESUtil;
 import com.antonioteca.cc42.utility.CsvExporter;
 import com.antonioteca.cc42.utility.EndlessScrollListener;
 import com.antonioteca.cc42.utility.Loading;
+import com.antonioteca.cc42.utility.NFCUtils;
 import com.antonioteca.cc42.utility.PdfCreator;
 import com.antonioteca.cc42.utility.PdfSharer;
 import com.antonioteca.cc42.utility.PdfViewer;
@@ -66,12 +73,17 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import com.journeyapps.barcodescanner.camera.CameraSettings;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class AttendanceListFragment extends Fragment {
 
+    private NfcAdapter nfcAdapter;
+    private PendingIntent pendingIntent;
+    private IntentFilter[] intentFiltersArray;
+    private String[][] techListsArray;
     private User user;
     private Loading l;
     private Long eventId;
@@ -241,7 +253,7 @@ public class AttendanceListFragment extends Fragment {
         UserRepository userRepository = new UserRepository(context);
         UserViewModelFactory userViewModelFactory = new UserViewModelFactory(userRepository);
         userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
-
+        nfcAdapter = NfcAdapter.getDefaultAdapter(context); // Obter o adaptador NFC padrão
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* habilitado por padrão */) {
             @Override
             public void handleOnBackPressed() {
@@ -260,14 +272,65 @@ public class AttendanceListFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
+    public void nfcResult(@NonNull String QRCode) {
+        beepManager.playBeepSoundAndVibrate();
+        if (QRCode.isEmpty()) {
+            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
+        } else {
+            String result = AESUtil.decrypt(QRCode);
+            if (result != null && result.startsWith("cc42user")) {
+                String resultQrCode = result.replace("cc42user", "");
+                String[] partsQrCode = resultQrCode.split("#", 6);
+                if (partsQrCode.length == 6) {
+                    // Armazenamento directo para nuvem
+                    Util.setVisibleProgressBar(binding.progressBarMarkAttendance, sharedViewModel);
+                    DaoEventFirebase.markAttendance(
+                            firebaseDatabase,
+                            String.valueOf(eventId),
+                            null,
+                            user.getUid(),
+                            partsQrCode[0], /* userId */
+                            partsQrCode[2], /* displayName */
+                            partsQrCode[3], /* cursusId */
+                            partsQrCode[4], /* campusId */
+                            partsQrCode[5], /* urlImageUser */
+                            context,
+                            layoutInflater,
+                            binding.progressBarMarkAttendance,
+                            sharedViewModel,
+                            () -> decoratedBarcodeView.resume()
+                    );
+                } else
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
+            } else
+                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
+        }
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentAttendanceListBinding.inflate(inflater, container, false);
         if (!user.isStaff()) {
+            binding.fabOpenReaderNFC.setVisibility(View.GONE);
             binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.GONE);
             binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.GONE);
         }
+        if (nfcAdapter != null) {
+            if (!nfcAdapter.isEnabled())
+                Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.msg_nfc_not_enabled), context, null);
+            else {
+                Object[] objects = NFCUtils.startNFC(
+                        nfcAdapter,
+                        activity
+                );
+                nfcAdapter = (NfcAdapter) objects[0];
+                pendingIntent = (PendingIntent) objects[1];
+                intentFiltersArray = (IntentFilter[]) objects[2];
+                techListsArray = (String[][]) objects[3];
+            }
+        } else
+            binding.fabOpenReaderNFC.setVisibility(View.GONE);
         return binding.getRoot();
     }
 
@@ -323,11 +386,22 @@ public class AttendanceListFragment extends Fragment {
         ProgressBar progressBarMarkAttendance = binding.progressBarMarkAttendance;
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
+            binding.fabOpenReaderNFC.setBackgroundTintList(colorStateList);
             binding.fabOpenCameraScannerQrCodeBack.setBackgroundTintList(colorStateList);
             binding.fabOpenCameraScannerQrCodeFront.setBackgroundTintList(colorStateList);
             binding.progressindicator.setIndicatorColor(Color.parseColor(colorCoalition));
             progressBarMarkAttendance.setIndeterminateTintList(ColorStateList.valueOf(Color.parseColor(colorCoalition)));
         }
+
+        binding.fabOpenReaderNFC.setOnClickListener(v -> NFCUtils.startReaderNFC(
+                nfcAdapter,
+                activity,
+                context,
+                pendingIntent,
+                intentFiltersArray,
+                techListsArray
+        ));
+
         binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(v -> openCameraScannerQrCodeEvent(0));
         binding.fabOpenCameraScannerQrCodeFront.setOnClickListener(v -> openCameraScannerQrCodeEvent(1));
         binding.fabOpenCameraScannerQrCodeClose.setOnClickListener(v -> closeCamera());
@@ -665,11 +739,13 @@ public class AttendanceListFragment extends Fragment {
         decoratedBarcodeView.getBarcodeView().setCameraSettings(createCameraSettings(cameraId));
         decoratedBarcodeView.resume();
         inflatedViewStub.setVisibility(View.VISIBLE);
+        binding.fabOpenReaderNFC.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.VISIBLE);
     }
 
+    @NonNull
     private CameraSettings createCameraSettings(int cameraId) {
         CameraSettings cameraSettings = new CameraSettings();
         cameraSettings.setRequestedCameraId(cameraId);
@@ -686,6 +762,7 @@ public class AttendanceListFragment extends Fragment {
             toggleToolbarVisibity();
         }
         inflatedViewStub.setVisibility(View.GONE);
+        binding.fabOpenReaderNFC.setVisibility(View.VISIBLE);
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.VISIBLE);
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.VISIBLE);
@@ -699,10 +776,69 @@ public class AttendanceListFragment extends Fragment {
         binding.recyclerviewAttendanceList.setVisibility(viewR);
     }
 
+    // Método para processar um Intent NFC recebido
+    public void resolveIntent(@NonNull Intent intent) {
+        // Verifica se a ação do Intent corresponde a uma descoberta de tag NFC (NDEF, TECH ou TAG)
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()) ||
+                NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction()) ||
+                NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
+
+            // Obtém as mensagens NDEF brutas do Intent
+            Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+
+            // Verifica se existem mensagens NDEF
+            if (rawMsgs != null) {
+                // Cria um StringBuilder para acumular o texto dos registros NDEF
+                StringBuilder resultado = new StringBuilder();
+
+                // Itera sobre cada mensagem NDEF bruta
+                for (Parcelable rawMsg : rawMsgs) {
+                    // Converte a mensagem bruta para um objeto NdefMessage
+                    NdefMessage msg = (NdefMessage) rawMsg;
+                    // Itera sobre cada registro NDEF dentro da mensagem
+                    for (NdefRecord record : msg.getRecords()) {
+                        // Verifica se o registro é do tipo TNF_WELL_KNOWN e se o tipo é RTD_TEXT (texto)
+                        if (record.getTnf() == NdefRecord.TNF_WELL_KNOWN &&
+                                Arrays.equals(record.getType(), NdefRecord.RTD_TEXT)) {
+
+                            try {
+                                // Obtém o payload (dados) do registro
+                                final String texto = NFCUtils.getString(record);
+
+                                // Adiciona o texto extraído ao resultado, seguido por uma nova linha
+                                resultado.append(texto);
+
+                            } catch (Exception e) {
+                                NFCUtils.showAlertDialogBuild(context.getString(R.string.err), getString(R.string.erro_process_text_pass), context, () ->
+                                        NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
+                                );
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                // Verifica se algum texto foi extraído
+                if (resultado.length() > 0) {
+                    nfcResult(resultado.toString().trim());
+                } else {
+                    NFCUtils.showAlertDialogBuild(getString(R.string.without_text), getString(R.string.not_found_text_pass), context, () ->
+                            NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
+                    );
+                }
+            } else {
+                NFCUtils.showAlertDialogBuild(getString(R.string.without_data), getString(R.string.without_message_NDEF), context, () ->
+                        NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
+                );
+            }
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        decoratedBarcodeView.resume();
+        if (decoratedBarcodeView.isShown())
+            decoratedBarcodeView.resume();
     }
 
     @Override

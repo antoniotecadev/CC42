@@ -21,8 +21,10 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,9 +48,11 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
@@ -61,6 +65,8 @@ import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
+import com.antonioteca.cc42.ui.event.AttendanceListFragment;
+import com.antonioteca.cc42.ui.meal.SubscriptionListFragment;
 import com.antonioteca.cc42.ui.setting.ThemePreferences;
 import com.antonioteca.cc42.utility.AESUtil;
 import com.antonioteca.cc42.utility.GlideApp;
@@ -505,6 +511,56 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         }
     }
 
+    private void handleNFCIntent(@NonNull Intent intent) {
+        Log.d("NFC_TECH", "onNewIntent da Activity chamado com ação: " + intent.getAction());
+
+        // Verifique se é um intent NFC que nos interessa
+        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction()) ||
+                NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction()) ||
+                NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            // Encontre o Fragment atual. A forma de fazer isso depende de como você gerencia seus fragmentos.
+
+            // Opção 1: Se você usa o Navigation Component e o Fragment é o destino atual do NavHost
+            try {
+                // Substitua R.id.nav_host_fragment pelo ID real do seu NavHostFragment no layout da Activity
+                NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_navigation_drawer);
+                if (navHostFragment != null) {
+                    Fragment currentFragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
+                    if (currentFragment instanceof
+                            SubscriptionListFragment) {
+                        Log.d("NFC_TECH", "Passando intent para SubscriptionListFragment");
+                        ((SubscriptionListFragment) currentFragment).resolveIntent(intent);
+                    } else if (currentFragment instanceof
+                            AttendanceListFragment) {
+                        Log.d("NFC_TECH", "Passando intent para AttendanceListFragment");
+                        ((AttendanceListFragment) currentFragment).resolveIntent(intent);
+                    } else {
+                        Log.d("NFC_TECH", "Fragmento actual: " + currentFragment.getClass().getSimpleName());
+                    }
+                } else {
+                    Log.e("NFC_TECH", "NavHostFragment não encontrado.");
+                }
+            } catch (Exception e) {
+                Log.e("NFC_TECH", "Erro ao tentar obter o fragmento atual do NavHostFragment: " + e.getMessage());
+            }
+
+            // Opção 2: Se você adiciona o fragmento programaticamente com uma tag específica
+            /*
+            SubscriptionListFragment fragment = (SubscriptionListFragment) getSupportFragmentManager().findFragmentByTag("SUBSCRIPTION_LIST_FRAGMENT_TAG");
+            if (fragment != null && fragment.isVisible()) {
+
+             Log.d("ACTIVITY_NFC", "Passando intent para SubscriptionListFragment (via tag)");
+                fragment.resolveIntent(intent);
+            } else {
+                Log.d("ACTIVITY_NFC", "SubscriptionListFragment não encontrado ou não visível (via tag)");
+            }
+            */
+
+            // Opção 3: Se o fragmento está em um ViewPager2, você precisará obter o fragmento atual do adapter.
+
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -520,6 +576,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        handleNFCIntent(intent);
         handleNotificationIntent(intent);
     }
 

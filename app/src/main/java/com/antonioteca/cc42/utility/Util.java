@@ -375,7 +375,7 @@ public class Util {
         // Reiniciar a Activity para aplicar as mudanças
         if (isSettingsFragment)
             activity.recreate();
-            // restartActivity(activity);
+        // restartActivity(activity);
     }
 
     public static void restartActivity(Activity activity) {
