@@ -151,6 +151,21 @@
 -keep class com.antonioteca.cc42.network.NotificationFirebase.FCMessage$Message { *; }
 -keep class com.antonioteca.cc42.network.NotificationExpo.ExpoNotificationPayload { *; }
 
+# iText Core (v7)
+-keep class com.itextpdf.** { *; }
+-dontwarn com.itextpdf.**
+-keepclassmembers class com.itextpdf.** { *; }
+
+# Android Graphics Bitmap usage
+-keep class android.graphics.BitmapFactory { *; }
+
+# Keep logging (opcional)
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
+}
+
 # Please add these rules to your existing keep rules in order to suppress warnings.
 # This is generated automatically by the Android Gradle plugin.
 -dontwarn org.slf4j.impl.StaticLoggerBinder
