@@ -147,7 +147,7 @@ public class HomeFragment extends Fragment {
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
                 if (httpStatus != null) {
                     Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
-                        setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
+                        setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
                         eventViewModel.getEvents(context);
                     });
                 }
@@ -160,7 +160,7 @@ public class HomeFragment extends Fragment {
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
                 if (httpException != null) {
                     Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
-                        setupVisibility(binding, View.VISIBLE, false, View.GONE, View.GONE);
+                        setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
                         eventViewModel.getEvents(context);
                     });
                 }
