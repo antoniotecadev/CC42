@@ -135,8 +135,6 @@ public class SubscriptionListFragment extends Fragment {
                     String resultQrCode = result.replace("cc42user", "");
                     String[] partsQrCode = resultQrCode.split("#", 6);
                     if (partsQrCode.length == 6) {
-                        // String urlImageUser = subscriptionListAdapter.containsUser(Long.parseLong(partsQrCode[0]));
-                        // if (urlImageUser != null) {
                         Util.setVisibleProgressBar(progressBarSubscription, sharedViewModel);
                         DaoSusbscriptionFirebase.subscription(
                                 firebaseDatabase,
@@ -155,8 +153,6 @@ public class SubscriptionListFragment extends Fragment {
                                 sharedViewModel,
                                 () -> decoratedBarcodeView.resume()
                         );
-                        // } else
-                        //    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), partsQrCode[2] + "\n" + getString(R.string.msg_user_not_fount_list), "#FDD835", null, () -> decoratedBarcodeView.resume());
                     } else
                         Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
                 } else
@@ -603,11 +599,6 @@ public class SubscriptionListFragment extends Fragment {
             }
         };
         requireActivity().addMenuProvider(menuProvider, getViewLifecycleOwner());
-//        sharedViewModel.disabledRecyclerView().observe(getViewLifecycleOwner(), disabled -> {
-//            binding.fabOpenCameraScannerQrCodeBack.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
-//            binding.fabOpenCameraScannerQrCodeFront.setVisibility(disabled ? View.INVISIBLE : View.VISIBLE);
-//            binding.recyclerviewSubscriptionList.setOnTouchListener((v, event) -> disabled);
-//        });
     }
 
     private void printAndShareSubscriptionsList(List<User> userList, boolean isPrint, int title) {
@@ -682,12 +673,10 @@ public class SubscriptionListFragment extends Fragment {
     }
 
     private void activeScrollListener() {
-        //sharedViewModel.setDisabledRecyclerView(true);
         binding.recyclerviewSubscriptionList.addOnScrollListener(onScrollListener);
     }
 
     private void desactiveScrollListener() {
-        //sharedViewModel.setDisabledRecyclerView(false);
         binding.recyclerviewSubscriptionList.removeOnScrollListener(onScrollListener);
     }
 

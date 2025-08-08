@@ -139,8 +139,6 @@ public class HomeFragment extends Fragment {
                 // Aplicar a animação de layout
                 // runLayoutAnimation(binding.recyclerviewEventsList, context);
             }
-            //else
-            //  setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
         });
 
         eventViewModel.getHttpSatus().observe(getViewLifecycleOwner(), event -> {
