@@ -181,6 +181,26 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.cardview.widget.CardView>
 
+        <Button
+            android:id="@+id/btnChallenge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="@color/green"
+            android:text="@string/challenge"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btnFinishedChallenge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="@color/error"
+            android:text="@string/challenge"
+            android:visibility="gone" />
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="match_parent"

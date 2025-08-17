@@ -36,8 +36,10 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -116,7 +118,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             contextMenu.setHeaderTitle(meal.getName());
             MenuItem menuItemEdit = contextMenu.add(view.getContext().getString(R.string.edit_meal));
             MenuItem menuItemDelete = contextMenu.add(view.getContext().getString(R.string.delete_meal));
-            MenuItem menuItemNotify = contextMenu.add(view.getContext().getString(R.string.notify_meal));
+            MenuItem menuItemChallenge = contextMenu.add(view.getContext().getString(R.string.challenge));
             MenuItem menuItemAddQrCode = contextMenu.add("Add Qr Code");
             MenuItem menuItemDelQrCode = contextMenu.add("Del Qr Code");
             if (idMealQrCode.contains(meal.getId())) {
@@ -135,7 +137,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                 deleteMeal(firebaseDatabase, context, meal, layoutInflater, campusId, cursusId);
                 return true;
             });
-            menuItemNotify.setOnMenuItemClickListener(item -> {
+            menuItemChallenge.setOnMenuItemClickListener(item -> {
                 ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.meals_way, android.R.layout.simple_spinner_item);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -149,7 +151,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setView(linearLayout);
-                builder.setTitle(R.string.notify_meal);
+                builder.setTitle(R.string.start_challenge);
                 builder.setMessage(meal.getName());
                 builder.setIcon(R.drawable.logo_42);
                 builder.setCancelable(false);
@@ -160,14 +162,26 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                 dialog.show();
 
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                    meal.setType(meal.getType() + ": " + spinner.getSelectedItem().toString());
-                    try {
-                        String topicStudent = "meals_" + campusId + "_" + cursusId;
-                        Notification.sendFCMNotification(context, layoutInflater, meal, String.valueOf(campusId), String.valueOf(cursusId), topicStudent, null);
-                        dialog.dismiss();
-                    } catch (IOException e) {
-                        Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
-                    }
+
+                    DatabaseReference refMeals = firebaseDatabase.getReference("challenge")
+                            .child("meals")
+                            .child(meal.getId());
+
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("start_challenge", true);
+                    refMeals.updateChildren(updates).addOnSuccessListener(aVoid -> {
+                        meal.setType(meal.getType() + ": " + spinner.getSelectedItem().toString());
+                        try {
+                            String topicStudent = "meals_" + campusId + "_" + cursusId;
+                            Notification.sendFCMNotification(context, layoutInflater, meal, String.valueOf(campusId), String.valueOf(cursusId), topicStudent, null);
+                            dialog.dismiss();
+                        } catch (IOException e) {
+                            Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
+                        }
+                    }).addOnFailureListener(e -> {
+                        String message = context.getString(R.string.msg_error_start_challenge) + ": " + e.getMessage();
+                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
+                    });
                 });
                 return true;
             });

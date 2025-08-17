@@ -112,6 +112,9 @@
         <action
             android:id="@+id/action_detailsMealFragment_to_faceRecognitionFragment"
             app:destination="@id/faceRecognitionFragment" />
+        <action
+            android:id="@+id/action_detailsMealFragment_to_challengeFragment"
+            app:destination="@id/challengeFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_cursu_list_meal"
@@ -180,7 +183,6 @@
         tools:layout="@layout/fragment_about_dialog" />
     <dialog
         android:id="@+id/faceRecognitionFragment"
-        android:name="com.antonioteca.cc42.facerecognition.FaceRecognitionFragment"
         android:label="Face ID"
         tools:layout="@layout/fragment_face_recognition">
         <argument
@@ -196,4 +198,13 @@
             android:name="cursusId"
             app:argType="string" />
     </dialog>
+    <fragment
+        android:id="@+id/challengeFragment"
+        android:name="com.antonioteca.cc42.ui.meal.ChallengeFragment"
+        android:label="@string/challenge"
+        tools:layout="@layout/fragment_challenge">
+        <argument
+            android:name="mealId"
+            app:argType="string" />
+    </fragment>
 </navigation>

@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
 
 public class MealViewModel extends ViewModel {
 
+    public boolean isView = false;
     public List<Meal> mealList = new ArrayList<>();
     private DatabaseReference mealRef;
     private ValueEventListener valueEventListener;

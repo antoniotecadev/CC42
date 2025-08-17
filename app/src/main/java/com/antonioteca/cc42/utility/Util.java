@@ -15,6 +15,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -306,14 +308,14 @@ public class Util {
         }
     }
 
-//    public static void startVibration(Context context) {
-//        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-//        if (vibrator != null)
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-//                vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
-//            else
-//                vibrator.vibrate(200);
-//    }
+    public static void startVibration(@NonNull Context context) {
+        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator != null)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+            else
+                vibrator.vibrate(200);
+    }
 
     private static void launchIntentPermission(boolean containsUri, Context context, ActivityResultLauncher<Intent> intentActivityResultLauncher) {
         Intent intent = new Intent();

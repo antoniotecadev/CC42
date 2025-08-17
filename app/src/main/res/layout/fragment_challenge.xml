@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_challenge_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/windowBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/text_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="16dp"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- Header: categoria + dificuldade -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/text_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Categoria"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/text_difficulty"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="Dificuldade"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Enunciado -->
+        <TextView
+            android:id="@+id/text_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Pergunta"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Bloco de código (visível só quando houver) -->
+        <ScrollView
+            android:id="@+id/code_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="#1e1e1e"
+            android:padding="10dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/text_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:textColor="#eeeeee"
+                android:textSize="14sp" />
+        </ScrollView>
+
+        <!-- Opções -->
+        <RadioGroup
+            android:id="@+id/radio_group_options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp">
+
+            <RadioButton
+                android:id="@+id/option_a"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Opção A" />
+
+            <RadioButton
+                android:id="@+id/option_b"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Opção B" />
+
+            <RadioButton
+                android:id="@+id/option_c"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Opção C" />
+
+            <RadioButton
+                android:id="@+id/option_d"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Opção D" />
+        </RadioGroup>
+
+        <!-- Timer + ação -->
+        <TextView
+            android:id="@+id/text_timer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="32dp"
+            android:layout_weight="1"
+            android:text="Tempo: 30s"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/button_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Responder" />
+    </LinearLayout>
+</ScrollView>
