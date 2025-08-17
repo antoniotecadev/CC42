@@ -579,15 +579,16 @@ public class AttendanceListFragment extends Fragment {
                     attendanceListAdapter.filterListStatus(false);
                 else if (itemId == R.id.action_three_list)
                     attendanceListAdapter.filterListStatus(null);
-                else if (itemId == R.id.action_register_face_id_camera_front) {
-                    AttendanceListFragmentDirections.ActionAttendanceListFragmentToFaceRecognitionFragment actionAttendanceListFragmentToFaceRecognitionFragment
-                            = AttendanceListFragmentDirections.actionAttendanceListFragmentToFaceRecognitionFragment(false, 1, String.valueOf(user.getCampusId()), String.valueOf(cursuId));
-                    Navigation.findNavController(view).navigate(actionAttendanceListFragmentToFaceRecognitionFragment);
-                } else if (itemId == R.id.action_register_face_id_camera_back) {
-                    AttendanceListFragmentDirections.ActionAttendanceListFragmentToFaceRecognitionFragment actionAttendanceListFragmentToFaceRecognitionFragment
-                            = AttendanceListFragmentDirections.actionAttendanceListFragmentToFaceRecognitionFragment(false, 0, String.valueOf(user.getCampusId()), String.valueOf(cursuId));
-                    Navigation.findNavController(view).navigate(actionAttendanceListFragmentToFaceRecognitionFragment);
-                } else if (itemId == R.id.action_list_reload) {
+//                else if (itemId == R.id.action_register_face_id_camera_front) {
+//                    AttendanceListFragmentDirections.ActionAttendanceListFragmentToFaceRecognitionFragment actionAttendanceListFragmentToFaceRecognitionFragment
+//                            = AttendanceListFragmentDirections.actionAttendanceListFragmentToFaceRecognitionFragment(false, 1, String.valueOf(user.getCampusId()), String.valueOf(cursuId));
+//                    Navigation.findNavController(view).navigate(actionAttendanceListFragmentToFaceRecognitionFragment);
+//                } else if (itemId == R.id.action_register_face_id_camera_back) {
+//                    AttendanceListFragmentDirections.ActionAttendanceListFragmentToFaceRecognitionFragment actionAttendanceListFragmentToFaceRecognitionFragment
+//                            = AttendanceListFragmentDirections.actionAttendanceListFragmentToFaceRecognitionFragment(false, 0, String.valueOf(user.getCampusId()), String.valueOf(cursuId));
+//                    Navigation.findNavController(view).navigate(actionAttendanceListFragmentToFaceRecognitionFragment);
+//                }
+                else if (itemId == R.id.action_list_reload) {
                     setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
                     l.currentPage = 1;
                     activeScrollListener();

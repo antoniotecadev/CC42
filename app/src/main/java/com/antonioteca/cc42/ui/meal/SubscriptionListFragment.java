@@ -560,15 +560,16 @@ public class SubscriptionListFragment extends Fragment {
                     subscriptionListAdapter.filterListStatus(false);
                 else if (itemId == R.id.action_three_list)
                     subscriptionListAdapter.filterListStatus(null);
-                else if (itemId == R.id.action_register_face_id_camera_front) {
-                    SubscriptionListFragmentDirections.ActionSubscriptionListFragmentToFaceRecognitionFragment actionSubscriptionListFragmentToFaceRecognitionFragment
-                            = SubscriptionListFragmentDirections.actionSubscriptionListFragmentToFaceRecognitionFragment(false, 1, String.valueOf(user.getCampusId()), String.valueOf(cursusId));
-                    Navigation.findNavController(view).navigate(actionSubscriptionListFragmentToFaceRecognitionFragment);
-                } else if (itemId == R.id.action_register_face_id_camera_back) {
-                    SubscriptionListFragmentDirections.ActionSubscriptionListFragmentToFaceRecognitionFragment actionSubscriptionListFragmentToFaceRecognitionFragment
-                            = SubscriptionListFragmentDirections.actionSubscriptionListFragmentToFaceRecognitionFragment(false, 0, String.valueOf(user.getCampusId()), String.valueOf(cursusId));
-                    Navigation.findNavController(view).navigate(actionSubscriptionListFragmentToFaceRecognitionFragment);
-                } else if (itemId == R.id.action_list_print) {
+//                else if (itemId == R.id.action_register_face_id_camera_front) {
+//                    SubscriptionListFragmentDirections.ActionSubscriptionListFragmentToFaceRecognitionFragment actionSubscriptionListFragmentToFaceRecognitionFragment
+//                            = SubscriptionListFragmentDirections.actionSubscriptionListFragmentToFaceRecognitionFragment(false, 1, String.valueOf(user.getCampusId()), String.valueOf(cursusId));
+//                    Navigation.findNavController(view).navigate(actionSubscriptionListFragmentToFaceRecognitionFragment);
+//                } else if (itemId == R.id.action_register_face_id_camera_back) {
+//                    SubscriptionListFragmentDirections.ActionSubscriptionListFragmentToFaceRecognitionFragment actionSubscriptionListFragmentToFaceRecognitionFragment
+//                            = SubscriptionListFragmentDirections.actionSubscriptionListFragmentToFaceRecognitionFragment(false, 0, String.valueOf(user.getCampusId()), String.valueOf(cursusId));
+//                    Navigation.findNavController(view).navigate(actionSubscriptionListFragmentToFaceRecognitionFragment);
+//                }
+                else if (itemId == R.id.action_list_print) {
                     boolean isExternalStorageManager = Util.launchPermissionDocument(
                             context,
                             requestIntentPermissionLauncherViewer,
