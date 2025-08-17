@@ -18,4 +18,7 @@
     <color name="light_black">#121212</color>
     <color name="light_white">#F5F5F5</color>
     <color name="colorStar">#FFD700</color>
+    <color name="success">#4CAF50</color>
+    <color name="warning">#FDD835</color>
+    <color name="error">#E53935</color>
 </resources>
