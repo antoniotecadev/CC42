@@ -47,8 +47,10 @@ import com.antonioteca.cc42.dao.daofarebase.DaoSusbscriptionFirebase;
 import com.antonioteca.cc42.databinding.FragmentSubscriptionListBinding;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Coalition;
+import com.antonioteca.cc42.model.LeaderboardFetcher;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
+import com.antonioteca.cc42.model.UserScore;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
@@ -485,38 +487,38 @@ public class SubscriptionListFragment extends Fragment {
             }
         });
 
-        sharedViewModel.getUserFaceIdLiveData().observe(getViewLifecycleOwner(), event -> {
-            if (event != null) {
-                String userId = event.getContentIfNotHandled();
-                if (userId != null) {
-                    beepManager.playBeepSoundAndVibrate();
-                    String[] userData = subscriptionListAdapter.containsUserFaceID(Long.parseLong(userId));
-                    String displayName = userData[0];
-                    String urlImageUser = userData[1];
-                    if (urlImageUser != null && !displayName.isEmpty()) {
-                        Util.setVisibleProgressBar(progressBarSubscription, sharedViewModel);
-                        DaoSusbscriptionFirebase.subscription(
-                                firebaseDatabase,
-                                null,
-                                String.valueOf(meal.getId()),
-                                null,
-                                userId, /* id */
-                                "", /* login */
-                                displayName, /* displayName */
-                                String.valueOf(cursusId), /* cursusId */
-                                String.valueOf(campusId), /* campusId */
-                                urlImageUser,
-                                context,
-                                layoutInflater,
-                                progressBarSubscription,
-                                sharedViewModel,
-                                () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true)
-                        );
-                    } else
-                        Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), displayName + "\n" + getString(R.string.msg_user_not_fount_list), "#FDD835", urlImageUser, () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true));
-                }
-            }
-        });
+//        sharedViewModel.getUserFaceIdLiveData().observe(getViewLifecycleOwner(), event -> {
+//            if (event != null) {
+//                String userId = event.getContentIfNotHandled();
+//                if (userId != null) {
+//                    beepManager.playBeepSoundAndVibrate();
+//                    String[] userData = subscriptionListAdapter.containsUserFaceID(Long.parseLong(userId));
+//                    String displayName = userData[0];
+//                    String urlImageUser = userData[1];
+//                    if (urlImageUser != null && !displayName.isEmpty()) {
+//                        Util.setVisibleProgressBar(progressBarSubscription, sharedViewModel);
+//                        DaoSusbscriptionFirebase.subscription(
+//                                firebaseDatabase,
+//                                null,
+//                                String.valueOf(meal.getId()),
+//                                null,
+//                                userId, /* id */
+//                                "", /* login */
+//                                displayName, /* displayName */
+//                                String.valueOf(cursusId), /* cursusId */
+//                                String.valueOf(campusId), /* campusId */
+//                                urlImageUser,
+//                                context,
+//                                layoutInflater,
+//                                progressBarSubscription,
+//                                sharedViewModel,
+//                                () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true)
+//                        );
+//                    } else
+//                        Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), displayName + "\n" + getString(R.string.msg_user_not_fount_list), "#FDD835", urlImageUser, () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true));
+//                }
+//            }
+//        });
 
         menuProvider = new MenuProvider() {
             @Override
@@ -560,6 +562,8 @@ public class SubscriptionListFragment extends Fragment {
                     subscriptionListAdapter.filterListStatus(false);
                 else if (itemId == R.id.action_three_list)
                     subscriptionListAdapter.filterListStatus(null);
+                else if (itemId == R.id.action_top_users_for_meal)
+                    fetchTopUsersForMeal(meal.getId(), 10, context, subscriptionListAdapter);
 //                else if (itemId == R.id.action_register_face_id_camera_front) {
 //                    SubscriptionListFragmentDirections.ActionSubscriptionListFragmentToFaceRecognitionFragment actionSubscriptionListFragmentToFaceRecognitionFragment
 //                            = SubscriptionListFragmentDirections.actionSubscriptionListFragmentToFaceRecognitionFragment(false, 1, String.valueOf(user.getCampusId()), String.valueOf(cursusId));
@@ -792,6 +796,30 @@ public class SubscriptionListFragment extends Fragment {
                 );
             }
         }
+    }
+
+    private void fetchTopUsersForMeal(String currentMealId, int mealsToServe, Context context, SubscriptionListAdapter subscriptionListAdapter) {
+        binding.progressBarSubscription.setVisibility(View.VISIBLE);
+        LeaderboardFetcher fetcher = new LeaderboardFetcher();
+
+        fetcher.fetchTopUsersForMeal(currentMealId, mealsToServe, new LeaderboardFetcher.LeaderboardCallback() {
+            @Override
+            public void onLeaderboardFetched(List<UserScore> topUsers) {
+                if (topUsers.isEmpty()) {
+                    Util.showAlertDialogBuild(context.getString(R.string.challenge), context.getString(R.string.not_found_user_challenge), context, null);
+                    binding.progressBarSubscription.setVisibility(View.GONE);
+                    return;
+                }
+                subscriptionListAdapter.filterTopUsersForMeal(topUsers);
+                binding.progressBarSubscription.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                binding.progressBarSubscription.setVisibility(View.GONE);
+                Util.showAlertDialogBuild(context.getString(R.string.err), errorMessage, context, null);
+            }
+        });
     }
 
     @Override

@@ -327,4 +327,7 @@
     <string name="msg_sucess_challenge_finished_description">O desafio terminou, o resultado já está disponível.</string>
     <string name="message_finished_challenge">Deseja realmente terminar o desafio?</string>
     <string name="msg_error_finished_challenge">Erro ao terminar o desafio</string>
+    <string name="not_found_user_challenge">Nenhum estudante qualificado ou nenhum estudante participou ou nenhum desafio foi inicializado.</string>
+    <string name="attempts">"Tentativas: "</string>
+    <string name="score">" | Pontos: "</string>
 </resources>

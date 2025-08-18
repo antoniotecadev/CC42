@@ -5,6 +5,8 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -43,6 +45,8 @@ public class User {
     private boolean isStaff;
 
     @Expose(serialize = false, deserialize = false)
+    private String challengeData;
+    @Expose(serialize = false, deserialize = false)
     public int ratingValue = 0;
 
     @Expose(serialize = false, deserialize = false)
@@ -56,12 +60,12 @@ public class User {
     @Expose(serialize = false, deserialize = false)
     private final SharedPreferences.Editor editor;
 
-    public User(Context context) {
+    public User(@NonNull Context context) {
         preferences = context.getSharedPreferences("MyAppPrefsUser", MODE_PRIVATE);
         editor = preferences.edit();
     }
 
-    public boolean saveUser(User user, Coalition coalition) {
+    public boolean saveUser(@NonNull User user, Coalition coalition) {
         editor.putLong("uid", user.uid);
         editor.putString("email", user.email);
         editor.putString("login", user.login);
@@ -92,6 +96,10 @@ public class User {
 
     public String getLogin() {
         return preferences.getString("login", null);
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public String getDisplayName() {
@@ -132,6 +140,14 @@ public class User {
 
     public void setCoalition(Coalition coalition) {
         this.coalition = coalition;
+    }
+
+    public String getChallengeData() {
+        return this.challengeData;
+    }
+
+    public void setChallengeData(String challengeData) {
+        this.challengeData = challengeData;
     }
 
     public void clear() {
