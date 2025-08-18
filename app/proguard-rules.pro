@@ -111,8 +111,14 @@
     *;       # Mantém todos os outros membros públicos
 }
 
+-keep class com.antonioteca.cc42.model.Question {
+    <init>(); # Construtor
+    *;       # Mantém todos os outros membros públicos
+}
+
 # Mantenha os nomes dos campos da classe Meal, pois o Firebase os usa para mapeamento.
 -keepnames class com.antonioteca.cc42.model.Meal
+-keepnames class com.antonioteca.cc42.model.Question
 
 # Protege classes necessárias do Firebase RealTime Database
 -keep class com.google.firebase.database.** { *; }
