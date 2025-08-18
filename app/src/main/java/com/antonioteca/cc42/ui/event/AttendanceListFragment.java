@@ -506,37 +506,37 @@ public class AttendanceListFragment extends Fragment {
             }
         });
 
-        sharedViewModel.getUserFaceIdLiveData().observe(getViewLifecycleOwner(), event -> {
-            if (event != null) {
-                String userId = event.getContentIfNotHandled();
-                if (userId != null) {
-                    beepManager.playBeepSoundAndVibrate();
-                    String[] userData = attendanceListAdapter.containsUserFaceID(Long.parseLong(userId));
-                    String displayName = userData[0];
-                    String urlImageUser = userData[1];
-                    if (urlImageUser != null && !displayName.isEmpty()) {
-                        Util.setVisibleProgressBar(binding.progressBarMarkAttendance, sharedViewModel);
-                        DaoEventFirebase.markAttendance(
-                                firebaseDatabase,
-                                String.valueOf(eventId),
-                                null,
-                                user.getUid(),
-                                userId, /* userId */
-                                displayName, /* displayName */
-                                String.valueOf(cursuId), /* cursusId */
-                                String.valueOf(user.getCampusId()), /* campusId */
-                                urlImageUser,
-                                context,
-                                layoutInflater,
-                                binding.progressBarMarkAttendance,
-                                sharedViewModel,
-                                () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true)
-                        );
-                    } else
-                        Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), displayName + "\n" + getString(R.string.msg_user_unregistered), "#FDD835", urlImageUser, () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true));
-                }
-            }
-        });
+//        sharedViewModel.getUserFaceIdLiveData().observe(getViewLifecycleOwner(), event -> {
+//            if (event != null) {
+//                String userId = event.getContentIfNotHandled();
+//                if (userId != null) {
+//                    beepManager.playBeepSoundAndVibrate();
+//                    String[] userData = attendanceListAdapter.containsUserFaceID(Long.parseLong(userId));
+//                    String displayName = userData[0];
+//                    String urlImageUser = userData[1];
+//                    if (urlImageUser != null && !displayName.isEmpty()) {
+//                        Util.setVisibleProgressBar(binding.progressBarMarkAttendance, sharedViewModel);
+//                        DaoEventFirebase.markAttendance(
+//                                firebaseDatabase,
+//                                String.valueOf(eventId),
+//                                null,
+//                                user.getUid(),
+//                                userId, /* userId */
+//                                displayName, /* displayName */
+//                                String.valueOf(cursuId), /* cursusId */
+//                                String.valueOf(user.getCampusId()), /* campusId */
+//                                urlImageUser,
+//                                context,
+//                                layoutInflater,
+//                                binding.progressBarMarkAttendance,
+//                                sharedViewModel,
+//                                () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true)
+//                        );
+//                    } else
+//                        Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), displayName + "\n" + getString(R.string.msg_user_unregistered), "#FDD835", urlImageUser, () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true));
+//                }
+//            }
+//        });
 
         menuProvider = new MenuProvider() {
             @Override

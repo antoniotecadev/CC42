@@ -11,7 +11,7 @@ import java.util.List;
 
 public class SharedViewModel extends ViewModel {
     private final MutableLiveData<EventObserver<Long>> longMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<EventObserver<String>> faceIDMutableLiveData = new MutableLiveData<>();
+//    private final MutableLiveData<EventObserver<String>> faceIDMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<EventObserver<Meal>> newMeal = new MutableLiveData<>();
     private final MutableLiveData<EventObserver<Meal>> updatedMeal = new MutableLiveData<>();
     private final MutableLiveData<Boolean> disabledMutableLiveData = new MutableLiveData<>();
@@ -58,9 +58,9 @@ public class SharedViewModel extends ViewModel {
         longMutableLiveData.setValue(new EventObserver<>(userId));
     }
 
-    public LiveData<EventObserver<String>> getUserFaceIdLiveData() {
-        return faceIDMutableLiveData;
-    }
+//    public LiveData<EventObserver<String>> getUserFaceIdLiveData() {
+//        return faceIDMutableLiveData;
+//    }
 
 //    public void setUserFaceIdLiveData(String userId) {
 //        faceIDMutableLiveData.setValue(new EventObserver<>(userId));
