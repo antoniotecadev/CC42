@@ -330,4 +330,5 @@
     <string name="not_found_user_challenge">Nenhum estudante qualificado ou nenhum estudante participou ou nenhum desafio foi inicializado.</string>
     <string name="attempts">"Tentativas: "</string>
     <string name="score">" | Pontos: "</string>
+    <string name="meal_vailable">Refeições disponíveis</string>
 </resources>

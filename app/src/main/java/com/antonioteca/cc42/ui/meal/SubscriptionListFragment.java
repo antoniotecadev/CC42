@@ -563,7 +563,7 @@ public class SubscriptionListFragment extends Fragment {
                 else if (itemId == R.id.action_three_list)
                     subscriptionListAdapter.filterListStatus(null);
                 else if (itemId == R.id.action_top_users_for_meal)
-                    fetchTopUsersForMeal(meal.getId(), 10, context, subscriptionListAdapter);
+                    fetchTopUsersForMeal(meal.getId(), context, subscriptionListAdapter);
 //                else if (itemId == R.id.action_register_face_id_camera_front) {
 //                    SubscriptionListFragmentDirections.ActionSubscriptionListFragmentToFaceRecognitionFragment actionSubscriptionListFragmentToFaceRecognitionFragment
 //                            = SubscriptionListFragmentDirections.actionSubscriptionListFragmentToFaceRecognitionFragment(false, 1, String.valueOf(user.getCampusId()), String.valueOf(cursusId));
@@ -798,13 +798,13 @@ public class SubscriptionListFragment extends Fragment {
         }
     }
 
-    private void fetchTopUsersForMeal(String currentMealId, int mealsToServe, Context context, SubscriptionListAdapter subscriptionListAdapter) {
+    private void fetchTopUsersForMeal(String currentMealId, Context context, SubscriptionListAdapter subscriptionListAdapter) {
         binding.progressBarSubscription.setVisibility(View.VISIBLE);
         LeaderboardFetcher fetcher = new LeaderboardFetcher();
 
-        fetcher.fetchTopUsersForMeal(currentMealId, mealsToServe, new LeaderboardFetcher.LeaderboardCallback() {
+        fetcher.fetchTopUsersForMeal(campusId, cursusId, currentMealId, new LeaderboardFetcher.LeaderboardCallback() {
             @Override
-            public void onLeaderboardFetched(List<UserScore> topUsers) {
+            public void onLeaderboardFetched(List<UserScore> topUsers, int numberOfMealsAvailable) {
                 if (topUsers.isEmpty()) {
                     Util.showAlertDialogBuild(context.getString(R.string.challenge), context.getString(R.string.not_found_user_challenge), context, null);
                     binding.progressBarSubscription.setVisibility(View.GONE);
@@ -812,6 +812,45 @@ public class SubscriptionListFragment extends Fragment {
                 }
                 subscriptionListAdapter.filterTopUsersForMeal(topUsers);
                 binding.progressBarSubscription.setVisibility(View.GONE);
+                String snackbarText = numberOfMealsAvailable + " " + getString(R.string.meal_vailable);
+                Snackbar snackbar = Snackbar.make(requireView(), snackbarText, Snackbar.LENGTH_INDEFINITE);
+
+                snackbar.setAction(R.string.close, view -> {
+                    snackbar.dismiss(); // Não é estritamente necessário se for só para fechar.
+                });
+
+                // Opcional: Definir a cor do texto da ação, se desejar
+                // snackbar.setActionTextColor(ContextCompat.getColor(context, R.color.your_action_color));
+
+                snackbar.addCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onShown(Snackbar sb) {
+                        super.onShown(sb);
+                        // Desabilita a interação com o RecyclerView
+                        // Uma forma é desabilitar o toque, outra é impedir o dispatch de toques
+                        binding.recyclerviewSubscriptionList.setClickable(false);
+                        binding.recyclerviewSubscriptionList.setFocusable(false);
+                        // Para uma desabilitação mais forte, você pode interceptar os toques.
+                        // No entanto, isso pode ser excessivo. Tente o setClickable primeiro.
+
+                        // Solução mais agressiva (se necessário):
+                        // recyclerView.requestDisallowInterceptTouchEvent(true); // Isso é mais para parent views
+                        // Ou cobrir o RecyclerView com uma view transparente que consome toques.
+                    }
+
+                    @Override
+                    public void onDismissed(Snackbar sb, int event) {
+                        super.onDismissed(sb, event);
+                        // Reabilita a interação com o RecyclerView
+                        binding.recyclerviewSubscriptionList.setClickable(true);
+                        binding.recyclerviewSubscriptionList.setFocusable(true);
+
+                        // Se usou a abordagem agressiva, reverta.
+                        // recyclerView.requestDisallowInterceptTouchEvent(false);
+                    }
+                });
+
+                snackbar.show();
             }
 
             @Override
