@@ -116,7 +116,7 @@ public class ChallengeFragment extends Fragment {
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
+                if (snapshot.exists() && binding != null && getContext() != null) {
                     boolean isStart = Boolean.TRUE.equals(snapshot.getValue(Boolean.class));
                     if (!isStart) {
                         locked(true, false);

@@ -179,9 +179,9 @@ public class DetailsMealFragment extends Fragment {
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
+                if (snapshot.exists() && binding != null && getContext() != null) {
                     boolean isStart = Boolean.TRUE.equals(snapshot.getValue(Boolean.class));
-                if (isStart && binding != null) {
+                    if (isStart) {
                         binding.btnChallenge.setVisibility(View.VISIBLE);
                         binding.btnFinishedChallenge.setVisibility(View.VISIBLE);
                         if (!mealViewModel.isView) {
@@ -189,7 +189,7 @@ public class DetailsMealFragment extends Fragment {
                             String message = getString(R.string.msg_sucess_challenge_started_description);
                             Util.showAlertDialogMessage(context, getLayoutInflater(), getString(R.string.msg_sucess_challenge_started), message, "#4CAF50", user.getImage(), null);
                         }
-                    } else if (binding != null) {
+                    } else {
                         binding.btnChallenge.setVisibility(View.GONE);
                         binding.btnFinishedChallenge.setVisibility(View.GONE);
                     }
