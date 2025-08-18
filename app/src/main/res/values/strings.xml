@@ -326,4 +326,5 @@
     <string name="msg_sucess_challenge_finished">DESAFIO 42</string>
     <string name="msg_sucess_challenge_finished_description">O desafio terminou, o resultado já está disponível.</string>
     <string name="message_finished_challenge">Deseja realmente terminar o desafio?</string>
+    <string name="msg_error_finished_challenge">Erro ao terminar o desafio</string>
 </resources>

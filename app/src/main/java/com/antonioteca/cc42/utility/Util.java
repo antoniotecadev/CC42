@@ -73,9 +73,10 @@ public class Util {
         if (runnableTryAgain == null)
             builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
         else {
-            if (message.equalsIgnoreCase("Face ID registado com sucesso"))
-                builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> runnableTryAgain.run());
-            else {
+            if (message.equalsIgnoreCase(context.getString(R.string.message_finished_challenge))) {
+                builder.setNeutralButton(R.string.no, (dialogInterface, i) -> dialogInterface.dismiss());
+                builder.setPositiveButton(R.string.yes, (dialogInterface, i) -> runnableTryAgain.run());
+            } else {
                 builder.setNeutralButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
                 builder.setPositiveButton(R.string.list_reload, (dialogInterface, i) -> runnableTryAgain.run());
             }

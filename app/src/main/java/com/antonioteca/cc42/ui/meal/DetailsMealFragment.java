@@ -214,9 +214,9 @@ public class DetailsMealFragment extends Fragment {
                     .child(meal.getId());
 
             Map<String, Object> updates = new HashMap<>();
-            updates.put("start_challenge", true);
+            updates.put("start_challenge", false);
             refMeals.updateChildren(updates).addOnSuccessListener(aVoid -> Util.showAlertDialogBuild(getString(R.string.challenge), getString(R.string.msg_sucess_challenge_finished_description), context, null)).addOnFailureListener(e -> {
-                String message = context.getString(R.string.msg_error_start_challenge) + ": " + e.getMessage();
+                String message = context.getString(R.string.msg_error_finished_challenge) + ": " + e.getMessage();
                 Util.showAlertDialogBuild(getString(R.string.err), message, context, null);
             });
         }));
