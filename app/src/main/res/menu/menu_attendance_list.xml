@@ -42,10 +42,6 @@
                 android:title=""
                 app:showAsAction="never" />
             <item
-                android:id="@+id/action_top_users_for_meal"
-                android:title="@string/challenge"
-                app:showAsAction="never" />
-            <item
                 android:id="@+id/action_three_list"
                 android:title=""
                 app:showAsAction="never" />

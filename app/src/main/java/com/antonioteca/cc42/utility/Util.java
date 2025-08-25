@@ -25,7 +25,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +39,6 @@ import androidx.preference.PreferenceManager;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ImageQrCodeBinding;
 import com.antonioteca.cc42.model.MealQrCode;
-import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.zxing.BarcodeFormat;
@@ -67,19 +65,12 @@ public class Util {
 
     public static void showAlertDialogBuild(String title, String message, Context context, Runnable runnableTryAgain) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(title);
-        builder.setMessage(message);
-        builder.setIcon(R.drawable.logo_42);
+        builder.setTitle(title).setMessage(message).setIcon(R.drawable.logo_42);
         if (runnableTryAgain == null)
             builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
         else {
-            if (message.equalsIgnoreCase(context.getString(R.string.message_finished_challenge))) {
-                builder.setNeutralButton(R.string.no, (dialogInterface, i) -> dialogInterface.dismiss());
-                builder.setPositiveButton(R.string.yes, (dialogInterface, i) -> runnableTryAgain.run());
-            } else {
-                builder.setNeutralButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
-                builder.setPositiveButton(R.string.list_reload, (dialogInterface, i) -> runnableTryAgain.run());
-            }
+            builder.setNeutralButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss())
+                    .setPositiveButton(R.string.list_reload, (dialogInterface, i) -> runnableTryAgain.run());
         }
         builder.show();
     }
@@ -240,16 +231,6 @@ public class Util {
                 .into(imageViewUserRegistered);
     }
 
-    public static void setVisibleProgressBar(ProgressBar progressBar, SharedViewModel sharedViewModel) {
-        progressBar.setVisibility(View.VISIBLE);
-//        sharedViewModel.setDisabledRecyclerView(true);
-    }
-
-    public static void setInvisibleProgressBar(ProgressBar progressBar, SharedViewModel sharedViewModel) {
-        progressBar.setVisibility(View.INVISIBLE);
-//        sharedViewModel.setDisabledRecyclerView(false);
-    }
-
     public static void showAlertDialogMessage(Context context,
                                               LayoutInflater layoutInflater,
                                               String title,
@@ -293,14 +274,16 @@ public class Util {
                     public void onTick(long millisUntilFinished) {
                         // Este método é chamado a cada intervalo (tick).
                         // Atualize o TextView com o tempo restante.
-                        modalTitle.setText(context.getString(R.string.sucess) + "\n" + millisUntilFinished / 1000);
+                        String message = context.getString(R.string.sucess) + "\n" + millisUntilFinished / 1000;
+                        modalTitle.setText(message);
                     }
 
                     @Override
                     public void onFinish() {
                         // Este método é chamado quando o contador termina.
                         // Atualize o TextView para 0 ou qualquer mensagem final.
-                        modalTitle.setText(context.getString(R.string.sucess) + "\n" + "0");
+                        String message = context.getString(R.string.sucess) + "\n" + "0";
+                        modalTitle.setText(message);
                         runnableResumeCamera.run();
                         dialog.dismiss();
                     }

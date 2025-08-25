@@ -318,17 +318,5 @@
     <string name="list_export_sucess">Lista exportada com sucessso !\n</string>
     <string name="err_export_list">"Erro ao exportar a lista: "</string>
     <string name="list_export_success">Lista exportada com sucessso !\n</string>
-    <string name="msg_error_start_challenge">Erro ao iniciar o desafio</string>
-    <string name="msg_sucess_challenge_started">DESAFIO 42</string>
-    <string name="msg_sucess_challenge_started_description">O desafio começou, quanto mais rápido, mais chance para receber a tua refeição.</string>
-    <string name="challenge">Desafio</string>
-    <string name="start_challenge">Iniciar desafio</string>
-    <string name="msg_sucess_challenge_finished">DESAFIO 42</string>
-    <string name="msg_sucess_challenge_finished_description">O desafio terminou, o resultado já está disponível.</string>
-    <string name="message_finished_challenge">Deseja realmente terminar o desafio?</string>
-    <string name="msg_error_finished_challenge">Erro ao terminar o desafio</string>
-    <string name="not_found_user_challenge">Nenhum estudante qualificado ou nenhum estudante participou ou nenhum desafio foi inicializado.</string>
-    <string name="attempts">"Tentativas: "</string>
-    <string name="score">" | Pontos: "</string>
-    <string name="meal_vailable">Refeições disponíveis</string>
+    <string name="subscribe">Inscrever - se</string>
 </resources>

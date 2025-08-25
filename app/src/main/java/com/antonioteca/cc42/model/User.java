@@ -45,8 +45,6 @@ public class User {
     private boolean isStaff;
 
     @Expose(serialize = false, deserialize = false)
-    private String challengeData;
-    @Expose(serialize = false, deserialize = false)
     public int ratingValue = 0;
 
     @Expose(serialize = false, deserialize = false)
@@ -140,14 +138,6 @@ public class User {
 
     public void setCoalition(Coalition coalition) {
         this.coalition = coalition;
-    }
-
-    public String getChallengeData() {
-        return this.challengeData;
-    }
-
-    public void setChallengeData(String challengeData) {
-        this.challengeData = challengeData;
     }
 
     public void clear() {

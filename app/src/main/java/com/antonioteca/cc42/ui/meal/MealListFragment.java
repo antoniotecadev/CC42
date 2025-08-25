@@ -372,7 +372,7 @@ public class MealListFragment extends Fragment {
 
     private final BarcodeCallback callback = new BarcodeCallback() {
         @Override
-        public void barcodeResult(BarcodeResult barcodeResult) {
+        public void barcodeResult(@NonNull BarcodeResult barcodeResult) {
             decoratedBarcodeView.pause();
             beepManager.playBeepSoundAndVibrate();
             if (barcodeResult.getText().isEmpty()) {

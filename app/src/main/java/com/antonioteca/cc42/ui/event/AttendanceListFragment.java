@@ -155,7 +155,7 @@ public class AttendanceListFragment extends Fragment {
                                 );
                             } else {*/
                         // Armazenamento directo para nuvem
-                        Util.setVisibleProgressBar(binding.progressBarMarkAttendance, sharedViewModel);
+                        binding.progressBarMarkAttendance.setVisibility(View.VISIBLE);
                         DaoEventFirebase.markAttendance(
                                 firebaseDatabase,
                                 String.valueOf(eventId),
@@ -191,7 +191,7 @@ public class AttendanceListFragment extends Fragment {
                 String[] partsQrCode = resultQrCode.split("#", 6);
                 if (partsQrCode.length == 6) {
                     // Armazenamento directo para nuvem
-                    Util.setVisibleProgressBar(binding.progressBarMarkAttendance, sharedViewModel);
+                    binding.progressBarMarkAttendance.setVisibility(View.VISIBLE);
                     DaoEventFirebase.markAttendance(
                             firebaseDatabase,
                             String.valueOf(eventId),
@@ -566,7 +566,6 @@ public class AttendanceListFragment extends Fragment {
                 menuItemAbsents.setTitle(context.getString(R.string.text_absent));
                 MenuItem menuItemAll = menu.findItem(R.id.action_three_list);
                 menuItemAll.setTitle(context.getString(R.string.all));
-                menu.findItem(R.id.action_top_users_for_meal).setVisible(false);
             }
 
             @Override

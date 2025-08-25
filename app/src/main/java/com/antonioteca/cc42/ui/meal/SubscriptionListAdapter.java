@@ -3,7 +3,6 @@ package com.antonioteca.cc42.ui.meal;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -14,13 +13,10 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewSubscriptionListBinding;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.model.UserDiffCallback;
-import com.antonioteca.cc42.model.UserScore;
 import com.antonioteca.cc42.utility.Util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionListAdapter.SubscriptionListViewHolder> {
@@ -96,7 +92,7 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         notifyItemRangeRemoved(0, getItemCount());
     }
 
-    public void filterSearch(String text) {
+    public void filterSearch(@NonNull String text) {
         this.userList.clear();
         if (text.isEmpty())
             this.userList.addAll(userListFilter);
@@ -126,39 +122,6 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
                     userList.add(user);
             }
         }
-        notifyDataSetChanged();
-    }
-
-    public void filterTopUsersForMeal(@NonNull List<UserScore> topUsers) {
-        if (userList.isEmpty()) {
-            Toast.makeText(context, R.string.msg_subscription_list_empty, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Map<Long, User> userMap = new HashMap<>();
-        for (User userFromList : this.userListFilter) { // Use userListFilter para ter a lista completa original
-            userMap.put(userFromList.uid, userFromList);
-        }
-
-        List<User> filteredTopUserObjects = new ArrayList<>();
-
-        for (UserScore topUserScore : topUsers) {
-            try {
-                Long userIdToFind = Long.parseLong(topUserScore.getUserId());
-                if (userMap.containsKey(userIdToFind)) {
-                    User foundUser = userMap.get(userIdToFind);
-                    if (foundUser != null) {
-                        foundUser.setChallengeData(context.getString(R.string.attempts) + topUserScore.getAttempts() + context.getString(R.string.score) + topUserScore.getTotalScore());
-                        filteredTopUserObjects.add(foundUser);
-                    }
-                }
-            } catch (NumberFormatException e) {
-                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        this.userList.clear();
-        this.userList.addAll(filteredTopUserObjects);
         notifyDataSetChanged();
     }
 
@@ -196,7 +159,6 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         imageUrl = user.getUrlImageUser();
         holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
-        holder.binding.textViewChallenge.setText(user.getChallengeData());
 //        if (user.ratingValue > 0) Avaliação do usuario
 //            StarUtils.selectedRating(holder.binding.starRatingDone, user.ratingValue);
 //        StarUtils.reduceStarSize(context, holder.binding.starRatingDone, 20, 20);

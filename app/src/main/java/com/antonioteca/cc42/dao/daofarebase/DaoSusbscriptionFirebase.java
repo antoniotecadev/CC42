@@ -2,6 +2,7 @@ package com.antonioteca.cc42.dao.daofarebase;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
@@ -24,7 +25,7 @@ public class DaoSusbscriptionFirebase {
 
     // Assinar
     public static void subscription(
-            FirebaseDatabase firebaseDatabase,
+            @NonNull FirebaseDatabase firebaseDatabase,
             List<MealQrCode> listMealQrCode,
             String mealId,
             String userStaffId,
@@ -52,7 +53,7 @@ public class DaoSusbscriptionFirebase {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    Util.setInvisibleProgressBar(progressBarSubscription, sharedViewModel);
+                    progressBarSubscription.setVisibility(View.GONE);
                     String message = displayName + "\n" + context.getString(R.string.msg_you_already_subscription);
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", urlImageUser, runnableResumeCamera);
                 } else {
@@ -71,12 +72,12 @@ public class DaoSusbscriptionFirebase {
                                 if (userStaffId != null)
                                     Util.sendInfoTmpUserEventMeal(userStaffId, firebaseDatabase, campusId, cursusId, displayName, urlImageUser);
                                 sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
-                                Util.setInvisibleProgressBar(progressBarSubscription, sharedViewModel);
+                                progressBarSubscription.setVisibility(View.GONE);
                                 String message = displayName + "\n" + context.getString(R.string.msg_sucess_subscription);
                                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", urlImageUser, runnableResumeCamera);
                             })
                             .addOnFailureListener(e -> {
-                                Util.setInvisibleProgressBar(progressBarSubscription, sharedViewModel);
+                                progressBarSubscription.setVisibility(View.GONE);
                                 String message = context.getString(R.string.msg_error_subscription) + ": " + e.getMessage();
                                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", urlImageUser, runnableResumeCamera);
                             });
@@ -85,7 +86,7 @@ public class DaoSusbscriptionFirebase {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Util.setInvisibleProgressBar(progressBarSubscription, sharedViewModel);
+                progressBarSubscription.setVisibility(View.GONE);
                 String message = context.getString(R.string.msg_error_check_subscription) + ": " + error.toException();
                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", urlImageUser, runnableResumeCamera);
             }

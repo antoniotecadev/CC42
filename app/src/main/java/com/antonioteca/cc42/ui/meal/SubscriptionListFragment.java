@@ -47,10 +47,8 @@ import com.antonioteca.cc42.dao.daofarebase.DaoSusbscriptionFirebase;
 import com.antonioteca.cc42.databinding.FragmentSubscriptionListBinding;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Coalition;
-import com.antonioteca.cc42.model.LeaderboardFetcher;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
-import com.antonioteca.cc42.model.UserScore;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
@@ -137,7 +135,7 @@ public class SubscriptionListFragment extends Fragment {
                     String resultQrCode = result.replace("cc42user", "");
                     String[] partsQrCode = resultQrCode.split("#", 6);
                     if (partsQrCode.length == 6) {
-                        Util.setVisibleProgressBar(progressBarSubscription, sharedViewModel);
+                        progressBarSubscription.setVisibility(View.VISIBLE);
                         DaoSusbscriptionFirebase.subscription(
                                 firebaseDatabase,
                                 null,
@@ -175,7 +173,7 @@ public class SubscriptionListFragment extends Fragment {
                 String resultQrCode = result.replace("cc42user", "");
                 String[] partsQrCode = resultQrCode.split("#", 6);
                 if (partsQrCode.length == 6) {
-                    Util.setVisibleProgressBar(progressBarSubscription, sharedViewModel);
+                    progressBarSubscription.setVisibility(View.VISIBLE);
                     DaoSusbscriptionFirebase.subscription(
                             firebaseDatabase,
                             null,
@@ -205,7 +203,7 @@ public class SubscriptionListFragment extends Fragment {
         }
     }
 
-    private void activityResultContractsViewer(Boolean result) {
+    private void activityResultContractsViewer(@NonNull Boolean result) {
         if (result) {
             List<User> userList = subscriptionListAdapter.getUserList();
             if (userList.isEmpty())
@@ -216,7 +214,7 @@ public class SubscriptionListFragment extends Fragment {
             Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_print), context, null);
     }
 
-    private void activityResultContractsSharer(Boolean result) {
+    private void activityResultContractsSharer(@NonNull Boolean result) {
         if (result) {
             List<User> userList = subscriptionListAdapter.getUserList();
             if (userList.isEmpty())
@@ -487,39 +485,6 @@ public class SubscriptionListFragment extends Fragment {
             }
         });
 
-//        sharedViewModel.getUserFaceIdLiveData().observe(getViewLifecycleOwner(), event -> {
-//            if (event != null) {
-//                String userId = event.getContentIfNotHandled();
-//                if (userId != null) {
-//                    beepManager.playBeepSoundAndVibrate();
-//                    String[] userData = subscriptionListAdapter.containsUserFaceID(Long.parseLong(userId));
-//                    String displayName = userData[0];
-//                    String urlImageUser = userData[1];
-//                    if (urlImageUser != null && !displayName.isEmpty()) {
-//                        Util.setVisibleProgressBar(progressBarSubscription, sharedViewModel);
-//                        DaoSusbscriptionFirebase.subscription(
-//                                firebaseDatabase,
-//                                null,
-//                                String.valueOf(meal.getId()),
-//                                null,
-//                                userId, /* id */
-//                                "", /* login */
-//                                displayName, /* displayName */
-//                                String.valueOf(cursusId), /* cursusId */
-//                                String.valueOf(campusId), /* campusId */
-//                                urlImageUser,
-//                                context,
-//                                layoutInflater,
-//                                progressBarSubscription,
-//                                sharedViewModel,
-//                                () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true)
-//                        );
-//                    } else
-//                        Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), displayName + "\n" + getString(R.string.msg_user_not_fount_list), "#FDD835", urlImageUser, () -> sharedViewModel.setUserFaceIdContinueCaptureLiveData(true));
-//                }
-//            }
-//        });
-
         menuProvider = new MenuProvider() {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -528,21 +493,23 @@ public class SubscriptionListFragment extends Fragment {
                 menu.findItem(R.id.action_list_export_csv).setVisible(false);
                 MenuItem menuItem = menu.findItem(R.id.action_search);
                 SearchView searchView = (SearchView) menuItem.getActionView();
-                searchView.setQueryHint(context.getString(R.string.name_login));
-                searchView.onActionViewExpanded();
-                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String query) {
-                        subscriptionListAdapter.filterSearch(query);
-                        return false;
-                    }
+                if (searchView != null) {
+                    searchView.setQueryHint(context.getString(R.string.name_login));
+                    searchView.onActionViewExpanded();
+                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                        @Override
+                        public boolean onQueryTextSubmit(String query) {
+                            subscriptionListAdapter.filterSearch(query);
+                            return false;
+                        }
 
-                    @Override
-                    public boolean onQueryTextChange(String newText) {
-                        subscriptionListAdapter.filterSearch(newText);
-                        return false;
-                    }
-                });
+                        @Override
+                        public boolean onQueryTextChange(String newText) {
+                            subscriptionListAdapter.filterSearch(newText);
+                            return false;
+                        }
+                    });
+                }
 
                 MenuItem menuItemSubscription = menu.findItem(R.id.action_one_list);
                 menuItemSubscription.setTitle(context.getString(R.string.with_signs));
@@ -562,17 +529,6 @@ public class SubscriptionListFragment extends Fragment {
                     subscriptionListAdapter.filterListStatus(false);
                 else if (itemId == R.id.action_three_list)
                     subscriptionListAdapter.filterListStatus(null);
-                else if (itemId == R.id.action_top_users_for_meal)
-                    fetchTopUsersForMeal(meal.getId(), context, subscriptionListAdapter);
-//                else if (itemId == R.id.action_register_face_id_camera_front) {
-//                    SubscriptionListFragmentDirections.ActionSubscriptionListFragmentToFaceRecognitionFragment actionSubscriptionListFragmentToFaceRecognitionFragment
-//                            = SubscriptionListFragmentDirections.actionSubscriptionListFragmentToFaceRecognitionFragment(false, 1, String.valueOf(user.getCampusId()), String.valueOf(cursusId));
-//                    Navigation.findNavController(view).navigate(actionSubscriptionListFragmentToFaceRecognitionFragment);
-//                } else if (itemId == R.id.action_register_face_id_camera_back) {
-//                    SubscriptionListFragmentDirections.ActionSubscriptionListFragmentToFaceRecognitionFragment actionSubscriptionListFragmentToFaceRecognitionFragment
-//                            = SubscriptionListFragmentDirections.actionSubscriptionListFragmentToFaceRecognitionFragment(false, 0, String.valueOf(user.getCampusId()), String.valueOf(cursusId));
-//                    Navigation.findNavController(view).navigate(actionSubscriptionListFragmentToFaceRecognitionFragment);
-//                }
                 else if (itemId == R.id.action_list_print) {
                     boolean isExternalStorageManager = Util.launchPermissionDocument(
                             context,
@@ -796,69 +752,6 @@ public class SubscriptionListFragment extends Fragment {
                 );
             }
         }
-    }
-
-    private void fetchTopUsersForMeal(String currentMealId, Context context, SubscriptionListAdapter subscriptionListAdapter) {
-        binding.progressBarSubscription.setVisibility(View.VISIBLE);
-        LeaderboardFetcher fetcher = new LeaderboardFetcher();
-
-        fetcher.fetchTopUsersForMeal(campusId, cursusId, currentMealId, new LeaderboardFetcher.LeaderboardCallback() {
-            @Override
-            public void onLeaderboardFetched(List<UserScore> topUsers, int numberOfMealsAvailable) {
-                if (topUsers.isEmpty()) {
-                    Util.showAlertDialogBuild(context.getString(R.string.challenge), context.getString(R.string.not_found_user_challenge), context, null);
-                    binding.progressBarSubscription.setVisibility(View.GONE);
-                    return;
-                }
-                subscriptionListAdapter.filterTopUsersForMeal(topUsers);
-                binding.progressBarSubscription.setVisibility(View.GONE);
-                String snackbarText = numberOfMealsAvailable + " " + getString(R.string.meal_vailable);
-                Snackbar snackbar = Snackbar.make(requireView(), snackbarText, Snackbar.LENGTH_INDEFINITE);
-
-                snackbar.setAction(R.string.close, view -> {
-                    snackbar.dismiss(); // Não é estritamente necessário se for só para fechar.
-                });
-
-                // Opcional: Definir a cor do texto da ação, se desejar
-                // snackbar.setActionTextColor(ContextCompat.getColor(context, R.color.your_action_color));
-
-                snackbar.addCallback(new Snackbar.Callback() {
-                    @Override
-                    public void onShown(Snackbar sb) {
-                        super.onShown(sb);
-                        // Desabilita a interação com o RecyclerView
-                        // Uma forma é desabilitar o toque, outra é impedir o dispatch de toques
-                        binding.recyclerviewSubscriptionList.setClickable(false);
-                        binding.recyclerviewSubscriptionList.setFocusable(false);
-                        // Para uma desabilitação mais forte, você pode interceptar os toques.
-                        // No entanto, isso pode ser excessivo. Tente o setClickable primeiro.
-
-                        // Solução mais agressiva (se necessário):
-                        // recyclerView.requestDisallowInterceptTouchEvent(true); // Isso é mais para parent views
-                        // Ou cobrir o RecyclerView com uma view transparente que consome toques.
-                    }
-
-                    @Override
-                    public void onDismissed(Snackbar sb, int event) {
-                        super.onDismissed(sb, event);
-                        // Reabilita a interação com o RecyclerView
-                        binding.recyclerviewSubscriptionList.setClickable(true);
-                        binding.recyclerviewSubscriptionList.setFocusable(true);
-
-                        // Se usou a abordagem agressiva, reverta.
-                        // recyclerView.requestDisallowInterceptTouchEvent(false);
-                    }
-                });
-
-                snackbar.show();
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                binding.progressBarSubscription.setVisibility(View.GONE);
-                Util.showAlertDialogBuild(context.getString(R.string.err), errorMessage, context, null);
-            }
-        });
     }
 
     @Override

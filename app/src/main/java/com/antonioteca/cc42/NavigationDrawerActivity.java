@@ -353,7 +353,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 String resultQrCode = result.replace("cc42event", "");
                 String[] partsQrCode = resultQrCode.split("#", 2);
                 if (partsQrCode.length == 2) {
-                    Util.setVisibleProgressBar(progressBar, sharedViewModel);
+                    progressBar.setVisibility(View.VISIBLE);
                     DaoEventFirebase.markAttendance(
                             firebaseDatabase,
                             partsQrCode[0], /* id event*/
@@ -376,7 +376,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 String resultQrCode = result.replace("cc42meal", "");
                 String[] partsQrCode = resultQrCode.split("#", 2);
                 if (partsQrCode.length == 2) {
-                    Util.setVisibleProgressBar(progressBar, sharedViewModel);
+                    progressBar.setVisibility(View.VISIBLE);
                     DaoSusbscriptionFirebase.subscription(
                             firebaseDatabase,
                             null,

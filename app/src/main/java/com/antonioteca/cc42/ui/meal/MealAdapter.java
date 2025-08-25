@@ -36,10 +36,8 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -103,7 +101,8 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         Meal meal = mealList.get(position);
         holder.binding.textViewName.setText(meal.getName());
         holder.binding.textViewDescription.setText(meal.getDescription());
-        holder.binding.textViewType.setText(meal.getType() + " " + meal.getCreatedDate() + " " + meal.getQuantity() + "/" + meal.getNumberSubscribed());
+        String textType = meal.getType() + " " + meal.getCreatedDate() + " " + meal.getQuantity() + "/" + meal.getNumberSubscribed();
+        holder.binding.textViewType.setText(textType);
         if (meal.isSubscribed()) {
             int greenColor = ContextCompat.getColor(context, R.color.green);
             holder.binding.txtViewSubscription.setTextColor(greenColor);
@@ -118,7 +117,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             contextMenu.setHeaderTitle(meal.getName());
             MenuItem menuItemEdit = contextMenu.add(view.getContext().getString(R.string.edit_meal));
             MenuItem menuItemDelete = contextMenu.add(view.getContext().getString(R.string.delete_meal));
-            MenuItem menuItemChallenge = contextMenu.add(view.getContext().getString(R.string.challenge));
+            MenuItem menuItemChallenge = contextMenu.add(view.getContext().getString(R.string.notify_meal));
             MenuItem menuItemAddQrCode = contextMenu.add("Add Qr Code");
             MenuItem menuItemDelQrCode = contextMenu.add("Del Qr Code");
             if (idMealQrCode.contains(meal.getId())) {
@@ -151,37 +150,25 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setView(linearLayout);
-                builder.setTitle(R.string.start_challenge);
+                builder.setTitle(meal.getType());
                 builder.setMessage(meal.getName());
                 builder.setIcon(R.drawable.logo_42);
                 builder.setCancelable(false);
                 builder.setNeutralButton(R.string.no, (dialog, which) -> dialog.dismiss());
-                builder.setPositiveButton(R.string.yes, null);
+                builder.setPositiveButton(R.string.notify_meal, null);
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
 
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-
-                    DatabaseReference refMeals = firebaseDatabase.getReference("challenge")
-                            .child("meals")
-                            .child(meal.getId());
-
-                    Map<String, Object> updates = new HashMap<>();
-                    updates.put("start_challenge", true);
-                    refMeals.updateChildren(updates).addOnSuccessListener(aVoid -> {
-                        meal.setType(meal.getType() + ": " + spinner.getSelectedItem().toString());
-                        try {
-                            String topicStudent = "meals_" + campusId + "_" + cursusId;
-                            Notification.sendFCMNotification(context, layoutInflater, meal, String.valueOf(campusId), String.valueOf(cursusId), topicStudent, null);
-                            dialog.dismiss();
-                        } catch (IOException e) {
-                            Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
-                        }
-                    }).addOnFailureListener(e -> {
-                        String message = context.getString(R.string.msg_error_start_challenge) + ": " + e.getMessage();
-                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
-                    });
+                    meal.setType(meal.getType() + ": " + spinner.getSelectedItem().toString());
+                    try {
+                        String topicStudent = "meals_" + campusId + "_" + cursusId;
+                        Notification.sendFCMNotification(context, layoutInflater, meal, String.valueOf(campusId), String.valueOf(cursusId), topicStudent, null);
+                        dialog.dismiss();
+                    } catch (IOException e) {
+                        Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
+                    }
                 });
                 return true;
             });
@@ -275,7 +262,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         loading.isLoading = false;
     }
 
-    private void deleteMeal(FirebaseDatabase firebaseDatabase, Context context, Meal meal, LayoutInflater layoutInflater, int campusId, int cursusId) {
+    private void deleteMeal(FirebaseDatabase firebaseDatabase, Context context, @NonNull Meal meal, LayoutInflater layoutInflater, int campusId, int cursusId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.delete_meal);
         builder.setMessage(meal.getName());
