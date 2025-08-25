@@ -1,7 +1,6 @@
 package com.antonioteca.cc42.ui.setting;
 
 import static com.antonioteca.cc42.network.NetworkConstants.REQUEST_CODE_POST_NOTIFICATIONS;
-import static com.antonioteca.cc42.utility.Util.restartActivity;
 import static com.antonioteca.cc42.utility.Util.setAppLanguage;
 import static com.antonioteca.cc42.utility.Util.setRequestPermissionLauncherNotification;
 
