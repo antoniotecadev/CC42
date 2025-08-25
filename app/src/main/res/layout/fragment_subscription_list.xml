@@ -88,6 +88,33 @@
         android:textSize="34sp"
         android:textStyle="bold" />
 
+    <RadioGroup
+        android:id="@+id/radioGroupMealPortion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:layout_marginTop="35dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <RadioButton
+            android:id="@+id/radioButtonFirstPortion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/first_portion"
+            android:textColor="@color/white" />
+
+        <RadioButton
+            android:id="@+id/radioButtonSecondPortion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/second_portion"
+            android:textColor="@color/white" />
+
+    </RadioGroup>
+
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressindicator"
         android:layout_width="100dp"

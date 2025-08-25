@@ -139,6 +139,7 @@ public class SubscriptionListFragment extends Fragment {
                         DaoSusbscriptionFirebase.subscription(
                                 firebaseDatabase,
                                 null,
+                                getPortionSelected(),
                                 String.valueOf(meal.getId()),
                                 null,
                                 partsQrCode[0], /* id */
@@ -177,6 +178,7 @@ public class SubscriptionListFragment extends Fragment {
                     DaoSusbscriptionFirebase.subscription(
                             firebaseDatabase,
                             null,
+                            getPortionSelected(),
                             String.valueOf(meal.getId()),
                             null,
                             partsQrCode[0], /* id */
@@ -625,6 +627,11 @@ public class SubscriptionListFragment extends Fragment {
         }
     };
 
+    @Nullable
+    private String getPortionSelected() {
+        return binding.radioGroupMealPortion.getCheckedRadioButtonId() == R.id.radioButtonFirstPortion ? null : "-";
+    }
+
     private void setNumberUserChip() {
         int[] numberUser = subscriptionListAdapter.getNumberUser();
         this.numberUserSubscription = numberUser[0];
@@ -660,6 +667,7 @@ public class SubscriptionListFragment extends Fragment {
         decoratedBarcodeView.resume();
         inflatedViewStub.setVisibility(View.VISIBLE);
         binding.fabOpenReaderNFC.setVisibility(View.GONE);
+        binding.radioGroupMealPortion.setVisibility(View.VISIBLE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.VISIBLE);
@@ -682,10 +690,11 @@ public class SubscriptionListFragment extends Fragment {
             toggleToolbarVisibity();
         }
         inflatedViewStub.setVisibility(View.GONE);
-        binding.fabOpenReaderNFC.setVisibility(View.VISIBLE);
+        binding.radioGroupMealPortion.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.VISIBLE);
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.VISIBLE);
+        binding.fabOpenReaderNFC.setVisibility(nfcAdapter != null ? View.VISIBLE : View.GONE);
     }
 
     private void setupVisibility(@NonNull FragmentSubscriptionListBinding binding, int viewP,

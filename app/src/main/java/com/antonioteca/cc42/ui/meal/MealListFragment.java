@@ -287,7 +287,7 @@ public class MealListFragment extends Fragment {
                     } else
                         Snackbar.make(view, R.string.meals_not_found, Snackbar.LENGTH_LONG).show();
                     return true;
-                });
+                }).setVisible(false);
                 menu.findItem(R.id.action_view_qr_code_meals_scanner).setOnMenuItemClickListener(item -> {
                     if (!mealAdapter.listMealQrCode.isEmpty()) {
                         if (decoratedBarcodeView.isShown())
@@ -300,7 +300,7 @@ public class MealListFragment extends Fragment {
                     } else
                         Snackbar.make(view, R.string.meals_not_found, Snackbar.LENGTH_LONG).show();
                     return true;
-                });
+                }).setVisible(false);
                 menu.findItem(R.id.action_view_create_meal).setOnMenuItemClickListener(item -> {
                     MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal =
                             MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(true, cursu.getId());
@@ -388,6 +388,7 @@ public class MealListFragment extends Fragment {
                             DaoSusbscriptionFirebase.subscription(
                                     firebaseDatabase,
                                     mealAdapter.listMealQrCode,
+                                    null,
                                     null,
                                     null,
                                     partsQrCode[0], /* userId */

@@ -27,6 +27,7 @@ public class DaoSusbscriptionFirebase {
     public static void subscription(
             @NonNull FirebaseDatabase firebaseDatabase,
             List<MealQrCode> listMealQrCode,
+            String portionSelected,
             String mealId,
             String userStaffId,
             String userId,
@@ -48,8 +49,10 @@ public class DaoSusbscriptionFirebase {
                 .child("meals")
                 .child(mealId == null ? listMealQrCode.get(0).id() : mealId)
                 .child("subscriptions");
+
+        String uid = portionSelected == null ? userId : portionSelected + userId;
         // Verifica se o usuário já assinou
-        subscriptionsRef.child(String.valueOf(userId)).addListenerForSingleValueEvent(new ValueEventListener() {
+        subscriptionsRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -58,12 +61,14 @@ public class DaoSusbscriptionFirebase {
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", urlImageUser, runnableResumeCamera);
                 } else {
                     Map<String, Object> update = new HashMap<>();
-                    if (mealId == null)
-                        for (MealQrCode mealQrCode : listMealQrCode)
-                            update.put("cursus/" + cursusId + "/meals/" + mealQrCode.id() + "/subscriptions/" + userId, true);
-                    else
-                        update.put("cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/" + userId, true);
-
+                    update.put("cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/" + uid, true);
+//                    if (mealId == null)
+//                        for (MealQrCode mealQrCode : listMealQrCode)
+//                            update.put("cursus/" + cursusId + "/meals/" + mealQrCode.id() + "/subscriptions/" + userId, true);
+//                    else {
+//                        String uid = portionSelected == null ? userId : portionSelected + userId;
+//                        update.put("cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/" + uid, true);
+//                    }
                     DatabaseReference campusReference = firebaseDatabase.getReference("campus")
                             .child(campusId);
 
@@ -71,8 +76,9 @@ public class DaoSusbscriptionFirebase {
                             .addOnSuccessListener(aVoid -> {
                                 if (userStaffId != null)
                                     Util.sendInfoTmpUserEventMeal(userStaffId, firebaseDatabase, campusId, cursusId, displayName, urlImageUser);
-                                sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
                                 progressBarSubscription.setVisibility(View.GONE);
+                                if (portionSelected == null)
+                                    sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
                                 String message = displayName + "\n" + context.getString(R.string.msg_sucess_subscription);
                                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", urlImageUser, runnableResumeCamera);
                             })
