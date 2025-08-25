@@ -148,7 +148,6 @@
     <string-array name="meals_way">
         <item>Primeira via</item>
         <item>Segunda via</item>
-        <item>Terceira via</item>
     </string-array>
     <string name="language">Idioma</string>
     <string name="select_language_app">Escolha o idioma da aplicação</string>

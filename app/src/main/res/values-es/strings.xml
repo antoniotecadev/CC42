@@ -139,9 +139,8 @@
         <item>Degustación</item>
     </string-array>
     <string-array name="meals_way">
-        <item>Primera emisión</item>
-        <item>Segunda emisión</item>
-        <item>Tercera emisión</item>
+        <item>Primera porción</item>
+        <item>Segunda porción</item>
     </string-array>
     <string name="language">Idioma</string>
     <string name="select_language_app">Elegir el idioma de la aplicación</string>
