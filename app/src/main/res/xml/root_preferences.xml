@@ -10,7 +10,7 @@
         app:title="@string/notificatio_title" />
 
     <ListPreference
-        android:defaultValue="en"
+        android:defaultValue="pt-rAO"
         android:entries="@array/language_entries"
         android:entryValues="@array/language_values"
         android:key="language_key"

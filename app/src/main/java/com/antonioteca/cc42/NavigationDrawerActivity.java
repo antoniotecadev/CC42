@@ -145,7 +145,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         // Carregar o idioma salvo antes de chamar super.onCreate()
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String language = preferences.getString("language_preference", null);
-        setAppLanguage(language == null ? "en" : language, getResources(), this, false);
+        setAppLanguage(language == null ? "pt-rAO" : language, getResources(), this, false);
         super.onCreate(savedInstanceState);
         ActivityNavigationDrawerBinding binding = ActivityNavigationDrawerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
