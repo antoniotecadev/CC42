@@ -139,9 +139,11 @@
         <item>Dégustation</item>
     </string-array>
     <string-array name="meals_way">
-        <item>Première portion</item>
-        <item>Deuxième portion</item>
+        <item>@string/first_portion</item>
+        <item>@string/second_portion</item>
     </string-array>
+    <string name="first_portion">Première portion</string>
+    <string name="second_portion">Deuxième portion</string>
     <string name="language">langue</string>
     <string name="select_language_app">Choisir la langue de l\'application</string>
     <string name="description_app">Check Cadet est une application qui permet aux étudiants de l\'École 42 de marquer leur présence aux événements et de signer les listes de repas numériquement en utilisant un code QR.</string>
