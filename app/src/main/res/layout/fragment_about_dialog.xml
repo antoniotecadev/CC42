@@ -19,6 +19,7 @@
             android:justificationMode="inter_word"
             android:text="@string/description_app"
             android:textSize="14sp"
+            android:maxLines="6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -45,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="António Teca"
+            android:text="@string/name_creator"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +61,7 @@
             android:layout_marginTop="8dp"
             android:clickable="true"
             android:focusable="true"
-            android:text="ateca"
+            android:text="@string/name_user_intra_creator"
             android:textColor="@android:color/holo_blue_dark"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -75,7 +76,7 @@
             android:layout_marginTop="8dp"
             android:clickable="true"
             android:focusable="true"
-            android:text="github.com/antoniotecadev"
+            android:text="@string/github_creator"
             android:textColor="@android:color/holo_blue_dark"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -90,11 +91,75 @@
             android:layout_marginTop="8dp"
             android:clickable="true"
             android:focusable="true"
-            android:text="antonioteca@hotmail.com"
+            android:text="@string/email_creator"
             android:textColor="@android:color/holo_blue_dark"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/githubLink" />
+
+        <ImageView
+            android:id="@+id/coCreatorPhoto"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/pedro_about"
+            app:layout_constraintEnd_toEndOf="@+id/emailLink"
+            app:layout_constraintStart_toStartOf="@+id/emailLink"
+            app:layout_constraintTop_toBottomOf="@+id/emailLink" />
+
+        <TextView
+            android:id="@+id/coCreatorName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/name_co_creator"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/coCreatorPhoto" />
+
+        <TextView
+            android:id="@+id/coProfileIntraLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/name_user_intra_co_creator"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/coCreatorName" />
+
+        <TextView
+            android:id="@+id/coGithubLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/github_co_creator"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/coProfileIntraLink" />
+
+        <TextView
+            android:id="@+id/coEmailLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/email_co_creator"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/coGithubLink" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

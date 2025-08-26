@@ -306,4 +306,5 @@
     <string name="list_export_sucess">Liste exportée avec succès !</string>
     <string name="err_export_list">Erreur lors de l\'exportation de la liste :</string>
     <string name="list_export_success">Liste exportée avec succès !</string>
+    <string name="send_email">Envoyer un e-mail</string>
 </resources>

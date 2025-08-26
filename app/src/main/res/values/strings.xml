@@ -319,4 +319,13 @@
     <string name="list_export_sucess">Lista exportada com sucessso !\n</string>
     <string name="err_export_list">"Erro ao exportar a lista: "</string>
     <string name="list_export_success">Lista exportada com sucesso !\n</string>
+    <string name="name_creator" translatable="false">António Teca</string>
+    <string name="name_user_intra_creator" translatable="false">ateca</string>
+    <string name="github_creator" translatable="false">github.com/antoniotecadev</string>
+    <string name="email_creator" translatable="false">antonioteca@hotmail.com</string>
+    <string name="name_co_creator" translatable="false">António Pedro</string>
+    <string name="name_user_intra_co_creator" translatable="false">ansebast</string>
+    <string name="github_co_creator" translatable="false">github.com/AntonioSebastiaoPedro</string>
+    <string name="email_co_creator" translatable="false">antoniosebastiaopedro19@gmail.com</string>
+    <string name="send_email">Enviar e-mail</string>
 </resources>

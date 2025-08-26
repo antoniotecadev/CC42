@@ -26,19 +26,35 @@ public class AboutDialogFragment extends DialogFragment {
         // dialog.setCanceledOnTouchOutside(false);
 
         binding.profileIntraLink.setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://profile.intra.42.fr/users/ateca"));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://profile.intra.42.fr/users/" + getString(R.string.name_user_intra_creator)));
             startActivity(browserIntent);
         });
 
         binding.githubLink.setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/antoniotecadev"));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + getString(R.string.github_creator)));
             startActivity(browserIntent);
         });
 
         binding.emailLink.setOnClickListener(v -> {
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                    "mailto", "antonioteca@hotmail.com", null));
-            startActivity(Intent.createChooser(emailIntent, "Enviar e-mail"));
+                    "mailto", getString(R.string.email_creator), null));
+            startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)));
+        });
+
+        binding.coProfileIntraLink.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://profile.intra.42.fr/users/" + getString(R.string.name_user_intra_co_creator)));
+            startActivity(browserIntent);
+        });
+
+        binding.coGithubLink.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://" + getString(R.string.github_co_creator)));
+            startActivity(browserIntent);
+        });
+
+        binding.coEmailLink.setOnClickListener(v -> {
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                    "mailto", getString(R.string.email_co_creator), null));
+            startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)));
         });
         return dialog;
     }
