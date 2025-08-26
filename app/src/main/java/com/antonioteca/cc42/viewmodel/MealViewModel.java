@@ -51,7 +51,6 @@ import java.util.stream.Collectors;
 
 public class MealViewModel extends ViewModel {
 
-    public boolean isView = false;
     public List<Meal> mealList = new ArrayList<>();
     private DatabaseReference mealRef;
     private ValueEventListener valueEventListener;
@@ -356,7 +355,7 @@ public class MealViewModel extends ViewModel {
                                          int mealsQuantity
     ) {
 
-        String mealName = binding.nameEditText.getText().toString();
+        String mealName = Objects.requireNonNullElse(binding.nameEditText.getText(), "").toString();
         String mealDescription = binding.descriptionEditText.getText().toString();
 
         DatabaseReference mealsRef = firebaseDatabase.getReference("campus")
@@ -411,7 +410,7 @@ public class MealViewModel extends ViewModel {
                                    int mealsQuantity
     ) {
 
-        String mealName = binding.nameEditText.getText().toString();
+        String mealName = Objects.requireNonNullElse(binding.nameEditText.getText(), "").toString();
         String mealDescription = binding.descriptionEditText.getText().toString();
         String type = MealsUtils.getMealType(context);
 
