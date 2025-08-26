@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +37,7 @@ import androidx.preference.PreferenceManager;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ImageQrCodeBinding;
+import com.antonioteca.cc42.databinding.ModalLayoutEventMessageBinding;
 import com.antonioteca.cc42.model.MealQrCode;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -69,8 +69,12 @@ public class Util {
         if (runnableTryAgain == null)
             builder.setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss());
         else {
-            builder.setNeutralButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss())
-                    .setPositiveButton(R.string.list_reload, (dialogInterface, i) -> runnableTryAgain.run());
+            if (message == null)
+                builder.setNeutralButton(R.string.no, (dialogInterface, i) -> dialogInterface.dismiss())
+                        .setPositiveButton(R.string.yes, (dialogInterface, i) -> runnableTryAgain.run());
+            else
+                builder.setNeutralButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss())
+                        .setPositiveButton(R.string.list_reload, (dialogInterface, i) -> runnableTryAgain.run());
         }
         builder.show();
     }
@@ -243,15 +247,13 @@ public class Util {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(customView)
                 .setCancelable(false);  // Impede que o modal seja fechado clicando fora
-        TextView modalMessage = customView.findViewById(R.id.modalMessage);
-        TextView modalTitle = customView.findViewById(R.id.modalTitle);
-        Button closeModalButton = customView.findViewById(R.id.closeModalButton);
+
         if (urlImageUser != null) {
             Util.setWidthHeightImageView(context, 200, 200, customView.findViewById(R.id.successIcon));
             ImageView successIcon = customView.findViewById(R.id.successIcon);
             setImageUserRegistered(context, urlImageUser, successIcon);
         }
-        int color = Color.parseColor(colorString);
+        int color = Color.parseColor(colorString == null ? "#FDD835" : colorString);
         ColorStateList colorStateList = ColorStateList.valueOf(color);
         binding.modalTitle.setText(title);
         binding.modalMessage.setText(message);
@@ -266,6 +268,10 @@ public class Util {
                 runnableResumeCamera.run();
                 dialog.dismiss();
             });
+            if (colorString == null) {
+                binding.closeModalButton.setText(context.getString(R.string.second_portion));
+                binding.closeModalButton.setBackgroundColor(Color.parseColor("#4CAF50"));
+            }
             if (Objects.equals(title, context.getString(R.string.sucess))) {
                 // Crie um CountDownTimer com duração total de 5 segundos (5000 milissegundos)
                 // e um intervalo de 1 segundo (1000 milissegundos) para ticks.

@@ -106,7 +106,7 @@
     <string name="msg_list_whithout_subscription">Liste sans abonnements</string>
     <string name="msg_subscription_list_empty">Liste d\'abonnements vide</string>
     <string name="msg_checking_subscription">Vérification des abonnements…</string>
-    <string name="msg_you_already_subscription">Vous êtes déjà abonné 😉 !</string>
+    <string name="msg_you_already_subscription">Vous êtes déjà abonné 😉</string>
     <string name="msg_sucess_subscription">Abonnement réussi 😊 !</string>
     <string name="msg_error_subscription">Une erreur s\'est produite lors de l\'abonnement 😯</string>
     <string name="msg_error_check_subscription">Erreur lors de la vérification de l\'abonnement 😪</string>

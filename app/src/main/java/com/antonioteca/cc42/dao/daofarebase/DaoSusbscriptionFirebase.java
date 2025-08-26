@@ -56,9 +56,16 @@ public class DaoSusbscriptionFirebase {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    boolean firstPortion = portionSelected == null;
                     progressBarSubscription.setVisibility(View.GONE);
-                    String message = displayName + "\n" + context.getString(R.string.msg_you_already_subscription);
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", urlImageUser, runnableResumeCamera);
+                    String message = displayName + "\n" + context.getString(R.string.msg_you_already_subscription) + " " + (firstPortion ? context.getString(R.string.first_portion) : context.getString(R.string.second_portion));
+                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, firstPortion ? null : "#FDD835", urlImageUser, firstPortion ? () -> {
+                        runnableResumeCamera.run();
+                        Util.showAlertDialogBuild(context.getString(R.string.second_portion), null, context, () -> {
+                            progressBarSubscription.setVisibility(View.VISIBLE);
+                            DaoSusbscriptionFirebase.subscription(firebaseDatabase, listMealQrCode, "-", mealId, userStaffId, userId, userLogin, displayName, cursusId, campusId, urlImageUser, context, layoutInflater, progressBarSubscription, sharedViewModel, runnableResumeCamera);
+                        });
+                    } : runnableResumeCamera);
                 } else {
                     Map<String, Object> update = new HashMap<>();
                     update.put("cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/" + uid, true);
