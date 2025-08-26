@@ -238,6 +238,7 @@ public class Util {
                                               String colorString,
                                               String urlImageUser, Runnable runnableResumeCamera) {
         View customView = layoutInflater.inflate(R.layout.modal_layout_event_message, null);
+        ModalLayoutEventMessageBinding binding = ModalLayoutEventMessageBinding.bind(customView);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(customView)
@@ -252,16 +253,16 @@ public class Util {
         }
         int color = Color.parseColor(colorString);
         ColorStateList colorStateList = ColorStateList.valueOf(color);
-        modalTitle.setText(title);
-        modalMessage.setText(message);
-        modalTitle.setTextColor(color);
-        closeModalButton.setBackgroundTintList(colorStateList);
+        binding.modalTitle.setText(title);
+        binding.modalMessage.setText(message);
+        binding.modalTitle.setTextColor(color);
+        binding.closeModalButton.setBackgroundTintList(colorStateList);
         AlertDialog dialog = builder.create();
         dialog.show();
         if (runnableResumeCamera == null) {
-            closeModalButton.setOnClickListener(v -> dialog.dismiss());
+            binding.closeModalButton.setOnClickListener(v -> dialog.dismiss());
         } else {
-            closeModalButton.setOnClickListener(v -> {
+            binding.closeModalButton.setOnClickListener(v -> {
                 runnableResumeCamera.run();
                 dialog.dismiss();
             });
@@ -275,7 +276,7 @@ public class Util {
                         // Este método é chamado a cada intervalo (tick).
                         // Atualize o TextView com o tempo restante.
                         String message = context.getString(R.string.sucess) + "\n" + millisUntilFinished / 1000;
-                        modalTitle.setText(message);
+                        binding.modalTitle.setText(message);
                     }
 
                     @Override
@@ -283,7 +284,7 @@ public class Util {
                         // Este método é chamado quando o contador termina.
                         // Atualize o TextView para 0 ou qualquer mensagem final.
                         String message = context.getString(R.string.sucess) + "\n" + "0";
-                        modalTitle.setText(message);
+                        binding.modalTitle.setText(message);
                         runnableResumeCamera.run();
                         dialog.dismiss();
                     }
