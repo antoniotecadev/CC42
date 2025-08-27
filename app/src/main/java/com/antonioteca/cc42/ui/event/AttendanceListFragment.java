@@ -544,21 +544,23 @@ public class AttendanceListFragment extends Fragment {
                 menuInflater.inflate(R.menu.menu_attendance_list, menu);
                 MenuItem menuItem = menu.findItem(R.id.action_search);
                 SearchView searchView = (SearchView) menuItem.getActionView();
-                searchView.setQueryHint(context.getString(R.string.name_login));
-                searchView.onActionViewExpanded();
-                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String query) {
-                        attendanceListAdapter.filterSearch(query);
-                        return false;
-                    }
+                if (searchView != null) {
+                    searchView.setQueryHint(context.getString(R.string.name_login));
+                    searchView.onActionViewExpanded();
+                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                        @Override
+                        public boolean onQueryTextSubmit(String query) {
+                            attendanceListAdapter.filterSearch(query);
+                            return false;
+                        }
 
-                    @Override
-                    public boolean onQueryTextChange(String newText) {
-                        attendanceListAdapter.filterSearch(newText);
-                        return false;
-                    }
-                });
+                        @Override
+                        public boolean onQueryTextChange(String newText) {
+                            attendanceListAdapter.filterSearch(newText);
+                            return false;
+                        }
+                    });
+                }
 
                 MenuItem menuItemPresents = menu.findItem(R.id.action_one_list);
                 menuItemPresents.setTitle(context.getString(R.string.text_present));
