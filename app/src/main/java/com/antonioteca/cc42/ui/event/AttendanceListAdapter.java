@@ -81,17 +81,20 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         notifyItemRangeRemoved(0, getItemCount());
     }
 
-    public void filterSearch(String text) {
+    private List<User> filteredList = new ArrayList<>();
+
+    public void filterSearch(@NonNull String text) {
         this.userList.clear();
         if (text.isEmpty())
             this.userList.addAll(userListFilter);
         else if (!userListFilter.isEmpty()) {
             text = text.toLowerCase();
+            filteredList.clear();
             for (User user : userListFilter) {
-                if (user.login.toLowerCase().contains(text) || user.displayName.toLowerCase().contains(text)) {
-                    userList.add(user);
-                }
+                if (user.login.toLowerCase().startsWith(text) || user.displayName.toLowerCase().startsWith(text))
+                    filteredList.add(user);
             }
+            this.userList.addAll(filteredList);
         }
         notifyDataSetChanged();
     }

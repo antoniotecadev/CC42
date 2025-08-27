@@ -101,6 +101,7 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
             for (User user : userListFilter) {
                 if (user.login.toLowerCase().contains(text) || user.displayName.toLowerCase().contains(text)) {
                     userList.add(user);
+                    break;
                 }
             }
         }
