@@ -37,7 +37,6 @@ import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -53,7 +52,6 @@ public class DetailsMealFragment extends Fragment {
     private HashMap<?, ?> ratingValuesUsers;
     private FirebaseDatabase firebaseDatabase;
     private FragmentDetailsMealBinding binding;
-    private ValueEventListener valueEventListener;
     RoundedCorners roundedCorners = new RoundedCorners(5);
     RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_60);
 
@@ -151,6 +149,7 @@ public class DetailsMealFragment extends Fragment {
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
             binding.progressBarMeal.setIndeterminateTintList(colorStateList);
+            binding.buttonSendComment.setBackgroundTintList(colorStateList);
         }
 
         binding.textViewType.setText(meal.getType());
@@ -167,6 +166,25 @@ public class DetailsMealFragment extends Fragment {
         binding.starRating.star3.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 3, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));
         binding.starRating.star4.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 4, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));
         binding.starRating.star5.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 5, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));
+
+        // Configura a visibilidade do comentário
+        if (!isSubscribed) {
+            binding.commentInputLayout.setVisibility(View.GONE);
+            binding.buttonSendComment.setVisibility(View.GONE);
+        }
+
+        // Obter comentário
+        mealViewModel.getCommentLiveData(context, firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), mealId, String.valueOf(userId))
+                .observe(getViewLifecycleOwner(), comment -> {
+                    if (comment != null && !comment.isEmpty()) {
+                        binding.textViewComment.setText(comment);
+                        binding.textViewComment.setVisibility(View.VISIBLE);
+                        binding.commentInputLayout.setVisibility(View.GONE);
+                        binding.buttonSendComment.setVisibility(View.GONE);
+                    }
+                });
+
+        binding.buttonSendComment.setOnClickListener(v -> mealViewModel.sendComment(context, firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), mealId, String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, binding.progressBarMeal));
 
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {

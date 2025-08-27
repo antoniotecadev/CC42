@@ -328,4 +328,10 @@
     <string name="github_co_creator" translatable="false">github.com/AntonioSebastiaoPedro</string>
     <string name="email_co_creator" translatable="false">antoniosebastiaopedro19@gmail.com</string>
     <string name="send_email">Enviar e-mail</string>
+    <string name="comment">Comentário</string>
+    <string name="cmtr">comentar</string>
+    <string name="comment_sent_successfully">Comentário enviado com sucesso.</string>
+    <string name="error_send_comment">Erro ao comentar.</string>
+    <string name="comment_required">Digite o seu comentário</string>
+    <string name="error_get_comment">Erro ao obter comentário.</string>
 </resources>

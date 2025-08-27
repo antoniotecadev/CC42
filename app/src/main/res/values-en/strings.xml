@@ -307,4 +307,10 @@
     <string name="err_export_list">rror exporting list:</string>
     <string name="list_export_success">List exported successfully!</string>
     <string name="send_email">Send email</string>
+    <string name="comment">Comment</string>
+    <string name="cmtr">comment</string>
+    <string name="comment_sent_successfully">Comment sent successfully.</string>
+    <string name="error_send_comment">Error sending comment.</string>
+    <string name="comment_required">Enter your comment</string>
+    <string name="error_get_comment">Error getting comment.</string>
 </resources>

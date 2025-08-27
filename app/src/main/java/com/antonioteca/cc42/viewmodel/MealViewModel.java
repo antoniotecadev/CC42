@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.cloudinary.utils.ObjectUtils;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,12 +57,21 @@ public class MealViewModel extends ViewModel {
     private DatabaseReference mealRef;
     private ValueEventListener valueEventListener;
     private MutableLiveData<Boolean> isSubscribed;
+    private MutableLiveData<String> commentMutableLiveData;
     private MutableLiveData<Meal> createdMealMutableLiveData;
     private MutableLiveData<Meal> updatedMealMutableLiveData;
     private MutableLiveData<EventObserver<Meal>> deleteMealMutableLiveData;
     private MutableLiveData<List<Meal>> mealListMutableLiveData;
     private MutableLiveData<List<String>> pathImageMutableLiveData;
     private MutableLiveData<List<Object>> ratingValuesMutableLiveData;
+
+    public LiveData<String> getCommentLiveData(Context context, @NonNull FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId, String userId) {
+        if (commentMutableLiveData == null) {
+            commentMutableLiveData = new MutableLiveData<>();
+            getComment(context, firebaseDatabase, campusId, cursusId, mealId, userId);
+        }
+        return commentMutableLiveData;
+    }
 
     public LiveData<Meal> getCreatedMealLiveData() {
         if (createdMealMutableLiveData == null)
@@ -89,8 +100,8 @@ public class MealViewModel extends ViewModel {
     public LiveData<List<Object>> getRatingValuesLiveData(Context context, FirebaseDatabase firebaseDatabase, ProgressBar progressBar, String campusId, String cursusId, String type, String typeId) {
         if (ratingValuesMutableLiveData == null) {
             progressBar.setVisibility(View.VISIBLE);
-            getRateMeal(context, firebaseDatabase, progressBar, campusId, cursusId, type, typeId);
             ratingValuesMutableLiveData = new MutableLiveData<>();
+            getRateMeal(context, firebaseDatabase, progressBar, campusId, cursusId, type, typeId);
         }
         return ratingValuesMutableLiveData;
     }
@@ -652,6 +663,73 @@ public class MealViewModel extends ViewModel {
             public void onCancelled(@NonNull DatabaseError error) {
                 String message = context.getString(R.string.msg_error_check_attendance_event) + ": " + error.toException();
                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
+            }
+        });
+    }
+
+    public void sendComment(Context context, @NonNull FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId, String userId, Button buttonSendComment, @NonNull TextInputLayout commentInputLayout, ProgressBar progressBarMeal) {
+        String comment = Objects.requireNonNull(commentInputLayout.getEditText()).getText().toString().trim();
+        if (comment.isEmpty()) {
+            commentInputLayout.setFocusable(true);
+            commentInputLayout.setErrorEnabled(true);
+            commentInputLayout.setError(context.getString(R.string.comment_required));
+            return;
+        } else {
+            commentInputLayout.setErrorEnabled(false);
+            commentInputLayout.setFocusable(false);
+            commentInputLayout.setError(null);
+        }
+
+        buttonSendComment.setEnabled(false);
+        progressBarMeal.setVisibility(View.VISIBLE);
+        // Enviar comentário para a refeição
+        DatabaseReference commentsRef = firebaseDatabase.getReference("campus")
+                .child(campusId)
+                .child("cursus")
+                .child(cursusId)
+                .child("meals")
+                .child(mealId)
+                .child("comments");
+
+        commentsRef.child(userId).setValue(comment).addOnSuccessListener(aVoid -> {
+            buttonSendComment.setEnabled(true);
+            commentMutableLiveData.setValue(comment);
+            progressBarMeal.setVisibility(View.GONE);
+            String message = context.getString(R.string.comment_sent_successfully);
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        }).addOnFailureListener(e -> {
+            buttonSendComment.setEnabled(true);
+            progressBarMeal.setVisibility(View.GONE);
+            String message = context.getString(R.string.error_send_comment) + ": " + e.getMessage();
+            Util.showAlertDialogBuild(context.getString(R.string.err), message, context, null);
+        });
+    }
+
+    private void getComment(Context context, @NonNull FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId, String userId) {
+
+        // Referência para a refeição específica
+        DatabaseReference commentsRef = firebaseDatabase.getReference("campus")
+                .child(campusId)
+                .child("cursus")
+                .child(cursusId)
+                .child("meals")
+                .child(mealId)
+                .child("comments");
+
+        commentsRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String comment = snapshot.getValue(String.class);
+                    if (comment != null)
+                        commentMutableLiveData.setValue(comment);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                String message = context.getString(R.string.error_get_comment) + ": " + error.toException();
+                Util.showAlertDialogBuild(context.getString(R.string.err), message, context, null);
             }
         });
     }
