@@ -148,9 +148,9 @@ public class SharedViewModel extends ViewModel {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     String comment = snapshot.getValue(String.class);
-                    if (comment != null)
-                        commentMutableLiveData.setValue(comment);
-                }
+                    commentMutableLiveData.setValue(Objects.requireNonNullElse(comment, ""));
+                } else
+                    commentMutableLiveData.setValue(null);
             }
 
             @Override

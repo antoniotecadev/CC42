@@ -186,7 +186,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:hint="@string/comment"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:counterEnabled="true"
                     app:counterMaxLength="42">
 
@@ -204,7 +204,8 @@
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/light_blue_900"
                     android:text="@string/cmtr"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/textViewComment"

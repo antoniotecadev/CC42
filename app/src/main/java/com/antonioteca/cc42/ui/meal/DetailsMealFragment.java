@@ -170,12 +170,6 @@ public class DetailsMealFragment extends Fragment {
         binding.starRating.star4.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 4, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));
         binding.starRating.star5.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 5, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));
 
-        // Configura a visibilidade do comentário
-        if (!isSubscribed) {
-            binding.commentInputLayout.setVisibility(View.GONE);
-            binding.buttonSendComment.setVisibility(View.GONE);
-        }
-
         // Obter comentário
         sharedViewModel.getCommentLiveData(context, firebaseDatabase, "meals", mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId))
                 .observe(getViewLifecycleOwner(), comment -> {
@@ -184,6 +178,9 @@ public class DetailsMealFragment extends Fragment {
                         binding.textViewComment.setVisibility(View.VISIBLE);
                         binding.commentInputLayout.setVisibility(View.GONE);
                         binding.buttonSendComment.setVisibility(View.GONE);
+                    } else if (comment == null && isSubscribed) {
+                        binding.commentInputLayout.setVisibility(View.VISIBLE);
+                        binding.buttonSendComment.setVisibility(View.VISIBLE);
                     }
                 });
 
