@@ -50,7 +50,6 @@ public class DetailsEventFragment extends Fragment {
     private int rating = 0;
     private Context context;
     private Loading loading;
-    private boolean userIspresent;
     private MealViewModel mealViewModel;
     private EventViewModel eventViewModel;
     private SharedViewModel sharedViewModel;
@@ -98,17 +97,6 @@ public class DetailsEventFragment extends Fragment {
         int campusId = user.getCampusId();
         int cursusId = event.getCursus_ids().get(0);
 
-        eventViewModel.getUserIsPresent(context, getLayoutInflater(), firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), eventId, String.valueOf(userId))
-                .observe(getViewLifecycleOwner(), userIspresent -> {
-                    if (userIspresent) {
-                        this.userIspresent = true;
-                        binding.starRating.getRoot().setVisibility(View.VISIBLE);
-                    } else {
-                        binding.textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
-                        binding.textViewTapToRate.setText(R.string.text_absent);
-                    }
-                });
-
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             if (actionBar != null)
@@ -148,32 +136,55 @@ public class DetailsEventFragment extends Fragment {
             binding.starRating.getRoot().setVisibility(View.GONE);
         }
 
-        mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, binding.progressBarEvent, String.valueOf(user.getCampusId()), String.valueOf(cursusId), type, eventId)
-                .observe(getViewLifecycleOwner(),
-                        ratingValues -> {
-                            if (!ratingValues.isEmpty())
-                                StarUtils.getRate(
-                                        context,
-                                        userId,
-                                        false,
-                                        ratingValues,
-                                        binding.starRatingDone,
-                                        binding.starRating,
-                                        binding.textViewTapToRate,
-                                        binding.numberOfRatings,
-                                        binding.averageRating,
-                                        binding.recyclerViewRating,
-                                        loading,
-                                        campusId,
-                                        cursusId,
-                                        type,
-                                        eventId,
-                                        rating,
-                                        firebaseDatabase,
-                                        binding.progressBarEvent,
-                                        mealViewModel);
-                            binding.progressBarEvent.setVisibility(View.INVISIBLE);
-                        });
+        eventViewModel.getUserIsPresent(context, getLayoutInflater(), firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), eventId, String.valueOf(userId))
+                .observe(getViewLifecycleOwner(), userIspresent -> {
+                    if (userIspresent) {
+                        binding.starRating.getRoot().setVisibility(View.VISIBLE);
+                        mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, binding.progressBarEvent, String.valueOf(user.getCampusId()), String.valueOf(cursusId), type, eventId)
+                                .observe(getViewLifecycleOwner(),
+                                        ratingValues -> {
+                                            if (!ratingValues.isEmpty())
+                                                StarUtils.getRate(
+                                                        context,
+                                                        userId,
+                                                        true,
+                                                        ratingValues,
+                                                        binding.starRatingDone,
+                                                        binding.starRating,
+                                                        binding.textViewTapToRate,
+                                                        binding.numberOfRatings,
+                                                        binding.averageRating,
+                                                        binding.recyclerViewRating,
+                                                        loading,
+                                                        campusId,
+                                                        cursusId,
+                                                        type,
+                                                        eventId,
+                                                        rating,
+                                                        firebaseDatabase,
+                                                        binding.progressBarEvent,
+                                                        mealViewModel);
+                                            binding.progressBarEvent.setVisibility(View.INVISIBLE);
+                                        });
+
+                        // Obter comentário
+                        sharedViewModel.getCommentLiveData(context, firebaseDatabase, type, eventId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId))
+                                .observe(getViewLifecycleOwner(), comment -> {
+                                    if (comment != null && !comment.isEmpty()) {
+                                        binding.textViewComment.setText(comment);
+                                        binding.textViewComment.setVisibility(View.VISIBLE);
+                                        binding.commentInputLayout.setVisibility(View.GONE);
+                                        binding.buttonSendComment.setVisibility(View.GONE);
+                                    } else if (comment == null) {
+                                        binding.commentInputLayout.setVisibility(View.VISIBLE);
+                                        binding.buttonSendComment.setVisibility(View.VISIBLE);
+                                    }
+                                });
+                    } else {
+                        binding.textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
+                        binding.textViewTapToRate.setText(R.string.text_absent);
+                    }
+                });
 
         // Configura os cliques das estrelas
         binding.starRating.star1.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 1, null, true, context, loading, userId, campusId, cursusId, type, eventId, rating, firebaseDatabase, binding.progressBarEvent, mealViewModel));
@@ -181,20 +192,6 @@ public class DetailsEventFragment extends Fragment {
         binding.starRating.star3.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 3, null, true, context, loading, userId, campusId, cursusId, type, eventId, rating, firebaseDatabase, binding.progressBarEvent, mealViewModel));
         binding.starRating.star4.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 4, null, true, context, loading, userId, campusId, cursusId, type, eventId, rating, firebaseDatabase, binding.progressBarEvent, mealViewModel));
         binding.starRating.star5.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 5, null, true, context, loading, userId, campusId, cursusId, type, eventId, rating, firebaseDatabase, binding.progressBarEvent, mealViewModel));
-
-        // Obter comentário
-        sharedViewModel.getCommentLiveData(context, firebaseDatabase, type, eventId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId))
-                .observe(getViewLifecycleOwner(), comment -> {
-                    if (comment != null && !comment.isEmpty()) {
-                        binding.textViewComment.setText(comment);
-                        binding.textViewComment.setVisibility(View.VISIBLE);
-                        binding.commentInputLayout.setVisibility(View.GONE);
-                        binding.buttonSendComment.setVisibility(View.GONE);
-                    } else if (comment == null && userIspresent) {
-                        binding.commentInputLayout.setVisibility(View.VISIBLE);
-                        binding.buttonSendComment.setVisibility(View.VISIBLE);
-                    }
-                });
 
         binding.buttonSendComment.setOnClickListener(v -> sharedViewModel.sendComment(context, firebaseDatabase, type, eventId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, binding.progressBarEvent));
 
