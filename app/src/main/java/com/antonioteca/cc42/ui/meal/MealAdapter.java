@@ -107,7 +107,8 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             int greenColor = ContextCompat.getColor(context, R.color.green);
             holder.binding.txtViewSubscription.setTextColor(greenColor);
             holder.binding.txtViewSubscription.setText(R.string.text_signed);
-        }
+        } else
+            holder.binding.txtViewSubscription.setText("");
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), holder.binding.imageViewMeal, roundedCorners, requestOptions);
         holder.binding.constraintLayoutMeal.setOnClickListener(v -> {
             MealListFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment = MealListFragmentDirections.actionNavMealToDetailsMealFragment(meal, cursusId);
