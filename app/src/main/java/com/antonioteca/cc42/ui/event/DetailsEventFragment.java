@@ -129,11 +129,8 @@ public class DetailsEventFragment extends Fragment {
         setMarkdownText(binding.textViewDescription, event.getDescription());
 
         if (System.currentTimeMillis() < Objects.requireNonNullElse(eventDateEnd, new Date()).getTime()) {
-            binding.starRatingDone.getRoot().setVisibility(View.GONE);
-            binding.starRatingDoneContainer.setVisibility(View.GONE);
-            binding.numberOfRatings.setVisibility(View.GONE);
-            binding.textViewTapToRate.setVisibility(View.GONE);
-            binding.starRating.getRoot().setVisibility(View.GONE);
+            binding.cardStarRating.setVisibility(View.GONE);
+            binding.cardStarRatingDone.setVisibility(View.GONE);
         }
 
         eventViewModel.getUserIsPresent(context, getLayoutInflater(), firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), eventId, String.valueOf(userId))
