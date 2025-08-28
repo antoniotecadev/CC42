@@ -84,8 +84,6 @@ public class DetailsEventFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-        int color;
         StarUtils.loadStarZero(context, binding.recyclerViewRating);
         StarUtils.setColorCoalitionStar(binding.starRating, user);
         StarUtils.reduceStarSize(context, binding.starRatingDone, 30, 30);
@@ -120,13 +118,6 @@ public class DetailsEventFragment extends Fragment {
             binding.progressBarEvent.setIndeterminateTintList(colorStateList);
         }
 
-        if (event.getKind().equalsIgnoreCase("event"))
-            color = Color.parseColor("#FF039BE5"); // light_blue_600
-        else if (event.getKind().equalsIgnoreCase("hackathon"))
-            color = Color.parseColor("#FF43A047");
-        else
-            color = Color.parseColor("#FFFFB300"); // orange
-        //binding.linearLayoutCompatEventDetails.setBackgroundColor(color);
         Date eventDateBegin = parseDate(event.getBegin_at());
         Date eventDateEnd = parseDate(event.getEnd_at());
         String day = getFormattedDate(eventDateBegin, "d");
@@ -136,11 +127,13 @@ public class DetailsEventFragment extends Fragment {
         String daysUntil = getDaysUntil(eventDateBegin);
         binding.textViewKind.setText(event.getKind());
         binding.textViewName.setText(event.getName());
-        binding.textViewDate.setText(month + " " + day + ", " + year + " at " + time);
+        String textDate = month + " " + day + ", " + year + " at " + time;
+        binding.textViewDate.setText(textDate);
         binding.textViewDuraction.setText(getEventDuration(eventDateBegin, eventDateEnd));
         binding.textViewDays.setText(daysUntil);
         binding.textViewLocation.setText(event.getLocation());
-        binding.textViewPeople.setText(event.getNbr_subscribers() + " / " + event.getMax_people());
+        String textPeople = event.getNbr_subscribers() + " / " + event.getMax_people();
+        binding.textViewPeople.setText(textPeople);
         setMarkdownText(binding.textViewDescription, event.getDescription());
 
         if (System.currentTimeMillis() < Objects.requireNonNullElse(eventDateEnd, new Date()).getTime()) {
@@ -210,15 +203,6 @@ public class DetailsEventFragment extends Fragment {
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_navigation_drawer);
-                if (menuItem.getItemId() == R.id.action_register_face_id_camera_front) {
-                    DetailsEventFragmentDirections.ActionDetailsEventFragmentToFaceRecognitionFragment actionDetailsEventFragmentToFaceRecognitionFragment
-                            = DetailsEventFragmentDirections.actionDetailsEventFragmentToFaceRecognitionFragment(true, 1, String.valueOf(campusId), String.valueOf(cursusId));
-                    Navigation.findNavController(view).navigate(actionDetailsEventFragmentToFaceRecognitionFragment);
-                } else if (menuItem.getItemId() == R.id.action_register_face_id_camera_back) {
-                    DetailsEventFragmentDirections.ActionDetailsEventFragmentToFaceRecognitionFragment actionDetailsEventFragmentToFaceRecognitionFragment
-                            = DetailsEventFragmentDirections.actionDetailsEventFragmentToFaceRecognitionFragment(true, 0, String.valueOf(campusId), String.valueOf(cursusId));
-                    Navigation.findNavController(view).navigate(actionDetailsEventFragmentToFaceRecognitionFragment);
-                }
                 return NavigationUI.onNavDestinationSelected(menuItem, navController);
             }
         };
