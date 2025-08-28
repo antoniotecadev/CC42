@@ -1,10 +1,8 @@
 package com.antonioteca.cc42.ui.home;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.antonioteca.cc42.utility.Util.dpToPx;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -32,11 +30,9 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private final Context context;
     private final String colorCoalition;
-
-    private final SharedPreferences.Editor editor;
     private final List<Event> eventList = new ArrayList<>();
     private final List<Event> eventListEnd = new ArrayList<>();
-    private boolean showEventListEnd;
+    private boolean showEventListEnd = false;
     private final SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
     private final SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
 
@@ -52,12 +48,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TYPE_FOOTER = 1;
     }
 
-    public EventAdapter(@NonNull List<Event> eventList, String colorCoalition, @NonNull Context context) {
-
-        SharedPreferences preferences = context.getSharedPreferences("MyAppPrefsEvent", MODE_PRIVATE);
-        editor = preferences.edit();
-
-        this.showEventListEnd = preferences.getBoolean("showEventListEnd", false);
+    public EventAdapter(@NonNull List<Event> eventList, String colorCoalition, Context context) {
 
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
@@ -68,11 +59,6 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             else
                 this.eventListEnd.add(event);
         }
-
-        if (this.showEventListEnd) {
-            this.eventList.addAll(this.eventListEnd);
-        }
-
         this.colorCoalition = colorCoalition;
         this.context = context;
     }
@@ -136,15 +122,11 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     int count = eventListEnd.size();
                     eventList.removeAll(eventListEnd);
                     showEventListEnd = false;
-                    editor.putBoolean("showEventListEnd", false);
-                    editor.apply();
                     notifyItemRangeRemoved(startPosition - count, count);
                     notifyItemChanged(eventList.size());
                 } else {
                     eventList.addAll(eventListEnd);
                     showEventListEnd = true;
-                    editor.putBoolean("showEventListEnd", true);
-                    editor.apply();
                     notifyItemRangeInserted(startPosition, eventListEnd.size());
                     notifyItemChanged(eventList.size());
                 }
