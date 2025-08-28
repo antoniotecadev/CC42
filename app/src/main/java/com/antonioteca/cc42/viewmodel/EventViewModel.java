@@ -95,7 +95,7 @@ public class EventViewModel extends ViewModel {
         });
     }
 
-    private void getParticipantWithMarkedAttendance(Context context, LayoutInflater layoutInflater, FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, String userId) {
+    private void getParticipantWithMarkedAttendance(Context context, LayoutInflater layoutInflater, @NonNull FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, String userId) {
         DatabaseReference participantsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
                 .child("cursus")
@@ -104,20 +104,14 @@ public class EventViewModel extends ViewModel {
                 .child(eventId)
                 .child("participants");  // Referência para os participantes do evento
 
-        participantsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        participantsRef.child(String.valueOf(userId)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                boolean present = false;
                 if (snapshot.exists()) {
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        String key = dataSnapshot.getKey();
-                        if (key != null && key.equals(String.valueOf(userId))) {
-                            present = true;
-                            break;
-                        }
-                    }
+                    isPresent.setValue(true);
+                } else {
+                    isPresent.setValue(false);
                 }
-                isPresent.setValue(present);
             }
 
             @Override

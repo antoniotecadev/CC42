@@ -39,10 +39,10 @@ import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.StarUtils;
 import com.antonioteca.cc42.viewmodel.EventViewModel;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
+import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Objects;
 
 public class DetailsEventFragment extends Fragment {
@@ -50,9 +50,10 @@ public class DetailsEventFragment extends Fragment {
     private int rating = 0;
     private Context context;
     private Loading loading;
+    private boolean userIspresent;
     private MealViewModel mealViewModel;
     private EventViewModel eventViewModel;
-    private HashMap<?, ?> ratingValuesUsers;
+    private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
     private FragmentDetailsEventBinding binding;
 
@@ -66,6 +67,7 @@ public class DetailsEventFragment extends Fragment {
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         mealViewModel = new ViewModelProvider(this).get(MealViewModel.class);
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
     }
 
     @SuppressLint("SetTextI18n")
@@ -98,9 +100,10 @@ public class DetailsEventFragment extends Fragment {
 
         eventViewModel.getUserIsPresent(context, getLayoutInflater(), firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), eventId, String.valueOf(userId))
                 .observe(getViewLifecycleOwner(), userIspresent -> {
-                    if (userIspresent)
+                    if (userIspresent) {
+                        this.userIspresent = true;
                         binding.starRating.getRoot().setVisibility(View.VISIBLE);
-                    else {
+                    } else {
                         binding.textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
                         binding.textViewTapToRate.setText(R.string.text_absent);
                     }
@@ -116,6 +119,7 @@ public class DetailsEventFragment extends Fragment {
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
             binding.progressBarEvent.setIndeterminateTintList(colorStateList);
+            binding.buttonSendComment.setBackgroundTintList(colorStateList);
         }
 
         Date eventDateBegin = parseDate(event.getBegin_at());
@@ -148,7 +152,7 @@ public class DetailsEventFragment extends Fragment {
                 .observe(getViewLifecycleOwner(),
                         ratingValues -> {
                             if (!ratingValues.isEmpty())
-                                ratingValuesUsers = StarUtils.getRate(
+                                StarUtils.getRate(
                                         context,
                                         userId,
                                         false,
@@ -177,6 +181,22 @@ public class DetailsEventFragment extends Fragment {
         binding.starRating.star3.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 3, null, true, context, loading, userId, campusId, cursusId, type, eventId, rating, firebaseDatabase, binding.progressBarEvent, mealViewModel));
         binding.starRating.star4.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 4, null, true, context, loading, userId, campusId, cursusId, type, eventId, rating, firebaseDatabase, binding.progressBarEvent, mealViewModel));
         binding.starRating.star5.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 5, null, true, context, loading, userId, campusId, cursusId, type, eventId, rating, firebaseDatabase, binding.progressBarEvent, mealViewModel));
+
+        // Obter comentário
+        sharedViewModel.getCommentLiveData(context, firebaseDatabase, type, eventId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId))
+                .observe(getViewLifecycleOwner(), comment -> {
+                    if (comment != null && !comment.isEmpty()) {
+                        binding.textViewComment.setText(comment);
+                        binding.textViewComment.setVisibility(View.VISIBLE);
+                        binding.commentInputLayout.setVisibility(View.GONE);
+                        binding.buttonSendComment.setVisibility(View.GONE);
+                    } else if (comment == null && userIspresent) {
+                        binding.commentInputLayout.setVisibility(View.VISIBLE);
+                        binding.buttonSendComment.setVisibility(View.VISIBLE);
+                    }
+                });
+
+        binding.buttonSendComment.setOnClickListener(v -> sharedViewModel.sendComment(context, firebaseDatabase, type, eventId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, binding.progressBarEvent));
 
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
