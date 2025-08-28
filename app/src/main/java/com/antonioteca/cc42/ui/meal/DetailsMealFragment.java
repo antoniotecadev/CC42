@@ -171,7 +171,7 @@ public class DetailsMealFragment extends Fragment {
         binding.starRating.star5.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 5, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));
 
         // Obter comentário
-        sharedViewModel.getCommentLiveData(context, firebaseDatabase, "meals", mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId))
+        sharedViewModel.getCommentLiveData(context, firebaseDatabase, type, mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId))
                 .observe(getViewLifecycleOwner(), comment -> {
                     if (comment != null && !comment.isEmpty()) {
                         binding.textViewComment.setText(comment);
@@ -184,7 +184,7 @@ public class DetailsMealFragment extends Fragment {
                     }
                 });
 
-        binding.buttonSendComment.setOnClickListener(v -> sharedViewModel.sendComment(context, firebaseDatabase, "meals", mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, binding.progressBarMeal));
+        binding.buttonSendComment.setOnClickListener(v -> sharedViewModel.sendComment(context, firebaseDatabase, type, mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, binding.progressBarMeal));
 
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
