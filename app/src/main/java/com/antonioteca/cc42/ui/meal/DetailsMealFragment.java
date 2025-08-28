@@ -34,6 +34,7 @@ import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.utility.StarUtils;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
+import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.database.FirebaseDatabase;
@@ -49,6 +50,7 @@ public class DetailsMealFragment extends Fragment {
     private Loading loading;
     private Context context;
     private MealViewModel mealViewModel;
+    private SharedViewModel sharedViewModel;
     private HashMap<?, ?> ratingValuesUsers;
     private FirebaseDatabase firebaseDatabase;
     private FragmentDetailsMealBinding binding;
@@ -64,6 +66,7 @@ public class DetailsMealFragment extends Fragment {
         user.coalition = new Coalition(context);
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         mealViewModel = new ViewModelProvider(this).get(MealViewModel.class);
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
     }
 
     @Override
@@ -174,7 +177,7 @@ public class DetailsMealFragment extends Fragment {
         }
 
         // Obter comentário
-        mealViewModel.getCommentLiveData(context, firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), mealId, String.valueOf(userId))
+        sharedViewModel.getCommentLiveData(context, firebaseDatabase, "meals", mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId))
                 .observe(getViewLifecycleOwner(), comment -> {
                     if (comment != null && !comment.isEmpty()) {
                         binding.textViewComment.setText(comment);
@@ -184,7 +187,7 @@ public class DetailsMealFragment extends Fragment {
                     }
                 });
 
-        binding.buttonSendComment.setOnClickListener(v -> mealViewModel.sendComment(context, firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), mealId, String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, binding.progressBarMeal));
+        binding.buttonSendComment.setOnClickListener(v -> sharedViewModel.sendComment(context, firebaseDatabase, "meals", mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, binding.progressBarMeal));
 
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
