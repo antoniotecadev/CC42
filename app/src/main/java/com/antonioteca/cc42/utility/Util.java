@@ -72,6 +72,9 @@ public class Util {
             if (message == null)
                 builder.setNeutralButton(R.string.no, (dialogInterface, i) -> dialogInterface.dismiss())
                         .setPositiveButton(R.string.yes, (dialogInterface, i) -> runnableTryAgain.run());
+            else if (title.equalsIgnoreCase(context.getString(R.string.second_portion)))
+                builder.setNeutralButton(R.string.no, (dialogInterface, i) -> dialogInterface.dismiss())
+                        .setPositiveButton(R.string.subscribed, (dialogInterface, i) -> runnableTryAgain.run());
             else
                 builder.setNeutralButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss())
                         .setPositiveButton(R.string.list_reload, (dialogInterface, i) -> runnableTryAgain.run());

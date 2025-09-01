@@ -55,6 +55,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
+                    android:importantForAccessibility="no"
                     android:src="@drawable/ic_baseline_restaurant_60" />
 
                 <!-- Rodapé -->
@@ -217,6 +218,16 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.cardview.widget.CardView>
 
+        <Button
+            android:id="@+id/buttonSubscribeSecondPortion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:backgroundTint="#1F000000"
+            android:enabled="false"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -229,20 +240,24 @@
                 android:layout_width="90dp"
                 android:layout_height="90dp"
                 android:layout_marginEnd="8dp"
+                android:contentDescription="@string/button"
                 app:backgroundTint="@color/light_white"
                 app:fabCustomSize="90dp"
                 app:maxImageSize="40dp"
-                app:srcCompat="@drawable/ic_baseline_qr_code_2_100" />
+                app:srcCompat="@drawable/ic_baseline_qr_code_2_100"
+                tools:ignore="RedundantDescriptionCheck,DuplicateSpeakableTextCheck" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabOpenSubscriptionList"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
                 android:layout_marginStart="16dp"
+                android:contentDescription="@string/button"
                 app:backgroundTint="@color/light_white"
                 app:fabCustomSize="90dp"
                 app:maxImageSize="40dp"
-                app:srcCompat="@drawable/ic_baseline_app_registration_100" />
+                app:srcCompat="@drawable/ic_baseline_app_registration_100"
+                tools:ignore="RedundantDescriptionCheck" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </ScrollView>

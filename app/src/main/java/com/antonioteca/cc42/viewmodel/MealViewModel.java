@@ -1,11 +1,13 @@
 package com.antonioteca.cc42.viewmodel;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -53,7 +55,9 @@ public class MealViewModel extends ViewModel {
 
     public List<Meal> mealList = new ArrayList<>();
     private DatabaseReference mealRef;
+    private DatabaseReference mealRefSecondPortion;
     private ValueEventListener valueEventListener;
+    private ValueEventListener valueEventListenerSecondPortion;
     private MutableLiveData<Boolean> isSubscribed;
     private MutableLiveData<Meal> createdMealMutableLiveData;
     private MutableLiveData<Meal> updatedMealMutableLiveData;
@@ -656,11 +660,110 @@ public class MealViewModel extends ViewModel {
         });
     }
 
+    public void hasSecondPortion(Context context, @NonNull FirebaseDatabase firebaseDatabase, Button buttonSubscribed, String campusId, String cursusId, String mealId, String userId) {
+        mealRefSecondPortion = firebaseDatabase.getReference("campus/" + campusId + "/cursus/" + cursusId + "/meals/" + mealId);
+        valueEventListenerSecondPortion = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Verifica se o nó "secondPortion" existe para a refeição
+                if (snapshot.exists()) {
+                    boolean hasSecondPortion = Boolean.TRUE.equals(snapshot.getValue(Boolean.class));
+
+                    // Se "secondPortion" for true, verifica se o usuário já se inscreveu para a segunda porção
+                    if (hasSecondPortion) {
+                        // A referência para a inscrição da segunda porção deve ser "campus/.../meals/mealId/subscriptions/-userId"
+                        // O "-" antes do userId indica que é uma inscrição para a segunda porção.
+                        DatabaseReference secondPortionSubscriptionRef = firebaseDatabase.getReference("campus/" + campusId + "/cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/-" + userId);
+                        secondPortionSubscriptionRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot subscriptionSnapshot) {
+                                if (subscriptionSnapshot.exists()) {
+                                    boolean isSubscribed = Boolean.TRUE.equals(subscriptionSnapshot.getValue(Boolean.class));
+                                    // Usuário já se inscreveu para a segunda porção
+                                    buttonSubscribed.setEnabled(false);
+                                    buttonSubscribed.setBackgroundColor(Color.parseColor("#1F000000"));
+                                    if (isSubscribed)
+                                        buttonSubscribed.setText(R.string.second_partion_already_subscribed); // "Segunda porção já solicitada"
+                                    else
+                                        buttonSubscribed.setText(R.string.second_portion_subscribed); // "Segunda porção não solicitada"
+                                } else {
+                                    // Usuário ainda não se inscreveu e a segunda porção está disponível
+                                    buttonSubscribed.setText(R.string.second_portion); // "Pedir segunda porção"
+                                    buttonSubscribed.setEnabled(true);
+                                    buttonSubscribed.setBackgroundColor(Color.parseColor("#4CAF50"));
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.second_portion) + ": " + error.getMessage(), context, null);
+                            }
+                        });
+                    } else {
+                        // "secondPortion" é false ou não existe, então desabilita o botão
+                        buttonSubscribed.setEnabled(false);
+                        buttonSubscribed.setBackgroundColor(Color.parseColor("#1F000000"));
+                        buttonSubscribed.setText(R.string.second_portion_finished); // Ou um texto indicando que não está disponível
+                    }
+                } else {
+                    // O nó "secondPortion" não existe, então a segunda porção não está disponível
+                    buttonSubscribed.setEnabled(false);
+                    buttonSubscribed.setText(R.string.second_portion_unavailable); // Ou um texto indicando que não está disponível
+                    buttonSubscribed.setBackgroundColor(Color.parseColor("#1F000000"));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.second_portion) + ": " + error.getMessage(), context, null);
+            }
+        };
+        // Observa o valor de "secondPortion" na refeição
+        mealRefSecondPortion.child("secondPortion").addValueEventListener(valueEventListenerSecondPortion);
+    }
+
+    public void subscribeSecondPortion(Context context, @NonNull FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String mealId, String mealName, @NonNull String mealPathImage, String currentUserId, Button buttonSubscribed, @NonNull ProgressBar progressBar) {
+        String pathImage = mealPathImage.isEmpty() ? null : mealPathImage;
+        progressBar.setVisibility(View.VISIBLE);
+        DatabaseReference secondPortionSubscriptionRef = firebaseDatabase.getReference("campus/" + campusId + "/cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/-" + currentUserId);
+
+        secondPortionSubscriptionRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    secondPortionSubscriptionRef.setValue(false)
+                            .addOnSuccessListener(aVoid -> {
+                                progressBar.setVisibility(View.GONE);
+                                buttonSubscribed.setEnabled(false);
+                                buttonSubscribed.setText(R.string.second_portion_subscribed);
+                                buttonSubscribed.setBackgroundColor(Color.parseColor("#1F000000"));
+                                Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.sucess), mealName + "\n" + context.getString(R.string.second_portion_subscribed), "#4CAF50", pathImage, null);
+                            })
+                            .addOnFailureListener(e -> {
+                                progressBar.setVisibility(View.GONE);
+                                Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), context.getString(R.string.error_subscribing_second_portion) + ": " + e.getMessage(), "#E53935", pathImage, null);
+                            });
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), context.getString(R.string.second_portion_already_subscribed), "#E53935", null, null);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                progressBar.setVisibility(View.GONE);
+                Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.error_subscribing_second_portion) + ": " + error.getMessage(), context, null);
+            }
+        });
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
         if (mealRef != null && valueEventListener != null)
             mealRef.removeEventListener(valueEventListener);
+        if (mealRefSecondPortion != null && valueEventListenerSecondPortion != null)
+            mealRefSecondPortion.removeEventListener(valueEventListenerSecondPortion);
         if (executorService != null && !executorService.isShutdown())
             executorService.shutdown();
     }

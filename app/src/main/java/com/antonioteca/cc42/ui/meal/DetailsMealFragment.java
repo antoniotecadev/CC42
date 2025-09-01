@@ -33,6 +33,7 @@ import com.antonioteca.cc42.utility.DateUtils;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.utility.StarUtils;
+import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
@@ -184,6 +185,8 @@ public class DetailsMealFragment extends Fragment {
                     }
                 });
 
+        mealViewModel.hasSecondPortion(context, firebaseDatabase, binding.buttonSubscribeSecondPortion, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(mealId), String.valueOf(userId));
+
         binding.buttonSendComment.setOnClickListener(v -> sharedViewModel.sendComment(context, firebaseDatabase, type, mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, binding.progressBarMeal));
 
         binding.fabGenerateQrCode.setOnClickListener(v -> {
@@ -205,6 +208,8 @@ public class DetailsMealFragment extends Fragment {
                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        binding.buttonSubscribeSecondPortion.setOnClickListener(v -> Util.showAlertDialogBuild(getString(R.string.second_portion), mealName, context, () -> mealViewModel.subscribeSecondPortion(context, firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(mealId), mealName, meal.getPathImage(), String.valueOf(userId), binding.buttonSubscribeSecondPortion, binding.progressBarMeal)));
 
         MenuProvider menuProvider = new MenuProvider() {
             @Override
