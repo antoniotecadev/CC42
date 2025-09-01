@@ -667,10 +667,11 @@ public class MealViewModel extends ViewModel {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 // Verifica se o nó "secondPortion" existe para a refeição
                 if (snapshot.exists()) {
-                    boolean hasSecondPortion = Boolean.TRUE.equals(snapshot.getValue(Boolean.class));
+                    boolean hasSecondPortion = Boolean.TRUE.equals(snapshot.child("hasSecondPortion").getValue(Boolean.class));
+                    Integer quantitySecondPortion = snapshot.child("quantitySecondPortion").getValue(Integer.class);
 
                     // Se "secondPortion" for true, verifica se o usuário já se inscreveu para a segunda porção
-                    if (hasSecondPortion) {
+                    if (hasSecondPortion && quantitySecondPortion != null && quantitySecondPortion > 0) {
                         // A referência para a inscrição da segunda porção deve ser "campus/.../meals/mealId/subscriptions/-userId"
                         // O "-" antes do userId indica que é uma inscrição para a segunda porção.
                         DatabaseReference secondPortionSubscriptionRef = firebaseDatabase.getReference("campus/" + campusId + "/cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/-" + userId);
