@@ -313,4 +313,11 @@
     <string name="error_send_comment">Error sending comment.</string>
     <string name="comment_required">Enter your comment</string>
     <string name="error_get_comment">Error getting comment.</string>
+    <string name="subscribed">Subscribe</string>
+    <string name="second_portion_subscribed">Subscription made</string>
+    <string name="second_portion_already_received">Second portion already received</string>
+    <string name="second_portion_unavailable">Second portion unavailable</string>
+    <string name="second_portion_finished">Second portion finished</string>
+    <string name="error_subscribing_second_portion">Error subscribing for second portion</string>
+    <string name="second_portion_already_subscribed">Already subscribed for second portion</string>
 </resources>

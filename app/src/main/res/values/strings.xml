@@ -334,4 +334,12 @@
     <string name="error_send_comment">Erro ao comentar.</string>
     <string name="comment_required">Digite o seu comentário</string>
     <string name="error_get_comment">Erro ao obter comentário.</string>
+    <string name="button">button</string>
+    <string name="subscribed">Inscrever - se</string>
+    <string name="second_portion_subscribed">Inscrição feita</string>
+    <string name="second_portion_already_received">Recebeu segunda via</string>
+    <string name="second_portion_unavailable">Segunda via indisponível</string>
+    <string name="second_portion_finished">Segunda via terminou</string>
+    <string name="error_subscribing_second_portion">Erro ao inscrever - se para segunda via</string>
+    <string name="second_portion_already_subscribed">Já inscreveu - se para segunda via</string>
 </resources>

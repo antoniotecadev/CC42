@@ -48,7 +48,7 @@ public class Notification {
                     HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpStatus.getDescription(), "#E53935", null, null);
                 } else
-                    Toast.makeText(context, R.string.notification_sent, Toast.LENGTH_LONG).show();
+                    Util.showAlertDialogBuild(context.getString(R.string.second_portion), context.getString(R.string.notification_sent) + ": " + meal.getName(), context, null);
             }
 
             @Override

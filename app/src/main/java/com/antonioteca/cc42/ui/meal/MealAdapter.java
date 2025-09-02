@@ -29,6 +29,7 @@ import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -36,8 +37,10 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -152,7 +155,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setView(linearLayout);
                 builder.setTitle(meal.getType());
-                builder.setMessage(meal.getName());
+                builder.setMessage(meal.getName() + "\n\n" + context.getString(R.string.quantity) + ": " + meal.getQuantity() + "\n");
                 builder.setIcon(R.drawable.logo_42);
                 builder.setCancelable(false);
                 builder.setNeutralButton(R.string.no, (dialog, which) -> dialog.dismiss());
@@ -162,14 +165,14 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                 dialog.show();
 
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                    meal.setType(meal.getType() + ": " + spinner.getSelectedItem().toString());
-                    try {
-                        String topicStudent = "meals_" + campusId + "_" + cursusId;
-                        Notification.sendFCMNotification(context, layoutInflater, meal, String.valueOf(campusId), String.valueOf(cursusId), topicStudent, null);
-                        dialog.dismiss();
-                    } catch (IOException e) {
-                        Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
-                    }
+                    if (spinner.getSelectedItemPosition() == 1) {
+                        DatabaseReference mealsRef = firebaseDatabase.getReference("campus/" + campusId + "/cursus/" + cursusId + "/meals");
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("hasSecondPortion", true);
+                        map.put("quantitySecondPortion", meal.getQuantity());
+                        mealsRef.child(meal.getId()).child("secondPortion").setValue(map).addOnSuccessListener(unused -> sendNotification(meal, spinner, dialog)).addOnFailureListener(e -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.second_portion) + ": " + e.getMessage(), context, null));
+                    } else
+                        sendNotification(meal, spinner, dialog);
                 });
                 return true;
             });
@@ -203,6 +206,17 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                 return true;
             });
         });
+    }
+
+    private void sendNotification(@NonNull Meal meal, @NonNull AppCompatSpinner spinner, @NonNull AlertDialog dialog) {
+        meal.setType(meal.getType() + ": " + spinner.getSelectedItem().toString());
+        try {
+            String topicStudent = "meals_" + campusId + "_" + cursusId;
+            Notification.sendFCMNotification(context, layoutInflater, meal, String.valueOf(campusId), String.valueOf(cursusId), topicStudent, null);
+            dialog.dismiss();
+        } catch (IOException e) {
+            Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
