@@ -33,7 +33,6 @@ import com.antonioteca.cc42.utility.DateUtils;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.utility.StarUtils;
-import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
@@ -209,7 +208,7 @@ public class DetailsMealFragment extends Fragment {
             }
         });
 
-        binding.buttonSubscribeSecondPortion.setOnClickListener(v -> Util.showAlertDialogBuild(getString(R.string.second_portion), mealName, context, () -> mealViewModel.subscribeSecondPortion(context, firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(mealId), mealName, meal.getPathImage(), String.valueOf(userId), binding.buttonSubscribeSecondPortion, binding.progressBarMeal)));
+        binding.buttonSubscribeSecondPortion.setOnClickListener(v -> mealViewModel.subscribeSecondPortion(context, firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(mealId), mealName, meal.getPathImage(), String.valueOf(userId), binding.buttonSubscribeSecondPortion, binding.progressBarMeal, true));
 
         MenuProvider menuProvider = new MenuProvider() {
             @Override
