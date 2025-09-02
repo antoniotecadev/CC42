@@ -56,19 +56,29 @@ public class DaoSusbscriptionFirebase {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    boolean firstPortion = portionSelected == null;
-                    progressBarSubscription.setVisibility(View.GONE);
-                    String message = displayName + "\n" + context.getString(R.string.msg_you_already_subscription) + " " + (firstPortion ? context.getString(R.string.first_portion) : context.getString(R.string.second_portion));
-                    Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, firstPortion ? null : "#FDD835", urlImageUser, firstPortion ? () -> {
-                        runnableResumeCamera.run();
-                        Util.showAlertDialogBuild(context.getString(R.string.second_portion), null, context, () -> {
-                            progressBarSubscription.setVisibility(View.VISIBLE);
-                            DaoSusbscriptionFirebase.subscription(firebaseDatabase, listMealQrCode, "-", mealId, userStaffId, userId, userLogin, displayName, cursusId, campusId, urlImageUser, context, layoutInflater, progressBarSubscription, sharedViewModel, runnableResumeCamera);
-                        });
-                    } : runnableResumeCamera);
+                    boolean isAlreadyReceived = Boolean.TRUE.equals(snapshot.getValue(Boolean.class));
+                    if (isAlreadyReceived) {
+                        boolean firstPortion = portionSelected == null;
+                        progressBarSubscription.setVisibility(View.GONE);
+                        String message = displayName + "\n" + context.getString(R.string.msg_you_already_subscription) + " " + (firstPortion ? context.getString(R.string.first_portion) : context.getString(R.string.second_portion));
+                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, firstPortion ? null : "#FDD835", urlImageUser, firstPortion ? () -> {
+                            runnableResumeCamera.run();
+                            Util.showAlertDialogBuild(context.getString(R.string.second_portion), null, context, () -> {
+                                progressBarSubscription.setVisibility(View.VISIBLE);
+                                DaoSusbscriptionFirebase.subscription(firebaseDatabase, listMealQrCode, "-", mealId, userStaffId, userId, userLogin, displayName, cursusId, campusId, urlImageUser, context, layoutInflater, progressBarSubscription, sharedViewModel, runnableResumeCamera);
+                            });
+                        } : runnableResumeCamera);
+                    } else {
+                        registerSubscription();
+                    }
                 } else {
-                    Map<String, Object> update = new HashMap<>();
-                    update.put("cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/" + uid, true);
+                    registerSubscription();
+                }
+            }
+
+            private void registerSubscription() {
+                Map<String, Object> update = new HashMap<>();
+                update.put("cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/" + uid, true);
 //                    if (mealId == null)
 //                        for (MealQrCode mealQrCode : listMealQrCode)
 //                            update.put("cursus/" + cursusId + "/meals/" + mealQrCode.id() + "/subscriptions/" + userId, true);
@@ -76,25 +86,24 @@ public class DaoSusbscriptionFirebase {
 //                        String uid = portionSelected == null ? userId : portionSelected + userId;
 //                        update.put("cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/" + uid, true);
 //                    }
-                    DatabaseReference campusReference = firebaseDatabase.getReference("campus")
-                            .child(campusId);
+                DatabaseReference campusReference = firebaseDatabase.getReference("campus")
+                        .child(campusId);
 
-                    campusReference.updateChildren(update)
-                            .addOnSuccessListener(aVoid -> {
-                                if (userStaffId != null)
-                                    Util.sendInfoTmpUserEventMeal(userStaffId, firebaseDatabase, campusId, cursusId, displayName, urlImageUser);
-                                progressBarSubscription.setVisibility(View.GONE);
-                                if (portionSelected == null)
-                                    sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
-                                String message = displayName + "\n" + context.getString(R.string.msg_sucess_subscription);
-                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", urlImageUser, runnableResumeCamera);
-                            })
-                            .addOnFailureListener(e -> {
-                                progressBarSubscription.setVisibility(View.GONE);
-                                String message = context.getString(R.string.msg_error_subscription) + ": " + e.getMessage();
-                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", urlImageUser, runnableResumeCamera);
-                            });
-                }
+                campusReference.updateChildren(update)
+                        .addOnSuccessListener(aVoid -> {
+                            if (userStaffId != null)
+                                Util.sendInfoTmpUserEventMeal(userStaffId, firebaseDatabase, campusId, cursusId, displayName, urlImageUser);
+                            progressBarSubscription.setVisibility(View.GONE);
+                            if (portionSelected == null)
+                                sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
+                            String message = displayName + "\n" + context.getString(R.string.msg_sucess_subscription);
+                            Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", urlImageUser, runnableResumeCamera);
+                        })
+                        .addOnFailureListener(e -> {
+                            progressBarSubscription.setVisibility(View.GONE);
+                            String message = context.getString(R.string.msg_error_subscription) + ": " + e.getMessage();
+                            Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", urlImageUser, runnableResumeCamera);
+                        });
             }
 
             @Override

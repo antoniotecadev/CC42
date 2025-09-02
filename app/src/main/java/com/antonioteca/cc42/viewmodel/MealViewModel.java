@@ -700,7 +700,7 @@ public class MealViewModel extends ViewModel {
                             buttonSubscribed.setEnabled(false);
                             buttonSubscribed.setBackgroundColor(colorDisabled);
                             if (isSubscribed)
-                                buttonSubscribed.setText(R.string.second_portion_already_receve); // "Segunda porção já solicitada"
+                                buttonSubscribed.setText(R.string.second_portion_already_received); // "Segunda porção já solicitada"
                             else
                                 buttonSubscribed.setText(R.string.second_portion_subscribed); // "Segunda porção não solicitada"
                         } else {
