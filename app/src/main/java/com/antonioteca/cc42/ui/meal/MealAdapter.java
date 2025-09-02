@@ -91,7 +91,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
 
     @Override
     public void onBindViewHolder(@NonNull MealAdapterViewHolder holder, int position) {
-        if (!loading.isLoading && (position == getItemCount() - 1)) {
+        if (!loading.isLoading && (position == getItemCount() - 1) && isStaff) {
             Toast.makeText(context, R.string.loading_more_meals, Toast.LENGTH_SHORT).show();
             loading.isLoading = true;
             loadMoreMeals();
@@ -235,7 +235,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
 
     public void loadMoreMeals() {
         if (lastKey != null) {
-            mealViewModel.loadMeals(context, binding, mealsRef, lastKey, userId);
+            mealViewModel.loadMeals(context, binding, mealsRef, lastKey, userId, isStaff);
         }
     }
 

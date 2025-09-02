@@ -107,11 +107,11 @@ public class MealViewModel extends ViewModel {
         return ratingValuesMutableLiveData;
     }
 
-    public LiveData<List<Meal>> getMealList(Context context, FragmentMealBinding binding, DatabaseReference mealsRef, String startAtKey, long userId) {
+    public LiveData<List<Meal>> getMealList(Context context, FragmentMealBinding binding, DatabaseReference mealsRef, String startAtKey, long userId, boolean isStaff) {
         if (mealListMutableLiveData == null) {
             mealListMutableLiveData = new MutableLiveData<>();
             binding.progressBarMeal.setVisibility(View.VISIBLE);
-            loadMeals(context, binding, mealsRef, startAtKey, userId);
+            loadMeals(context, binding, mealsRef, startAtKey, userId, isStaff);
         } else if (mealListMutableLiveData.getValue() != null && !this.mealList.isEmpty()) {
             mealListMutableLiveData.getValue().clear();
             List<Meal> mealList = new ArrayList<>(this.mealList);
@@ -129,12 +129,12 @@ public class MealViewModel extends ViewModel {
         return isSubscribed;
     }
 
-    public void loadMeals(Context context, FragmentMealBinding binding, @NonNull DatabaseReference mealsRef, String startAtKey, long userId) {
+    public void loadMeals(Context context, FragmentMealBinding binding, @NonNull DatabaseReference mealsRef, String startAtKey, long userId, boolean isStaff) {
         Query query = mealsRef.orderByKey();
         if (startAtKey != null) {
             query = query.endBefore(startAtKey).limitToLast(15);
         } else {
-            query = query.limitToLast(15);
+            query = query.limitToLast(isStaff ? 15 : 7);
         }
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -166,7 +166,7 @@ public class MealViewModel extends ViewModel {
                     String message = context.getString(R.string.meals_not_found);
                     Util.showAlertDialogBuild(context.getString(R.string.warning), message, context, () -> {
                         MealsUtils.setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.INVISIBLE);
-                        loadMeals(context, binding, mealsRef, startAtKey, userId);
+                        loadMeals(context, binding, mealsRef, startAtKey, userId, isStaff);
                     });
                 }
                 mealListMutableLiveData.setValue(mealList);
@@ -178,7 +178,7 @@ public class MealViewModel extends ViewModel {
                     String message = context.getString(R.string.error_load_data) + ": " + error.getMessage();
                     Util.showAlertDialogBuild(context.getString(R.string.err), message, context, () -> {
                         MealsUtils.setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.INVISIBLE);
-                        loadMeals(context, binding, mealsRef, startAtKey, userId);
+                        loadMeals(context, binding, mealsRef, startAtKey, userId, isStaff);
                     });
                 }
                 mealListMutableLiveData.setValue(new ArrayList<>());

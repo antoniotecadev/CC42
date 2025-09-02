@@ -146,6 +146,7 @@ public class MealListFragment extends Fragment {
         Cursu cursu = args.getCursu();
         int campusId = user.getCampusId();
         long userId = user.getUid();
+        boolean isStaff = user.isStaff();
         this.cursusId = cursu.getId();
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
@@ -216,7 +217,7 @@ public class MealListFragment extends Fragment {
             mealAdapter.mealList.clear();
             mealViewModel.mealList.clear();
             mealAdapter.notifyDataSetChanged();
-            mealViewModel.loadMeals(context, binding, mealsRef, null, userId);
+            mealViewModel.loadMeals(context, binding, mealsRef, null, userId, isStaff);
         });
 
         String colorCoalition = user.coalition.getColor();
@@ -241,7 +242,7 @@ public class MealListFragment extends Fragment {
                 cursu.getId());
         binding.recyclerViewMeal.setAdapter(mealAdapter);
 
-        mealViewModel.getMealList(context, binding, mealsRef, null, userId).observe(getViewLifecycleOwner(), meals -> {
+        mealViewModel.getMealList(context, binding, mealsRef, null, userId, isStaff).observe(getViewLifecycleOwner(), meals -> {
             if (!meals.isEmpty() && meals.get(0) != null) {
                 mealAdapter.updateMealList(meals, meals.get(meals.size() - 1).getId());
                 mealViewModel.mealList.addAll(meals);
