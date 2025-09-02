@@ -678,48 +678,51 @@ public class MealViewModel extends ViewModel {
                     boolean hasSecondPortion = Boolean.TRUE.equals(snapshot.child("hasSecondPortion").getValue(Boolean.class));
                     Integer quantitySecondPortion = snapshot.child("quantitySecondPortion").getValue(Integer.class);
 
-                    // Se "secondPortion" for true, verifica se o usuário já se inscreveu para a segunda porção
-                    if (hasSecondPortion && quantitySecondPortion != null && quantitySecondPortion > 0) {
-                        // A referência para a inscrição da segunda porção deve ser "campus/.../meals/mealId/subscriptions/-userId"
-                        // O "-" antes do userId indica que é uma inscrição para a segunda porção.
-                        DatabaseReference secondPortionSubscriptionRef = firebaseDatabase.getReference("campus/" + campusId + "/cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/-" + userId);
-                        secondPortionSubscriptionRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot subscriptionSnapshot) {
-                                if (subscriptionSnapshot.exists()) {
-                                    boolean isSubscribed = Boolean.TRUE.equals(subscriptionSnapshot.getValue(Boolean.class));
-                                    // Usuário já se inscreveu para a segunda porção
-                                    buttonSubscribed.setEnabled(false);
-                                    buttonSubscribed.setBackgroundColor(colorDisabled);
-                                    if (isSubscribed)
-                                        buttonSubscribed.setText(R.string.second_portion_already_receve); // "Segunda porção já solicitada"
-                                    else
-                                        buttonSubscribed.setText(R.string.second_portion_subscribed); // "Segunda porção não solicitada"
-                                } else {
-                                    // Usuário ainda não se inscreveu e a segunda porção está disponível
-                                    buttonSubscribed.setEnabled(true);
-                                    buttonSubscribed.setText(R.string.subscribed); // "Pedir segunda porção"
-                                    buttonSubscribed.setBackgroundTintList(colorStateList);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.second_portion) + ": " + error.getMessage(), context, null);
-                            }
-                        });
-                    } else {
-                        // "secondPortion" é false ou não existe, então desabilita o botão
-                        buttonSubscribed.setEnabled(false);
-                        buttonSubscribed.setBackgroundColor(colorDisabled);
-                        buttonSubscribed.setText(R.string.second_portion_finished); // Ou um texto indicando que não está disponível
-                    }
+                    // A referência para a inscrição da segunda porção deve ser "campus/.../meals/mealId/subscriptions/-userId"
+                    // O "-" antes do userId indica que é uma inscrição para a segunda porção.
+                    DatabaseReference secondPortionSubscriptionRef = firebaseDatabase.getReference("campus/" + campusId + "/cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/-" + userId);
+                    extracted(secondPortionSubscriptionRef, hasSecondPortion && quantitySecondPortion != null && quantitySecondPortion > 0);
                 } else {
                     // O nó "secondPortion" não existe, então a segunda porção não está disponível
                     buttonSubscribed.setEnabled(false);
                     buttonSubscribed.setBackgroundColor(colorDisabled);
                     buttonSubscribed.setText(R.string.second_portion_unavailable); // Ou um texto indicando que não está disponível
                 }
+            }
+
+            private void extracted(@NonNull DatabaseReference secondPortionSubscriptionRef, boolean hasSecondPortion) {
+                secondPortionSubscriptionRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot subscriptionSnapshot) {
+                        if (subscriptionSnapshot.exists()) {
+                            boolean isSubscribed = Boolean.TRUE.equals(subscriptionSnapshot.getValue(Boolean.class));
+                            // Usuário já se inscreveu para a segunda porção
+                            buttonSubscribed.setEnabled(false);
+                            buttonSubscribed.setBackgroundColor(colorDisabled);
+                            if (isSubscribed)
+                                buttonSubscribed.setText(R.string.second_portion_already_receve); // "Segunda porção já solicitada"
+                            else
+                                buttonSubscribed.setText(R.string.second_portion_subscribed); // "Segunda porção não solicitada"
+                        } else {
+                            if (hasSecondPortion) {
+                                // Usuário ainda não se inscreveu e a segunda porção está disponível
+                                buttonSubscribed.setEnabled(true);
+                                buttonSubscribed.setText(R.string.subscribed); // "Pedir segunda porção"
+                                buttonSubscribed.setBackgroundTintList(colorStateList);
+                            } else {
+                                // Usuário ainda não se inscreveu e a segunda porção terminou
+                                buttonSubscribed.setEnabled(false);
+                                buttonSubscribed.setBackgroundColor(colorDisabled);
+                                buttonSubscribed.setText(R.string.second_portion_finished);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.second_portion) + ": " + error.getMessage(), context, null);
+                    }
+                });
             }
 
             @Override
