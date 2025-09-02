@@ -235,6 +235,7 @@ public class MealListFragment extends Fragment {
                 mealViewModel,
                 firebaseDatabase,
                 getLayoutInflater(),
+                user.isStaff(),
                 user.getUid(),
                 campusId,
                 cursu.getId());

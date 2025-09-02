@@ -29,7 +29,6 @@ import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -57,6 +56,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
     private final Context context;
     private String lastKey = null;
     private final Loading loading;
+    private final boolean isStaff;
     private final int campusId;
     private final int cursusId;
     private final long userId;
@@ -66,12 +66,13 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
     private final RoundedCorners roundedCorners = new RoundedCorners(5);
     private final RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_60);
 
-    public MealAdapter(Context context, Loading loading, FragmentMealBinding binding, DatabaseReference mealsRef, MealViewModel mealViewModel, FirebaseDatabase firebaseDatabase, LayoutInflater layoutInflater, long uid, int campusId, int cursusId) {
+    public MealAdapter(Context context, Loading loading, FragmentMealBinding binding, DatabaseReference mealsRef, MealViewModel mealViewModel, FirebaseDatabase firebaseDatabase, LayoutInflater layoutInflater, boolean isStaff, long uid, int campusId, int cursusId) {
         this.loading = loading;
         this.binding = binding;
         this.mealsRef = mealsRef;
         this.mealViewModel = mealViewModel;
         this.context = context;
+        this.isStaff = isStaff;
         this.userId = uid;
         this.campusId = campusId;
         this.cursusId = cursusId;
@@ -117,95 +118,98 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             MealListFragmentDirections.ActionNavMealToDetailsMealFragment actionNavMealToDetailsMealFragment = MealListFragmentDirections.actionNavMealToDetailsMealFragment(meal, cursusId);
             Navigation.findNavController(v).navigate(actionNavMealToDetailsMealFragment);
         });
-        holder.binding.constraintLayoutMeal.setOnCreateContextMenuListener((contextMenu, view, contextMenuInfo) -> {
-            contextMenu.setHeaderTitle(meal.getName());
-            MenuItem menuItemEdit = contextMenu.add(view.getContext().getString(R.string.edit_meal));
-            MenuItem menuItemDelete = contextMenu.add(view.getContext().getString(R.string.delete_meal));
-            MenuItem menuItemChallenge = contextMenu.add(view.getContext().getString(R.string.notify_meal));
-            MenuItem menuItemAddQrCode = contextMenu.add("Add Qr Code");
-            MenuItem menuItemDelQrCode = contextMenu.add("Del Qr Code");
-            if (idMealQrCode.contains(meal.getId())) {
-                menuItemAddQrCode.setVisible(false);
-                menuItemDelQrCode.setVisible(true);
-            } else {
-                menuItemAddQrCode.setVisible(true);
-                menuItemDelQrCode.setVisible(false);
-            }
-            menuItemEdit.setOnMenuItemClickListener(item -> {
-                MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal = MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(false, cursusId).setMeal(meal);
-                Navigation.findNavController(view).navigate(actionNavMealToDialogFragmentCreateMeal);
-                return true;
-            });
-            menuItemDelete.setOnMenuItemClickListener(item -> {
-                deleteMeal(firebaseDatabase, context, meal, layoutInflater, campusId, cursusId);
-                return true;
-            });
-            menuItemChallenge.setOnMenuItemClickListener(item -> {
-                ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.meals_way, android.R.layout.simple_spinner_item);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-                LinearLayout linearLayout = new LinearLayout(context);
-                linearLayout.setOrientation(LinearLayout.VERTICAL);
-                linearLayout.setPadding(32, 16, 32, 0);
-                AppCompatSpinner spinner = new AppCompatSpinner(context);
-                spinner.setPadding(0, 0, 0, 32);
-                spinner.setAdapter(adapter);
-                linearLayout.addView(spinner);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setView(linearLayout);
-                builder.setTitle(meal.getType());
-                builder.setMessage(meal.getName() + "\n\n" + context.getString(R.string.quantity) + ": " + meal.getQuantity() + "\n");
-                builder.setIcon(R.drawable.logo_42);
-                builder.setCancelable(false);
-                builder.setNeutralButton(R.string.no, (dialog, which) -> dialog.dismiss());
-                builder.setPositiveButton(R.string.notify_meal, null);
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                    if (spinner.getSelectedItemPosition() == 1) {
-                        DatabaseReference mealsRef = firebaseDatabase.getReference("campus/" + campusId + "/cursus/" + cursusId + "/meals");
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("hasSecondPortion", true);
-                        map.put("quantitySecondPortion", meal.getQuantity());
-                        mealsRef.child(meal.getId()).child("secondPortion").setValue(map).addOnSuccessListener(unused -> sendNotification(meal, spinner, dialog)).addOnFailureListener(e -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.second_portion) + ": " + e.getMessage(), context, null));
-                    } else
-                        sendNotification(meal, spinner, dialog);
+        if (!isStaff)
+            holder.binding.constraintLayoutMeal.setOnLongClickListener(v -> false);
+        else
+            holder.binding.constraintLayoutMeal.setOnCreateContextMenuListener((contextMenu, view, contextMenuInfo) -> {
+                contextMenu.setHeaderTitle(meal.getName());
+                MenuItem menuItemEdit = contextMenu.add(view.getContext().getString(R.string.edit_meal));
+                MenuItem menuItemDelete = contextMenu.add(view.getContext().getString(R.string.delete_meal));
+                MenuItem menuItemChallenge = contextMenu.add(view.getContext().getString(R.string.notify_meal));
+                MenuItem menuItemAddQrCode = contextMenu.add("Add Qr Code");
+                MenuItem menuItemDelQrCode = contextMenu.add("Del Qr Code");
+                if (idMealQrCode.contains(meal.getId())) {
+                    menuItemAddQrCode.setVisible(false);
+                    menuItemDelQrCode.setVisible(true);
+                } else {
+                    menuItemAddQrCode.setVisible(true);
+                    menuItemDelQrCode.setVisible(false);
+                }
+                menuItemEdit.setOnMenuItemClickListener(item -> {
+                    MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal = MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(false, cursusId).setMeal(meal);
+                    Navigation.findNavController(view).navigate(actionNavMealToDialogFragmentCreateMeal);
+                    return true;
                 });
-                return true;
-            });
-            menuItemAddQrCode.setOnMenuItemClickListener(item -> {
-                Bitmap bitmapQrCode = Util.generateQrCodeWhithoutLogo(context, "meal" + meal.getId() + "#" + userId, barcodeEncoder, sizeInPx);
-                if (bitmapQrCode != null) {
-                    if (!selectedPositions.contains(position)) {
-                        selectedPositions.add(position);
+                menuItemDelete.setOnMenuItemClickListener(item -> {
+                    deleteMeal(firebaseDatabase, context, meal, layoutInflater, campusId, cursusId);
+                    return true;
+                });
+                menuItemChallenge.setOnMenuItemClickListener(item -> {
+                    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.meals_way, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    LinearLayout linearLayout = new LinearLayout(context);
+                    linearLayout.setOrientation(LinearLayout.VERTICAL);
+                    linearLayout.setPadding(32, 16, 32, 0);
+                    AppCompatSpinner spinner = new AppCompatSpinner(context);
+                    spinner.setPadding(0, 0, 0, 32);
+                    spinner.setAdapter(adapter);
+                    linearLayout.addView(spinner);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setView(linearLayout);
+                    builder.setTitle(meal.getType());
+                    builder.setMessage(meal.getName() + "\n\n" + context.getString(R.string.quantity) + ": " + meal.getQuantity() + "\n");
+                    builder.setIcon(R.drawable.logo_42);
+                    builder.setCancelable(false);
+                    builder.setNeutralButton(R.string.no, (dialog, which) -> dialog.dismiss());
+                    builder.setPositiveButton(R.string.notify_meal, null);
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                        if (spinner.getSelectedItemPosition() == 1) {
+                            DatabaseReference mealsRef = firebaseDatabase.getReference("campus/" + campusId + "/cursus/" + cursusId + "/meals");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("hasSecondPortion", true);
+                            map.put("quantitySecondPortion", meal.getQuantity());
+                            mealsRef.child(meal.getId()).child("secondPortion").setValue(map).addOnSuccessListener(unused -> sendNotification(meal, spinner, dialog)).addOnFailureListener(e -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.second_portion) + ": " + e.getMessage(), context, null));
+                        } else
+                            sendNotification(meal, spinner, dialog);
+                    });
+                    return true;
+                });
+                menuItemAddQrCode.setOnMenuItemClickListener(item -> {
+                    Bitmap bitmapQrCode = Util.generateQrCodeWhithoutLogo(context, "meal" + meal.getId() + "#" + userId, barcodeEncoder, sizeInPx);
+                    if (bitmapQrCode != null) {
+                        if (!selectedPositions.contains(position)) {
+                            selectedPositions.add(position);
+                            notifyItemChanged(position);
+                        }
+                        idMealQrCode.add(meal.getId());
+                        listMealQrCode.add(new MealQrCode(meal.getId(), meal.getName(), meal.getDescription(), campusId, cursusId, bitmapQrCode));
+                        Snackbar.make(view, meal.getName(), Snackbar.LENGTH_LONG).show();
+                    } else
+                        Snackbar.make(view, R.string.msg_qr_code_invalid, Snackbar.LENGTH_LONG).show();
+                    return true;
+                });
+                menuItemDelQrCode.setOnMenuItemClickListener(item -> {
+                    if (selectedPositions.contains(position)) {
+                        selectedPositions.remove(position);
                         notifyItemChanged(position);
                     }
-                    idMealQrCode.add(meal.getId());
-                    listMealQrCode.add(new MealQrCode(meal.getId(), meal.getName(), meal.getDescription(), campusId, cursusId, bitmapQrCode));
-                    Snackbar.make(view, meal.getName(), Snackbar.LENGTH_LONG).show();
-                } else
-                    Snackbar.make(view, R.string.msg_qr_code_invalid, Snackbar.LENGTH_LONG).show();
-                return true;
-            });
-            menuItemDelQrCode.setOnMenuItemClickListener(item -> {
-                if (selectedPositions.contains(position)) {
-                    selectedPositions.remove(position);
-                    notifyItemChanged(position);
-                }
-                idMealQrCode.remove(meal.getId());
-                for (MealQrCode mealQrCodo : listMealQrCode) {
-                    if (meal.getId().equals(mealQrCodo.id())) {
-                        listMealQrCode.remove(mealQrCodo);
-                        break;
+                    idMealQrCode.remove(meal.getId());
+                    for (MealQrCode mealQrCodo : listMealQrCode) {
+                        if (meal.getId().equals(mealQrCodo.id())) {
+                            listMealQrCode.remove(mealQrCodo);
+                            break;
+                        }
                     }
-                }
-                Snackbar.make(view, meal.getName(), Snackbar.LENGTH_LONG).show();
-                return true;
+                    Snackbar.make(view, meal.getName(), Snackbar.LENGTH_LONG).show();
+                    return true;
+                });
             });
-        });
     }
 
     private void sendNotification(@NonNull Meal meal, @NonNull AppCompatSpinner spinner, @NonNull AlertDialog dialog) {
