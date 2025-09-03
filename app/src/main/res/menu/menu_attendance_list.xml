@@ -42,6 +42,10 @@
                 android:title=""
                 app:showAsAction="never" />
             <item
+                android:id="@+id/action_list_subscripted_second_portion"
+                android:title="@string/second_portion"
+                app:showAsAction="never" />
+            <item
                 android:id="@+id/action_three_list"
                 android:title=""
                 app:showAsAction="never" />

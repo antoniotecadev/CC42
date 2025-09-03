@@ -23,6 +23,7 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
 
     private Context context;
     private final List<User> userList;
+    private boolean isFilterSecondPortion;
     private final List<User> userListFilter;
 
     public boolean isMarkAttendance = false;
@@ -105,6 +106,7 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
                 }
             }
         }
+        isFilterSecondPortion = false;
         notifyDataSetChanged();
     }
 
@@ -123,6 +125,20 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
                     userList.add(user);
             }
         }
+        isFilterSecondPortion = false;
+        notifyDataSetChanged();
+    }
+
+    public void filterUsersSubscriptedSecondPortion(List<String> usersIdsSubscription) {
+        List<User> filteredList = new ArrayList<>();
+        for (int i = 0; i < getItemCount(); i++) {
+            if (usersIdsSubscription.contains("-" + this.userListFilter.get(i).uid)) {
+                filteredList.add(this.userList.get(i));
+            }
+        }
+        this.userList.clear();
+        isFilterSecondPortion = true;
+        this.userList.addAll(filteredList);
         notifyDataSetChanged();
     }
 
@@ -169,6 +185,10 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         } else if (user.isSubscription() != null && !user.isSubscription()) {
             holder.binding.textViewSubscription.setTextColor(redColor);
             holder.binding.textViewSubscription.setText(context.getString(R.string.text_unsigned));
+        }
+        if (isFilterSecondPortion) {
+            holder.binding.textViewSubscription.setTextColor(greenColor);
+            holder.binding.textViewSubscription.setText(context.getString(R.string.second_portion));
         }
         holder.binding.cardViewRegisteredUser.setOnClickListener(v -> {
             if (user.isSubscription() != null)

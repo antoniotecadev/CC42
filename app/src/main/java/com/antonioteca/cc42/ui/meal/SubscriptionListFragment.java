@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -531,7 +532,12 @@ public class SubscriptionListFragment extends Fragment {
                     subscriptionListAdapter.filterListStatus(false);
                 else if (itemId == R.id.action_three_list)
                     subscriptionListAdapter.filterListStatus(null);
-                else if (itemId == R.id.action_list_print) {
+                else if (itemId == R.id.action_list_subscripted_second_portion) {
+                    if (userIds != null && !userIds.isEmpty() && userIds.get(0) != null) {
+                        subscriptionListAdapter.filterUsersSubscriptedSecondPortion(userIds);
+                    } else
+                        Toast.makeText(context, getString(R.string.msg_error_get_ids_user_local), Toast.LENGTH_LONG).show();
+                } else if (itemId == R.id.action_list_print) {
                     boolean isExternalStorageManager = Util.launchPermissionDocument(
                             context,
                             requestIntentPermissionLauncherViewer,
