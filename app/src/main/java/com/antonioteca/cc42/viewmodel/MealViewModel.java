@@ -695,14 +695,16 @@ public class MealViewModel extends ViewModel {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot subscriptionSnapshot) {
                         if (subscriptionSnapshot.exists()) {
-                            boolean isSubscribed = Boolean.TRUE.equals(subscriptionSnapshot.getValue(Boolean.class));
+                            boolean isReceived = Boolean.TRUE.equals(subscriptionSnapshot.getValue(Boolean.class));
                             // Usuário já se inscreveu para a segunda porção
                             buttonSubscribed.setEnabled(false);
-                            buttonSubscribed.setBackgroundColor(colorDisabled);
-                            if (isSubscribed)
+                            if (isReceived) {
+                                buttonSubscribed.setBackgroundTintList(colorStateList);
                                 buttonSubscribed.setText(R.string.second_portion_already_received); // "Segunda porção já solicitada"
-                            else
+                            } else {
+                                buttonSubscribed.setBackgroundColor(Color.parseColor("#FF01579B"));
                                 buttonSubscribed.setText(R.string.second_portion_subscribed); // "Segunda porção não solicitada"
+                            }
                         } else {
                             if (hasSecondPortion) {
                                 // Usuário ainda não se inscreveu e a segunda porção está disponível
@@ -712,8 +714,8 @@ public class MealViewModel extends ViewModel {
                             } else {
                                 // Usuário ainda não se inscreveu e a segunda porção terminou
                                 buttonSubscribed.setEnabled(false);
-                                buttonSubscribed.setBackgroundColor(colorDisabled);
                                 buttonSubscribed.setText(R.string.second_portion_finished);
+                                buttonSubscribed.setBackgroundColor(Color.parseColor("#E53935"));
                             }
                         }
                     }
