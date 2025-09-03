@@ -1,7 +1,6 @@
 package com.antonioteca.cc42.network.NotificationFirebase;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.Toast;
 
@@ -47,8 +46,13 @@ public class Notification {
                 if (!response.isSuccessful()) {
                     HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpStatus.getDescription(), "#E53935", null, null);
-                } else
-                    Util.showAlertDialogBuild(context.getString(R.string.second_portion), context.getString(R.string.notification_sent) + ": " + meal.getName(), context, null);
+                } else {
+                    sendNotificationToIphone(meal, campusId, cursusId, data);
+                    if (condition != null)
+                        Toast.makeText(context, R.string.notification_sent, Toast.LENGTH_LONG).show();
+                    else
+                        Util.showAlertDialogBuild(context.getString(R.string.notification_sent), meal.getType(), context, null);
+                }
             }
 
             @Override
@@ -57,7 +61,9 @@ public class Notification {
                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpException.getDescription(), "#E53935", null, null);
             }
         });
+    }
 
+    private static void sendNotificationToIphone(@NonNull Meal meal, String campusId, String cursusId, FCMessage.Data data) {
         Map<String, Object> dataExtra = new HashMap<>();
         dataExtra.put("data", data);
         NotificationSender notificationSender = new NotificationSender();
