@@ -342,14 +342,15 @@ public class SubscriptionListFragment extends Fragment {
         binding.recyclerviewSubscriptionList.setLayoutManager(new LinearLayoutManager(context));
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
-            if (subscriptionListAdapter.isMarkAttendance || subscriptionListAdapter.getItemCount() < 0) {
+            Util.showAlertDialogBuild(getString(R.string.subscriptions_list), meal.getName(), context, () -> {
+                subscriptionListAdapter.isFilterSecondPortion = false;
                 setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
                 l.currentPage = 1;
                 activeScrollListener();
                 subscriptionListAdapter.clean();
                 userViewModel.getUserIdsSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
-            } else
-                binding.swipeRefreshLayout.setRefreshing(false);
+            });
+            binding.swipeRefreshLayout.setRefreshing(false);
         });
 
         scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
@@ -436,7 +437,6 @@ public class SubscriptionListFragment extends Fragment {
                     subscriptionListAdapter.updateSubscriptionUser(userIds);
                     setNumberUserChip();
                 }
-                subscriptionListAdapter.isMarkAttendance = false;
             } else
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
         });

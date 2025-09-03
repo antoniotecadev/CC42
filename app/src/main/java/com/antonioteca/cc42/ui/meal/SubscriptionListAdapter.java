@@ -23,10 +23,8 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
 
     private Context context;
     private final List<User> userList;
-    private boolean isFilterSecondPortion;
+    public boolean isFilterSecondPortion;
     private final List<User> userListFilter;
-
-    public boolean isMarkAttendance = false;
 
     public SubscriptionListAdapter() {
         this.userList = new ArrayList<>();
@@ -64,7 +62,6 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
     public void updateSubscriptionUserSingle(Long uid) {
         for (int i = 0; i < getItemCount(); i++) {
             if (Objects.equals(this.userList.get(i).uid, uid)) {
-                isMarkAttendance = true;
                 this.userList.get(i).setSubscription(true);
                 notifyItemChanged(i);
                 this.userList.add(0, this.userList.get(i));
