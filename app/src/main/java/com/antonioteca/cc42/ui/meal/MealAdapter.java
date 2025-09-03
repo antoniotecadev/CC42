@@ -213,13 +213,16 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
     }
 
     private void sendNotification(@NonNull Meal meal, @NonNull AppCompatSpinner spinner, @NonNull AlertDialog dialog) {
-        meal.setType(meal.getType() + ": " + spinner.getSelectedItem().toString());
+        String type = meal.getType();
+        meal.setType(type + ": " + spinner.getSelectedItem().toString());
         try {
             String topicStudent = "meals_" + campusId + "_" + cursusId;
             Notification.sendFCMNotification(context, layoutInflater, meal, String.valueOf(campusId), String.valueOf(cursusId), topicStudent, null);
             dialog.dismiss();
         } catch (IOException e) {
             Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
+        } finally {
+            meal.setType(type);
         }
     }
 
