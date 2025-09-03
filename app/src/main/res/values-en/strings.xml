@@ -320,4 +320,5 @@
     <string name="second_portion_finished">Second portion finished</string>
     <string name="error_subscribing_second_portion">Error subscribing for second portion</string>
     <string name="second_portion_already_subscribed">Already subscribed for second portion</string>
+    <string name="second_portion_not_subscribe">Not subscribed for second portion</string>
 </resources>

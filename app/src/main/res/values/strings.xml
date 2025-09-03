@@ -342,4 +342,5 @@
     <string name="second_portion_finished">Segunda via terminou</string>
     <string name="error_subscribing_second_portion">Erro ao inscrever - se para segunda via</string>
     <string name="second_portion_already_subscribed">Já inscreveu - se para segunda via</string>
+    <string name="second_portion_not_subscribe">Não está inscrito para segunda via</string>
 </resources>

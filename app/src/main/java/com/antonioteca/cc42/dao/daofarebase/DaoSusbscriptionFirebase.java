@@ -55,10 +55,10 @@ public class DaoSusbscriptionFirebase {
         subscriptionsRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean firstPortion = portionSelected == null;
                 if (snapshot.exists()) {
                     boolean isAlreadyReceived = Boolean.TRUE.equals(snapshot.getValue(Boolean.class));
                     if (isAlreadyReceived) {
-                        boolean firstPortion = portionSelected == null;
                         progressBarSubscription.setVisibility(View.GONE);
                         String message = displayName + "\n" + context.getString(R.string.msg_you_already_subscription) + " " + (firstPortion ? context.getString(R.string.first_portion) : context.getString(R.string.second_portion));
                         Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, firstPortion ? null : "#FDD835", urlImageUser, firstPortion ? () -> {
@@ -68,11 +68,15 @@ public class DaoSusbscriptionFirebase {
                                 DaoSusbscriptionFirebase.subscription(firebaseDatabase, listMealQrCode, "-", mealId, userStaffId, userId, userLogin, displayName, cursusId, campusId, urlImageUser, context, layoutInflater, progressBarSubscription, sharedViewModel, runnableResumeCamera);
                             });
                         } : runnableResumeCamera);
-                    } else {
+                    } else
                         registerSubscription();
-                    }
                 } else {
-                    registerSubscription();
+                    if (firstPortion)
+                        registerSubscription();
+                    else {
+                        progressBarSubscription.setVisibility(View.GONE);
+                        Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), displayName + "\n" + context.getString(R.string.second_portion_not_subscribe), "#E53935", urlImageUser, runnableResumeCamera);
+                    }
                 }
             }
 
