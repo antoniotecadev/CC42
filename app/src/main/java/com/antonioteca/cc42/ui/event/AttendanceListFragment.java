@@ -360,14 +360,14 @@ public class AttendanceListFragment extends Fragment {
         binding.recyclerviewAttendanceList.setLayoutManager(new LinearLayoutManager(context));
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
-            if (attendanceListAdapter.isMarkAttendance || attendanceListAdapter.getItemCount() < 0) {
+            Util.showAlertDialogBuild(getString(R.string.msg_attendance_list), eventName, context, () -> {
                 setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
                 l.currentPage = 1;
                 activeScrollListener();
                 attendanceListAdapter.clean();
                 userViewModel.getIdsUsersAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
-            } else
-                binding.swipeRefreshLayout.setRefreshing(false);
+            });
+            binding.swipeRefreshLayout.setRefreshing(false);
         });
 
         scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
@@ -454,7 +454,6 @@ public class AttendanceListFragment extends Fragment {
                     attendanceListAdapter.updateAttendanceUser(userIds);
                     setNumberUserChip();
                 }
-                attendanceListAdapter.isMarkAttendance = false;
             } else
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
         });

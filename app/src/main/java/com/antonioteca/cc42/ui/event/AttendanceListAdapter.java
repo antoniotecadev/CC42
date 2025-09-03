@@ -24,7 +24,6 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
     private Context context;
     private final List<User> userList;
     private final List<User> userListFilter;
-    public boolean isMarkAttendance = false;
 
     public AttendanceListAdapter() {
         this.userList = new ArrayList<>();
@@ -62,7 +61,6 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
     public void updateAttendanceUserSingle(Long uid) {
         for (int i = 0; i < getItemCount(); i++) {
             if (Objects.equals(this.userList.get(i).uid, uid)) {
-                isMarkAttendance = true;
                 this.userList.get(i).setPresent(true);
                 notifyItemChanged(i);
                 this.userList.add(0, this.userList.get(i));
@@ -81,7 +79,7 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         notifyItemRangeRemoved(0, getItemCount());
     }
 
-    private List<User> filteredList = new ArrayList<>();
+    private final List<User> filteredList = new ArrayList<>();
 
     public void filterSearch(@NonNull String text) {
         this.userList.clear();
