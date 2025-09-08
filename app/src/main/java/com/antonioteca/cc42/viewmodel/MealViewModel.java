@@ -706,11 +706,12 @@ public class MealViewModel extends ViewModel {
                                 if (isCommitted) {
                                     buttonSubscribed.setBackgroundColor(Color.parseColor("#FF01579B"));
                                     buttonSubscribed.setText(R.string.second_portion_subscribed); // "Segunda porção não solicitada"
-                                }else{
+                                } else {
                                     buttonSubscribed.setBackgroundColor(colorDisabled);
                                     buttonSubscribed.setText(R.string.second_portion_unavailable); // "Segunda porção não solicitada"
                                 }
                             }
+                            removeEventListener(mealRefSecondPortion, valueEventListenerSecondPortion, true);
                         } else {
                             if (hasSecondPortion) {
                                 // Usuário ainda não se inscreveu e a segunda porção está disponível
@@ -722,6 +723,7 @@ public class MealViewModel extends ViewModel {
                                 buttonSubscribed.setEnabled(false);
                                 buttonSubscribed.setText(R.string.second_portion_finished);
                                 buttonSubscribed.setBackgroundColor(Color.parseColor("#E53935"));
+                                removeEventListener(mealRefSecondPortion, valueEventListenerSecondPortion, true);
                             }
                         }
                     }
@@ -800,6 +802,7 @@ public class MealViewModel extends ViewModel {
                     buttonSubscribed.setEnabled(false);
                     buttonSubscribed.setBackgroundColor(colorDisabled);
                     buttonSubscribed.setText(R.string.second_portion_subscribed);
+                    removeEventListener(mealRefSecondPortion, valueEventListenerSecondPortion, true);
                     Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.sucess), mealName + "\n" + context.getString(R.string.second_portion_subscribed), "#4CAF50", pathImage, null);
                 } else {
                     // Transação abortada (usuário já inscrito ou não há segunda porção)
@@ -819,11 +822,18 @@ public class MealViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        if (mealRef != null && valueEventListener != null)
-            mealRef.removeEventListener(valueEventListener);
-        if (mealRefSecondPortion != null && valueEventListenerSecondPortion != null)
-            mealRefSecondPortion.removeEventListener(valueEventListenerSecondPortion);
+        removeEventListener(mealRef, valueEventListener, false);
+        removeEventListener(mealRefSecondPortion, valueEventListenerSecondPortion, true);
         if (executorService != null && !executorService.isShutdown())
             executorService.shutdown();
+    }
+
+    private void removeEventListener(DatabaseReference mealRef, ValueEventListener valueEventListener, boolean isSecondPortion) {
+        if (mealRef != null && valueEventListener != null) {
+            if (isSecondPortion)
+                mealRef.child("secondPortion").removeEventListener(valueEventListener);
+            else
+                mealRef.child("ratings").removeEventListener(valueEventListener);
+        }
     }
 }
