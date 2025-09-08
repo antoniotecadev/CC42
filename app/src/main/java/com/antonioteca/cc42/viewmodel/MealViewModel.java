@@ -59,6 +59,7 @@ public class MealViewModel extends ViewModel {
 
     public List<Meal> mealList = new ArrayList<>();
     private DatabaseReference mealRef;
+    private boolean isCommitted = true;
     boolean isSubscribedSecondPortion = false;
     private DatabaseReference mealRefSecondPortion;
     private ValueEventListener valueEventListener;
@@ -702,8 +703,13 @@ public class MealViewModel extends ViewModel {
                                 buttonSubscribed.setBackgroundTintList(colorStateList);
                                 buttonSubscribed.setText(R.string.second_portion_already_received); // "Segunda porção já solicitada"
                             } else {
-                                buttonSubscribed.setBackgroundColor(Color.parseColor("#FF01579B"));
-                                buttonSubscribed.setText(R.string.second_portion_subscribed); // "Segunda porção não solicitada"
+                                if (isCommitted) {
+                                    buttonSubscribed.setBackgroundColor(Color.parseColor("#FF01579B"));
+                                    buttonSubscribed.setText(R.string.second_portion_subscribed); // "Segunda porção não solicitada"
+                                }else{
+                                    buttonSubscribed.setBackgroundColor(colorDisabled);
+                                    buttonSubscribed.setText(R.string.second_portion_unavailable); // "Segunda porção não solicitada"
+                                }
                             }
                         } else {
                             if (hasSecondPortion) {
@@ -749,26 +755,31 @@ public class MealViewModel extends ViewModel {
                 MutableData subscription = mutableData.child("subscriptions");
                 MutableData secondPortion = mutableData.child("secondPortion");
 
-
+                // Lê os valores actuais antes de qualquer modificação
                 Boolean hasSecondPortion = secondPortion.child("hasSecondPortion").getValue(Boolean.class);
                 Integer quantitySecondPortion = secondPortion.child("quantitySecondPortion").getValue(Integer.class);
 
+                if (hasSecondPortion == null || quantitySecondPortion == null) {
+                    isSubscribedSecondPortion = false;
+                    return Transaction.abort();
+                }
+
                 // Verifica se o usuário já se inscreveu
-                MutableData secondPortionSubscription = subscription.child("-" + currentUserId);
-                if (secondPortionSubscription.getValue() != null) {
+                if (subscription.child("-" + currentUserId).getValue() != null) {
                     // Usuário já inscrito, aborta a transação
                     isSubscribedSecondPortion = true;
                     return Transaction.abort();
                 }
 
-                if (Boolean.TRUE.equals(hasSecondPortion) && quantitySecondPortion != null && quantitySecondPortion > 0) {
-                    int quantity = quantitySecondPortion - 1;
+                if (Boolean.TRUE.equals(hasSecondPortion) && quantitySecondPortion > 0) {
+                    int newQuantity = quantitySecondPortion - 1;
                     // Decrementa a quantidade
-                    secondPortion.child("quantitySecondPortion").setValue(quantity);
+                    secondPortion.child("quantitySecondPortion").setValue(newQuantity);
                     // Se a quantidade chegar a 0, atualiza hasSecondPortion para false
-                    if (quantity == 0) {
+                    if (newQuantity == 0) {
                         secondPortion.child("hasSecondPortion").setValue(false);
                     }
+                    isCommitted = false;
                     // Adiciona a inscrição do usuário
                     subscription.child("-" + currentUserId).setValue(false); // Usando false para indicar inscrição mas sem receber a refeição
                     return Transaction.success(mutableData);
@@ -785,6 +796,7 @@ public class MealViewModel extends ViewModel {
                 if (error != null) {
                     Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), context.getString(R.string.error_subscribing_second_portion) + ": " + error.getMessage(), "#E53935", pathImage, null);
                 } else if (committed) {
+                    isCommitted = true;
                     buttonSubscribed.setEnabled(false);
                     buttonSubscribed.setBackgroundColor(colorDisabled);
                     buttonSubscribed.setText(R.string.second_portion_subscribed);
