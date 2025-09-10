@@ -46,7 +46,7 @@ import java.util.Set;
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterViewHolder> {
     public final List<MealQrCode> listMealQrCode = new ArrayList<>();
     public final List<String> idMealQrCode = new ArrayList<>();
-    private final Set<Integer> selectedPositions = new HashSet<>();
+//    private final Set<Integer> selectedPositions = new HashSet<>();
     public final List<Meal> mealList = new ArrayList<>();
     private final FirebaseDatabase firebaseDatabase;
     private final LayoutInflater layoutInflater;
@@ -60,8 +60,8 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
     private final int campusId;
     private final int cursusId;
     private final long userId;
-    private final int sizeInPx;
-    private final BarcodeEncoder barcodeEncoder;
+//    private final int sizeInPx;
+//    private final BarcodeEncoder barcodeEncoder;
 
     private final RoundedCorners roundedCorners = new RoundedCorners(5);
     private final RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_baseline_restaurant_60);
@@ -78,8 +78,8 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         this.cursusId = cursusId;
         this.layoutInflater = layoutInflater;
         this.firebaseDatabase = firebaseDatabase;
-        this.sizeInPx = Util.getSizeInPx(context);
-        this.barcodeEncoder = new BarcodeEncoder();
+//        this.sizeInPx = Util.getSizeInPx(context);
+//        this.barcodeEncoder = new BarcodeEncoder();
     }
 
     @NonNull
@@ -97,10 +97,10 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
             loadMoreMeals();
         }
 
-        if (selectedPositions.contains(position))
-            holder.itemView.setBackgroundColor(Color.LTGRAY);
-        else
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+//        if (selectedPositions.contains(position))
+//            holder.itemView.setBackgroundColor(Color.LTGRAY);
+//        else
+//            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
         Meal meal = mealList.get(position);
         holder.binding.textViewName.setText(meal.getName());
@@ -126,15 +126,15 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                 MenuItem menuItemEdit = contextMenu.add(view.getContext().getString(R.string.edit_meal));
                 MenuItem menuItemDelete = contextMenu.add(view.getContext().getString(R.string.delete_meal));
                 MenuItem menuItemChallenge = contextMenu.add(view.getContext().getString(R.string.notify_meal));
-                MenuItem menuItemAddQrCode = contextMenu.add("Add Qr Code");
-                MenuItem menuItemDelQrCode = contextMenu.add("Del Qr Code");
-                if (idMealQrCode.contains(meal.getId())) {
-                    menuItemAddQrCode.setVisible(false);
-                    menuItemDelQrCode.setVisible(true);
-                } else {
-                    menuItemAddQrCode.setVisible(true);
-                    menuItemDelQrCode.setVisible(false);
-                }
+//                MenuItem menuItemAddQrCode = contextMenu.add("Add Qr Code");
+//                MenuItem menuItemDelQrCode = contextMenu.add("Del Qr Code");
+//                if (idMealQrCode.contains(meal.getId())) {
+//                    menuItemAddQrCode.setVisible(false);
+//                    menuItemDelQrCode.setVisible(true);
+//                } else {
+//                    menuItemAddQrCode.setVisible(true);
+//                    menuItemDelQrCode.setVisible(false);
+//                }
                 menuItemEdit.setOnMenuItemClickListener(item -> {
                     MealListFragmentDirections.ActionNavMealToDialogFragmentCreateMeal actionNavMealToDialogFragmentCreateMeal = MealListFragmentDirections.actionNavMealToDialogFragmentCreateMeal(false, cursusId).setMeal(meal);
                     Navigation.findNavController(view).navigate(actionNavMealToDialogFragmentCreateMeal);
@@ -180,35 +180,35 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                     });
                     return true;
                 });
-                menuItemAddQrCode.setOnMenuItemClickListener(item -> {
-                    Bitmap bitmapQrCode = Util.generateQrCodeWhithoutLogo(context, "meal" + meal.getId() + "#" + userId, barcodeEncoder, sizeInPx);
-                    if (bitmapQrCode != null) {
-                        if (!selectedPositions.contains(position)) {
-                            selectedPositions.add(position);
-                            notifyItemChanged(position);
-                        }
-                        idMealQrCode.add(meal.getId());
-                        listMealQrCode.add(new MealQrCode(meal.getId(), meal.getName(), meal.getDescription(), campusId, cursusId, bitmapQrCode));
-                        Snackbar.make(view, meal.getName(), Snackbar.LENGTH_LONG).show();
-                    } else
-                        Snackbar.make(view, R.string.msg_qr_code_invalid, Snackbar.LENGTH_LONG).show();
-                    return true;
-                });
-                menuItemDelQrCode.setOnMenuItemClickListener(item -> {
-                    if (selectedPositions.contains(position)) {
-                        selectedPositions.remove(position);
-                        notifyItemChanged(position);
-                    }
-                    idMealQrCode.remove(meal.getId());
-                    for (MealQrCode mealQrCodo : listMealQrCode) {
-                        if (meal.getId().equals(mealQrCodo.id())) {
-                            listMealQrCode.remove(mealQrCodo);
-                            break;
-                        }
-                    }
-                    Snackbar.make(view, meal.getName(), Snackbar.LENGTH_LONG).show();
-                    return true;
-                });
+//                menuItemAddQrCode.setOnMenuItemClickListener(item -> {
+//                    Bitmap bitmapQrCode = Util.generateQrCodeWhithoutLogo(context, "meal" + meal.getId() + "#" + userId, barcodeEncoder, sizeInPx);
+//                    if (bitmapQrCode != null) {
+//                        if (!selectedPositions.contains(position)) {
+//                            selectedPositions.add(position);
+//                            notifyItemChanged(position);
+//                        }
+//                        idMealQrCode.add(meal.getId());
+//                        listMealQrCode.add(new MealQrCode(meal.getId(), meal.getName(), meal.getDescription(), campusId, cursusId, bitmapQrCode));
+//                        Snackbar.make(view, meal.getName(), Snackbar.LENGTH_LONG).show();
+//                    } else
+//                        Snackbar.make(view, R.string.msg_qr_code_invalid, Snackbar.LENGTH_LONG).show();
+//                    return true;
+//                });
+//                menuItemDelQrCode.setOnMenuItemClickListener(item -> {
+//                    if (selectedPositions.contains(position)) {
+//                        selectedPositions.remove(position);
+//                        notifyItemChanged(position);
+//                    }
+//                    idMealQrCode.remove(meal.getId());
+//                    for (MealQrCode mealQrCodo : listMealQrCode) {
+//                        if (meal.getId().equals(mealQrCodo.id())) {
+//                            listMealQrCode.remove(mealQrCodo);
+//                            break;
+//                        }
+//                    }
+//                    Snackbar.make(view, meal.getName(), Snackbar.LENGTH_LONG).show();
+//                    return true;
+//                });
             });
     }
 

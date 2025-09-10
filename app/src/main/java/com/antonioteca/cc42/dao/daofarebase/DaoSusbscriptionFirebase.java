@@ -8,7 +8,6 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 
 import com.antonioteca.cc42.R;
-import com.antonioteca.cc42.model.MealQrCode;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.google.firebase.database.DataSnapshot;
@@ -18,7 +17,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DaoSusbscriptionFirebase {
@@ -26,7 +24,7 @@ public class DaoSusbscriptionFirebase {
     // Assinar
     public static void subscription(
             @NonNull FirebaseDatabase firebaseDatabase,
-            List<MealQrCode> listMealQrCode,
+            Integer portionQuantity,
             String portionSelected,
             String mealId,
             String userStaffId,
@@ -47,7 +45,7 @@ public class DaoSusbscriptionFirebase {
                 .child("cursus")
                 .child(cursusId)
                 .child("meals")
-                .child(mealId == null ? listMealQrCode.get(0).id() : mealId)
+                .child(mealId)
                 .child("subscriptions");
 
         String uid = portionSelected == null ? userId : portionSelected + userId;
@@ -57,7 +55,7 @@ public class DaoSusbscriptionFirebase {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 boolean firstPortion = portionSelected == null;
                 if (snapshot.exists()) {
-                    boolean isAlreadyReceived = Boolean.TRUE.equals(snapshot.getValue(Boolean.class));
+                    boolean isAlreadyReceived = Boolean.TRUE.equals(snapshot.child("status").getValue(Boolean.class));
                     if (isAlreadyReceived) {
                         progressBarSubscription.setVisibility(View.GONE);
                         String message = displayName + "\n" + context.getString(R.string.msg_you_already_subscription) + " " + (firstPortion ? context.getString(R.string.first_portion) : context.getString(R.string.second_portion));
@@ -65,7 +63,7 @@ public class DaoSusbscriptionFirebase {
                             runnableResumeCamera.run();
                             Util.showAlertDialogBuild(context.getString(R.string.second_portion), null, context, () -> {
                                 progressBarSubscription.setVisibility(View.VISIBLE);
-                                DaoSusbscriptionFirebase.subscription(firebaseDatabase, listMealQrCode, "-", mealId, userStaffId, userId, userLogin, displayName, cursusId, campusId, urlImageUser, context, layoutInflater, progressBarSubscription, sharedViewModel, runnableResumeCamera);
+                                DaoSusbscriptionFirebase.subscription(firebaseDatabase, portionQuantity, "-", mealId, userStaffId, userId, userLogin, displayName, cursusId, campusId, urlImageUser, context, layoutInflater, progressBarSubscription, sharedViewModel, runnableResumeCamera);
                             });
                         } : runnableResumeCamera);
                     } else
@@ -82,7 +80,11 @@ public class DaoSusbscriptionFirebase {
 
             private void registerSubscription() {
                 Map<String, Object> update = new HashMap<>();
-                update.put("cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/" + uid, true);
+                Map<String, Object> updateStatus = new HashMap<>();
+                updateStatus.put("status", true);
+                updateStatus.put("quantity", portionQuantity);
+                update.put("cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/" + uid, updateStatus);
+//                    .child(mealId == null ? listMealQrCode.get(0).id() : mealId)
 //                    if (mealId == null)
 //                        for (MealQrCode mealQrCode : listMealQrCode)
 //                            update.put("cursus/" + cursusId + "/meals/" + mealQrCode.id() + "/subscriptions/" + userId, true);

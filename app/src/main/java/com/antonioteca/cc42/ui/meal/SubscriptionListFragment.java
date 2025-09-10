@@ -110,8 +110,8 @@ public class SubscriptionListFragment extends Fragment {
     private int numberUserSubscription = 0;
     private int numberUserUnsubscription = 0;
 
-    final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
-    final long[] lastClickTime = {0};
+//    final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
+//    final long[] lastClickTime = {0};
     final boolean[] isFlashLightOn = {false};
 
     private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(
@@ -139,7 +139,7 @@ public class SubscriptionListFragment extends Fragment {
                         progressBarSubscription.setVisibility(View.VISIBLE);
                         DaoSusbscriptionFirebase.subscription(
                                 firebaseDatabase,
-                                null,
+                                Integer.parseInt(binding.textViewQuantityValue.getText().toString()),
                                 getPortionSelected(),
                                 String.valueOf(meal.getId()),
                                 null,
@@ -178,7 +178,7 @@ public class SubscriptionListFragment extends Fragment {
                     progressBarSubscription.setVisibility(View.VISIBLE);
                     DaoSusbscriptionFirebase.subscription(
                             firebaseDatabase,
-                            null,
+                            1,
                             getPortionSelected(),
                             String.valueOf(meal.getId()),
                             null,
@@ -371,6 +371,8 @@ public class SubscriptionListFragment extends Fragment {
         progressBarSubscription = binding.progressBarSubscription;
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
+            binding.buttonDecrement.setStrokeColor(colorStateList);
+            binding.buttonIncrement.setStrokeColor(colorStateList);
             binding.fabOpenReaderNFC.setBackgroundTintList(colorStateList);
             binding.fabOpenCameraScannerQrCodeBack.setBackgroundTintList(colorStateList);
             binding.fabOpenCameraScannerQrCodeFront.setBackgroundTintList(colorStateList);
@@ -402,13 +404,13 @@ public class SubscriptionListFragment extends Fragment {
             return true;
         });
 
-        inflatedViewStub.setOnClickListener(v -> {
-            long clickTime = System.currentTimeMillis();
-            if (clickTime - lastClickTime[0] < DOUBLE_CLICK_TIME_DELTA) {
-                closeCamera();
-            }
-            lastClickTime[0] = clickTime;
-        });
+//        inflatedViewStub.setOnClickListener(v -> {
+//            long clickTime = System.currentTimeMillis();
+//            if (clickTime - lastClickTime[0] < DOUBLE_CLICK_TIME_DELTA) {
+//                closeCamera();
+//            }
+//            lastClickTime[0] = clickTime;
+//        });
 
         decoratedBarcodeView.setTorchListener(new DecoratedBarcodeView.TorchListener() {
             @Override
@@ -420,6 +422,20 @@ public class SubscriptionListFragment extends Fragment {
             public void onTorchOff() {
                 Snackbar.make(requireView(), R.string.off_flashlight, Snackbar.LENGTH_LONG).show();
             }
+        });
+
+        binding.buttonDecrement.setOnClickListener(v -> {
+            int currentQuantity = Integer.parseInt(binding.textViewQuantityValue.getText().toString());
+            if (currentQuantity > 1) {
+                binding.textViewQuantityValue.setText(String.valueOf(currentQuantity - 1));
+            }
+        });
+
+        binding.buttonIncrement.setOnClickListener(v -> {
+            int currentQuantity = Integer.parseInt(binding.textViewQuantityValue.getText().toString());
+            // You might want to add a maximum limit here if needed
+            if (currentQuantity < 9)
+                binding.textViewQuantityValue.setText(String.valueOf(currentQuantity + 1));
         });
 
         binding.progressBarSubscription.setVisibility(View.VISIBLE);
@@ -673,6 +689,7 @@ public class SubscriptionListFragment extends Fragment {
         decoratedBarcodeView.resume();
         inflatedViewStub.setVisibility(View.VISIBLE);
         binding.fabOpenReaderNFC.setVisibility(View.GONE);
+        binding.liniearLayoutQuantity.setVisibility(View.VISIBLE);
         binding.radioGroupMealPortion.setVisibility(View.VISIBLE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.GONE);
@@ -697,6 +714,7 @@ public class SubscriptionListFragment extends Fragment {
         }
         inflatedViewStub.setVisibility(View.GONE);
         binding.radioGroupMealPortion.setVisibility(View.GONE);
+        binding.liniearLayoutQuantity.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.VISIBLE);
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.VISIBLE);

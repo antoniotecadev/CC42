@@ -379,7 +379,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.VISIBLE);
                     DaoSusbscriptionFirebase.subscription(
                             firebaseDatabase,
-                            null,
+                            1,
                             null,
                             partsQrCode[0], /* id meal*/
                             partsQrCode[1], /* id user staff */
