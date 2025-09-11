@@ -17,7 +17,9 @@ import com.antonioteca.cc42.utility.Util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionListAdapter.SubscriptionListViewHolder> {
 
@@ -50,17 +52,23 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
     }
 
     public void updateSubscriptionUser(List<String> usersIdsSubscription) {
+        Set<String> usersIdsSet = new HashSet<>(usersIdsSubscription);
         boolean asigned;
-        for (int i = 0; i < getItemCount(); i++) {
-            asigned = usersIdsSubscription.contains(String.valueOf(this.userList.get(i).uid));
-            this.userList.get(i).setSubscription(asigned);
-            this.userListFilter.get(i).setSubscription(asigned);
-            notifyItemChanged(i);
+        int count = getItemCount();
+        for (int i = 0; i < count; i++) {
+            User currentUser = this.userList.get(i);
+            asigned = usersIdsSet.contains(String.valueOf(currentUser.uid));
+            if (currentUser.isSubscription() == null || currentUser.isSubscription() != asigned) {
+                currentUser.setSubscription(asigned);
+                this.userListFilter.get(i).setSubscription(asigned); // Assuming userListFilter has the same user objects or needs parallel update
+                notifyItemChanged(i);
+            }
         }
     }
 
     public void updateSubscriptionUserSingle(Long uid) {
-        for (int i = 0; i < getItemCount(); i++) {
+        int count = getItemCount();
+        for (int i = 0; i < count; i++) {
             if (Objects.equals(this.userList.get(i).uid, uid)) {
                 this.userList.get(i).setSubscription(true);
                 notifyItemChanged(i);
@@ -128,9 +136,12 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
 
     public void filterUsersSubscriptedSecondPortion(List<String> usersIdsSubscription) {
         List<User> filteredList = new ArrayList<>();
-        for (int i = 0; i < getItemCount(); i++) {
-            if (usersIdsSubscription.contains("-" + this.userListFilter.get(i).uid)) {
-                filteredList.add(this.userList.get(i));
+        Set<String> usersIdsSet = new HashSet<>(usersIdsSubscription); // Converta para HashSet para pesquisa O(1)
+        int itemCount = getItemCount();
+        for (int i = 0; i < itemCount; i++) {
+            User currentUser = this.userListFilter.get(i);
+            if (usersIdsSet.contains("-" + currentUser.uid)) {
+                filteredList.add(this.userList.get(i)); // this.userList e this.userListFilter sincronizados
             }
         }
         this.userList.clear();
