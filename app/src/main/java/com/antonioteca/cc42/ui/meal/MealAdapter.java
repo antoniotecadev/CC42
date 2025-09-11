@@ -94,7 +94,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         if (!loading.isLoading && (position == getItemCount() - 1) && isStaff) {
             Toast.makeText(context, R.string.loading_more_meals, Toast.LENGTH_SHORT).show();
             loading.isLoading = true;
-            loadMoreMeals();
+//            loadMoreMeals();
         }
 
 //        if (selectedPositions.contains(position))
@@ -105,7 +105,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         Meal meal = mealList.get(position);
         holder.binding.textViewName.setText(meal.getName());
         holder.binding.textViewDescription.setText(meal.getDescription());
-        String textType = meal.getType() + " " + meal.getCreatedDate() + " " + meal.getQuantity() + "/" + meal.getNumberSubscribed();
+        String textType = meal.getType() + " " + meal.getCreatedDate() + " " + meal.getQuantity() + "/" + meal.getQuantityReceived();
         holder.binding.textViewType.setText(textType);
         if (meal.isSubscribed()) {
             int greenColor = ContextCompat.getColor(context, R.color.green);

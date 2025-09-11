@@ -135,7 +135,7 @@ public class MealViewModel extends ViewModel {
         if (startAtKey != null) {
             query = query.endBefore(startAtKey).limitToLast(15);
         } else {
-            query = query.limitToLast(isStaff ? 15 : 7);
+            query = query.limitToLast(isStaff ? 1 : 7);
         }
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -144,20 +144,21 @@ public class MealViewModel extends ViewModel {
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Meal meal = dataSnapshot.getValue(Meal.class);
+                        int quantityReceivedFinal = 0;
                         DataSnapshot subscription = dataSnapshot.child("subscriptions");
-                        assert meal != null;
-                        meal.setNumberSubscribed((int) subscription.getChildrenCount());
-                        int quantity = meal.getQuantity() - meal.getNumberSubscribed();
-                        meal.setQuantity(Math.max(quantity, 0));
-                        if (subscription.exists()) {
-                            for (DataSnapshot snapshotId : subscription.getChildren()) {
-                                String key = snapshotId.getKey();
-                                if (key != null && key.equals(String.valueOf(userId))) {
-                                    meal.setSubscribed(true);
-                                    break;
-                                }
+                        if (meal == null || !subscription.exists()) continue;
+                        for (DataSnapshot snapshotId : subscription.getChildren()) {
+                            String key = snapshotId.getKey();
+                            if (key == null) continue;
+                            Integer quantityReceived = snapshotId.child("quantity").getValue(Integer.class);
+                            quantityReceivedFinal += quantityReceived == null ? 0 : quantityReceived;
+                            if (key.equals(String.valueOf(userId))) {
+                                meal.setSubscribed(true);
                             }
                         }
+                        meal.setQuantityReceived(quantityReceivedFinal);
+                        int quantity = meal.getQuantity() - meal.getQuantityReceived();
+                        meal.setQuantity(Math.max(quantity, 0));
                         mealList.add(meal);
                     }
                     Collections.reverse(mealList);
