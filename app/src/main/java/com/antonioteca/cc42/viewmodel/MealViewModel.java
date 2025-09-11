@@ -135,7 +135,7 @@ public class MealViewModel extends ViewModel {
         if (startAtKey != null) {
             query = query.endBefore(startAtKey).limitToLast(15);
         } else {
-            query = query.limitToLast(isStaff ? 1 : 7);
+            query = query.limitToLast(isStaff ? 15 : 7);
         }
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

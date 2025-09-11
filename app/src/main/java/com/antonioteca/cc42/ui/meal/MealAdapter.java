@@ -94,7 +94,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         if (!loading.isLoading && (position == getItemCount() - 1) && isStaff) {
             Toast.makeText(context, R.string.loading_more_meals, Toast.LENGTH_SHORT).show();
             loading.isLoading = true;
-//            loadMoreMeals();
+            loadMoreMeals();
         }
 
 //        if (selectedPositions.contains(position))
