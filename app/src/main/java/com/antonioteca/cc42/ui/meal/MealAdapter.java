@@ -46,7 +46,7 @@ import java.util.Set;
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterViewHolder> {
     public final List<MealQrCode> listMealQrCode = new ArrayList<>();
     public final List<String> idMealQrCode = new ArrayList<>();
-//    private final Set<Integer> selectedPositions = new HashSet<>();
+    //    private final Set<Integer> selectedPositions = new HashSet<>();
     public final List<Meal> mealList = new ArrayList<>();
     private final FirebaseDatabase firebaseDatabase;
     private final LayoutInflater layoutInflater;

@@ -144,19 +144,19 @@ public class MealViewModel extends ViewModel {
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Meal meal = dataSnapshot.getValue(Meal.class);
-                        int quantityReceivedFinal = 0;
+                        int quantityReceived = 0;
                         DataSnapshot subscription = dataSnapshot.child("subscriptions");
                         if (meal == null || !subscription.exists()) continue;
                         for (DataSnapshot snapshotId : subscription.getChildren()) {
                             String key = snapshotId.getKey();
                             if (key == null) continue;
-                            Integer quantityReceived = snapshotId.child("quantity").getValue(Integer.class);
-                            quantityReceivedFinal += quantityReceived == null ? 0 : quantityReceived;
+                            Integer quantityReceivedUser = snapshotId.child("quantity").getValue(Integer.class);
+                            quantityReceived += quantityReceivedUser == null ? 0 : quantityReceivedUser;
                             if (key.equals(String.valueOf(userId))) {
                                 meal.setSubscribed(true);
                             }
                         }
-                        meal.setQuantityReceived(quantityReceivedFinal);
+                        meal.setQuantityReceived(quantityReceived);
                         int quantity = meal.getQuantity() - meal.getQuantityReceived();
                         meal.setQuantity(Math.max(quantity, 0));
                         mealList.add(meal);
