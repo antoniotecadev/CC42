@@ -105,7 +105,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         Meal meal = mealList.get(position);
         holder.binding.textViewName.setText(meal.getName());
         holder.binding.textViewDescription.setText(meal.getDescription());
-        String textType = meal.getType() + " " + meal.getCreatedDate() + " " + meal.getQuantity() + "/" + meal.getQuantityReceived();
+        String textType = meal.getType() + " " + meal.getCreatedDate() + " " + meal.getQuantityNotReceived() + "/" + meal.getQuantityReceived();
         holder.binding.textViewType.setText(textType);
         if (meal.isSubscribed()) {
             int greenColor = ContextCompat.getColor(context, R.color.green);
@@ -159,7 +159,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setView(linearLayout);
                     builder.setTitle(meal.getType());
-                    builder.setMessage(meal.getName() + "\n\n" + context.getString(R.string.quantity) + ": " + meal.getQuantity() + "\n");
+                    builder.setMessage(meal.getName() + "\n\n" + context.getString(R.string.quantity) + ": " + meal.getQuantityNotReceived() + "\n");
                     builder.setIcon(R.drawable.logo_42);
                     builder.setCancelable(false);
                     builder.setNeutralButton(R.string.no, (dialog, which) -> dialog.dismiss());
@@ -173,7 +173,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
                             DatabaseReference mealsRef = firebaseDatabase.getReference("campus/" + campusId + "/cursus/" + cursusId + "/meals");
                             Map<String, Object> map = new HashMap<>();
                             map.put("hasSecondPortion", true);
-                            map.put("quantitySecondPortion", meal.getQuantity());
+                            map.put("quantitySecondPortion", meal.getQuantityNotReceived());
                             mealsRef.child(meal.getId()).child("secondPortion").setValue(map).addOnSuccessListener(unused -> sendNotification(meal, spinner, dialog)).addOnFailureListener(e -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.second_portion) + ": " + e.getMessage(), context, null));
                         } else
                             sendNotification(meal, spinner, dialog);

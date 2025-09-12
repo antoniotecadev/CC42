@@ -158,7 +158,7 @@ public class MealViewModel extends ViewModel {
                         }
                         meal.setQuantityReceived(quantityReceived);
                         int quantity = meal.getQuantity() - meal.getQuantityReceived();
-                        meal.setQuantity(Math.max(quantity, 0));
+                        meal.setQuantityNotReceived(Math.max(quantity, 0));
                         mealList.add(meal);
                     }
                     Collections.reverse(mealList);

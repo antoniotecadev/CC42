@@ -18,6 +18,7 @@ public class Meal implements Parcelable {
     private transient boolean subscribed;
     private transient int quantityReceived;
     public transient boolean isNotification;
+    private transient int quantityNotReceived;
 
     public Meal() {
     }
@@ -41,6 +42,7 @@ public class Meal implements Parcelable {
         description = in.readString();
         quantity = in.readInt();
         quantityReceived = in.readInt();
+        quantityNotReceived = in.readInt();
         pathImage = in.readString();
         rating = in.readInt();
         createdDate = in.readString();
@@ -56,6 +58,7 @@ public class Meal implements Parcelable {
         dest.writeString(description);
         dest.writeInt(quantity);
         dest.writeInt(quantityReceived);
+        dest.writeInt(quantityNotReceived);
         dest.writeString(pathImage);
         dest.writeInt(rating);
         dest.writeString(createdDate);
@@ -154,5 +157,13 @@ public class Meal implements Parcelable {
 
     public void setQuantityReceived(int numberSubscribed) {
         this.quantityReceived = numberSubscribed;
+    }
+
+    public int getQuantityNotReceived() {
+        return quantityNotReceived;
+    }
+
+    public void setQuantityNotReceived(int quantityNotReceived) {
+        this.quantityNotReceived = quantityNotReceived;
     }
 }

@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,7 @@ public class UserViewModel extends ViewModel {
     private MutableLiveData<User> userMutableLiveData;
     private MutableLiveData<List<User>> userListMutableLiveData;
     private MutableLiveData<List<String>> userIdsListMutableLiveData;
+    private MutableLiveData<List<Object>> userIdsAndQuantityListMutableLiveData;
     private MutableLiveData<HttpStatus> httpStatusMutableLiveData;
     private MutableLiveData<HttpException> httpExceptionMutableLiveData;
     private MutableLiveData<EventObserver<HttpStatus>> httpStatusMutableLiveDataEvent;
@@ -97,6 +99,11 @@ public class UserViewModel extends ViewModel {
         return userIdsListMutableLiveData;
     }
 
+    public LiveData<List<Object>> getUserIdsAndQuantityList() {
+        if (userIdsAndQuantityListMutableLiveData == null)
+            userIdsAndQuantityListMutableLiveData = new MutableLiveData<>();
+        return userIdsAndQuantityListMutableLiveData;
+    }
 
     public LiveData<HttpStatus> getHttpSatus() {
         if (httpStatusMutableLiveData == null)
@@ -401,22 +408,27 @@ public class UserViewModel extends ViewModel {
 
         List<String> userIdsSubscription = new ArrayList<>();
         userIdsSubscription.add("-1");
+        final Integer[] quantityReceived = {0};
         subscriptionsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Integer quantityReceivedUser = dataSnapshot.child("quantity").getValue(Integer.class);
                         userIdsSubscription.add(dataSnapshot.getKey());
+                        if (quantityReceivedUser == null) continue;
+                        quantityReceived[0] += quantityReceivedUser;
                     }
                 }
-                userIdsListMutableLiveData.postValue(userIdsSubscription);
+                userIdsAndQuantityListMutableLiveData.postValue(new ArrayList<>(Arrays.asList(userIdsSubscription, quantityReceived[0])));
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 String message = context.getString(R.string.msg_error_check_subscription) + ": " + error.toException();
                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
-                userIdsListMutableLiveData.postValue(userIdsSubscription);
+                userIdsAndQuantityListMutableLiveData.postValue(new ArrayList<>(Arrays.asList(userIdsSubscription, quantityReceived[0])));
             }
         });
     }

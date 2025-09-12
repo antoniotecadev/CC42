@@ -61,6 +61,30 @@
         app:chipBackgroundColor="@color/red"
         tools:ignore="HardcodedText,TextContrastCheck" />
 
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipNumberMealReceived"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|end"
+        android:layout_marginTop="112dp"
+        android:layout_marginEnd="16dp"
+        android:text="0"
+        android:textColor="@color/white"
+        app:chipBackgroundColor="@color/light_blue_900"
+        tools:ignore="HardcodedText,TextContrastCheck" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipNumberMealNotReceived"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|end"
+        android:layout_marginTop="160dp"
+        android:layout_marginEnd="16dp"
+        android:text="0"
+        android:textColor="@color/white"
+        app:chipBackgroundColor="@color/colorStar"
+        tools:ignore="HardcodedText,TextContrastCheck" />
+
     <TextView
         android:id="@+id/textViewEmptyData"
         android:layout_width="match_parent"

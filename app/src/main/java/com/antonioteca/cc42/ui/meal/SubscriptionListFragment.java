@@ -107,10 +107,11 @@ public class SubscriptionListFragment extends Fragment {
     private DecoratedBarcodeView decoratedBarcodeView;
     private SubscriptionListAdapter subscriptionListAdapter;
 
+    private int numberMealReceived = 0;
     private int numberUserSubscription = 0;
     private int numberUserUnsubscription = 0;
 
-//    final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
+    //    final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
 //    final long[] lastClickTime = {0};
     final boolean[] isFlashLightOn = {false};
 
@@ -440,8 +441,17 @@ public class SubscriptionListFragment extends Fragment {
 
         binding.progressBarSubscription.setVisibility(View.VISIBLE);
         userViewModel.getUserIdsSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
-        userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
-            this.userIds = userIds;
+        userViewModel.getUserIdsAndQuantityList().observe(getViewLifecycleOwner(), userIdsAndQuantity -> {
+            Object userIdsObject = userIdsAndQuantity.get(0);
+            Object quantityReicevedObject = userIdsAndQuantity.get(1);
+            if (userIdsObject instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<String> userIds = (List<String>) userIdsObject;
+                this.userIds = userIds;
+            }
+            if (quantityReicevedObject instanceof Integer) {
+                this.numberMealReceived = (int) quantityReicevedObject;
+            }
             userViewModel.getUsersSubscription(cursusId, l, context);
         });
 
@@ -460,9 +470,18 @@ public class SubscriptionListFragment extends Fragment {
         sharedViewModel.getUserIdLiveData().observe(getViewLifecycleOwner(), event -> {
             if (event != null) {
                 Long userId = event.getContentIfNotHandled();
-                subscriptionListAdapter.updateSubscriptionUserSingle(userId);
-                binding.chipSubscription.setText(String.valueOf(++numberUserSubscription));
-                binding.chipUnsubscription.setText(String.valueOf(Math.max(--numberUserUnsubscription, 0)));
+                if (userId == null) return;
+                int quantity = Integer.parseInt(binding.textViewQuantityValue.getText().toString());
+                if (getPortionSelected() == null) {
+                    subscriptionListAdapter.updateSubscriptionUserSingle(userId);
+                    binding.chipSubscription.setText(String.valueOf(++numberUserSubscription));
+                    binding.chipUnsubscription.setText(String.valueOf(Math.max(--numberUserUnsubscription, 0)));
+                }
+                numberMealReceived += quantity;
+                meal.setQuantityReceived(numberMealReceived);
+                binding.chipNumberMealReceived.setText(String.valueOf(numberMealReceived));
+                meal.setQuantityNotReceived(meal.getQuantityNotReceived() - quantity);
+                binding.chipNumberMealNotReceived.setText(String.valueOf(Math.max(meal.getQuantityNotReceived(), 0)));
             }
         });
 
@@ -659,7 +678,9 @@ public class SubscriptionListFragment extends Fragment {
         this.numberUserSubscription = numberUser[0];
         this.numberUserUnsubscription = numberUser[1];
         binding.chipSubscription.setText(String.valueOf(numberUserSubscription));
+        binding.chipNumberMealReceived.setText(String.valueOf(numberMealReceived));
         binding.chipUnsubscription.setText(String.valueOf(numberUserUnsubscription));
+        binding.chipNumberMealNotReceived.setText(String.valueOf(meal.getQuantityNotReceived()));
     }
 
     private void activeScrollListener() {

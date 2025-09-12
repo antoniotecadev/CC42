@@ -29,7 +29,7 @@ public class Notification {
 
     public static void sendFCMNotification(Context context, LayoutInflater layoutInflater, @NonNull Meal meal, String campusId, String cursusId, String topic, String condition) throws IOException {
         FCMessage.Notification notification = new FCMessage.Notification(meal.getType(), meal.getName(), meal.getPathImage());
-        FCMessage.Data data = new FCMessage.Data(meal.getId(), meal.getCreatedBy(), meal.getCreatedDate(), String.valueOf(meal.getQuantity()), cursusId, "DetailsMealFragment", meal.getDescription(), notification);
+        FCMessage.Data data = new FCMessage.Data(meal.getId(), meal.getCreatedBy(), meal.getCreatedDate(), String.valueOf(meal.getQuantityNotReceived()), cursusId, "DetailsMealFragment", meal.getDescription(), notification);
         FCMessage.Message message = new FCMessage.Message(topic, condition, notification, data);
         FCMessage fcmMessage = new FCMessage(message);
 

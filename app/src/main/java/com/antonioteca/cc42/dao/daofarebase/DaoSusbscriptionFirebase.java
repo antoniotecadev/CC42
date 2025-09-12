@@ -100,8 +100,7 @@ public class DaoSusbscriptionFirebase {
                             if (userStaffId != null)
                                 Util.sendInfoTmpUserEventMeal(userStaffId, firebaseDatabase, campusId, cursusId, displayName, urlImageUser);
                             progressBarSubscription.setVisibility(View.GONE);
-                            if (portionSelected == null)
-                                sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
+                            sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
                             String message = displayName + "\n" + context.getString(R.string.msg_sucess_subscription);
                             Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", urlImageUser, runnableResumeCamera);
                         })
