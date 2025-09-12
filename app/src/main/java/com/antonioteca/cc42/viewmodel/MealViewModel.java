@@ -697,7 +697,7 @@ public class MealViewModel extends ViewModel {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot subscriptionSnapshot) {
                         if (subscriptionSnapshot.exists()) {
-                            boolean isReceived = Boolean.TRUE.equals(subscriptionSnapshot.getValue(Boolean.class));
+                            boolean isReceived = Boolean.TRUE.equals(subscriptionSnapshot.child("status").getValue(Boolean.class));
                             // Usuário já se inscreveu para a segunda porção
                             buttonSubscribed.setEnabled(false);
                             if (isReceived) {
@@ -768,7 +768,7 @@ public class MealViewModel extends ViewModel {
                 }
 
                 // Verifica se o usuário já se inscreveu
-                if (subscription.child("-" + currentUserId).getValue() != null) {
+                if (subscription.child("-" + currentUserId).child("status").getValue() != null) {
                     // Usuário já inscrito, aborta a transação
                     isSubscribedSecondPortion = true;
                     return Transaction.abort();
@@ -783,8 +783,11 @@ public class MealViewModel extends ViewModel {
                         secondPortion.child("hasSecondPortion").setValue(false);
                     }
                     isCommitted = false;
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("status", false);
+                    updates.put("quantity", 0);
                     // Adiciona a inscrição do usuário
-                    subscription.child("-" + currentUserId).setValue(false); // Usando false para indicar inscrição mas sem receber a refeição
+                    subscription.child("-" + currentUserId).setValue(updates); // Usando false para indicar inscrição mas sem receber a refeição
                     return Transaction.success(mutableData);
                 } else {
                     // Não há segunda porção disponível ou a quantidade é 0
