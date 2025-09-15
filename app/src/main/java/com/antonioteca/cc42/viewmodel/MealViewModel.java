@@ -146,7 +146,7 @@ public class MealViewModel extends ViewModel {
                         Meal meal = dataSnapshot.getValue(Meal.class);
                         int quantityReceived = 0;
                         DataSnapshot subscription = dataSnapshot.child("subscriptions");
-                        if (meal == null || !subscription.exists()) continue;
+                        if (meal == null) continue;
                         for (DataSnapshot snapshotId : subscription.getChildren()) {
                             String key = snapshotId.getKey();
                             if (key == null) continue;
@@ -450,6 +450,7 @@ public class MealViewModel extends ViewModel {
                 createdBy,
                 createdDate
         );
+        meal.setQuantityNotReceived(mealsQuantity);
         // Salvar os dados da refeição no Firebase Realtime Database
         mealsRef.child(Objects.requireNonNull(mealId)).setValue(meal)
                 .addOnSuccessListener(aVoid -> {
