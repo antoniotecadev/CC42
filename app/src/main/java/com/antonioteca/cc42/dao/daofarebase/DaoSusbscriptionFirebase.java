@@ -83,6 +83,7 @@ public class DaoSusbscriptionFirebase {
                 Map<String, Object> updateStatus = new HashMap<>();
                 updateStatus.put("status", true);
                 updateStatus.put("quantity", portionQuantity);
+                updateStatus.put("createdBy", userStaffId);
                 update.put("cursus/" + cursusId + "/meals/" + mealId + "/subscriptions/" + uid, updateStatus);
 //                    .child(mealId == null ? listMealQrCode.get(0).id() : mealId)
 //                    if (mealId == null)
