@@ -25,6 +25,7 @@ public class AboutDialogFragment extends DialogFragment {
         AlertDialog dialog = builder.create();
         // dialog.setCanceledOnTouchOutside(false);
 
+
         binding.profileIntraLink.setOnClickListener(v -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://profile.intra.42.fr/users/" + getString(R.string.name_user_intra_creator)));
             startActivity(browserIntent);
@@ -41,6 +42,13 @@ public class AboutDialogFragment extends DialogFragment {
             startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)));
         });
 
+        binding.whatsappLink.setOnClickListener(v -> {
+            String url = "https://api.whatsapp.com/send?phone=" + getString(R.string.whatsapp_creator);
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+        });
+
         binding.coProfileIntraLink.setOnClickListener(v -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://profile.intra.42.fr/users/" + getString(R.string.name_user_intra_co_creator)));
             startActivity(browserIntent);
@@ -55,6 +63,13 @@ public class AboutDialogFragment extends DialogFragment {
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                     "mailto", getString(R.string.email_co_creator), null));
             startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)));
+        });
+
+        binding.coWhatsappLink.setOnClickListener(v -> {
+            String url = "https://api.whatsapp.com/send?phone=" + getString(R.string.whatsapp_co_creator);
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
         });
         return dialog;
     }

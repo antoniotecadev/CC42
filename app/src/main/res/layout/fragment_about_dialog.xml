@@ -17,12 +17,14 @@
             android:layout_marginHorizontal="18dp"
             android:layout_marginTop="16dp"
             android:justificationMode="inter_word"
+            android:maxLines="6"
             android:text="@string/description_app"
             android:textSize="14sp"
-            android:maxLines="6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="VisualLintLongText"
+            tools:targetApi="26" />
 
         <!-- Foto do Criador -->
         <ImageView
@@ -34,11 +36,12 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
+            android:importantForAccessibility="no"
             android:src="@drawable/ateca_about"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appDescription" />
+            app:layout_constraintTop_toBottomOf="@+id/appDescription"
+            tools:ignore="ImageContrastCheck" />
 
         <!-- Nome do Criador -->
         <TextView
@@ -66,7 +69,8 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/creatorName" />
+            app:layout_constraintTop_toBottomOf="@id/creatorName"
+            tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
 
         <!-- Links: GitHub -->
         <TextView
@@ -81,7 +85,8 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profileIntraLink" />
+            app:layout_constraintTop_toBottomOf="@id/profileIntraLink"
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
         <!-- Links: E-mail -->
         <TextView
@@ -96,17 +101,38 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/githubLink" />
+            app:layout_constraintTop_toBottomOf="@id/githubLink"
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
+
+        <!-- Links: WhatsApp -->
+        <TextView
+            android:id="@+id/whatsappLink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:importantForAccessibility="no"
+            android:text="@string/whatsapp"
+            android:textAlignment="center"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/emailLink"
+            tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
 
         <ImageView
             android:id="@+id/coCreatorPhoto"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginTop="16dp"
+            android:importantForAccessibility="no"
             android:src="@drawable/pedro_about"
-            app:layout_constraintEnd_toEndOf="@+id/emailLink"
-            app:layout_constraintStart_toStartOf="@+id/emailLink"
-            app:layout_constraintTop_toBottomOf="@+id/emailLink" />
+            app:layout_constraintEnd_toEndOf="@+id/whatsappLink"
+            app:layout_constraintStart_toStartOf="@+id/whatsappLink"
+            app:layout_constraintTop_toBottomOf="@+id/whatsappLink"
+            tools:ignore="ImageContrastCheck" />
 
         <TextView
             android:id="@+id/coCreatorName"
@@ -132,7 +158,8 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/coCreatorName" />
+            app:layout_constraintTop_toBottomOf="@id/coCreatorName"
+            tools:ignore="TextContrastCheck,TouchTargetSizeCheck" />
 
         <TextView
             android:id="@+id/coGithubLink"
@@ -146,7 +173,8 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/coProfileIntraLink" />
+            app:layout_constraintTop_toBottomOf="@id/coProfileIntraLink"
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
         <TextView
             android:id="@+id/coEmailLink"
@@ -160,6 +188,24 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/coGithubLink" />
+            app:layout_constraintTop_toBottomOf="@id/coGithubLink"
+            tools:ignore="TextContrastCheck,TextContrastCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
+
+        <!-- Links: WhatsApp Co-Creator -->
+        <TextView
+            android:id="@+id/coWhatsappLink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/whatsapp"
+            android:textAlignment="center"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/coEmailLink"
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
