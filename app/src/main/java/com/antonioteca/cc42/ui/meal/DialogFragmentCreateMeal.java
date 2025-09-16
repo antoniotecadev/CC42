@@ -137,7 +137,7 @@ public class DialogFragmentCreateMeal extends DialogFragment {
             binding.nameEditText.setText(meal.getName());
             if (mealdescription != null)
                 addChipsFromData(mealdescription);
-            binding.quantityEditText.setText(String.valueOf(meal.getQuantity()));
+            binding.quantityEditText.setText(String.valueOf(meal.getQuantityNotReceived()));
             binding.buttonCreateMeal.setText(getText(R.string.ok));
         } else {
             loadingImageMeal(imageUri);
