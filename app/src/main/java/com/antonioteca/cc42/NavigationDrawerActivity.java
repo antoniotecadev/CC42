@@ -191,6 +191,9 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             @Override
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_settings_general, menu);
+                MenuItem menuItem = menu.findItem(R.id.sendMessageFragment);
+                if (!user.isStaff())
+                    menuItem.setVisible(false);
             }
 
             @Override

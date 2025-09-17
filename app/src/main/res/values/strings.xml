@@ -346,4 +346,23 @@
     <string name="whatsapp_creator" translatable="false">+244932359808</string>
     <string name="whatsapp_co_creator" translatable="false">+244951713308</string>
     <string name="whatsapp" translatable="false">Whatsapp</string>
+    <string name="Cursus42" translatable="false">42Cursus</string>
+    <string name="CPiscine" translatable="false">C Piscine</string>
+    <string name="CPiscineReloaded" translatable="false">C-Piscine-Reloaded</string>
+    <string name="tittle">Título</string>
+    <string name="message">Mensagem</string>
+    <string name="send_message">Enviar Mensagem</string>
+    <string name="sending">Enviando...</string>
+    <string name="title_is_not_empty">O título não pode estar vazio</string>
+    <string name="message_is_not_empty">A mensagem não pode estar vazia</string>
+    <string name="message_send_success">Mensagem enviada com sucesso!</string>
+    <string name="error_send_message">"Erro ao enviar mensagem: "</string>
+    <string name="error_generate_id_message">Erro ao gerar ID da mensagem.</string>
+    <string name="error_load_messages">"Erro ao carregar mensagens: "</string>
+    <string name="date_univalible">Data indisponível</string>
+    <string-array name="cursus_list" translatable="false">
+        <item>@string/Cursus42</item>
+        <item>@string/CPiscine</item>
+        <item>@string/CPiscineReloaded</item>
+    </string-array>
 </resources>

@@ -132,6 +132,7 @@
 -keep class com.antonioteca.cc42.model.Coalition { *; }
 -keep class com.antonioteca.cc42.model.Subscription { *; }
 -keep class com.antonioteca.cc42.model.LoginResponse { *; }
+-keep class com.antonioteca.cc42.model.Message { *; }
 -keepattributes *Annotation*
 
 # Impede que classes anotadas com @Keep sejam minificadas

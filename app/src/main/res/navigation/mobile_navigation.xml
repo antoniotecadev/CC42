@@ -195,4 +195,14 @@
             android:name="cursusId"
             app:argType="string" />
     </dialog>
+    <fragment
+        android:id="@+id/sendMessageFragment"
+        android:name="com.antonioteca.cc42.ui.home.SendMessageFragment"
+        android:label="@string/message"
+        tools:layout="@layout/fragment_send_message" />
+    <fragment
+        android:id="@+id/messageListFragment"
+        android:name="com.antonioteca.cc42.ui.home.MessageListFragment"
+        android:label="@string/message"
+        tools:layout="@layout/fragment_message_list" />
 </navigation>

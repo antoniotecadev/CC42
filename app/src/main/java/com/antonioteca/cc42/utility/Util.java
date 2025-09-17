@@ -18,6 +18,8 @@ import android.os.Environment;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,21 +108,21 @@ public class Util {
         }
     }
 
-//    public static void setFormattedText(TextView textView, String formattedText) {
-//        Spanned result;
-//
-//        // Verifica a versão do Android para usar o método correto de Html.fromHtml
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            result = Html.fromHtml(formattedText, Html.FROM_HTML_MODE_LEGACY);
-//        } else {
-//            result = Html.fromHtml(formattedText);
-//        }
-//
-//        // Define o texto formatado no TextView
-//        textView.setText(result);
-//    }
+    public static void setFormattedText(TextView textView, String formattedText) {
+        Spanned result;
 
-    public static void setMarkdownText(TextView textView, String markdownText) {
+        // Verifica a versão do Android para usar o método correto de Html.fromHtml
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            result = Html.fromHtml(formattedText, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            result = Html.fromHtml(formattedText);
+        }
+
+        // Define o texto formatado no TextView
+        textView.setText(result);
+    }
+
+    public static void setMarkdownText(@NonNull TextView textView, String markdownText) {
         // Inicializa o Markwon
         Markwon markwon = Markwon.create(textView.getContext());
 
