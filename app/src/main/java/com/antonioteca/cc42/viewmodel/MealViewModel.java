@@ -467,7 +467,7 @@ public class MealViewModel extends ViewModel {
                         String topicStaff = "meals_" + campusId + "_" + campusName;
                         List<String> topics = Arrays.asList(topicStudent, topicStaff);
                         String condition = topics.stream().map(topic -> "'" + topic + "' in topics").collect(Collectors.joining(" || "));
-                        Notification.sendFCMNotification(context, layoutInflater, meal, campusId, cursusId, null, condition);
+                        Notification.sendFCMNotification(context, layoutInflater, meal, null, campusId, cursusId, null, condition);
                     } catch (IOException e) {
                         Toast.makeText(context, R.string.error_send_notification, Toast.LENGTH_LONG).show();
                     }

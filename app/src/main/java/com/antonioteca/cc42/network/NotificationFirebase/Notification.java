@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.dao.daoapi.DaoApiMeal;
 import com.antonioteca.cc42.model.Meal;
+import com.antonioteca.cc42.model.Message;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.network.NotificationExpo.ExpoNotificationPayload;
@@ -27,10 +28,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Notification {
 
-    public static void sendFCMNotification(Context context, LayoutInflater layoutInflater, @NonNull Meal meal, String campusId, String cursusId, String topic, String condition) throws IOException {
-        FCMessage.Notification notification = new FCMessage.Notification(meal.getType(), meal.getName(), meal.getPathImage());
-        FCMessage.Data data = new FCMessage.Data(meal.getId(), meal.getCreatedBy(), meal.getCreatedDate(), String.valueOf(meal.getQuantityNotReceived()), cursusId, "DetailsMealFragment", meal.getDescription(), notification);
-        FCMessage.Message message = new FCMessage.Message(topic, condition, notification, data);
+    public static void sendFCMNotification(Context context, LayoutInflater layoutInflater, Meal meal, Message messageStaff, String campusId, String cursusId, String topic, String condition) throws IOException {
+
+        FCMessage.Notification notification;
+        FCMessage.Data data;
+        FCMessage.Message message;
+
+        if (meal != null) {
+            notification = new FCMessage.Notification(meal.getType(), meal.getName(), meal.getPathImage());
+            data = new FCMessage.Data(meal.getId(), meal.getCreatedBy(), meal.getCreatedDate(), String.valueOf(meal.getQuantityNotReceived()), cursusId, "DetailsMealFragment", meal.getDescription(), notification);
+            message = new FCMessage.Message(topic, condition, notification, data);
+        } else {
+            notification = new FCMessage.Notification(messageStaff.getTitle(), messageStaff.getMessage(), null);
+            data = null;
+            message = new FCMessage.Message(topic, condition, notification, null);
+        }
         FCMessage fcmMessage = new FCMessage(message);
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -47,7 +59,11 @@ public class Notification {
                     HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), "Notification: " + httpStatus.getDescription(), "#E53935", null, null);
                 } else {
-                    sendNotificationToIphone(meal, campusId, cursusId, data);
+                    if (meal != null) {
+                        sendNotificationToIphone(meal, null, campusId, cursusId, data);
+                    } else {
+                        sendNotificationToIphone(null, messageStaff, campusId, cursusId, data);
+                    }
                     if (condition != null)
                         Toast.makeText(context, R.string.notification_sent, Toast.LENGTH_LONG).show();
                     else
@@ -63,11 +79,15 @@ public class Notification {
         });
     }
 
-    private static void sendNotificationToIphone(@NonNull Meal meal, String campusId, String cursusId, FCMessage.Data data) {
+    private static void sendNotificationToIphone(Meal meal, Message messageStaff, String campusId, String cursusId, FCMessage.Data data) {
+        ExpoNotificationPayload payload;
         Map<String, Object> dataExtra = new HashMap<>();
         dataExtra.put("data", data);
         NotificationSender notificationSender = new NotificationSender();
-        ExpoNotificationPayload payload = new ExpoNotificationPayload(meal.getType(), meal.getName(), dataExtra, meal.getPathImage().trim());
+        if (meal != null)
+            payload = new ExpoNotificationPayload(meal.getType(), meal.getName(), dataExtra, meal.getPathImage().trim());
+        else
+            payload = new ExpoNotificationPayload(messageStaff.getTitle(), messageStaff.getMessage(), dataExtra, null);
         notificationSender.sendExpoNotificationToGroup(campusId, cursusId, payload);
     }
 
