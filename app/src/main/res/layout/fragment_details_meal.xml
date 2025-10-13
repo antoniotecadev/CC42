@@ -199,14 +199,14 @@
                     android:hint="@string/comment"
                     android:visibility="gone"
                     app:counterEnabled="true"
-                    app:counterMaxLength="42">
+                    app:counterMaxLength="200">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/commentEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textCapSentences"
-                        android:maxLength="42" />
+                        android:maxLength="200" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
