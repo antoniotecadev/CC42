@@ -211,12 +211,21 @@
                         android:maxLength="200" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <CheckBox
+                    android:id="@+id/anonymousCommentCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/anonymous"
+                    android:textColor="@color/textColorPrimary"
+                    android:visibility="gone" />
+
                 <Button
                     android:id="@+id/buttonSendComment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/light_blue_900"
-                    android:text="@string/cmtr"
+                    android:text="@string/sendComment"
                     android:textSize="16sp"
                     android:visibility="gone" />
 

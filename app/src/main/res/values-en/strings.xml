@@ -325,4 +325,8 @@
     <string name="ratingsCount">ratings</string>
     <string name="rateWithStars">Rate with stars</string>
     <string name="yourRatingAndComment">Your Rating &amp; Comment</string>
+    <string name="sendRating">SEND RATING</string>
+    <string name="sendComment">SEND COMMENT</string>
+    <string name="sendRatingAndComment">SEND RATING AND COMMENT</string>
+    <string name="anonymous">anónimo</string>
 </resources>

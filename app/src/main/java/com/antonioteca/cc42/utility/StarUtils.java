@@ -3,9 +3,7 @@ package com.antonioteca.cc42.utility;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,8 +15,6 @@ import com.antonioteca.cc42.databinding.StarRatingBinding;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.ui.meal.RatingProgressAdapter;
 import com.antonioteca.cc42.ui.meal.RatingProgressItem;
-import com.antonioteca.cc42.viewmodel.MealViewModel;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,48 +92,17 @@ public class StarUtils {
     }
 
     // Método para lidar com o clique nas estrelas
-    public static int fillStars(StarRatingBinding starRatingBinding,
-                                int selectedRating,
-                                Double ratingAverage,
-                                boolean isOnClick,
-                                Context context,
-                                Loading loading,
-                                long userId,
-                                int campusId,
-                                int cursusId,
-                                String type,
-                                String typeId,
-                                int rating,
-                                FirebaseDatabase firebaseDatabase,
-                                ProgressBar progressBar,
-                                MealViewModel mealViewModel) {
+    public static void fillStars(StarRatingBinding starRatingBinding,
+                                 int selectedRating,
+                                 Double ratingAverage,
+                                 Loading loading,
+                                 int rating) {
         if (rating != selectedRating && !loading.isLoading) {
-            if (ratingAverage == null)
-                rating = selectedRating;
-            if (isOnClick) {
-                StarUtils.resetStars(starRatingBinding); // Reseta todas as estrelas
-                loading.isLoading = true;
-                progressBar.setVisibility(View.VISIBLE);
-            }
             StarUtils.selectedRating(starRatingBinding, selectedRating);
-            if (isOnClick) {
-                mealViewModel.rate(
-                        context,
-                        firebaseDatabase,
-                        loading,
-                        progressBar,
-                        String.valueOf(campusId),
-                        String.valueOf(cursusId),
-                        type,
-                        typeId,
-                        String.valueOf(userId),
-                        selectedRating
-                );
-            } else if (ratingAverage != null) {
+            if (ratingAverage != null) {
                 StarUtils.starHalf(starRatingBinding, ratingAverage, selectedRating/*ratingAverageRounded*/);
             }
         }
-        return (rating);
     }
 
     @SuppressLint("SetTextI18n")
@@ -154,14 +119,8 @@ public class StarUtils {
             TextView textViewAverageRating,
             RecyclerView recyclerViewRating,
             Loading loading,
-            int campusId,
-            int cursusId,
             String type,
-            String typeId,
-            int rating,
-            FirebaseDatabase firebaseDatabase,
-            ProgressBar progressBar,
-            MealViewModel mealViewModel
+            int rating
     ) {
         String averageRating = ratingValues.get(1).toString().replace(",", "."); // média da avaliação total sem ser arrendodando ex: 4.5
         HashMap<?, ?> ratingCounts = (HashMap<?, ?>) ratingValues.get(2); // Total de avaliação para cada estrela
@@ -170,25 +129,15 @@ public class StarUtils {
         Integer ratingValueUser = (Integer) ratingValuesUsers.get(String.valueOf(userId)); // Avaliação do usuário actual
 
         // ratingValues.get(0): média da avaliação total arrendodando ex: 5
-        fillStars(starRatingDone, (int) ratingValues.get(0), Double.valueOf(averageRating), false, context, loading, userId, campusId, cursusId, type, typeId, rating, firebaseDatabase, progressBar, mealViewModel);
+        fillStars(starRatingDone, (int) ratingValues.get(0), Double.valueOf(averageRating), loading, rating);
         if (ratingValueUser != null) {
             textViewRateWithStars.setText(type.equals("events") ? R.string.text_present : R.string.text_signed);
             textViewRateWithStars.setTextColor(context.getResources().getColor(R.color.green));
             fillStars(starRating,
                     ratingValueUser,
                     null,
-                    false,
-                    context,
                     loading,
-                    userId,
-                    campusId,
-                    cursusId,
-                    type,
-                    typeId,
-                    rating,
-                    firebaseDatabase,
-                    progressBar,
-                    mealViewModel);
+                    rating);
             starRating.star1.setClickable(false);
             starRating.star2.setClickable(false);
             starRating.star3.setClickable(false);

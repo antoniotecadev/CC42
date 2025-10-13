@@ -545,39 +545,6 @@ public class MealViewModel extends ViewModel {
         return lastPart.replaceAll("\\.[a-zA-Z0-9]+$", "");
     }
 
-    public void rate(
-            Context context,
-            @NonNull FirebaseDatabase firebaseDatabase,
-            Loading loading,
-            ProgressBar progressBar,
-            String campusId,
-            String cursusId,
-            String type,
-            String typeId,
-            String userId,
-            int rating
-    ) {
-        // Referência para a refeição específica
-        DatabaseReference mealRef = firebaseDatabase.getReference("campus")
-                .child(campusId)
-                .child("cursus")
-                .child(cursusId)
-                .child(type)
-                .child(typeId);
-
-        mealRef.child("ratings").child(userId).setValue(rating)
-                .addOnSuccessListener(aVoid -> {
-                    loading.isLoading = false;
-                    progressBar.setVisibility(View.INVISIBLE);
-                    Util.showAlertDialogMessage(context, LayoutInflater.from(context), "" + rating, context.getString(R.string.rating_submitted_successfully), "#4CAF50", null, null);
-                })
-                .addOnFailureListener(e -> {
-                    loading.isLoading = false;
-                    progressBar.setVisibility(View.INVISIBLE);
-                    Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), e.getMessage(), "#E53935", null, null);
-                });
-    }
-
     private void getRateMeal(
             Context context,
             FirebaseDatabase firebaseDatabase,

@@ -325,4 +325,8 @@
     <string name="ratingsCount">Calificaciones</string>
     <string name="rateWithStars">Califica con estrellas</string>
     <string name="yourRatingAndComment">Tu Calificación y Comentario</string>
+    <string name="sendRating">ENVIAR CALIFICACIÓN</string>
+    <string name="sendComment">ENVIAR COMENTARIO</string>
+    <string name="sendRatingAndComment">ENVIAR CALIFICACIÓN Y COMENTARIO</string>
+    <string name="anonymous">anónimo</string>
 </resources>

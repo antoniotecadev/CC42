@@ -325,4 +325,8 @@
     <string name="ratingsCount">Évaluations</string>
     <string name="rateWithStars">Notez avec des étoiles</string>
     <string name="yourRatingAndComment">Votre Évaluation &amp; Commentaire</string>
+    <string name="sendRating">"ENVOYER L'ÉVALUATION "</string>
+    <string name="sendComment">ENVOYER LE COMMENTAIR</string>
+    <string name="sendRatingAndComment">ENVOYER L\'ÉVALUATION ET LE COMMENTAIRE</string>
+    <string name="anonymous">anónimo</string>
 </resources>

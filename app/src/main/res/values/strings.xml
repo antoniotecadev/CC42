@@ -364,6 +364,10 @@
     <string name="ratingsCount">avaliações</string>
     <string name="rateWithStars">Avalie com estrelas</string>
     <string name="yourRatingAndComment">Sua Avaliação e Comentário</string>
+    <string name="sendRating">ENVIAR AVALIAÇÃO</string>
+    <string name="sendComment">ENVIAR COMENTÁRIO</string>
+    <string name="sendRatingAndComment">ENVIAR AVALIAÇÃO E COMENTÁRIO</string>
+    <string name="anonymous">anónimo</string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>

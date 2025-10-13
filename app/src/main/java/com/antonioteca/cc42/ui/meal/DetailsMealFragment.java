@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +27,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.FragmentDetailsMealBinding;
+import com.antonioteca.cc42.databinding.StarRatingBinding;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
@@ -97,7 +100,7 @@ public class DetailsMealFragment extends Fragment {
         int campusId = user.getCampusId();
         int cursusId = args.getCursusId();
 
-        String ratingCount = getString(R.string._0) +" "+ getString(R.string.ratingsCount);
+        String ratingCount = getString(R.string._0) + " " + getString(R.string.ratingsCount);
         binding.numberOfRatings.setText(ratingCount);
         mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, binding.progressBarMeal, String.valueOf(campusId), String.valueOf(cursusId), type, mealId)
                 .observe(getViewLifecycleOwner(),
@@ -124,14 +127,8 @@ public class DetailsMealFragment extends Fragment {
                                         binding.averageRating,
                                         binding.recyclerViewRating,
                                         loading,
-                                        campusId,
-                                        cursusId,
                                         type,
-                                        mealId,
-                                        rating,
-                                        firebaseDatabase,
-                                        binding.progressBarMeal,
-                                        mealViewModel);
+                                        rating);
                             binding.progressBarMeal.setVisibility(View.INVISIBLE);
                         });
 
@@ -166,18 +163,45 @@ public class DetailsMealFragment extends Fragment {
         binding.textViewQuantity.setText(quantity);
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, roundedCorners, requestOptions);
 
-        // Configura os cliques das estrelas
-        binding.starRating.star1.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 1, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));
-        binding.starRating.star2.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 2, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));
-        binding.starRating.star3.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 3, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));
-        binding.starRating.star4.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 4, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));
-        binding.starRating.star5.setOnClickListener(v -> rating = StarUtils.fillStars(binding.starRating, 5, null, true, context, loading, userId, campusId, cursusId, type, mealId, rating, firebaseDatabase, binding.progressBarMeal, mealViewModel));
+        sharedViewModel.getResetLiveData().observe(getViewLifecycleOwner(), reset -> {
+            if (reset) {
+                this.rating = 0;
+                binding.buttonSendComment.setText(R.string.sendComment);
+            }
+        });
+
+        binding.starRating.star1.setOnClickListener(v -> markStar(1, binding.starRating));
+        binding.starRating.star2.setOnClickListener(v -> markStar(2, binding.starRating));
+        binding.starRating.star3.setOnClickListener(v -> markStar(3, binding.starRating));
+        binding.starRating.star4.setOnClickListener(v -> markStar(4, binding.starRating));
+        binding.starRating.star5.setOnClickListener(v -> markStar(5, binding.starRating));
+
+        binding.commentEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                updateSendButtonText();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        binding.commentEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                binding.anonymousCommentCheckBox.setVisibility(View.VISIBLE);
+            }
+        });
 
         // Obter comentário
         sharedViewModel.getCommentLiveData(context, firebaseDatabase, type, mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId))
                 .observe(getViewLifecycleOwner(), comment -> {
-                    if (comment != null && !comment.isEmpty()) {
-                        binding.textViewComment.setText(comment);
+                    if (comment != null && !comment.getComment().isEmpty()) {
+                        binding.textViewComment.setText(comment.isAnonymous() ? "(" + getString(R.string.anonymous) + ")\n" + comment.getComment() : comment.getComment());
                         binding.textViewComment.setVisibility(View.VISIBLE);
                         binding.commentInputLayout.setVisibility(View.GONE);
                         binding.buttonSendComment.setVisibility(View.GONE);
@@ -185,11 +209,35 @@ public class DetailsMealFragment extends Fragment {
                         binding.commentInputLayout.setVisibility(View.VISIBLE);
                         binding.buttonSendComment.setVisibility(View.VISIBLE);
                     }
+                    binding.anonymousCommentCheckBox.setVisibility(View.GONE);
                 });
 
         mealViewModel.hasSecondPortion(context, firebaseDatabase, binding.buttonSubscribeSecondPortion, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(mealId), String.valueOf(userId));
 
-        binding.buttonSendComment.setOnClickListener(v -> sharedViewModel.sendComment(context, firebaseDatabase, type, mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, binding.progressBarMeal));
+        binding.buttonSendComment.setOnClickListener(v -> {
+            boolean hasComment = !Objects.requireNonNull(binding.commentEditText.getText()).toString().isEmpty();
+            boolean hasRating = rating > 0;
+
+            if (hasRating && !hasComment) {
+                sharedViewModel.rate(
+                        context,
+                        firebaseDatabase,
+                        loading,
+                        binding.progressBarMeal,
+                        String.valueOf(campusId),
+                        String.valueOf(cursusId),
+                        type,
+                        mealId,
+                        String.valueOf(userId),
+                        this.rating
+                );
+            } else if (!hasRating && hasComment) {
+                boolean isAnonymous = binding.anonymousCommentCheckBox.isChecked();
+                sharedViewModel.sendComment(context, firebaseDatabase, type, mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, isAnonymous, binding.progressBarMeal);
+            } else if (hasRating) {
+                Toast.makeText(context, R.string.sendRatingAndComment, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         binding.fabGenerateQrCode.setOnClickListener(v -> {
             try {
@@ -226,6 +274,26 @@ public class DetailsMealFragment extends Fragment {
             }
         };
         requireActivity().addMenuProvider(menuProvider, getViewLifecycleOwner());
+    }
+
+    private void markStar(int selectedRating, StarRatingBinding starRatingBinding) {
+        StarUtils.resetStars(starRatingBinding); // Reseta todas as estrelas
+        StarUtils.fillStars(starRatingBinding, selectedRating, null, loading, this.rating); // Preenche a estrela selecionada)
+        this.rating = selectedRating;
+        updateSendButtonText();
+    }
+
+    private void updateSendButtonText() {
+        boolean hasComment = !Objects.requireNonNull(binding.commentEditText.getText()).toString().isEmpty();
+        boolean hasRating = rating > 0;
+
+        if (hasRating && !hasComment) {
+            binding.buttonSendComment.setText(R.string.sendRating);
+        } else if (!hasRating && hasComment) {
+            binding.buttonSendComment.setText(R.string.sendComment);
+        } else if (hasRating) { // Implies hasComment is true, or we want this text anyway if both are present
+            binding.buttonSendComment.setText(R.string.sendRatingAndComment);
+        }
     }
 
     @Override
