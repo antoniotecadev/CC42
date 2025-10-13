@@ -105,8 +105,9 @@ public class DetailsMealFragment extends Fragment {
                                 binding.starRating.getRoot().setVisibility(View.VISIBLE);
                             if (ratingValues.isEmpty()) {
                                 if (!isSubscribed) {
-                                    binding.textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
-                                    binding.textViewTapToRate.setText(R.string.text_unsigned);
+                                    binding.textViewTapToRate.setTextColor(context.getResources().getColor(android.R.color.darker_gray));
+                                    binding.textViewTapToRate.setText(R.string.needCheckinToRate);
+                                    binding.textViewTapToRate.setTextSize(14);
                                 }
                             } else
                                 ratingValuesUsers = StarUtils.getRate(

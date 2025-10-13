@@ -360,6 +360,7 @@
     <string name="error_generate_id_message">Erro ao gerar ID da mensagem.</string>
     <string name="error_load_messages">"Erro ao carregar mensagens: "</string>
     <string name="date_univalible">Data indisponível</string>
+    <string name="needCheckinToRate" >🍽️ Precisa de estar subscrito na refeição para avaliar e comentar</string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>

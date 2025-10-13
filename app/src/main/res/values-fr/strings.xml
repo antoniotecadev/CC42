@@ -321,4 +321,5 @@
     <string name="error_subscribing_second_portion">Erreur lors de l\'abonnement à la deuxième portion</string>
     <string name="second_portion_already_subscribed">Déjà abonné à la deuxième portion</string>
     <string name="second_portion_not_subscribe">Non abonné à la deuxième portion</string>
+    <string name="needCheckinToRate" >🍽️ Vous devez être abonné(e) au repas pour noter et commenter.</string>
 </resources>
