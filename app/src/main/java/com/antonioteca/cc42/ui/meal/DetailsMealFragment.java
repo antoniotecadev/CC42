@@ -29,7 +29,6 @@ import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
-import com.antonioteca.cc42.utility.DateUtils;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
 import com.antonioteca.cc42.utility.StarUtils;
