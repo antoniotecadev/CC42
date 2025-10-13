@@ -322,4 +322,5 @@
     <string name="second_portion_already_subscribed">Already subscribed for second portion</string>
     <string name="second_portion_not_subscribe">Not subscribed for second portion</string>
     <string name="needCheckinToRate" >🍽️ You need to be subscribed to the meal to rate and comment</string>
+    <string name="ratingsCount">ratings</string>
 </resources>

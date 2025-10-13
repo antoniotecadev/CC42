@@ -98,6 +98,8 @@ public class DetailsMealFragment extends Fragment {
         int campusId = user.getCampusId();
         int cursusId = args.getCursusId();
 
+        String ratingCount = getString(R.string._0) +" "+ getString(R.string.ratingsCount);
+        binding.numberOfRatings.setText(ratingCount);
         mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, binding.progressBarMeal, String.valueOf(campusId), String.valueOf(cursusId), type, mealId)
                 .observe(getViewLifecycleOwner(),
                         ratingValues -> {
