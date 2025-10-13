@@ -205,7 +205,9 @@
                         android:id="@+id/commentEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textCapSentences"
+                        android:gravity="top"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:lines="3"
                         android:maxLength="200" />
                 </com.google.android.material.textfield.TextInputLayout>
 
