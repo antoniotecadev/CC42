@@ -161,7 +161,7 @@ public class DetailsMealFragment extends Fragment {
         binding.textViewType.setText(meal.getType());
         binding.textViewName.setText(mealName);
         binding.textViewDescription.setText(mealDescription);
-        binding.textViewDate.setText(DateUtils.formatDate(DateUtils.parseDate(meal.getCreatedDate())));
+        binding.textViewDate.setText(meal.getCreatedDate());
         String quantity = getString(R.string.quantity) + ": " + meal.getQuantityNotReceived();
         binding.textViewQuantity.setText(quantity);
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, roundedCorners, requestOptions);
