@@ -324,4 +324,5 @@
     <string name="needCheckinToRate" >🍽️ Necesitas estar suscrito/a a la comida para valorar y comentar.</string>
     <string name="ratingsCount">Calificaciones</string>
     <string name="rateWithStars">Califica con estrellas</string>
+    <string name="yourRatingAndComment">Tu Calificación y Comentario</string>
 </resources>

@@ -165,6 +165,17 @@
                 android:padding="16dp">
 
                 <TextView
+                    android:id="@+id/textViewYourRatingAndComment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingVertical="8dp"
+                    android:text="@string/yourRatingAndComment"
+                    android:textColor="@color/light_blue_900"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
                     android:id="@+id/textViewRateWithStars"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -172,8 +183,7 @@
                     android:paddingVertical="8dp"
                     android:text="@string/rateWithStars"
                     android:textColor="@android:color/darker_gray"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textSize="16sp" />
 
                 <include
                     android:id="@+id/starRating"

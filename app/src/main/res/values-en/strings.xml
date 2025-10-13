@@ -324,4 +324,5 @@
     <string name="needCheckinToRate" >🍽️ You need to be subscribed to the meal to rate and comment</string>
     <string name="ratingsCount">ratings</string>
     <string name="rateWithStars">Rate with stars</string>
+    <string name="yourRatingAndComment">Your Rating &amp; Comment</string>
 </resources>
