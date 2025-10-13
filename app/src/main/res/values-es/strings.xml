@@ -323,4 +323,5 @@
     <string name="second_portion_not_subscribe">No está suscrito para la segunda porción</string>
     <string name="needCheckinToRate" >🍽️ Necesitas estar suscrito/a a la comida para valorar y comentar.</string>
     <string name="ratingsCount">Calificaciones</string>
+    <string name="rateWithStars">Califica con estrellas</string>
 </resources>

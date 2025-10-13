@@ -165,13 +165,13 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/textViewTapToRate"
+                    android:id="@+id/textViewRateWithStars"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:paddingVertical="8dp"
-                    android:text="@string/tap_to_rate"
-                    android:textColor="@color/textColorPrimary"
+                    android:text="@string/rateWithStars"
+                    android:textColor="@android:color/darker_gray"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 

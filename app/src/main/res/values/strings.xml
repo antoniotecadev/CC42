@@ -362,6 +362,7 @@
     <string name="date_univalible">Data indisponível</string>
     <string name="needCheckinToRate" >🍽️ Precisa de estar subscrito na refeição para avaliar e comentar</string>
     <string name="ratingsCount">avaliações</string>
+    <string name="rateWithStars">Avalie com estrelas</string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>

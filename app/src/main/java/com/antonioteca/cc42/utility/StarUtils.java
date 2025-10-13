@@ -149,7 +149,7 @@ public class StarUtils {
             @NonNull List<Object> ratingValues,
             StarRatingBinding starRatingDone,
             StarRatingBinding starRating,
-            TextView textViewTapToRate,
+            TextView textViewRateWithStars,
             TextView textViewNumberOfRatings,
             TextView textViewAverageRating,
             RecyclerView recyclerViewRating,
@@ -172,8 +172,8 @@ public class StarUtils {
         // ratingValues.get(0): média da avaliação total arrendodando ex: 5
         fillStars(starRatingDone, (int) ratingValues.get(0), Double.valueOf(averageRating), false, context, loading, userId, campusId, cursusId, type, typeId, rating, firebaseDatabase, progressBar, mealViewModel);
         if (ratingValueUser != null) {
-            textViewTapToRate.setText(type.equals("events") ? R.string.text_present : R.string.text_signed);
-            textViewTapToRate.setTextColor(context.getResources().getColor(R.color.green));
+            textViewRateWithStars.setText(type.equals("events") ? R.string.text_present : R.string.text_signed);
+            textViewRateWithStars.setTextColor(context.getResources().getColor(R.color.green));
             fillStars(starRating,
                     ratingValueUser,
                     null,
@@ -196,8 +196,8 @@ public class StarUtils {
             starRating.star5.setClickable(false);
         } else {
             if (!userIsSubscribed) {
-                textViewTapToRate.setTextColor(context.getResources().getColor(R.color.red));
-                textViewTapToRate.setText(type.equals("events") ? R.string.text_absent : R.string.text_unsigned);
+                textViewRateWithStars.setTextColor(context.getResources().getColor(R.color.red));
+                textViewRateWithStars.setText(type.equals("events") ? R.string.text_absent : R.string.text_unsigned);
             }
         }
 
