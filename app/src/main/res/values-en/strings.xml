@@ -329,4 +329,5 @@
     <string name="sendComment">SEND COMMENT</string>
     <string name="sendRatingAndComment">SEND RATING AND COMMENT</string>
     <string name="anonymous">anónimo</string>
+    <string name="anonymousComment">Anonymous comment</string>
 </resources>

@@ -201,7 +201,7 @@ public class DetailsMealFragment extends Fragment {
         sharedViewModel.getCommentLiveData(context, firebaseDatabase, type, mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId))
                 .observe(getViewLifecycleOwner(), comment -> {
                     if (comment != null && !comment.getComment().isEmpty()) {
-                        binding.textViewComment.setText(comment.isAnonymous() ? "(" + getString(R.string.anonymous) + ")\n" + comment.getComment() : comment.getComment());
+                        binding.textViewComment.setText(comment.isAnonymous() ? "(" + getString(R.string.anonymousComment) + ")\n" + comment.getComment() : "(" + getString(R.string.comment) + ")\n" + comment.getComment());
                         binding.textViewComment.setVisibility(View.VISIBLE);
                         binding.commentInputLayout.setVisibility(View.GONE);
                         binding.buttonSendComment.setVisibility(View.GONE);
