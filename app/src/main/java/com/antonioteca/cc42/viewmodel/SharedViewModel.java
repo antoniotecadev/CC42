@@ -30,7 +30,7 @@ import java.util.Objects;
 
 public class SharedViewModel extends ViewModel {
 
-    private MutableLiveData<Boolean> reset;
+    private MutableLiveData<Boolean> resetRating;
     private MutableLiveData<Comment> commentMutableLiveData;
     private final MutableLiveData<EventObserver<Long>> longMutableLiveData = new MutableLiveData<>();
     //    private final MutableLiveData<EventObserver<String>> faceIDMutableLiveData = new MutableLiveData<>();
@@ -98,9 +98,9 @@ public class SharedViewModel extends ViewModel {
         return commentMutableLiveData;
     }
 
-    public LiveData<Boolean> getResetLiveData() {
-        reset = new MutableLiveData<>();
-        return reset;
+    public LiveData<Boolean> getResetRatingLiveData() {
+        resetRating = new MutableLiveData<>();
+        return resetRating;
     }
 
     public void sendComment(Context context, @NonNull FirebaseDatabase firebaseDatabase, String type, String typeId, String campusId, String cursusId, String userId, Button buttonSendComment, @NonNull TextInputLayout commentInputLayout, boolean isAnonymous, ProgressBar progressBar) {
@@ -195,7 +195,7 @@ public class SharedViewModel extends ViewModel {
 
         mealRef.child("ratings").child(userId).setValue(rating)
                 .addOnSuccessListener(aVoid -> {
-                    reset.setValue(true);
+                    resetRating.setValue(true);
                     loading.isLoading = false;
                     progressBar.setVisibility(View.INVISIBLE);
                     Util.showAlertDialogMessage(context, LayoutInflater.from(context), "" + rating, context.getString(R.string.rating_submitted_successfully), "#4CAF50", null, null);

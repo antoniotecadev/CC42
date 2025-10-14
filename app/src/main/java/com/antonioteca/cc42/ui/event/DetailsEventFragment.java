@@ -184,7 +184,7 @@ public class DetailsEventFragment extends Fragment {
                     }
                 });
 
-        sharedViewModel.getResetLiveData().observe(getViewLifecycleOwner(), reset -> {
+        sharedViewModel.getResetRatingLiveData().observe(getViewLifecycleOwner(), reset -> {
             if (reset) {
                 this.rating = 0;
                 binding.buttonSendComment.setText(R.string.sendComment);

@@ -163,7 +163,7 @@ public class DetailsMealFragment extends Fragment {
         binding.textViewQuantity.setText(quantity);
         MealsUtils.loadingImageMeal(context, meal.getPathImage(), binding.imageViewMeal, roundedCorners, requestOptions);
 
-        sharedViewModel.getResetLiveData().observe(getViewLifecycleOwner(), reset -> {
+        sharedViewModel.getResetRatingLiveData().observe(getViewLifecycleOwner(), reset -> {
             if (reset) {
                 this.rating = 0;
                 binding.buttonSendComment.setText(R.string.sendComment);
