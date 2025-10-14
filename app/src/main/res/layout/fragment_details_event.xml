@@ -323,8 +323,8 @@
                     android:id="@+id/textViewComment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="2"
-                    android:textColor="@color/light_blue_900"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/darker_gray"
                     android:visibility="gone" />
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.cardview.widget.CardView>
