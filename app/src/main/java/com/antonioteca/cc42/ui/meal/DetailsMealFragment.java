@@ -53,6 +53,7 @@ public class DetailsMealFragment extends Fragment {
     private Context context;
     private MealViewModel mealViewModel;
     private SharedViewModel sharedViewModel;
+    private Integer ratingValueUser;
     private HashMap<?, ?> ratingValuesUsers;
     private FirebaseDatabase firebaseDatabase;
     private FragmentDetailsMealBinding binding;
@@ -114,8 +115,8 @@ public class DetailsMealFragment extends Fragment {
                                     binding.textViewRateWithStars.setText(R.string.needCheckinToRate);
                                     binding.textViewRateWithStars.setTextSize(14);
                                 }
-                            } else
-                                ratingValuesUsers = StarUtils.getRate(
+                            } else {
+                                HashMap<String, Object> result = StarUtils.getRate(
                                         context,
                                         userId,
                                         isSubscribed,
@@ -129,6 +130,9 @@ public class DetailsMealFragment extends Fragment {
                                         loading,
                                         type,
                                         rating);
+                                ratingValuesUsers = (HashMap<?, ?>) result.get("ratingValuesUsers");
+                                ratingValueUser = (Integer) result.get("ratingValueUser");
+                            }
                             binding.progressBarMeal.setVisibility(View.INVISIBLE);
                         });
 
@@ -232,10 +236,27 @@ public class DetailsMealFragment extends Fragment {
                         this.rating
                 );
             } else if (!hasRating && hasComment) {
+                if (ratingValueUser == null || ratingValueUser == 0)
+                    Toast.makeText(context, R.string.sendRatingAndComment, Toast.LENGTH_SHORT).show();
+                else {
+                    boolean isAnonymous = binding.anonymousCommentCheckBox.isChecked();
+                    sharedViewModel.sendComment(context, firebaseDatabase, type, mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, isAnonymous, binding.progressBarMeal);
+                }
+            } else if (hasRating) {
+                sharedViewModel.rate(
+                        context,
+                        firebaseDatabase,
+                        loading,
+                        binding.progressBarMeal,
+                        String.valueOf(campusId),
+                        String.valueOf(cursusId),
+                        type,
+                        mealId,
+                        String.valueOf(userId),
+                        this.rating
+                );
                 boolean isAnonymous = binding.anonymousCommentCheckBox.isChecked();
                 sharedViewModel.sendComment(context, firebaseDatabase, type, mealId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, isAnonymous, binding.progressBarMeal);
-            } else if (hasRating) {
-                Toast.makeText(context, R.string.sendRatingAndComment, Toast.LENGTH_SHORT).show();
             }
         });
 

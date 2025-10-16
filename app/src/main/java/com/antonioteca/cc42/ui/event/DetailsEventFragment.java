@@ -47,6 +47,7 @@ import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class DetailsEventFragment extends Fragment {
@@ -54,6 +55,7 @@ public class DetailsEventFragment extends Fragment {
     private int rating = 0;
     private Context context;
     private Loading loading;
+    private Integer ratingValueUser;
     private MealViewModel mealViewModel;
     private EventViewModel eventViewModel;
     private SharedViewModel sharedViewModel;
@@ -146,8 +148,8 @@ public class DetailsEventFragment extends Fragment {
                         mealViewModel.getRatingValuesLiveData(context, firebaseDatabase, binding.progressBarEvent, String.valueOf(user.getCampusId()), String.valueOf(cursusId), type, eventId)
                                 .observe(getViewLifecycleOwner(),
                                         ratingValues -> {
-                                            if (!ratingValues.isEmpty())
-                                                StarUtils.getRate(
+                                            if (!ratingValues.isEmpty()) {
+                                                HashMap<String, Object> result = StarUtils.getRate(
                                                         context,
                                                         userId,
                                                         true,
@@ -161,6 +163,8 @@ public class DetailsEventFragment extends Fragment {
                                                         loading,
                                                         type,
                                                         rating);
+                                                ratingValueUser = (Integer) result.get("ratingValueUser");
+                                            }
                                             binding.progressBarEvent.setVisibility(View.INVISIBLE);
                                         });
 
@@ -237,10 +241,27 @@ public class DetailsEventFragment extends Fragment {
                         this.rating
                 );
             } else if (!hasRating && hasComment) {
+                if (ratingValueUser == null || ratingValueUser == 0)
+                    Toast.makeText(context, R.string.sendRatingAndComment, Toast.LENGTH_SHORT).show();
+                else {
+                    boolean isAnonymous = binding.anonymousCommentCheckBox.isChecked();
+                    sharedViewModel.sendComment(context, firebaseDatabase, type, eventId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, isAnonymous, binding.progressBarEvent);
+                }
+            } else if (hasRating) {
+                sharedViewModel.rate(
+                        context,
+                        firebaseDatabase,
+                        loading,
+                        binding.progressBarEvent,
+                        String.valueOf(campusId),
+                        String.valueOf(cursusId),
+                        type,
+                        eventId,
+                        String.valueOf(userId),
+                        this.rating
+                );
                 boolean isAnonymous = binding.anonymousCommentCheckBox.isChecked();
                 sharedViewModel.sendComment(context, firebaseDatabase, type, eventId, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(userId), binding.buttonSendComment, binding.commentInputLayout, isAnonymous, binding.progressBarEvent);
-            } else if (hasRating) {
-                Toast.makeText(context, R.string.sendRatingAndComment, Toast.LENGTH_SHORT).show();
             }
         });
 

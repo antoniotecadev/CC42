@@ -107,7 +107,7 @@ public class StarUtils {
 
     @SuppressLint("SetTextI18n")
     @NonNull
-    public static HashMap<?, ?> getRate(
+    public static HashMap<String, Object> getRate(
             Context context,
             long userId,
             boolean userIsSubscribed,
@@ -161,7 +161,11 @@ public class StarUtils {
         adapter.notifyDataSetChanged();
         textViewNumberOfRatings.setText(numberOfRatings + " " + context.getString(R.string.ratings));
         textViewAverageRating.setText(averageRating);
-        return ratingValuesUsers;
+
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("ratingValuesUsers", ratingValuesUsers);
+        result.put("ratingValueUser", ratingValueUser);
+        return result;
     }
 
     public static void loadStarZero(Context context, RecyclerView recyclerView) {
