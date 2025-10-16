@@ -134,10 +134,10 @@ public class DetailsEventFragment extends Fragment {
         binding.textViewPeople.setText(textPeople);
         setMarkdownText(binding.textViewDescription, event.getDescription());
 
-        if (System.currentTimeMillis() < Objects.requireNonNullElse(eventDateEnd, new Date()).getTime()) {
-            binding.cardStarRating.setVisibility(View.GONE);
-            binding.cardStarRatingDone.setVisibility(View.GONE);
-        }
+//        if (System.currentTimeMillis() < Objects.requireNonNullElse(eventDateEnd, new Date()).getTime()) {
+//            binding.cardStarRating.setVisibility(View.GONE);
+//            binding.cardStarRatingDone.setVisibility(View.GONE);
+//        }
 
         String ratingCount = getString(R.string._0) + " " + getString(R.string.ratingsCount);
         binding.numberOfRatings.setText(ratingCount);
