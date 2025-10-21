@@ -675,12 +675,14 @@ public class SubscriptionListFragment extends Fragment {
 
     private void setNumberUserChip() {
         int[] numberUser = subscriptionListAdapter.getNumberUser();
+        int countUserSubscribedSecondPortion = subscriptionListAdapter.getCountUserSubscribedSecondPortion(userIds);
         this.numberUserSubscription = numberUser[0];
         this.numberUserUnsubscription = numberUser[1];
         binding.chipSubscription.setText(String.valueOf(numberUserSubscription));
         binding.chipNumberMealReceived.setText(String.valueOf(numberMealReceived));
         binding.chipUnsubscription.setText(String.valueOf(numberUserUnsubscription));
         binding.chipNumberMealNotReceived.setText(String.valueOf(meal.getQuantityNotReceived()));
+        binding.chipNumberSubscribedSecondPortion.setText(String.valueOf(countUserSubscribedSecondPortion));
     }
 
     private void activeScrollListener() {

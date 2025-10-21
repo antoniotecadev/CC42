@@ -150,6 +150,18 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         notifyDataSetChanged();
     }
 
+    public int getCountUserSubscribedSecondPortion(List<String> usersIdsSubscription) {
+        Set<String> usersIdsSet = new HashSet<>(usersIdsSubscription); // Converta para HashSet para pesquisa O(1)
+        int count = 0;
+        int itemCount = getItemCount();
+        for (int i = 0; i < itemCount; i++) {
+            if (usersIdsSet.contains("-" + this.userListFilter.get(i).uid)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
 //    public String containsUser(long userId) {
 //        for (User user : getUserList()) {
 //            if (user.uid == userId) {
