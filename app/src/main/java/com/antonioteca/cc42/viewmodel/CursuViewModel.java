@@ -33,11 +33,11 @@ public class CursuViewModel extends ViewModel {
         this.cursuRepository = cursuRepository;
     }
 
-    public LiveData<List<Cursu>> getCursustLiveData(Context context, ProgressBar progressBar) {
+    public LiveData<List<Cursu>> getCursustLiveData(Context context, String cursusIdStudentOrStaff, ProgressBar progressBar) {
         if (cursuListMutableLiveData == null) {
             cursuListMutableLiveData = new MutableLiveData<>();
             progressBar.setVisibility(View.VISIBLE);
-            getCursus(context);
+            getCursus(context, cursusIdStudentOrStaff);
         }
         return cursuListMutableLiveData;
     }
@@ -54,8 +54,8 @@ public class CursuViewModel extends ViewModel {
         return httpExceptionMutableLiveDataCursu;
     }
 
-    public void getCursus(Context context) {
-        cursuRepository.getCursus(new Callback<>() {
+    public void getCursus(Context context, String cursusIdStudentOrStaff) {
+        cursuRepository.getCursus(cursusIdStudentOrStaff, new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<Cursu>> call, @NonNull Response<List<Cursu>> response) {
                 if (response.isSuccessful())

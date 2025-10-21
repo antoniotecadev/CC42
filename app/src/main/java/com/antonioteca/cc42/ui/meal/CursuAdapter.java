@@ -70,18 +70,15 @@ public class CursuAdapter extends RecyclerView.Adapter<CursuAdapter.CursuViewHol
         }
     }
 
-    public void filter(String text, boolean isStaff) {
+    public void filter(String text, boolean isNotsearchView) {
         this.cursuList.clear();
         if (text.isEmpty())
             this.cursuList.addAll(cursuListFull);
         else if (!cursuListFull.isEmpty()) {
             text = text.toLowerCase();
             for (Cursu cursu : cursuListFull) {
-                if (isStaff) {
-                    int cursusId = cursu.getId();
-                    if (cursusId == 21 || cursusId == 66 || cursusId == 9) {
-                        cursuList.add(cursu);
-                    }
+                if (isNotsearchView) {
+                    cursuList.add(cursu);
                 } else if (cursu.getName().toLowerCase().contains(text) || String.valueOf(cursu.getId()).toLowerCase().contains(text)) {
                     cursuList.add(cursu);
                 }

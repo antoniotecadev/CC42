@@ -40,6 +40,7 @@ public class CursuListMealFragment extends Fragment {
     private Context context;
     private MenuProvider menuProvider;
     private CursuAdapter cursuAdapter;
+    private String cursusIdStudentOrStaff;
     private CursuViewModel cursuViewModel;
     private FragmentCursuListMealBinding binding;
 
@@ -54,6 +55,7 @@ public class CursuListMealFragment extends Fragment {
         isStaff = user.isStaff();
         cursusId = user.getCursusId();
         user.coalition = new Coalition(context);
+        cursusIdStudentOrStaff = isStaff ? "21, 66, 9, 3" : String.valueOf(cursusId);
     }
 
     @Override
@@ -79,7 +81,7 @@ public class CursuListMealFragment extends Fragment {
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
-            cursuViewModel.getCursus(context);
+            cursuViewModel.getCursus(context, cursusIdStudentOrStaff);
         });
 
         final boolean[] isClick = {false};
@@ -95,13 +97,12 @@ public class CursuListMealFragment extends Fragment {
             }
         });
 
-        cursuViewModel.getCursustLiveData(context, binding.progressBarCursus).observe(getViewLifecycleOwner(), cursus -> {
+        cursuViewModel.getCursustLiveData(context, cursusIdStudentOrStaff, binding.progressBarCursus).observe(getViewLifecycleOwner(), cursus -> {
             if (!cursus.isEmpty() && cursus.get(0) != null) {
                 setupVisibility(binding, View.INVISIBLE, false, View.INVISIBLE, View.VISIBLE);
                 cursuAdapter = new CursuAdapter(context, cursus, color, cursusId);
                 binding.recyclerviewCursuList.setAdapter(cursuAdapter);
                 binding.chipNumberCursus.setText(String.valueOf(cursuAdapter.getItemCount()));
-                cursuAdapter.filter(String.valueOf(cursusId), true);
             } else
                 setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
         });
@@ -113,7 +114,7 @@ public class CursuListMealFragment extends Fragment {
                 if (httpStatus != null) {
                     Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, () -> {
                         setupVisibility(binding, View.VISIBLE, false, View.INVISIBLE, View.INVISIBLE);
-                        cursuViewModel.getCursus(context);
+                        cursuViewModel.getCursus(context, cursusIdStudentOrStaff);
                     });
                 }
             }
@@ -126,7 +127,7 @@ public class CursuListMealFragment extends Fragment {
                 if (httpException != null) {
                     Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, () -> {
                         setupVisibility(binding, View.VISIBLE, false, View.INVISIBLE, View.INVISIBLE);
-                        cursuViewModel.getCursus(context);
+                        cursuViewModel.getCursus(context, cursusIdStudentOrStaff);
                     });
                 }
             }

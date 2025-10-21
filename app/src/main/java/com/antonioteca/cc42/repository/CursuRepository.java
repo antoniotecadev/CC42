@@ -28,20 +28,20 @@ public class CursuRepository {
         daoApiCursu = RetrofitClientApi.getApiService(context).create(DaoApiCursu.class);
     }
 
-    public void getCursus(@NonNull Callback<List<Cursu>> callback) {
+    public void getCursus(String cursusIdStudentOrStaff, @NonNull Callback<List<Cursu>> callback) {
         if (token.isTokenExpired(token.getTokenExpirationTime())) {
             token.getRefreshTokenUserSave(context, (success) -> {
                 if (success)
-                    extracted(callback);
+                    extracted(cursusIdStudentOrStaff, callback);
                 else
                     callback.onResponse(null, Response.success(new ArrayList<>()));
             });
         } else
-            extracted(callback);
+            extracted(cursusIdStudentOrStaff, callback);
     }
 
-    private void extracted(Callback<List<Cursu>> callback) {
-        Call<List<Cursu>> cursusCall = daoApiCursu.getCursus("Bearer " + token.getAccessToken(), 1, 100);
+    private void extracted(String cursusIdStudentOrStaff, Callback<List<Cursu>> callback) {
+        Call<List<Cursu>> cursusCall = daoApiCursu.getCursus("Bearer " + token.getAccessToken(), 1, 100, cursusIdStudentOrStaff);
         cursusCall.enqueue(callback);
     }
 }

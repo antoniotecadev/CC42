@@ -14,6 +14,7 @@ public interface DaoApiCursu {
     Call<List<Cursu>> getCursus(
             @Header("Authorization") String accessToken,
             @Query("page[number]") int pageNumber,  // Adiciona o número da página
-            @Query("page[size]") int pageSize       // Adiciona o tamanho da página
+            @Query("page[size]") int pageSize,       // Adiciona o tamanho da página
+            @Query("filter[id]") String ids
     );
 }
