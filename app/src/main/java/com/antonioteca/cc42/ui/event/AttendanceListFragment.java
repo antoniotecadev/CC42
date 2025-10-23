@@ -680,7 +680,7 @@ public class AttendanceListFragment extends Fragment {
                         binding.progressindicator.setVisibility(View.VISIBLE);
                         ExecutorService executor = Executors.newSingleThreadExecutor();
                         executor.execute(() -> {
-                            File filePdf = PdfCreator.createPdfAttendanceList(context, requireActivity(), eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, userList, binding.progressindicator, binding.textViewTotal);
+                            File filePdf = PdfCreator.createPdfAttendanceList(context, requireActivity(), eventKind, eventName, eventDate, numberUserAbsent, numberUserPresent, numberUserPresentCheckOut, numberUserAbsentCheckOut, userList, binding.progressindicator, binding.textViewTotal);
                             if (filePdf != null) {
                                 if (isPrint)
                                     PdfViewer.openPdf(context, filePdf, "application/pdf", getString(R.string.msg_no_pdf_viewing_applications_were_found));

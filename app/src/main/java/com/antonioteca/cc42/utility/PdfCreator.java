@@ -66,7 +66,7 @@ public class PdfCreator {
     }
 
     @Nullable
-    public static File createPdfAttendanceList(Context context, FragmentActivity fragmentActivity, String eventKind, String eventName, String eventDate, int numberUserAbsent, int numberUserPresent, List<User> userList, CircularProgressIndicator progressIndicator, TextView textViewTotal) {
+    public static File createPdfAttendanceList(Context context, FragmentActivity fragmentActivity, String eventKind, String eventName, String eventDate, int numberUserAbsent, int numberUserPresent, int numberUserPresentCheckOut, int numberUserAbsentCheckOut, List<User> userList, CircularProgressIndicator progressIndicator, TextView textViewTotal) {
         File folder = createFolder(context, "AttendanceList");
         if (folder == null)
             return null;
@@ -111,11 +111,17 @@ public class PdfCreator {
                     .setBold();
             document.add(title);
             Paragraph attendanceParagraph = new Paragraph()
-                    .add(new Text(context.getString(R.string.text_present) + ": ").setBold())
+                    .add(new Text(context.getString(R.string.checkIn) + " feito: ").setBold())
                     .add(new Text(String.valueOf(numberUserPresent)))
                     .add(new Text(" | "))
-                    .add(new Text(context.getString(R.string.text_absent) + ": ").setBold())
+                    .add(new Text(context.getString(R.string.checkIn) + " não feito: ").setBold())
                     .add(new Text(String.valueOf(numberUserAbsent)))
+                    .add(new Text(" | "))
+                    .add(new Text(context.getString(R.string.checkOut) + " feito: ").setBold())
+                    .add(new Text(String.valueOf(numberUserPresentCheckOut)))
+                    .add(new Text(" | "))
+                    .add(new Text(context.getString(R.string.checkOut) + " não feito: ").setBold())
+                    .add(new Text(String.valueOf(numberUserAbsentCheckOut)))
                     .setTextAlignment(TextAlignment.CENTER);
             document.add(attendanceParagraph);
             Paragraph dateParagraph = new Paragraph()
@@ -128,22 +134,30 @@ public class PdfCreator {
                     .add(new Text(eventName))
                     .setTextAlignment(TextAlignment.LEFT);
             document.add(kindParagraph);
-            Table table = new Table(UnitValue.createPercentArray(new float[]{10, 50, 25, 15}))
+            Table table = new Table(UnitValue.createPercentArray(new float[]{10, 40, 20, 15, 15}))
                     .useAllAvailableWidth();
             table.setMarginTop(20);
             table.addHeaderCell(new Paragraph(context.getString(R.string.num)).setBold());
             table.addHeaderCell(new Paragraph(context.getString(R.string.full_name)).setBold());
             table.addHeaderCell(new Paragraph(context.getString(R.string.login)).setBold());
-            table.addHeaderCell(new Paragraph(context.getString(R.string.attendance)).setBold());
+            table.addHeaderCell(new Paragraph(context.getString(R.string.checkIn)).setBold());
+            table.addHeaderCell(new Paragraph(context.getString(R.string.checkOut)).setBold());
             int totalUsers = userList.size();
             for (int i = 0; i < totalUsers; i++) {
                 User user = userList.get(i);
                 table.addCell(new Paragraph(String.valueOf(i + 1)));
                 table.addCell(new Paragraph(user.displayName));
                 table.addCell(new Paragraph(user.login));
-                if (user.isCheckIn() != null && user.isCheckIn()) {
+                Boolean isCheckIn = user.isCheckIn();
+                if (isCheckIn != null && isCheckIn) {
                     table.addCell(new Paragraph(context.getString(R.string.text_present)).setFontColor(green, 100));
-                } else if (user.isCheckIn() != null && !user.isCheckIn()) {
+                } else {
+                    table.addCell(new Paragraph(context.getString(R.string.text_absent)).setFontColor(red, 100));
+                }
+                Boolean isCheckOut = user.isCheckOut();
+                if (isCheckOut != null && isCheckOut) {
+                    table.addCell(new Paragraph(context.getString(R.string.text_present)).setFontColor(green, 100));
+                } else {
                     table.addCell(new Paragraph(context.getString(R.string.text_absent)).setFontColor(red, 100));
                 }
                 int sum = i + 1;
