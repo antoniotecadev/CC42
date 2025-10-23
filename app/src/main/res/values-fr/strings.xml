@@ -321,6 +321,17 @@
     <string name="error_subscribing_second_portion">Erreur lors de l\'abonnement à la deuxième portion</string>
     <string name="second_portion_already_subscribed">Déjà abonné à la deuxième portion</string>
     <string name="second_portion_not_subscribe">Non abonné à la deuxième portion</string>
+    <string name="tittle">Titre</string>
+    <string name="message">Message</string>
+    <string name="send_message">Envoyer le Message</string>
+    <string name="sending">Envoi en cours...</string>
+    <string name="title_is_not_empty">Le titre ne peut pas être vide</string>
+    <string name="message_is_not_empty">Le message ne peut pas être vide</string>
+    <string name="message_send_success">Message envoyé avec succès !</string>
+    <string name="error_send_message">Erreur lors de l\'envoi du message :</string>
+    <string name="error_generate_id_message">Erreur lors de la génération de l\'ID du message.</string>
+    <string name="error_load_messages">Erreur lors du chargement des messages :</string>
+    <string name="date_univalible">Date non disponible.</string>
     <string name="needCheckinToRate" >🍽️ Vous devez être abonné(e) au repas pour noter et commenter.</string>
     <string name="ratingsCount">Évaluations</string>
     <string name="rateWithStars">Notez avec des étoiles</string>

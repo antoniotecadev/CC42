@@ -321,6 +321,7 @@
     <string name="error_subscribing_second_portion">Error subscribing for second portion</string>
     <string name="second_portion_already_subscribed">Already subscribed for second portion</string>
     <string name="second_portion_not_subscribe">Not subscribed for second portion</string>
+    <string name="date_univalible">Date unavailable.</string>
     <string name="needCheckinToRate" >🍽️ You need to be subscribed to the meal to rate and comment</string>
     <string name="ratingsCount">ratings</string>
     <string name="rateWithStars">Rate with stars</string>
@@ -336,4 +337,14 @@
     <string name="checkoutSuccessful">Check-out realizado com sucesso!</string>
     <string name="errorMakingCheck">Erro ao fazer check</string>
     <string name="needCheckinFirst">Precisa de fazer check-in primeiro.</string>
+    <string name="tittle">Title</string>
+    <string name="message">Message</string>
+    <string name="send_message">Send Message</string>
+    <string name="sending">Sending...</string>
+    <string name="title_is_not_empty">The title cannot be empty</string>
+    <string name="message_is_not_empty">The message cannot be empty</string>
+    <string name="message_send_success">Message sent successfully!</string>
+    <string name="error_send_message">Error sending message:</string>
+    <string name="error_generate_id_message">Error generating message ID.</string>
+    <string name="error_load_messages">Error loading messages:</string>
 </resources>
