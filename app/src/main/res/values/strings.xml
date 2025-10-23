@@ -371,6 +371,12 @@
     <string name="anonymousComment">Comentário anónimo</string>
     <string name="checkIn">Check-in</string>
     <string name="checkOut">Check-out</string>
+    <string name="alreadyCheckedIn">Já fez check-in neste evento.</string>
+    <string name="alreadyCheckedOut">Já fez check-out neste evento.</string>
+    <string name="checkinSuccessful">Check-in realizado com sucesso!</string>
+    <string name="checkoutSuccessful">Check-out realizado com sucesso!</string>
+    <string name="errorMakingCheck">Erro ao fazer check</string>
+    <string name="needCheckinFirst">Precisa de fazer check-in primeiro.</string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>

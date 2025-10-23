@@ -107,6 +107,33 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <RadioGroup
+        android:id="@+id/radioGroupEventCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:layout_marginTop="35dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <RadioButton
+            android:id="@+id/radioButtonCheckIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/checkIn"
+            android:textColor="@color/white" />
+
+        <RadioButton
+            android:id="@+id/radioButtonCheckOut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/checkOut"
+            android:textColor="@color/white" />
+
+    </RadioGroup>
+
     <TextView
         android:id="@+id/textViewEmptyData"
         android:layout_width="match_parent"

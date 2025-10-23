@@ -168,6 +168,7 @@ public class AttendanceListFragment extends Fragment {
                                 partsQrCode[3], /* cursusId */
                                 partsQrCode[4], /* campusId */
                                 partsQrCode[5], /* urlImageUser */
+                                getCheckSelected(),
                                 context,
                                 layoutInflater,
                                 binding.progressBarMarkAttendance,
@@ -204,6 +205,7 @@ public class AttendanceListFragment extends Fragment {
                             partsQrCode[3], /* cursusId */
                             partsQrCode[4], /* campusId */
                             partsQrCode[5], /* urlImageUser */
+                            getCheckSelected(), /* checkin or checkout */
                             context,
                             layoutInflater,
                             binding.progressBarMarkAttendance,
@@ -462,9 +464,15 @@ public class AttendanceListFragment extends Fragment {
         sharedViewModel.getUserIdLiveData().observe(getViewLifecycleOwner(), event -> {
             if (event != null) {
                 Long userId = event.getContentIfNotHandled();
-                attendanceListAdapter.updateAttendanceUserSingle(userId);
-                binding.chipPresent.setText(String.valueOf(++numberUserPresent));
-                binding.chipAbsent.setText(String.valueOf(Math.max(--numberUserAbsent, 0)));
+                if (getCheckSelected()) {
+                    attendanceListAdapter.updateAttendanceUserSingle(userId, true);
+                    binding.chipPresent.setText(String.valueOf(++numberUserPresent));
+                    binding.chipAbsent.setText(String.valueOf(Math.max(--numberUserAbsent, 0)));
+                } else {
+                    attendanceListAdapter.updateAttendanceUserSingle(userId, false);
+                    binding.chipPresentCheckOut.setText(String.valueOf(++numberUserPresentCheckOut));
+                    binding.chipAbsentCheckOut.setText(String.valueOf(Math.max(--numberUserAbsentCheckOut, 0)));
+                }
             }
         });
 
@@ -705,6 +713,10 @@ public class AttendanceListFragment extends Fragment {
         }
     };
 
+    private boolean getCheckSelected() {
+        return binding.radioGroupEventCheck.getCheckedRadioButtonId() == R.id.radioButtonCheckIn;
+    }
+
     private void setNumberUserChip() {
         int[] numberUser = attendanceListAdapter.getNumberUser();
         this.numberUserPresent = numberUser[0];
@@ -744,6 +756,7 @@ public class AttendanceListFragment extends Fragment {
         decoratedBarcodeView.resume();
         inflatedViewStub.setVisibility(View.VISIBLE);
         binding.fabOpenReaderNFC.setVisibility(View.GONE);
+        binding.radioGroupEventCheck.setVisibility(View.VISIBLE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.VISIBLE);
@@ -766,6 +779,7 @@ public class AttendanceListFragment extends Fragment {
             toggleToolbarVisibity();
         }
         inflatedViewStub.setVisibility(View.GONE);
+        binding.radioGroupEventCheck.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.VISIBLE);
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.VISIBLE);

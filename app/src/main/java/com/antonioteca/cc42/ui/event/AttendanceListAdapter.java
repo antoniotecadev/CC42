@@ -91,11 +91,14 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         notifyDataSetChanged();
     }
 
-    public void updateAttendanceUserSingle(Long uid) {
+    public void updateAttendanceUserSingle(Long uid, boolean isCheckIn) {
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
             if (Objects.equals(this.userList.get(i).uid, uid)) {
-                this.userList.get(i).setIsCheckIn(true);
+                if (isCheckIn)
+                    this.userList.get(i).setIsCheckIn(true);
+                else
+                    this.userList.get(i).setIsCheckOut(true);
                 notifyItemChanged(i);
                 this.userList.add(0, this.userList.get(i));
                 notifyItemInserted(0);

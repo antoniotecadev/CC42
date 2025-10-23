@@ -367,6 +367,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                             cursusId,
                             campusId,
                             urlImageUser,
+                            true,
                             context,
                             getLayoutInflater(),
                             progressBar,

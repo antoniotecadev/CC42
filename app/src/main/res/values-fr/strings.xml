@@ -330,4 +330,10 @@
     <string name="sendRatingAndComment">ENVOYER L\'ÉVALUATION ET LE COMMENTAIRE</string>
     <string name="anonymous">anónimo</string>
     <string name="anonymousComment">Commentaire anonyme</string>
+    <string name="alreadyCheckedIn">Já fez check-in neste evento.</string>
+    <string name="alreadyCheckedOut">Já fez check-out neste evento.</string>
+    <string name="checkinSuccessful">Check-in realizado com sucesso!</string>
+    <string name="checkoutSuccessful">Check-out realizado com sucesso!</string>
+    <string name="errorMakingCheck">Erro ao fazer check</string>
+    <string name="needCheckinFirst">Precisa de fazer check-in primeiro.</string>
 </resources>

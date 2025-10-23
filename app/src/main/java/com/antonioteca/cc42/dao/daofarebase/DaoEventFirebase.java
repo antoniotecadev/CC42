@@ -32,6 +32,7 @@ public class DaoEventFirebase {
             String cursusId,
             String campusId,
             String urlImageUser,
+            boolean eventAction,
             Context context,
             LayoutInflater layoutInflater,
             ProgressBar progressBarMarkAttendance,
@@ -52,18 +53,38 @@ public class DaoEventFirebase {
         campusRef.child(String.valueOf(userId)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
+                String check = eventAction ? "checkin" : "checkout";
+                boolean existsSnapshot = snapshot.exists();
+                if (existsSnapshot && snapshot.child(check).getValue(Long.class) != null) {
                     progressBarMarkAttendance.setVisibility(View.GONE);
-                    String message = displayName + "\n" + context.getString(R.string.msg_you_already_mark_attendance_event);
+                    String message = displayName + "\n" + (eventAction ? context.getString(R.string.alreadyCheckedIn) : context.getString(R.string.alreadyCheckedOut));
                     Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", urlImageUser, runnableResumeCamera);
                 } else {
-                    Map<String, Object> participantData = new HashMap<>();
-                    participantData.put(String.valueOf(userId), true);
+                    if (!eventAction) {
+                        Long existingData = existsSnapshot ? snapshot.child("checkin").getValue(Long.class) : null;
+                        if (existingData == null) {
+                            progressBarMarkAttendance.setVisibility(View.GONE);
+                            String message = displayName + "\n" + context.getString(R.string.needCheckinFirst);
+                            Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), message, "#FDD835", urlImageUser, runnableResumeCamera);
+                            return;
+                        }
+                    }
+
+                    // Obtenha os dados existentes do snapshot se ele existir.
+                    Map<String, Object> participantData;
+                    if (existsSnapshot && snapshot.getValue() instanceof Map) {
+                        //noinspection unchecked
+                        participantData = new HashMap<>((Map<String, Object>) snapshot.getValue());
+                    } else {
+                        participantData = new HashMap<>();
+                    }
+
+                    // Adicione ou atualize a informação de check-in/check-out e registeredBy.
+                    participantData.put(check, System.currentTimeMillis());
                     participantData.put("registeredBy", registeredBy);
 
                     // Atualiza o nó do participante no evento
                     Map<String, Object> eventUpdates = new HashMap<>();
-//                    eventUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/status", "pendente"); // ou "iniciado" ou "finalizado"
                     eventUpdates.put("cursus/" + cursusId + "/events/" + eventId + "/participants/" + userId, participantData);
 
                     // Referência ao Firebase para adicionar o cadete
@@ -77,12 +98,12 @@ public class DaoEventFirebase {
                                     Util.sendInfoTmpUserEventMeal(userStaffId, firebaseDatabase, campusId, cursusId, displayName, urlImageUser);
                                 sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
                                 progressBarMarkAttendance.setVisibility(View.GONE);
-                                String message = displayName + "\n" + context.getString(R.string.msg_sucess_mark_attendance_event);
+                                String message = displayName + "\n" + (eventAction ? context.getString(R.string.checkinSuccessful) : context.getString(R.string.checkoutSuccessful));
                                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", urlImageUser, runnableResumeCamera);
                             })
                             .addOnFailureListener(e -> {
                                 progressBarMarkAttendance.setVisibility(View.GONE);
-                                String message = context.getString(R.string.msg_error_mark_attendance_event) + ": " + e.getMessage();
+                                String message = context.getString(R.string.errorMakingCheck) + ": " + e.getMessage();
                                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", urlImageUser, runnableResumeCamera);
                             });
                 }
