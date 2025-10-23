@@ -16,7 +16,9 @@ import com.antonioteca.cc42.model.UserDiffCallback;
 import com.antonioteca.cc42.utility.Util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAdapter.AttendanceListViewHolder> {
@@ -47,21 +49,53 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         // apenas para os itens que realmente mudaram.
         diffResult.dispatchUpdatesTo(this);
     }
+    // Dentro da classe AttendanceListAdapter
 
-    public void updateAttendanceUser(List<String> usersIdsWithMarkedPresence) {
-        boolean present;
-        for (int i = 0; i < getItemCount(); i++) {
-            present = usersIdsWithMarkedPresence.contains(String.valueOf(this.userList.get(i).uid));
-            this.userList.get(i).setPresent(present);
-            this.userListFilter.get(i).setPresent(present);
-            notifyItemChanged(i);
+    public void updateAttendanceUser(Map<String, Boolean> usersIdsWithMarkedPresence) {
+        // Passo 1: Otimização - Crie um mapa de usuários para busca rápida O(1).
+        // Isso evita o loop aninhado e torna o algoritmo muito mais eficiente (O(N) em vez de O(N*M)).
+        Map<String, User> userMap = new HashMap<>();
+        for (User user : userListFilter) {
+            userMap.put(String.valueOf(user.uid), user);
         }
+
+        // Passo 2: Itere sobre o mapa de presenças que você recebeu.
+        // Esta é a lista de todos que fizeram check-in.
+        for (Map.Entry<String, Boolean> entry : usersIdsWithMarkedPresence.entrySet()) {
+            String userId = entry.getKey();
+            boolean hasCheckedOut = entry.getValue(); // true se fez check-out, false se não.
+
+            // Encontra o usuário correspondente no mapa de usuários em tempo O(1).
+            User user = userMap.get(userId);
+
+            if (user != null) {
+                // Atualiza o status conforme a sua regra de negócio.
+                user.setIsCheckIn(true);       // Sempre tem check-in se está no mapa.
+                user.setIsCheckOut(hasCheckedOut); // Define o status de check-out.
+
+                // Remove o usuário do mapa para que possamos identificar quem não fez check-in.
+                userMap.remove(userId);
+            }
+        }
+
+        // Passo 3: Trate os usuários restantes.
+        // Todos os usuários que sobraram em 'userMap' são aqueles que NÃO estão na lista de presença.
+        // Portanto, eles devem ser marcados como ausentes (check-in = false).
+        for (User user : userMap.values()) {
+            user.setIsCheckIn(false);
+            user.setIsCheckOut(false); // Ausente não pode ter check-out.
+        }
+
+        // Passo 4: Notifique o adapter sobre as mudanças.
+        // Esta é a forma mais segura e eficiente de atualizar a UI.
+        notifyDataSetChanged();
     }
 
     public void updateAttendanceUserSingle(Long uid) {
-        for (int i = 0; i < getItemCount(); i++) {
+        int count = getItemCount();
+        for (int i = 0; i < count; i++) {
             if (Objects.equals(this.userList.get(i).uid, uid)) {
-                this.userList.get(i).setPresent(true);
+                this.userList.get(i).setIsCheckIn(true);
                 notifyItemChanged(i);
                 this.userList.add(0, this.userList.get(i));
                 notifyItemInserted(0);
@@ -103,12 +137,12 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
             this.userList.addAll(userListFilter);
         else if (status) {
             for (User user : userListFilter) {
-                if (user.isPresent())
+                if (user.isCheckIn())
                     userList.add(user);
             }
         } else {
             for (User user : userListFilter) {
-                if (!user.isPresent())
+                if (!user.isCheckIn())
                     userList.add(user);
             }
         }
@@ -149,16 +183,25 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         imageUrl = user.getUrlImageUser();
         holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
-        if (user.isPresent() != null && user.isPresent()) {
-            holder.binding.textViewPresent.setTextColor(greenColor);
-            holder.binding.textViewPresent.setText(context.getString(R.string.text_present));
-        } else if (user.isPresent() != null && !user.isPresent()) {
-            holder.binding.textViewPresent.setTextColor(redColor);
-            holder.binding.textViewPresent.setText(context.getString(R.string.text_absent));
+        Boolean isCheckIn = user.isCheckIn();
+        if (isCheckIn != null && isCheckIn) {
+            holder.binding.textViewSubscriptionCheckIn.setTextColor(greenColor);
+            holder.binding.textViewSubscriptionCheckIn.setText(context.getString(R.string.text_present));
+        } else if (isCheckIn != null) {
+            holder.binding.textViewSubscriptionCheckIn.setTextColor(redColor);
+            holder.binding.textViewSubscriptionCheckIn.setText(context.getString(R.string.text_absent));
+        }
+        Boolean isCheckOut = user.isCheckOut();
+        if (isCheckOut != null && isCheckOut) {
+            holder.binding.textViewSubscriptionCheckOut.setTextColor(greenColor);
+            holder.binding.textViewSubscriptionCheckOut.setText(context.getString(R.string.text_present));
+        } else if (isCheckOut != null) {
+            holder.binding.textViewSubscriptionCheckOut.setTextColor(redColor);
+            holder.binding.textViewSubscriptionCheckOut.setText(context.getString(R.string.text_absent));
         }
         holder.binding.cardViewRegisteredUser.setOnClickListener(v -> {
-            if (user.isPresent() != null)
-                Util.showModalUserDetails(context, user.login, user.displayName, imageUrl, holder.binding.textViewPresent.getText().toString(), user.isPresent());
+            if (user.isCheckIn() != null)
+                Util.showModalUserDetails(context, user.login, user.displayName, imageUrl, holder.binding.textViewSubscriptionCheckIn.getText().toString(), user.isCheckIn());
         });
         Util.setImageUserRegistered(context, imageUrl, holder.binding.imageViewUserRegistered);
     }
@@ -177,7 +220,7 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
         int size1 = 0;
 
         for (User user : getUserList()) {
-            if (user.isPresent() != null && user.isPresent()) {
+            if (user.isCheckIn() != null && user.isCheckIn()) {
                 size0 += 1;
             } else {
                 size1 += 1;

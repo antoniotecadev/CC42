@@ -58,7 +58,7 @@ public class CsvExporter {
                 csvData.append(i).append(";");
                 csvData.append(escapeCsvString(user.displayName)).append(";");  // Use sua classe User
                 csvData.append(escapeCsvString(user.login)).append(";"); // Use sua classe User
-                csvData.append(user.isPresent() ? context.getString(R.string.text_present) : context.getString(R.string.text_absent));            // Use sua classe User
+                csvData.append(user.isCheckIn() ? context.getString(R.string.text_present) : context.getString(R.string.text_absent));            // Use sua classe User
                 csvData.append("\n");
                 i++;
             }

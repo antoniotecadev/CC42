@@ -75,6 +75,7 @@ import com.journeyapps.barcodescanner.camera.CameraSettings;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -94,13 +95,13 @@ public class AttendanceListFragment extends Fragment {
     private String eventDate;
     private Integer cameraId;
     private Activity activity;
-    private List<String> userIds;
     private String colorCoalition;
     private View inflatedViewStub;
     private BeepManager beepManager;
     private ScanOptions scanOptions;
     private MenuProvider menuProvider;
     private UserViewModel userViewModel;
+    private Map<String, Boolean> userIds;
     private LayoutInflater layoutInflater;
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
@@ -365,7 +366,7 @@ public class AttendanceListFragment extends Fragment {
                 l.currentPage = 1;
                 activeScrollListener();
                 attendanceListAdapter.clean();
-                userViewModel.getIdsUsersAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
+                userViewModel.getUsersDataAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
             });
             binding.swipeRefreshLayout.setRefreshing(false);
         });
@@ -440,8 +441,8 @@ public class AttendanceListFragment extends Fragment {
         });
 
         progressBarMarkAttendance.setVisibility(View.VISIBLE);
-        userViewModel.getIdsUsersAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
-        userViewModel.getUserIdsList().observe(getViewLifecycleOwner(), userIds -> {
+        userViewModel.getUsersDataAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
+        userViewModel.getUserIdsMapList().observe(getViewLifecycleOwner(), userIds -> {
             this.userIds = userIds;
             userViewModel.getUsersEvent(eventId, l, context);
         });
@@ -450,7 +451,7 @@ public class AttendanceListFragment extends Fragment {
             if (!users.isEmpty() && users.get(0) != null) {
                 attendanceListAdapter.updateUserList(users, context);
                 binding.recyclerviewAttendanceList.setAdapter(attendanceListAdapter);
-                if (userIds != null && !userIds.isEmpty() && userIds.get(0) != null) {
+                if (userIds != null && !userIds.isEmpty()) {
                     attendanceListAdapter.updateAttendanceUser(userIds);
                     setNumberUserChip();
                 }
@@ -596,7 +597,7 @@ public class AttendanceListFragment extends Fragment {
                     l.currentPage = 1;
                     activeScrollListener();
                     attendanceListAdapter.clean();
-                    userViewModel.getIdsUsersAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
+                    userViewModel.getUsersDataAttendanceList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursuId), String.valueOf(eventId), context, layoutInflater);
                 } else if (itemId == R.id.action_list_print) {
                     boolean isExternalStorageManager = Util.launchPermissionDocument(
                             context,

@@ -48,7 +48,10 @@ public class User {
     public int ratingValue = 0;
 
     @Expose(serialize = false, deserialize = false)
-    public Boolean present = null;
+    public Boolean checkIn = null;
+
+    @Expose(serialize = false, deserialize = false)
+    public Boolean checkOut = null;
 
     @Expose(serialize = false, deserialize = false)
     public Boolean subscriptionFirstPortion = null;
@@ -152,14 +155,21 @@ public class User {
         return editor.commit(); // ou editor.apply() se preferir
     }
 
-    public Boolean isPresent() {
-        return present;
+    public Boolean isCheckIn() {
+        return checkIn;
     }
 
-    public void setPresent(Boolean present) {
-        this.present = present;
+    public void setIsCheckIn(Boolean checkIn) {
+        this.checkIn = checkIn;
     }
 
+    public Boolean isCheckOut() {
+        return checkOut;
+    }
+
+    public void setIsCheckOut(Boolean checkOut) {
+        this.checkOut = checkOut;
+    }
 
     public Boolean isSubscriptionFirstPortion() {
         return subscriptionFirstPortion;
@@ -192,7 +202,7 @@ public class User {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return Objects.equals(uid, user.uid) && // Garante que o ID também seja comparado
-                Objects.equals(present, user.present) &&
+                Objects.equals(checkIn, user.checkIn) &&
                 Objects.equals(subscriptionFirstPortion, user.subscriptionFirstPortion) &&
                 Objects.equals(subscriptionSecondPortion, user.subscriptionSecondPortion);
         // Compare todos os campos relevantes para o conteúdo visual
@@ -200,7 +210,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(uid, present, subscriptionFirstPortion, subscriptionSecondPortion);
+        return Objects.hash(uid, checkIn, subscriptionFirstPortion, subscriptionSecondPortion);
         // Use os mesmos campos do equals
     }
 }

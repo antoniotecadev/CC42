@@ -23,6 +23,76 @@
                 android:layout_gravity="top"
                 android:layout="@layout/qrcode_scanner_stub" />
 
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    app:singleLine="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipPresent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|end"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:text="0"
+                        android:textColor="@color/white"
+                        app:chipBackgroundColor="@color/green"
+                        app:chipIcon="@drawable/baseline_person_16"
+                        app:chipIconSize="16dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipAbsent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|end"
+                        android:layout_marginTop="64dp"
+                        android:layout_marginEnd="16dp"
+                        android:text="0"
+                        android:textColor="@color/white"
+                        app:chipBackgroundColor="@color/red"
+                        app:chipIcon="@drawable/baseline_person_off_16"
+                        app:chipIconSize="16dp"
+                        tools:ignore="HardcodedText" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCheckIn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|end"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:text="0"
+                        android:textColor="@color/white"
+                        app:chipBackgroundColor="@color/teal_700"
+                        app:chipIcon="@drawable/baseline_login_24"
+                        app:chipIconSize="16dp"
+                        tools:ignore="HardcodedText" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCheckOut"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|end"
+                        android:layout_marginTop="64dp"
+                        android:layout_marginEnd="16dp"
+                        android:text="0"
+                        android:textColor="@color/white"
+                        app:chipBackgroundColor="@android:color/holo_orange_dark"
+                        app:chipIcon="@drawable/baseline_logout_24"
+                        app:chipIconSize="16dp" />
+
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -36,28 +106,6 @@
             </androidx.core.widget.NestedScrollView>
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/chipPresent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|end"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="0"
-        android:textColor="@color/white"
-        app:chipBackgroundColor="@color/green" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/chipAbsent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|end"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="16dp"
-        android:text="0"
-        android:textColor="@color/white"
-        app:chipBackgroundColor="@color/red" />
 
     <TextView
         android:id="@+id/textViewEmptyData"

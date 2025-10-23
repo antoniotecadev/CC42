@@ -141,9 +141,9 @@ public class PdfCreator {
                 table.addCell(new Paragraph(String.valueOf(i + 1)));
                 table.addCell(new Paragraph(user.displayName));
                 table.addCell(new Paragraph(user.login));
-                if (user.isPresent() != null && user.isPresent()) {
+                if (user.isCheckIn() != null && user.isCheckIn()) {
                     table.addCell(new Paragraph(context.getString(R.string.text_present)).setFontColor(green, 100));
-                } else if (user.isPresent() != null && !user.isPresent()) {
+                } else if (user.isCheckIn() != null && !user.isCheckIn()) {
                     table.addCell(new Paragraph(context.getString(R.string.text_absent)).setFontColor(red, 100));
                 }
                 int sum = i + 1;

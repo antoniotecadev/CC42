@@ -369,6 +369,8 @@
     <string name="sendRatingAndComment">ENVIAR AVALIAÇÃO E COMENTÁRIO</string>
     <string name="anonymous">anónimo</string>
     <string name="anonymousComment">Comentário anónimo</string>
+    <string name="checkIn">Check-in</string>
+    <string name="checkOut">Check-out</string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>

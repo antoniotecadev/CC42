@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import retrofit2.Call;
@@ -55,7 +56,7 @@ public class UserViewModel extends ViewModel {
     //    private MutableLiveData<List<User>> userList;
     private MutableLiveData<User> userMutableLiveData;
     private MutableLiveData<List<User>> userListMutableLiveData;
-    private MutableLiveData<List<String>> userIdsListMutableLiveData;
+    private MutableLiveData<Map<String, Boolean>> userIdsMapListMutableLiveData;
     private MutableLiveData<List<Object>> userIdsAndQuantityListMutableLiveData;
     private MutableLiveData<HttpStatus> httpStatusMutableLiveData;
     private MutableLiveData<HttpException> httpExceptionMutableLiveData;
@@ -93,10 +94,10 @@ public class UserViewModel extends ViewModel {
         return userListMutableLiveData;
     }
 
-    public LiveData<List<String>> getUserIdsList() {
-        if (userIdsListMutableLiveData == null)
-            userIdsListMutableLiveData = new MutableLiveData<>();
-        return userIdsListMutableLiveData;
+    public LiveData<Map<String, Boolean>> getUserIdsMapList() {
+        if (userIdsMapListMutableLiveData == null)
+            userIdsMapListMutableLiveData = new MutableLiveData<>();
+        return userIdsMapListMutableLiveData;
     }
 
     public LiveData<List<Object>> getUserIdsAndQuantityList() {
@@ -245,7 +246,7 @@ public class UserViewModel extends ViewModel {
         });
     }
 
-    public void getIdsUsersAttendanceList(@NonNull FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, Context context, LayoutInflater layoutInflater) {
+    public void getUsersDataAttendanceList(@NonNull FirebaseDatabase firebaseDatabase, String campusId, String cursusId, String eventId, Context context, LayoutInflater layoutInflater) {
         DatabaseReference participantsRef = firebaseDatabase.getReference("campus")
                 .child(campusId)
                 .child("cursus")
@@ -254,28 +255,24 @@ public class UserViewModel extends ViewModel {
                 .child(eventId)
                 .child("participants");  // Referência para os participantes do evento
 
-        List<String> userIdsWithMarkedAttendance = new ArrayList<>();
-        userIdsWithMarkedAttendance.add("-1");
+        Map<String, Boolean> userIdsWithMarkedAttendance = new HashMap<>();
+        userIdsWithMarkedAttendance.put("-1", false);
         participantsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        userIdsWithMarkedAttendance.add(dataSnapshot.getKey());
-//                        Boolean isParticipant = dataSnapshot.getValue(Boolean.class);
-//                        if (Boolean.TRUE.equals(isParticipant)) {
-//                            userIdsWhoMarkedAttendance.add(dataSnapshot.getKey());
-//                        }
+                        userIdsWithMarkedAttendance.put(dataSnapshot.getKey(), dataSnapshot.child("checkout").getValue(Long.class) != null);
                     }
                 }
-                userIdsListMutableLiveData.postValue(userIdsWithMarkedAttendance);
+                userIdsMapListMutableLiveData.postValue(userIdsWithMarkedAttendance);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 String message = context.getString(R.string.msg_error_check_attendance_event) + ": " + error.toException();
                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
-                userIdsListMutableLiveData.postValue(userIdsWithMarkedAttendance);
+                userIdsMapListMutableLiveData.postValue(userIdsWithMarkedAttendance);
             }
         });
     }
