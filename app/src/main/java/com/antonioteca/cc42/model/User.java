@@ -48,16 +48,16 @@ public class User {
     public int ratingValue = 0;
 
     @Expose(serialize = false, deserialize = false)
-    public Boolean checkIn = null;
+    private Boolean checkIn = null;
 
     @Expose(serialize = false, deserialize = false)
-    public Boolean checkOut = null;
+    private Boolean checkOut = null;
 
     @Expose(serialize = false, deserialize = false)
-    public Boolean subscriptionFirstPortion = null;
+    private Boolean subscriptionFirstPortion = null;
 
     @Expose(serialize = false, deserialize = false)
-    public Boolean subscriptionSecondPortion = null;
+    private Boolean subscriptionSecondPortion = null;
 
     @Expose(serialize = false, deserialize = false)
     private final SharedPreferences preferences;

@@ -218,15 +218,23 @@ public class AttendanceListAdapter extends RecyclerView.Adapter<AttendanceListAd
     public int[] getNumberUser() {
         int size0 = 0;
         int size1 = 0;
+        int size2 = 0;
+        int size3 = 0;
 
         for (User user : getUserList()) {
             if (user.isCheckIn() != null && user.isCheckIn()) {
                 size0 += 1;
+                Boolean isCheckOut = user.isCheckOut();
+                if (isCheckOut != null && isCheckOut) {
+                    size2 += 1;
+                } else {
+                    size3 += 1;
+                }
             } else {
                 size1 += 1;
             }
         }
-        return new int[]{size0, size1};
+        return new int[]{size0, size1, size2, size3};
     }
 
     public static class AttendanceListViewHolder extends RecyclerView.ViewHolder {

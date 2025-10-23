@@ -111,7 +111,8 @@ public class AttendanceListFragment extends Fragment {
 
     private int numberUserAbsent = 0;
     private int numberUserPresent = 0;
-
+    private int numberUserPresentCheckOut = 0;
+    private int numberUserAbsentCheckOut = 0;
     final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
     final long[] lastClickTime = {0};
     final boolean[] isFlashLightOn = {false};
@@ -219,7 +220,6 @@ public class AttendanceListFragment extends Fragment {
                 );
         }
     }
-
 
     private void activityResultContractsViewer(@NonNull Boolean result) {
         if (result) {
@@ -709,8 +709,12 @@ public class AttendanceListFragment extends Fragment {
         int[] numberUser = attendanceListAdapter.getNumberUser();
         this.numberUserPresent = numberUser[0];
         this.numberUserAbsent = numberUser[1];
+        this.numberUserPresentCheckOut = numberUser[2];
+        this.numberUserAbsentCheckOut = numberUser[3];
         binding.chipPresent.setText(String.valueOf(numberUserPresent));
         binding.chipAbsent.setText(String.valueOf(numberUserAbsent));
+        binding.chipPresentCheckOut.setText(String.valueOf(numberUserPresentCheckOut));
+        binding.chipAbsentCheckOut.setText(String.valueOf(numberUserAbsentCheckOut));
     }
 
     private void activeScrollListener() {
