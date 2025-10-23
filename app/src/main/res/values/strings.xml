@@ -360,7 +360,7 @@
     <string name="error_generate_id_message">Erro ao gerar ID da mensagem.</string>
     <string name="error_load_messages">"Erro ao carregar mensagens: "</string>
     <string name="date_univalible">Data indisponível</string>
-    <string name="needCheckinToRate" >🍽️ Precisa de estar subscrito na refeição para avaliar e comentar</string>
+    <string name="needCheckinToRate">🍽️ Precisa de estar subscrito na refeição para avaliar e comentar</string>
     <string name="ratingsCount">avaliações</string>
     <string name="rateWithStars">Avalie com estrelas</string>
     <string name="yourRatingAndComment">Sua Avaliação e Comentário</string>
@@ -369,8 +369,8 @@
     <string name="sendRatingAndComment">ENVIAR AVALIAÇÃO E COMENTÁRIO</string>
     <string name="anonymous">anónimo</string>
     <string name="anonymousComment">Comentário anónimo</string>
-    <string name="checkIn">Check-in</string>
-    <string name="checkOut">Check-out</string>
+    <string name="checkIn" translatable="false">Check-in</string>
+    <string name="checkOut" translatable="false">Check-out</string>
     <string name="alreadyCheckedIn">Já fez check-in neste evento.</string>
     <string name="alreadyCheckedOut">Já fez check-out neste evento.</string>
     <string name="checkinSuccessful">Check-in realizado com sucesso!</string>
