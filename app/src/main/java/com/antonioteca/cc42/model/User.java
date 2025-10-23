@@ -51,7 +51,10 @@ public class User {
     public Boolean present = null;
 
     @Expose(serialize = false, deserialize = false)
-    public Boolean subscription = null;
+    public Boolean subscriptionFirstPortion = null;
+
+    @Expose(serialize = false, deserialize = false)
+    public Boolean subscriptionSecondPortion = null;
 
     @Expose(serialize = false, deserialize = false)
     private final SharedPreferences preferences;
@@ -158,12 +161,20 @@ public class User {
     }
 
 
-    public Boolean isSubscription() {
-        return subscription;
+    public Boolean isSubscriptionFirstPortion() {
+        return subscriptionFirstPortion;
     }
 
-    public void setSubscription(Boolean subscription) {
-        this.subscription = subscription;
+    public void setSubscriptionFirstPortion(Boolean subscription) {
+        this.subscriptionFirstPortion = subscription;
+    }
+
+    public Boolean isSubscriptionSecondPortion() {
+        return subscriptionSecondPortion;
+    }
+
+    public void setSubscriptionSecondPortion(Boolean subscription) {
+        this.subscriptionSecondPortion = subscription;
     }
 
     public boolean getSubscribedToTopicMealNotification() {
@@ -182,13 +193,14 @@ public class User {
         User user = (User) o;
         return Objects.equals(uid, user.uid) && // Garante que o ID também seja comparado
                 Objects.equals(present, user.present) &&
-                Objects.equals(subscription, user.subscription);
+                Objects.equals(subscriptionFirstPortion, user.subscriptionFirstPortion) &&
+                Objects.equals(subscriptionSecondPortion, user.subscriptionSecondPortion);
         // Compare todos os campos relevantes para o conteúdo visual
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uid, present, subscription);
+        return Objects.hash(uid, present, subscriptionFirstPortion, subscriptionSecondPortion);
         // Use os mesmos campos do equals
     }
 }

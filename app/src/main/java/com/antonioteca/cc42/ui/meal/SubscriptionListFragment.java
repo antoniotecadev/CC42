@@ -110,6 +110,8 @@ public class SubscriptionListFragment extends Fragment {
     private int numberMealReceived = 0;
     private int numberUserSubscription = 0;
     private int numberUserUnsubscription = 0;
+    private int numberUserSubscriptionSecondPortion = 0;
+    private int numberUserNotSubscriptionSecondPortion = 0;
 
     //    final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
 //    final long[] lastClickTime = {0};
@@ -473,9 +475,13 @@ public class SubscriptionListFragment extends Fragment {
                 if (userId == null) return;
                 int quantity = Integer.parseInt(binding.textViewQuantityValue.getText().toString());
                 if (getPortionSelected() == null) {
-                    subscriptionListAdapter.updateSubscriptionUserSingle(userId);
+                    subscriptionListAdapter.updateSubscriptionUserSingle(userId, true);
                     binding.chipSubscription.setText(String.valueOf(++numberUserSubscription));
                     binding.chipUnsubscription.setText(String.valueOf(Math.max(--numberUserUnsubscription, 0)));
+                } else {
+                    subscriptionListAdapter.updateSubscriptionUserSingle(userId, false);
+                    binding.chipNumberSubscribedSecondPortion.setText(String.valueOf(++numberUserSubscriptionSecondPortion));
+                    numberUserNotSubscriptionSecondPortion = Math.max(--numberUserNotSubscriptionSecondPortion, 0);
                 }
                 numberMealReceived += quantity;
                 meal.setQuantityReceived(numberMealReceived);
@@ -613,7 +619,7 @@ public class SubscriptionListFragment extends Fragment {
                         binding.progressindicator.setVisibility(View.VISIBLE);
                         ExecutorService executor = Executors.newSingleThreadExecutor();
                         executor.execute(() -> {
-                            File filePdf = PdfCreator.createPdfSubscriptionList(context, requireActivity(), meal, numberUserUnsubscription, numberUserSubscription, subscriptionListAdapter.getUserList(), binding.progressindicator, binding.textViewTotal);
+                            File filePdf = PdfCreator.createPdfSubscriptionList(context, requireActivity(), meal, numberUserUnsubscription, numberUserSubscription, numberUserSubscriptionSecondPortion, numberUserNotSubscriptionSecondPortion, subscriptionListAdapter.getUserList(), binding.progressindicator, binding.textViewTotal);
                             if (filePdf != null) {
                                 if (isPrint)
                                     PdfViewer.openPdf(context, filePdf, "application/pdf", getString(R.string.msg_no_pdf_viewing_applications_were_found));
@@ -674,15 +680,16 @@ public class SubscriptionListFragment extends Fragment {
     }
 
     private void setNumberUserChip() {
-        int[] numberUser = subscriptionListAdapter.getNumberUser();
-        int countUserSubscribedSecondPortion = subscriptionListAdapter.getCountUserSubscribedSecondPortion(userIds);
+        int[] numberUser = subscriptionListAdapter.getNumberMealsReceivedUser();
         this.numberUserSubscription = numberUser[0];
         this.numberUserUnsubscription = numberUser[1];
+        this.numberUserSubscriptionSecondPortion = numberUser[2];
+        this.numberUserNotSubscriptionSecondPortion = numberUser[3];
         binding.chipSubscription.setText(String.valueOf(numberUserSubscription));
         binding.chipNumberMealReceived.setText(String.valueOf(numberMealReceived));
         binding.chipUnsubscription.setText(String.valueOf(numberUserUnsubscription));
         binding.chipNumberMealNotReceived.setText(String.valueOf(meal.getQuantityNotReceived()));
-        binding.chipNumberSubscribedSecondPortion.setText(String.valueOf(countUserSubscribedSecondPortion));
+        binding.chipNumberSubscribedSecondPortion.setText(String.valueOf(numberUserSubscriptionSecondPortion));
     }
 
     private void activeScrollListener() {

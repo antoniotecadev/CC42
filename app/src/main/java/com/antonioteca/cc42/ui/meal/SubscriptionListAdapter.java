@@ -53,24 +53,33 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
 
     public void updateSubscriptionUser(List<String> usersIdsSubscription) {
         Set<String> usersIdsSet = new HashSet<>(usersIdsSubscription);
-        boolean asigned;
+        boolean subscribedFirstPortion;
+        boolean subscribedSecondPortion;
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
             User currentUser = this.userList.get(i);
-            asigned = usersIdsSet.contains(String.valueOf(currentUser.uid));
-            if (currentUser.isSubscription() == null || currentUser.isSubscription() != asigned) {
-                currentUser.setSubscription(asigned);
-                this.userListFilter.get(i).setSubscription(asigned); // Assuming userListFilter has the same user objects or needs parallel update
+            subscribedFirstPortion = usersIdsSet.contains(String.valueOf(currentUser.uid));
+            subscribedSecondPortion = usersIdsSet.contains("-" + currentUser.uid);
+            if (currentUser.isSubscriptionFirstPortion() == null || currentUser.isSubscriptionFirstPortion() != subscribedFirstPortion) {
+                currentUser.setSubscriptionFirstPortion(subscribedFirstPortion);
+                this.userListFilter.get(i).setSubscriptionFirstPortion(subscribedFirstPortion);
+                notifyItemChanged(i);
+            } else if (currentUser.isSubscriptionSecondPortion() == null || currentUser.isSubscriptionSecondPortion() != subscribedSecondPortion) {
+                currentUser.setSubscriptionSecondPortion(subscribedSecondPortion);
+                this.userListFilter.get(i).setSubscriptionSecondPortion(subscribedSecondPortion);
                 notifyItemChanged(i);
             }
         }
     }
 
-    public void updateSubscriptionUserSingle(Long uid) {
+    public void updateSubscriptionUserSingle(Long uid, boolean isFirstPortion) {
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
             if (Objects.equals(this.userList.get(i).uid, uid)) {
-                this.userList.get(i).setSubscription(true);
+                if (isFirstPortion)
+                    this.userList.get(i).setSubscriptionFirstPortion(true);
+                else
+                    this.userList.get(i).setSubscriptionSecondPortion(true);
                 notifyItemChanged(i);
                 this.userList.add(0, this.userList.get(i));
                 notifyItemInserted(0);
@@ -121,12 +130,12 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
             this.userList.addAll(userListFilter);
         else if (status) {
             for (User user : userListFilter) {
-                if (user.isSubscription())
+                if (user.isSubscriptionFirstPortion())
                     userList.add(user);
             }
         } else {
             for (User user : userListFilter) {
-                if (!user.isSubscription())
+                if (!user.isSubscriptionFirstPortion())
                     userList.add(user);
             }
         }
@@ -148,18 +157,6 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         isFilterSecondPortion = true;
         this.userList.addAll(filteredList);
         notifyDataSetChanged();
-    }
-
-    public int getCountUserSubscribedSecondPortion(List<String> usersIdsSubscription) {
-        Set<String> usersIdsSet = new HashSet<>(usersIdsSubscription); // Converta para HashSet para pesquisa O(1)
-        int count = 0;
-        int itemCount = getItemCount();
-        for (int i = 0; i < itemCount; i++) {
-            if (usersIdsSet.contains("-" + this.userListFilter.get(i).uid)) {
-                count++;
-            }
-        }
-        return count;
     }
 
 //    public String containsUser(long userId) {
@@ -199,21 +196,30 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
 //        if (user.ratingValue > 0) Avaliação do usuario
 //            StarUtils.selectedRating(holder.binding.starRatingDone, user.ratingValue);
 //        StarUtils.reduceStarSize(context, holder.binding.starRatingDone, 20, 20);
-        if (user.isSubscription() != null && user.isSubscription()) {
-            holder.binding.textViewSubscription.setTextColor(greenColor);
-            holder.binding.textViewSubscription.setText(context.getString(R.string.text_signed));
-        } else if (user.isSubscription() != null && !user.isSubscription()) {
-            holder.binding.textViewSubscription.setTextColor(redColor);
-            holder.binding.textViewSubscription.setText(context.getString(R.string.text_unsigned));
+        Boolean isSubscriptionFirstPortion = user.isSubscriptionFirstPortion();
+        if (isSubscriptionFirstPortion != null && isSubscriptionFirstPortion) {
+            holder.binding.textViewSubscriptionFirstPortion.setTextColor(greenColor);
+            holder.binding.textViewSubscriptionFirstPortion.setText(context.getString(R.string.text_signed));
+        } else {
+            holder.binding.textViewSubscriptionFirstPortion.setTextColor(redColor);
+            holder.binding.textViewSubscriptionFirstPortion.setText(context.getString(R.string.text_unsigned));
+        }
+        Boolean isSubscriptionSecondPortion = user.isSubscriptionSecondPortion();
+        if (isSubscriptionSecondPortion != null && isSubscriptionSecondPortion) {
+            holder.binding.textViewSubscriptionSecondPortion.setTextColor(greenColor);
+            holder.binding.textViewSubscriptionSecondPortion.setText(context.getString(R.string.text_signed));
+        } else {
+            holder.binding.textViewSubscriptionSecondPortion.setTextColor(redColor);
+            holder.binding.textViewSubscriptionSecondPortion.setText(context.getString(R.string.text_unsigned));
         }
         if (isFilterSecondPortion) {
-            holder.binding.textViewSubscription.setTextColor(greenColor);
-            holder.binding.textViewSubscription.setText(context.getString(R.string.second_portion));
+            holder.binding.textViewSubscriptionSecondPortion.setTextColor(greenColor);
+            holder.binding.textViewSubscriptionSecondPortion.setText(context.getString(R.string.text_signed));
         }
-        holder.binding.cardViewRegisteredUser.setOnClickListener(v -> {
-            if (user.isSubscription() != null)
-                Util.showModalUserDetails(context, user.login, user.displayName, imageUrl, holder.binding.textViewSubscription.getText().toString(), user.isSubscription());
-        });
+//        holder.binding.cardViewRegisteredUser.setOnClickListener(v -> {
+//            if (user.isSubscriptionFirstPortion() != null)
+//                Util.showModalUserDetails(context, user.login, user.displayName, imageUrl, holder.binding.textViewSubscriptionFirstPortion.getText().toString(), user.isSubscriptionSecondPortion());
+//        });
         Util.setImageUserRegistered(context, imageUrl, holder.binding.imageViewUser);
     }
 
@@ -226,17 +232,25 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         return this.userList;
     }
 
-    public int[] getNumberUser() {
+    public int[] getNumberMealsReceivedUser() {
         int size0 = 0;
         int size1 = 0;
+        int size2 = 0;
+        int size3 = 0;
         for (User user : getUserList()) {
-            if (user.isSubscription() != null && user.isSubscription()) {
+            if (user.isSubscriptionFirstPortion()) {
                 size0 += 1;
             } else {
                 size1 += 1;
             }
+            Boolean isSubscriptionSecondPortion = user.isSubscriptionSecondPortion();
+            if (isSubscriptionSecondPortion != null && isSubscriptionSecondPortion) {
+                size2 += 1;
+            } else {
+                size3 += 1;
+            }
         }
-        return new int[]{size0, size1};
+        return new int[]{size0, size1, size2, size3};
     }
 
     public static class SubscriptionListViewHolder extends RecyclerView.ViewHolder {

@@ -175,6 +175,7 @@ public class PdfCreator {
             Context context, FragmentActivity fragmentActivity,
             Meal meal,
             int numberUserUnsubscription, int numberUserSubscription,
+            int numberUserSubscriptionSecondPortion, int numberUserNotSubscriptionSecondPortion,
             List<User> userList,
             CircularProgressIndicator progressIndicator, TextView textViewTotal) {
         File folder = createFolder(context, "MealSubscriptionList");
@@ -221,11 +222,17 @@ public class PdfCreator {
                     .setBold();
             document.add(title);
             Paragraph attendanceParagraph = new Paragraph()
-                    .add(new Text(context.getString(R.string.text_signed) + ": ").setBold())
+                    .add(new Text("1ª via " + context.getString(R.string.text_signed) + ": ").setBold())
                     .add(new Text(String.valueOf(numberUserSubscription)))
                     .add(new Text(" | "))
-                    .add(new Text(context.getString(R.string.text_unsigned) + ": ").setBold())
+                    .add(new Text("1ª via " + context.getString(R.string.text_unsigned) + ": ").setBold())
                     .add(new Text(String.valueOf(numberUserUnsubscription)))
+                    .add(new Text(" | "))
+                    .add(new Text("2ª via " + context.getString(R.string.text_signed) + ": ").setBold())
+                    .add(new Text(String.valueOf(numberUserSubscriptionSecondPortion)))
+                    .add(new Text(" | "))
+                    .add(new Text("2ª via " + context.getString(R.string.text_unsigned) + ": ").setBold())
+                    .add(new Text(String.valueOf(numberUserNotSubscriptionSecondPortion)))
                     .setTextAlignment(TextAlignment.CENTER);
             document.add(attendanceParagraph);
             Paragraph dateParagraph = new Paragraph()
@@ -238,13 +245,14 @@ public class PdfCreator {
                     .add(new Text(meal.getName()))
                     .setTextAlignment(TextAlignment.LEFT);
             document.add(kindParagraph);
-            Table table = new Table(UnitValue.createPercentArray(new float[]{10, 50, 25, 15}))
+            Table table = new Table(UnitValue.createPercentArray(new float[]{10, 40, 20, 15, 15}))
                     .useAllAvailableWidth();
             table.setMarginTop(20);
             table.addHeaderCell(new Paragraph(context.getString(R.string.num)).setBold());
             table.addHeaderCell(new Paragraph(context.getString(R.string.full_name)).setBold());
             table.addHeaderCell(new Paragraph(context.getString(R.string.login)).setBold());
-            table.addHeaderCell(new Paragraph(context.getString(R.string.subscription)).setBold());
+            table.addHeaderCell(new Paragraph(context.getString(R.string.first_portion)).setBold());
+            table.addHeaderCell(new Paragraph(context.getString(R.string.second_portion)).setBold());
 
             int totalUsers = userList.size();
             for (int i = 0; i < totalUsers; i++) {
@@ -252,9 +260,16 @@ public class PdfCreator {
                 table.addCell(new Paragraph(String.valueOf(i + 1)));
                 table.addCell(new Paragraph(user.displayName));
                 table.addCell(new Paragraph(user.login));
-                if (user.isSubscription() != null && user.isSubscription()) {
+                Boolean isSubscriptionFirstPortion = user.isSubscriptionFirstPortion();
+                Boolean isSubscriptionSecondPortion = user.isSubscriptionSecondPortion();
+                if (isSubscriptionFirstPortion != null && isSubscriptionFirstPortion) {
                     table.addCell(new Paragraph(context.getString(R.string.text_signed)).setFontColor(green, 100));
-                } else if (user.isSubscription() != null && !user.isSubscription()) {
+                } else {
+                    table.addCell(new Paragraph(context.getString(R.string.text_unsigned)).setFontColor(red, 100));
+                }
+                if (isSubscriptionSecondPortion != null && isSubscriptionSecondPortion) {
+                    table.addCell(new Paragraph(context.getString(R.string.text_signed)).setFontColor(green, 100));
+                } else {
                     table.addCell(new Paragraph(context.getString(R.string.text_unsigned)).setFontColor(red, 100));
                 }
                 int sum = i + 1;
