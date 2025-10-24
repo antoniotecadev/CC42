@@ -164,7 +164,7 @@
     <string name="outside_meal_times">En dehors des heures de repas</string>
     <string name="error_creating_image_file">Erreur lors de la création du fichier image</string>
     <string name="device_does_not_have_camera">L\'appareil n\'a pas d\'appareil photo</string>
-    <string name="loading_more_meals">Chargement de plus de repas...</string>
+    <string name="loading_more_meals">Chargement de plus de repas…</string>
     <string name="rating_submitted_successfully">Évaluation envoyée avec succès</string>
     <string name="notify_meal">Notifier</string>
     <string name="information">Information</string>
@@ -324,7 +324,7 @@
     <string name="tittle">Titre</string>
     <string name="message">Message</string>
     <string name="send_message">Envoyer le Message</string>
-    <string name="sending">Envoi en cours...</string>
+    <string name="sending">Envoi en cours…</string>
     <string name="title_is_not_empty">Le titre ne peut pas être vide</string>
     <string name="message_is_not_empty">Le message ne peut pas être vide</string>
     <string name="message_send_success">Message envoyé avec succès !</string>
@@ -341,11 +341,11 @@
     <string name="sendRatingAndComment">ENVOYER L\'ÉVALUATION ET LE COMMENTAIRE</string>
     <string name="anonymous">anónimo</string>
     <string name="anonymousComment">Commentaire anonyme</string>
-    <string name="alreadyCheckedIn">Já fez check-in neste evento.</string>
-    <string name="alreadyCheckedOut">Já fez check-out neste evento.</string>
-    <string name="checkinSuccessful">Check-in realizado com sucesso!</string>
-    <string name="checkoutSuccessful">Check-out realizado com sucesso!</string>
-    <string name="errorMakingCheck">Erro ao fazer check</string>
-    <string name="needCheckinFirst">Precisa de fazer check-in primeiro.</string>
+    <string name="alreadyCheckedIn">Vous vous êtes déjà enregistré(e) pour cet événement.</string>
+    <string name="alreadyCheckedOut">Vous avez déjà enregistré votre départ pour cet événement.</string>
+    <string name="checkinSuccessful">Enregistrement réussi !</string>
+    <string name="checkoutSuccessful">Départ enregistré avec succès !</string>
+    <string name="errorMakingCheck">Erreur lors de l\'enregistrement</string>
+    <string name="needCheckinFirst">Vous devez d\'abord vous enregistrer.</string>
     <string name="view_events">✨ ÉVÉNEMENTS</string>
 </resources>
