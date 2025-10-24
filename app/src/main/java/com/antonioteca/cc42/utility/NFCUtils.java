@@ -9,15 +9,21 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.tech.MifareClassic;
 import android.nfc.tech.NfcA;
+import android.os.Build;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.databinding.LayoutQuantityBinding;
+import com.antonioteca.cc42.databinding.RadioGroupCheckBinding;
+import com.antonioteca.cc42.databinding.RadioGroupPortionBinding;
 
 import java.io.UnsupportedEncodingException;
 
@@ -52,14 +58,14 @@ public class NFCUtils {
         return new Object[]{nfcAdapter, pendingIntent, intentFiltersArray, techListsArray};
     }
 
-    public static void startReaderNFC(NfcAdapter nfcAdapter, Activity activity, Context context, PendingIntent pendingIntent, IntentFilter[] intentFiltersArray, String[][] techListsArray) {
+    public static void startReaderNFC(NfcAdapter nfcAdapter, Activity activity, Context context, PendingIntent pendingIntent, IntentFilter[] intentFiltersArray, String[][] techListsArray, RadioGroupCheckBinding radioGroupCheck, RadioGroupPortionBinding radioGroupPortion, LayoutQuantityBinding layoutQuantity) {
         if (nfcAdapter != null) {
             startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray);
             // 1. Criar o layout programaticamente
-            LinearLayout layout = new LinearLayout(context);
-            layout.setOrientation(LinearLayout.VERTICAL);
-            layout.setPadding(50, 50, 50, 50);
-            layout.setGravity(Gravity.CENTER_HORIZONTAL);
+            LinearLayout dialogLayout = new LinearLayout(context);
+            dialogLayout.setOrientation(LinearLayout.VERTICAL);
+            dialogLayout.setPadding(50, 0, 50, 50);
+            dialogLayout.setGravity(Gravity.CENTER_HORIZONTAL);
 
             // 2. Criar a ImageView
             ImageView imageView = new ImageView(context);
@@ -70,17 +76,87 @@ public class NFCUtils {
             );
             imageParams.gravity = Gravity.CENTER_HORIZONTAL;
             imageView.setLayoutParams(imageParams);
+            ViewGroup parent;
+            if (radioGroupCheck != null) {
+                // Obtém o pai da view que queremos mover
+                parent = (ViewGroup) radioGroupCheck.getRoot().getParent();
+                if (parent != null) {
+                    // Remove a view do seu pai actual
+                    parent.removeView(radioGroupCheck.getRoot());
+                }
+                radioGroupCheck.radioGroupEventCheck.setVisibility(View.VISIBLE);
+                // Itera sobre todos os RadioButtons dentro do RadioGroup
+                setColorText(context, radioGroupCheck, null, R.color.textColorPrimary);
+                dialogLayout.addView(radioGroupCheck.getRoot());
+            } else {
+                parent = (ViewGroup) radioGroupPortion.getRoot().getParent();
+                if (parent != null) {
+                    // Remove a view do seu pai actual
+                    parent.removeView(radioGroupPortion.getRoot());
+                }
+                radioGroupPortion.radioGroupMealPortion.setVisibility(View.VISIBLE);
+                // Itera sobre todos os RadioButtons dentro do RadioGroup
+                setColorText(context, null, radioGroupPortion, R.color.textColorPrimary);
+                dialogLayout.addView(radioGroupPortion.getRoot());
+            }
+            dialogLayout.addView(imageView);
+            if (layoutQuantity != null) {
+                LayoutQuantityBinding dialogQuantityBinding = LayoutQuantityBinding.inflate(activity.getLayoutInflater());
+                dialogQuantityBinding.liniearLayoutQuantity.setVisibility(View.VISIBLE);
 
-            // 3. Adicionar a ImageView ao layout
-            layout.addView(imageView);
+                LinearLayout.LayoutParams liniearLayoutQuantityValue = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+                liniearLayoutQuantityValue.setMargins(0, 0, 0, 0);
+                dialogQuantityBinding.liniearLayoutQuantityValue.setLayoutParams(liniearLayoutQuantityValue);
+
+                dialogQuantityBinding.textViewQuantity.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
+                dialogQuantityBinding.textViewQuantityValue.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
+                dialogQuantityBinding.buttonDecrement.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
+                dialogQuantityBinding.buttonIncrement.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
+                dialogQuantityBinding.buttonDecrement.setOnClickListener(v -> {
+                    int currentQuantity = Integer.parseInt(dialogQuantityBinding.textViewQuantityValue.getText().toString());
+                    if (currentQuantity > 1) {
+                        dialogQuantityBinding.textViewQuantityValue.setText(String.valueOf(currentQuantity - 1));
+                        layoutQuantity.textViewQuantityValue.setText(String.valueOf(currentQuantity - 1));
+                    }
+                });
+
+                dialogQuantityBinding.buttonIncrement.setOnClickListener(v -> {
+                    int currentQuantity = Integer.parseInt(dialogQuantityBinding.textViewQuantityValue.getText().toString());
+                    if (currentQuantity < 9) {
+                        dialogQuantityBinding.textViewQuantityValue.setText(String.valueOf(currentQuantity + 1));
+                        layoutQuantity.textViewQuantityValue.setText(String.valueOf(currentQuantity + 1));
+                    }
+                });
+                dialogLayout.addView(dialogQuantityBinding.getRoot());
+            }
 
             new AlertDialog.Builder(context)
                     .setIcon(R.drawable.baseline_connect_without_contact_24)
                     .setTitle(R.string.reader_nfc)
                     .setMessage(R.string.aprox_pass)
-                    .setView(layout)
+                    .setView(dialogLayout)
                     .setCancelable(false)
                     .setPositiveButton(context.getString(R.string.cancel), (dialog, which) -> {
+                        // ATENÇÃO: É preciso adicionar a view de volta ao seu pai original
+                        // se o diálogo for cancelado, para evitar problemas na UI.
+                        if (parent != null) {
+                            if (radioGroupCheck != null) {
+                                // 1. Remove a view do seu pai ACTUAL (o layout do diálogo)
+                                radioGroupCheck.radioGroupEventCheck.setVisibility(View.GONE);
+                                setColorText(context, radioGroupCheck, null, R.color.white);
+                                dialogLayout.removeView(radioGroupCheck.getRoot());
+                                // 2. Agora sim, adiciona a view de volta ao seu pai ORIGINAL
+                                parent.addView(radioGroupCheck.getRoot());
+                            } else {
+                                radioGroupPortion.radioGroupMealPortion.setVisibility(View.GONE);
+                                setColorText(context, null, radioGroupPortion, R.color.white);
+                                dialogLayout.removeView(radioGroupPortion.getRoot());
+                                parent.addView(radioGroupPortion.getRoot());
+                            }
+                        }
                         nfcAdapter.disableForegroundDispatch(activity);
                         dialog.dismiss();
                     })
@@ -89,6 +165,29 @@ public class NFCUtils {
             Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.nfc_not_suport), context, null);
         }
     }
+
+    private static void setColorText(Context context, RadioGroupCheckBinding radioGroupCheck, RadioGroupPortionBinding radioGroupPortion, int color) {
+        if (radioGroupCheck != null) {
+            for (int i = 0; i < radioGroupCheck.radioGroupEventCheck.getChildCount(); i++) {
+                View child = radioGroupCheck.radioGroupEventCheck.getChildAt(i);
+                // Verifica se o filho é um RadioButton antes de fazer o cast
+                if (child instanceof RadioButton) {
+                    // Define a cor do texto para cada RadioButton
+                    ((RadioButton) child).setTextColor(context.getResources().getColor(color));
+                }
+            }
+        } else {
+            for (int i = 0; i < radioGroupPortion.radioGroupMealPortion.getChildCount(); i++) {
+                View child = radioGroupPortion.radioGroupMealPortion.getChildAt(i);
+                // Verifica se o filho é um RadioButton antes de fazer o cast
+                if (child instanceof RadioButton) {
+                    // Define a cor do texto para cada RadioButton
+                    ((RadioButton) child).setTextColor(context.getResources().getColor(color));
+                }
+            }
+        }
+    }
+
 
     public static void startReaderNFC(@NonNull NfcAdapter nfcAdapter, Activity activity, PendingIntent pendingIntent, IntentFilter[] intentFiltersArray, String[][] techListsArray) {
         nfcAdapter.enableForegroundDispatch(
@@ -101,7 +200,7 @@ public class NFCUtils {
 
     public static int getFlags() {
         int flags; // Variável para armazenar as flags do PendingIntent
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) { // Verifica a versão do SDK do Android
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Verifica a versão do SDK do Android
             //  A partir do Android 12 (API 31, codinome “S”), o sistema exige que o PendingIntent seja mutável se você pretende alterar os dados da Intent.
             flags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE; // Define as flags para versões S e superiores
         } else { // Para versões anteriores ao S

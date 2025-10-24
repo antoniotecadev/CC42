@@ -142,7 +142,7 @@ public class SubscriptionListFragment extends Fragment {
                         progressBarSubscription.setVisibility(View.VISIBLE);
                         DaoSusbscriptionFirebase.subscription(
                                 firebaseDatabase,
-                                Integer.parseInt(binding.textViewQuantityValue.getText().toString()),
+                                Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString()),
                                 getPortionSelected(),
                                 String.valueOf(meal.getId()),
                                 null,
@@ -181,7 +181,7 @@ public class SubscriptionListFragment extends Fragment {
                     progressBarSubscription.setVisibility(View.VISIBLE);
                     DaoSusbscriptionFirebase.subscription(
                             firebaseDatabase,
-                            1,
+                            Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString()),
                             getPortionSelected(),
                             String.valueOf(meal.getId()),
                             null,
@@ -374,8 +374,8 @@ public class SubscriptionListFragment extends Fragment {
         progressBarSubscription = binding.progressBarSubscription;
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
-            binding.buttonDecrement.setStrokeColor(colorStateList);
-            binding.buttonIncrement.setStrokeColor(colorStateList);
+            binding.layoutQuantity.buttonDecrement.setStrokeColor(colorStateList);
+            binding.layoutQuantity.buttonIncrement.setStrokeColor(colorStateList);
             binding.fabOpenReaderNFC.setBackgroundTintList(colorStateList);
             binding.fabOpenCameraScannerQrCodeBack.setBackgroundTintList(colorStateList);
             binding.fabOpenCameraScannerQrCodeFront.setBackgroundTintList(colorStateList);
@@ -389,7 +389,10 @@ public class SubscriptionListFragment extends Fragment {
                 context,
                 pendingIntent,
                 intentFiltersArray,
-                techListsArray
+                techListsArray,
+                null,
+                binding.radioGroupPortion,
+                binding.layoutQuantity
         ));
 
         binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(v -> openCameraScannerQrCodeSubscriptio(0));
@@ -427,18 +430,18 @@ public class SubscriptionListFragment extends Fragment {
             }
         });
 
-        binding.buttonDecrement.setOnClickListener(v -> {
-            int currentQuantity = Integer.parseInt(binding.textViewQuantityValue.getText().toString());
+        binding.layoutQuantity.buttonDecrement.setOnClickListener(v -> {
+            int currentQuantity = Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString());
             if (currentQuantity > 1) {
-                binding.textViewQuantityValue.setText(String.valueOf(currentQuantity - 1));
+                binding.layoutQuantity.textViewQuantityValue.setText(String.valueOf(currentQuantity - 1));
             }
         });
 
-        binding.buttonIncrement.setOnClickListener(v -> {
-            int currentQuantity = Integer.parseInt(binding.textViewQuantityValue.getText().toString());
+        binding.layoutQuantity.buttonIncrement.setOnClickListener(v -> {
+            int currentQuantity = Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString());
             // You might want to add a maximum limit here if needed
             if (currentQuantity < 9)
-                binding.textViewQuantityValue.setText(String.valueOf(currentQuantity + 1));
+                binding.layoutQuantity.textViewQuantityValue.setText(String.valueOf(currentQuantity + 1));
         });
 
         binding.progressBarSubscription.setVisibility(View.VISIBLE);
@@ -473,7 +476,7 @@ public class SubscriptionListFragment extends Fragment {
             if (event != null) {
                 Long userId = event.getContentIfNotHandled();
                 if (userId == null) return;
-                int quantity = Integer.parseInt(binding.textViewQuantityValue.getText().toString());
+                int quantity = Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString());
                 if (getPortionSelected() == null) {
                     subscriptionListAdapter.updateSubscriptionUserSingle(userId, true);
                     binding.chipSubscription.setText(String.valueOf(++numberUserSubscription));
@@ -676,7 +679,7 @@ public class SubscriptionListFragment extends Fragment {
 
     @Nullable
     private String getPortionSelected() {
-        return binding.radioGroupMealPortion.getCheckedRadioButtonId() == R.id.radioButtonFirstPortion ? null : "-";
+        return binding.radioGroupPortion.radioGroupMealPortion.getCheckedRadioButtonId() == R.id.radioButtonFirstPortion ? null : "-";
     }
 
     private void setNumberUserChip() {
@@ -719,11 +722,11 @@ public class SubscriptionListFragment extends Fragment {
         decoratedBarcodeView.resume();
         inflatedViewStub.setVisibility(View.VISIBLE);
         binding.fabOpenReaderNFC.setVisibility(View.GONE);
-        binding.liniearLayoutQuantity.setVisibility(View.VISIBLE);
-        binding.radioGroupMealPortion.setVisibility(View.VISIBLE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.VISIBLE);
+        binding.layoutQuantity.liniearLayoutQuantity.setVisibility(View.VISIBLE);
+        binding.radioGroupPortion.radioGroupMealPortion.setVisibility(View.VISIBLE);
     }
 
     @NonNull
@@ -743,11 +746,11 @@ public class SubscriptionListFragment extends Fragment {
             toggleToolbarVisibity();
         }
         inflatedViewStub.setVisibility(View.GONE);
-        binding.radioGroupMealPortion.setVisibility(View.GONE);
-        binding.liniearLayoutQuantity.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.VISIBLE);
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.VISIBLE);
+        binding.layoutQuantity.liniearLayoutQuantity.setVisibility(View.GONE);
+        binding.radioGroupPortion.radioGroupMealPortion.setVisibility(View.GONE);
         binding.fabOpenReaderNFC.setVisibility(nfcAdapter != null ? View.VISIBLE : View.GONE);
     }
 

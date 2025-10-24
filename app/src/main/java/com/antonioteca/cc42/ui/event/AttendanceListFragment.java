@@ -168,7 +168,7 @@ public class AttendanceListFragment extends Fragment {
                                 partsQrCode[3], /* cursusId */
                                 partsQrCode[4], /* campusId */
                                 partsQrCode[5], /* urlImageUser */
-                                getCheckSelected(),
+                                getCheckSelected(), /* checkin or checkout */
                                 context,
                                 layoutInflater,
                                 binding.progressBarMarkAttendance,
@@ -404,7 +404,10 @@ public class AttendanceListFragment extends Fragment {
                 context,
                 pendingIntent,
                 intentFiltersArray,
-                techListsArray
+                techListsArray,
+                binding.radioGroupCheck,
+                null,
+                null
         ));
 
         binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(v -> openCameraScannerQrCodeEvent(0));
@@ -714,7 +717,7 @@ public class AttendanceListFragment extends Fragment {
     };
 
     private boolean getCheckSelected() {
-        return binding.radioGroupEventCheck.getCheckedRadioButtonId() == R.id.radioButtonCheckIn;
+        return binding.radioGroupCheck.radioGroupEventCheck.getCheckedRadioButtonId() == R.id.radioButtonCheckIn;
     }
 
     private void setNumberUserChip() {
@@ -756,10 +759,10 @@ public class AttendanceListFragment extends Fragment {
         decoratedBarcodeView.resume();
         inflatedViewStub.setVisibility(View.VISIBLE);
         binding.fabOpenReaderNFC.setVisibility(View.GONE);
-        binding.radioGroupEventCheck.setVisibility(View.VISIBLE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.VISIBLE);
+        binding.radioGroupCheck.radioGroupEventCheck.setVisibility(View.VISIBLE);
     }
 
     @NonNull
@@ -779,10 +782,10 @@ public class AttendanceListFragment extends Fragment {
             toggleToolbarVisibity();
         }
         inflatedViewStub.setVisibility(View.GONE);
-        binding.radioGroupEventCheck.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.VISIBLE);
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.VISIBLE);
+        binding.radioGroupCheck.radioGroupEventCheck.setVisibility(View.GONE);
         binding.fabOpenReaderNFC.setVisibility(nfcAdapter != null ? View.VISIBLE : View.GONE);
     }
 
