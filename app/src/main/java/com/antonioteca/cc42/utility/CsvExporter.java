@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -64,8 +61,9 @@ public class CsvExporter {
                 i++;
             }
 
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-            String fileName = baseFileName + "_" + timeStamp + ".csv";
+//            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+//            String fileName = baseFileName + "_" + timeStamp + ".csv";
+            String fileName = baseFileName + ".csv";
             File fileSaved;
 
             try {
