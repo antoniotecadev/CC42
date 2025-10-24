@@ -28,7 +28,7 @@ import java.util.concurrent.Executors;
 
 public class CsvExporter {
 
-    private static final String CSV_HEADER = "Nº;Nome completo;Login;Presença\n"; // Adapte os cabeçalhos
+    private static final String CSV_HEADER = "Nº;Nome completo;Login;Check-in;Check-out\n"; // Adapte os cabeçalhos
     private static final String UTF8_BOM = "\uFEFF"; // detectar que o arquivo está codificado em UTF-8
 
     public interface ExportCallback {
@@ -58,7 +58,8 @@ public class CsvExporter {
                 csvData.append(i).append(";");
                 csvData.append(escapeCsvString(user.displayName)).append(";");  // Use sua classe User
                 csvData.append(escapeCsvString(user.login)).append(";"); // Use sua classe User
-                csvData.append(user.isCheckIn() ? context.getString(R.string.text_present) : context.getString(R.string.text_absent));            // Use sua classe User
+                csvData.append(user.isCheckIn() ? context.getString(R.string.text_present) : context.getString(R.string.text_absent));
+                csvData.append(user.isCheckOut() ? context.getString(R.string.text_present) : context.getString(R.string.text_absent));
                 csvData.append("\n");
                 i++;
             }
