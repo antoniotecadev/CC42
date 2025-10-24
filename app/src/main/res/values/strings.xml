@@ -377,6 +377,7 @@
     <string name="checkoutSuccessful">Check-out realizado com sucesso!</string>
     <string name="errorMakingCheck">Erro ao fazer check</string>
     <string name="needCheckinFirst">Precisa de fazer check-in primeiro.</string>
+    <string name="view_events">✨ EVENTOS</string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>

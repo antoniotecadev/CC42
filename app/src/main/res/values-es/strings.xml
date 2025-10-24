@@ -347,4 +347,5 @@
     <string name="error_send_message">Error al enviar el mensaje:</string>
     <string name="error_generate_id_message">" Error al generar el ID del mensaje."</string>
     <string name="error_load_messages">Error al cargar los mensajes:</string>
+    <string name="view_events">✨ EVENTOS</string>
 </resources>

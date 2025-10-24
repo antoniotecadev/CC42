@@ -3,6 +3,7 @@ package com.antonioteca.cc42.viewmodel;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
@@ -46,12 +47,16 @@ public class EventViewModel extends ViewModel {
         this.eventRepository = eventRepository;
     }
 
-    public LiveData<List<Event>> getEventsList(Context context, ProgressBar progressBar) {
+    public void getEventsList(Context context, @NonNull ProgressBar progressBar) {
+        progressBar.setVisibility(View.VISIBLE);
+        getEvents(context);
+    }
+
+    public LiveData<List<Event>> getEventsList(Button buttonLoadEvents) {
         if (eventMutableLiveData == null) {
             eventMutableLiveData = new MutableLiveData<>();
-            progressBar.setVisibility(View.VISIBLE);
-            getEvents(context);
-        }
+        } else
+            buttonLoadEvents.setVisibility(View.GONE);
         return eventMutableLiveData;
     }
 

@@ -347,4 +347,5 @@
     <string name="error_send_message">Error sending message:</string>
     <string name="error_generate_id_message">Error generating message ID.</string>
     <string name="error_load_messages">Error loading messages:</string>
+    <string name="view_events">✨ EVENTS</string>
 </resources>

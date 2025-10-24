@@ -30,6 +30,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private final Context context;
     private final String colorCoalition;
+    private final GradientDrawable gradientDrawable;
     private final List<Event> eventList = new ArrayList<>();
     private final List<Event> eventListEnd = new ArrayList<>();
     private boolean showEventListEnd = false;
@@ -48,7 +49,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TYPE_FOOTER = 1;
     }
 
-    public EventAdapter(@NonNull List<Event> eventList, String colorCoalition, Context context) {
+    public EventAdapter(@NonNull List<Event> eventList, String colorCoalition, GradientDrawable gradientDrawable, Context context) {
 
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
@@ -59,8 +60,9 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             else
                 this.eventListEnd.add(event);
         }
-        this.colorCoalition = colorCoalition;
         this.context = context;
+        this.colorCoalition = colorCoalition;
+        this.gradientDrawable = gradientDrawable;
     }
 
     @NonNull
@@ -154,15 +156,6 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public EventViewHolder(@NonNull View view) {
             super(view);
             this.view = view;
-            int[] colors = {
-                    Color.parseColor("#444444"),
-                    Color.parseColor(colorCoalition),
-            };
-
-            GradientDrawable gradientDrawable = new GradientDrawable(
-                    GradientDrawable.Orientation.LEFT_RIGHT,
-                    colors
-            );
             view.findViewById(R.id.linearLayoutEvent).setBackground(gradientDrawable);
         }
     }

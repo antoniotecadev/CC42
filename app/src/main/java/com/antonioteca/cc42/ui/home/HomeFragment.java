@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,6 +105,7 @@ public class HomeFragment extends Fragment {
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
+            binding.buttonLoadEvents.setVisibility(View.GONE);
             eventViewModel.getEvents(context);
         });
 
@@ -148,11 +150,18 @@ public class HomeFragment extends Fragment {
                     });
         }
 
+        GradientDrawable gradientDrawable = getGradientDrawable(colorCoalition);
         String finalColorCoalition = colorCoalition;
-        eventViewModel.getEventsList(context, binding.progressBar).observe(getViewLifecycleOwner(), eventList -> {
+
+        binding.buttonLoadEvents.setOnClickListener(v -> {
+            binding.buttonLoadEvents.setVisibility(View.GONE);
+            eventViewModel.getEventsList(context, binding.progressBar);
+        });
+
+        eventViewModel.getEventsList(binding.buttonLoadEvents).observe(getViewLifecycleOwner(), eventList -> {
             setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
             if (!eventList.isEmpty() && eventList.get(0) != null) {
-                eventAdapter = new EventAdapter(eventList, finalColorCoalition, context);
+                eventAdapter = new EventAdapter(eventList, finalColorCoalition, gradientDrawable, context);
                 binding.recyclerviewEventsList.setAdapter(eventAdapter);
                 // Aplicar a animação de layout
                 // runLayoutAnimation(binding.recyclerviewEventsList, context);
@@ -189,6 +198,19 @@ public class HomeFragment extends Fragment {
         // Lógica para buscar e exibir a mensagem mais recente
         if (cursusId != 0)
             fetchAndShowLatestMessageDialog(String.valueOf(campusId), String.valueOf(cursusId));
+    }
+
+    @NonNull
+    private GradientDrawable getGradientDrawable(String colorCoalition) {
+        int[] colors = {
+                Color.parseColor("#444444"),
+                Color.parseColor(colorCoalition),
+        };
+
+        return new GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT,
+                colors
+        );
     }
 
     public static OnBackPressedCallback outApp(Activity activity, Context context) {
