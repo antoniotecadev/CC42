@@ -348,10 +348,13 @@
     <string name="errorMakingCheck">Erreur lors de l\'enregistrement</string>
     <string name="needCheckinFirst">Vous devez d\'abord vous enregistrer.</string>
     <string name="view_events">✨ ÉVÉNEMENTS</string>
-    <string name="tapToRegister">👇 Toque na área do mapa onde você está localizado.</string>
-    <string name="selectedLocation">📍 Local selecionado: Nenhum</string>
-    <string name="tipText">💡 Dica: segure por 1s para ver quem está nesta área.</string>
-    <string name="location">Localização</string>
-    <string name="confirmLocation">Confirmar localização</string>
-    <string name="youAreAt">Você está em:</string>
+    <string name="tapToRegister">👇 Appuyez sur la zone de la carte où vous vous trouvez.</string>
+    <string name="selectedLocation">📍 Emplacement sélectionné : Aucun</string>
+    <string name="tipText">💡 Astuce : maintenez appuyé pendant 1s pour voir qui se trouve dans cette zone.</string>
+    <string name="location">Emplacement</string>
+    <string name="localSelected">Emplacement sélectionné :</string>
+    <string name="confirmLocation">📍 Confirmer l\'emplacement</string>
+    <string name="youAreAt">Vous êtes à :</string>
+    <string name="locationSavedSuccess">Votre emplacement a été enregistré avec succès.</string>
+    <string name="errorSavingLocation">Impossible d\'enregistrer votre emplacement.</string>
 </resources>
