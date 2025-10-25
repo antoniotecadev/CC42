@@ -4,6 +4,7 @@
     <SwitchPreferenceCompat
         app:defaultValue="true"
         app:icon="@drawable/ic_baseline_notifications_24"
+        app:isPreferenceVisible="false"
         app:key="notification_key"
         app:summaryOff="@string/notification_summary_off"
         app:summaryOn="@string/notificatio_summary_on"
