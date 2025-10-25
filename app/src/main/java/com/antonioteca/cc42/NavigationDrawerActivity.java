@@ -61,11 +61,13 @@ import com.antonioteca.cc42.dao.daofarebase.DaoEventFirebase;
 import com.antonioteca.cc42.dao.daofarebase.DaoSusbscriptionFirebase;
 import com.antonioteca.cc42.databinding.ActivityNavigationDrawerBinding;
 import com.antonioteca.cc42.model.Coalition;
+import com.antonioteca.cc42.model.Cursu;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.ui.event.AttendanceListFragment;
+import com.antonioteca.cc42.ui.home.HomeFragmentDirections;
 import com.antonioteca.cc42.ui.meal.SubscriptionListFragment;
 import com.antonioteca.cc42.ui.setting.ThemePreferences;
 import com.antonioteca.cc42.utility.AESUtil;
@@ -87,6 +89,7 @@ import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class NavigationDrawerActivity extends AppCompatActivity {
 
@@ -118,6 +121,9 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_camera_denied), context, null);
             });
 
+    /**
+     * @noinspection ResultOfMethodCallIgnored
+     */
     private void initCloudinary() {
         try {
             MediaManager.get();
@@ -136,7 +142,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         context = NavigationDrawerActivity.this;
         User user = new User(context);
-        if (user.isStaff())
+        boolean isStaff = user.isStaff();
+        if (isStaff)
             initCloudinary();
         // Aplicar o Tema ao Iniciar o App
         ThemePreferences themePreferences = new ThemePreferences(this);
@@ -167,7 +174,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
         String topic = "/topics/meals_" + campusId + "_";
 
-        if (user.isStaff())
+        if (isStaff)
             topic += user.getCampusName();
         else {
             cursusId = String.valueOf(user.getCursusId());
@@ -192,7 +199,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
                 menuInflater.inflate(R.menu.menu_settings_general, menu);
                 MenuItem menuItem = menu.findItem(R.id.sendMessageFragment);
-                if (!user.isStaff())
+                if (!isStaff)
                     menuItem.setVisible(false);
             }
 
@@ -228,6 +235,34 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
             }
         });
+
+        Map<Integer, String> cursusList = new HashMap<>();
+        cursusList.put(66, "C-Piscine-Reloaded");
+        cursusList.put(21, "42Cursus");
+        cursusList.put(9, "C Piscine");
+        cursusList.put(3, "Discovery Piscine - Web Programming Essentials");
+
+        navigationView.setNavigationItemSelectedListener(item -> {
+            // Fecha o drawer
+            drawer.closeDrawers();
+            if (!isStaff) {
+                if (item.getItemId() == R.id.nav_cursu_list_meal) {
+                    // Verifica se já não está no destino para evitar recriar o fragment
+                    if (Objects.requireNonNull(navController.getCurrentDestination()).getId() != R.id.nav_cursu_list_meal) {
+                        int cursuId = Integer.parseInt(cursusId);
+                        Cursu cursu = new Cursu();
+                        cursu.setId(cursuId);
+                        cursu.setName(cursusList.get(cursuId));
+                        HomeFragmentDirections.ActionNavHomeToNavMeal actionNavHomeToNavMeal = HomeFragmentDirections.actionNavHomeToNavMeal(cursu);
+                        navController.navigate(actionNavHomeToNavMeal);
+                    }
+                    return true;
+                }
+            }
+            // Deixe o NavigationUI tratar outros itens, se houver
+            return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item);
+        });
+
         // Obter o NavigationView
         // Obter o header view dentro do NavigationView
         View headerView = navigationView.getHeaderView(0);
@@ -291,7 +326,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
     private void asNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED)
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED)
                 requestPermissionLauncherNotification.launch(Manifest.permission.POST_NOTIFICATIONS);
     }
 
@@ -592,6 +627,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onResume() {
         super.onResume();

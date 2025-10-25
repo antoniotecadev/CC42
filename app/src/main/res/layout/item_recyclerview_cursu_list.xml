@@ -51,6 +51,17 @@
             app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
             app:layout_constraintStart_toEndOf="@+id/textViewName"
             app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
+
+        <TextView
+            android:id="@+id/textViewCreatedAt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintEnd_toEndOf="@+id/textViewName"
+            app:layout_constraintStart_toStartOf="@+id/textViewName"
+            app:layout_constraintTop_toBottomOf="@+id/textViewName" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View

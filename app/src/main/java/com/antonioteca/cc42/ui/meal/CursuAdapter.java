@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ItemRecyclerviewCursuListBinding;
 import com.antonioteca.cc42.model.Cursu;
+import com.antonioteca.cc42.utility.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,8 @@ public class CursuAdapter extends RecyclerView.Adapter<CursuAdapter.CursuViewHol
         if (colorIcon != 0)
             holder.binding.imageViewCursu.setColorFilter(colorIcon);
         holder.binding.textViewName.setText(cursu.getName());
-//        holder.binding.textViewId.setText(String.valueOf(cursu.getId()));
+        holder.binding.textViewId.setText(String.valueOf(cursu.getId()));
+        holder.binding.textViewCreatedAt.setText(DateUtils.formatDate(DateUtils.parseDate(cursu.getCreated_at())));
         holder.itemView.setOnClickListener(v -> {
             CursuListMealFragmentDirections.ActionNavCursuListMealToNavMeal actionNavCursuListMealToNavMeal =
                     CursuListMealFragmentDirections.actionNavCursuListMealToNavMeal(cursu);

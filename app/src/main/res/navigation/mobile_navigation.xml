@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_nav_home_to_aboutDialogFragment"
             app:destination="@id/aboutDialogFragment" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_meal"
+            app:destination="@id/nav_meal" />
     </fragment>
 
     <fragment
