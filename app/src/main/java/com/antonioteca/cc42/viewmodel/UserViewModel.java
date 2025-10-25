@@ -1,6 +1,7 @@
 package com.antonioteca.cc42.viewmodel;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import androidx.annotation.NonNull;
@@ -10,16 +11,19 @@ import androidx.lifecycle.ViewModel;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.dao.daoapi.DaoApiUser;
+import com.antonioteca.cc42.model.Location;
 import com.antonioteca.cc42.model.LoginResponse;
 import com.antonioteca.cc42.model.Subscription;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
+import com.antonioteca.cc42.network.LocationSaveCallback;
 import com.antonioteca.cc42.repository.TokenRepository;
 import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.EventObserver;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.Util;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -50,8 +54,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserViewModel extends ViewModel {
 
-    private final CompositeDisposable compositeDisposable;
-    private final UserRepository userRepository;
+    private CompositeDisposable compositeDisposable;
+    private UserRepository userRepository;
 
     //    private MutableLiveData<List<User>> userList;
     private MutableLiveData<User> userMutableLiveData;
@@ -66,6 +70,9 @@ public class UserViewModel extends ViewModel {
     public UserViewModel(UserRepository userRepository) {
         this.compositeDisposable = new CompositeDisposable();
         this.userRepository = userRepository;
+    }
+
+    public UserViewModel() {
     }
 
 //    public MutableLiveData<List<User>> getUserList() {
@@ -487,6 +494,38 @@ public class UserViewModel extends ViewModel {
         });
     }
 
+    private static final String TAG = "FirebaseServiceLocation";
+
+    public void saveUserLocation(
+            @NonNull String userId,
+            @NonNull String campusId,
+            @NonNull String cursusId,
+            @NonNull Location location,
+            @NonNull LocationSaveCallback callback) {
+
+        try {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            String path = String.format("campus/%s/cursus/%s/user_locations/%s", campusId, cursusId, userId);
+            DatabaseReference userLocationRef = database.getReference(path);
+
+            userLocationRef.setValue(location)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "✅ Localização salva com sucesso!");
+                        callback.onSuccess();
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e(TAG, "❌ Erro ao salvar localização:", e);
+                            callback.onError(e);
+                        }
+                    });
+
+        } catch (Exception e) {
+            Log.e(TAG, "❌ Erro ao inicializar a operação do Firebase:", e);
+            callback.onError(e);
+        }
+    }
 
     @Override
     protected void onCleared() {

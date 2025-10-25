@@ -134,6 +134,7 @@
 -keep class com.antonioteca.cc42.model.LoginResponse { *; }
 -keep class com.antonioteca.cc42.model.Message { *; }
 -keep class com.antonioteca.cc42.model.Comment { *; }
+-keep class com.antonioteca.cc42.model.Location { *; }
 -keepattributes *Annotation*
 
 # Impede que classes anotadas com @Keep sejam minificadas

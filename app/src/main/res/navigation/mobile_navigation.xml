@@ -208,4 +208,9 @@
         android:name="com.antonioteca.cc42.ui.home.MessageListFragment"
         android:label="@string/message"
         tools:layout="@layout/fragment_message_list" />
+    <fragment
+        android:id="@+id/manualLocationFragment"
+        android:name="com.antonioteca.cc42.ui.location.ManualLocationFragment"
+        android:label="fragment_manual_location"
+        tools:layout="@layout/fragment_manual_location" />
 </navigation>

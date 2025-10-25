@@ -348,4 +348,10 @@
     <string name="errorMakingCheck">Erreur lors de l\'enregistrement</string>
     <string name="needCheckinFirst">Vous devez d\'abord vous enregistrer.</string>
     <string name="view_events">✨ ÉVÉNEMENTS</string>
+    <string name="tapToRegister">👇 Toque na área do mapa onde você está localizado.</string>
+    <string name="selectedLocation">📍 Local selecionado: Nenhum</string>
+    <string name="tipText">💡 Dica: segure por 1s para ver quem está nesta área.</string>
+    <string name="location">Localização</string>
+    <string name="confirmLocation">Confirmar localização</string>
+    <string name="youAreAt">Você está em:</string>
 </resources>

@@ -195,6 +195,15 @@ public class User {
         editor.putBoolean("subscribedToTopicMealNotification", value);
     }
 
+    public String getPushToken() {
+        return preferences.getString("pushToken", null);
+    }
+
+    public void setPushToken(String pushToken) {
+        editor.putString("pushToken", pushToken);
+        commit();
+    }
+
     // equals e hashCode são cruciais para DiffUtil.areContentsTheSame
     @Override
     public boolean equals(Object o) {
