@@ -81,7 +81,8 @@ public class LocationsOverlayView extends FrameLayout {
             btn.setTextSize(10f);
             btn.setGravity(Gravity.CENTER);
             btn.setPadding(2, 6, 2, 2);
-            btn.setBackgroundResource(R.drawable.location_button_background); // veja drawable abaixo
+            btn.setBackgroundColor(loc.color);
+//            btn.setBackgroundResource(R.drawable.location_button_background); // veja drawable abaixo
             btn.setAlpha(0.85f);
 
             // clique
@@ -123,8 +124,8 @@ public class LocationsOverlayView extends FrameLayout {
             if (loc != null && loc.areaId.equals(selectedLocationId)) {
                 // borda visível quando selecionado
                 v.setBackgroundResource(R.drawable.location_button_background_selected);
-            } else {
-                v.setBackgroundResource(R.drawable.location_button_background);
+            } else if (loc != null) {
+                v.setBackgroundColor(loc.color);
             }
         }
     }
