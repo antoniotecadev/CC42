@@ -55,7 +55,7 @@ public class EventViewModel extends ViewModel {
     public LiveData<List<Event>> getEventsList(Button buttonLoadEvents) {
         if (eventMutableLiveData == null) {
             eventMutableLiveData = new MutableLiveData<>();
-        } else
+        } else if (eventMutableLiveData.getValue() != null && !eventMutableLiveData.getValue().isEmpty())
             buttonLoadEvents.setVisibility(View.GONE);
         return eventMutableLiveData;
     }
