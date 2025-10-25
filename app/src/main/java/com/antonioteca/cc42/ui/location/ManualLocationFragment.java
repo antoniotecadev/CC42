@@ -1,5 +1,6 @@
 package com.antonioteca.cc42.ui.location;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Location;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.LocationSaveCallback;
@@ -22,6 +24,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +39,7 @@ public class ManualLocationFragment extends Fragment {
     private LocationsOverlayView overlay;
     private TextView selectedLocationText;
     private UserViewModel userViewModel;
+    private ProgressBar progressBar;
     private Context context;
     private User user;
 
@@ -46,9 +50,10 @@ public class ManualLocationFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getFirebaseMessageToken();
         context = requireContext();
         user = new User(context);
-        getFirebaseMessageToken();
+        user.coalition = new Coalition(context);
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     }
 
@@ -57,8 +62,15 @@ public class ManualLocationFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_manual_location, container, false);
 
-        overlay = root.findViewById(R.id.locationsOverlay);
         selectedLocationText = root.findViewById(R.id.selectedLocationText);
+        overlay = root.findViewById(R.id.locationsOverlay);
+        progressBar = root.findViewById(R.id.progressBar);
+
+        String colorCoalition = user.coalition.getColor();
+        if (colorCoalition != null) {
+            ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
+            progressBar.setIndeterminateTintList(colorStateList);
+        }
 
         List<Location> schoolLocations = new ArrayList<>();
         schoolLocations.add(new Location("formal_auditorium", "Auditório Formal", 0.20f, 0.04f, 0.29f, 0.17f, Color.parseColor("#803498DB")));
@@ -87,8 +99,10 @@ public class ManualLocationFragment extends Fragment {
                         .setNegativeButton(R.string.cancel, (dialog, which) -> overlay.clearSelection())
                         .setPositiveButton(R.string.ok, (dialog, which) -> {
                             try {
+                                progressBar.setVisibility(View.VISIBLE);
                                 saveLocation(location);
                             } catch (NullPointerException e) {
+                                progressBar.setVisibility(View.GONE);
                                 Util.showAlertDialogBuild("🔴 " + getString(R.string.err), e.getMessage(), context, null);
                             }
                         })
@@ -131,6 +145,7 @@ public class ManualLocationFragment extends Fragment {
                 new LocationSaveCallback() {
                     @Override
                     public void onSuccess() {
+                        progressBar.setVisibility(View.GONE);
                         Util.showAlertDialogBuild("🟢 " + getString(R.string.sucess), getString(R.string.locationSavedSuccess), context, null);
                         String localSelected = getString(R.string.localSelected) + " " + location.areaName;
                         selectedLocationText.setText(localSelected);
@@ -138,6 +153,7 @@ public class ManualLocationFragment extends Fragment {
 
                     @Override
                     public void onError(Exception e) {
+                        progressBar.setVisibility(View.GONE);
                         Util.showAlertDialogBuild("🔴 " + getString(R.string.err), getString(R.string.errorSavingLocation) + "\n" + e.getMessage(), context, null);
                     }
                 }
