@@ -43,13 +43,12 @@
             android:id="@+id/imageViewClose"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:background="#FD6634"
             android:clickable="true"
             android:focusable="true"
             android:src="@android:drawable/ic_menu_close_clear_cancel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="#34495e" />
+            app:tint="#ffffff" />
 
         <!-- Login do Estudante -->
         <TextView
