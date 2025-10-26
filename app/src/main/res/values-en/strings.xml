@@ -357,4 +357,9 @@
     <string name="youAreAt">You are at:</string>
     <string name="locationSavedSuccess">Your location has been saved successfully.</string>
     <string name="errorSavingLocation">Could not save your location.</string>
+    <string name="searchPlaceholder">Student login (e.g., amessi)</string>
+    <string name="notifyStudent">🔔 Notify</string>
+    <string name="shareMyLocation">📍 Share</string>
+    <string name="enterValidLogin">Please enter a valid login.</string>
+    <string name="errorSearching">Could not find the student.</string>
 </resources>

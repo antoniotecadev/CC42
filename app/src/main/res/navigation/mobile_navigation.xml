@@ -211,6 +211,6 @@
     <fragment
         android:id="@+id/manualLocationFragment"
         android:name="com.antonioteca.cc42.ui.location.ManualLocationFragment"
-        android:label="fragment_manual_location"
+        android:label="@string/location"
         tools:layout="@layout/fragment_manual_location" />
 </navigation>

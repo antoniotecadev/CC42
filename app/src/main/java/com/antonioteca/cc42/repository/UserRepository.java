@@ -207,4 +207,10 @@ public class UserRepository {
         }
         return links;
     }
+
+    public void getUserByLogin(String userLogin, Callback<User> callback) {
+        String accessToken = "Bearer " + token.getAccessToken();
+        Call<User> userCall = daoApiUser.getUserByLogin(accessToken, userLogin);
+        userCall.enqueue(callback);
+    }
 }

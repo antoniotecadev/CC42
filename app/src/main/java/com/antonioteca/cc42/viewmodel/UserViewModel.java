@@ -494,6 +494,26 @@ public class UserViewModel extends ViewModel {
         });
     }
 
+    public void getUserByLogin(Context context, String userLogin) {
+        userRepository.getUserByLogin(userLogin, new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                if (response.isSuccessful()) {
+                    User user = response.body();
+                    userMutableLiveData.postValue(user);
+                } else {
+                    HttpStatus httpStatus = HttpStatus.handleResponse(response.code());
+                    httpStatusMutableLiveData.postValue(httpStatus);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable throwable) {
+                Util.showAlertDialogBuild(context.getString(R.string.err), throwable.getMessage(), context, null);
+            }
+        });
+    }
+
     private static final String TAG = "FirebaseServiceLocation";
 
     public void saveUserLocation(

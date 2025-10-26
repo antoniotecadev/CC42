@@ -387,6 +387,11 @@
     <string name="youAreAt">Você está em:</string>
     <string name="locationSavedSuccess">A sua localização foi registada com sucesso.</string>
     <string name="errorSavingLocation">Não foi possível guardar a sua localização.</string>
+    <string name="searchPlaceholder">User do estudante (ex: amessi)</string>
+    <string name="notifyStudent">🔔 Notificar</string>
+    <string name="shareMyLocation">📍 Partilhar</string>
+    <string name="enterValidLogin">Digite um user válido.</string>
+    <string name="errorSearching">Não foi possível encontrar o estudante.</string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>

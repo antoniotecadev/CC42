@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -13,17 +14,29 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.factory.EventViewModelFactory;
+import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Location;
 import com.antonioteca.cc42.model.User;
+import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.network.LocationSaveCallback;
+import com.antonioteca.cc42.repository.EventRepository;
+import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.UserViewModel;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 
 import android.content.Context;
 import android.graphics.Color;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,13 +46,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ManualLocationFragment extends Fragment {
 
+    private ProgressBar progressBar, searchProgressBar;
     private LocationsOverlayView overlay;
     private TextView selectedLocationText;
     private UserViewModel userViewModel;
-    private ProgressBar progressBar;
     private Context context;
     private User user;
 
@@ -54,7 +68,9 @@ public class ManualLocationFragment extends Fragment {
         context = requireContext();
         user = new User(context);
         user.coalition = new Coalition(context);
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        UserRepository userRepository = new UserRepository(context);
+        UserViewModelFactory eventViewModelFactory = new UserViewModelFactory(userRepository);
+        userViewModel = new ViewModelProvider(this, eventViewModelFactory).get(UserViewModel.class);
     }
 
     @Override
@@ -64,11 +80,26 @@ public class ManualLocationFragment extends Fragment {
 
         selectedLocationText = root.findViewById(R.id.selectedLocationText);
         overlay = root.findViewById(R.id.locationsOverlay);
+
+        searchProgressBar = root.findViewById(R.id.searchProgressBar);
         progressBar = root.findViewById(R.id.progressBar);
+
+        ImageView imageViewClose = root.findViewById(R.id.imageViewClose);
+        ImageView studentAvatar = root.findViewById(R.id.studentAvatar);
+
+        ImageButton searchButton = root.findViewById(R.id.searchButton);
+        CardView cardView = root.findViewById(R.id.foundStudentCard);
+
+        TextInputLayout searchInputLayout = root.findViewById(R.id.searchInputLayout);
+        TextInputEditText searchInput = root.findViewById(R.id.searchInput);
+
+        TextView studentName = root.findViewById(R.id.studentName);
+        TextView studentLogin = root.findViewById(R.id.studentLogin);
 
         String colorCoalition = user.coalition.getColor();
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
+            searchProgressBar.setIndeterminateTintList(colorStateList);
             progressBar.setIndeterminateTintList(colorStateList);
         }
 
@@ -88,6 +119,43 @@ public class ManualLocationFragment extends Fragment {
         schoolLocations.add(new Location("hallway", "Corredor", 0.37f, 0.20f, 0.70f, 0.05f, Color.parseColor("#6EEDDEAA")));
         schoolLocations.add(new Location("decompression_zone", "Zona de Descompressão", 0.44f, 0.91f, 0.07f, 0.39f, Color.parseColor("#8095A5A6")));
         overlay.setLocations(schoolLocations);
+
+        imageViewClose.setOnClickListener(v -> cardView.setVisibility(View.GONE));
+
+        searchButton.setOnClickListener(v -> {
+            String searchInputString = Objects.requireNonNullElse(searchInput.getText(), "").toString();
+            if (searchInputString.trim().isEmpty()) {
+                searchInputLayout.requestFocus();
+                searchInputLayout.setError(getString(R.string.enterValidLogin));
+                return;
+            } else if (!Objects.requireNonNullElse(searchInputLayout.getError(), "").toString().isEmpty()) {
+                searchInputLayout.setError(null);
+            }
+            v.setVisibility(View.GONE);
+            cardView.setVisibility(View.GONE);
+            searchProgressBar.setVisibility(View.VISIBLE);
+            userViewModel.getUserByLogin(context, searchInputString);
+        });
+
+
+        userViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
+            searchProgressBar.setVisibility(View.GONE);
+            searchButton.setVisibility(View.VISIBLE);
+            if (user != null) {
+                studentName.setText(user.displayName);
+                studentLogin.setText(user.login);
+                Util.setImageUserRegistered(context, user.getUrlImageUser().trim(), studentAvatar);
+                cardView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        userViewModel.getHttpSatus().observe(getViewLifecycleOwner(), httpStatus -> {
+            searchProgressBar.setVisibility(View.GONE);
+            searchButton.setVisibility(View.VISIBLE);
+            if (httpStatus != null) {
+                searchInputLayout.setError(httpStatus.getCode() == 404 ? getString(R.string.errorSearching) : httpStatus.getDescription());
+            }
+        });
 
         overlay.setOnLocationSelectedListener(new LocationsOverlayView.OnLocationSelectedListener() {
             @Override

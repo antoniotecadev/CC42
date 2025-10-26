@@ -357,4 +357,9 @@
     <string name="youAreAt">Vous êtes à :</string>
     <string name="locationSavedSuccess">Votre emplacement a été enregistré avec succès.</string>
     <string name="errorSavingLocation">Impossible d\'enregistrer votre emplacement.</string>
+    <string name="searchPlaceholder">Login de l\'étudiant (ex: amessi)</string>
+    <string name="notifyStudent">🔔 Notifier</string>
+    <string name="shareMyLocation">📍 Partager</string>
+    <string name="enterValidLogin">Veuillez saisir un login valide.</string>
+    <string name="errorSearching">Impossible de trouver l\'étudiant.</string>
 </resources>

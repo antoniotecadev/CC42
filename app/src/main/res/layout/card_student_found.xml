@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/studentCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="#34495e"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    app:strokeColor="#27ae60"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Avatar do Estudante (Imagem) -->
+        <ImageView
+            android:id="@+id/studentAvatar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_launcher_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Nome Completo do Estudante -->
+        <TextView
+            android:id="@+id/studentName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textColor="#ecf0f1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/imageViewClose"
+            app:layout_constraintStart_toEndOf="@id/studentAvatar"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="António Teca" />
+
+        <ImageView
+            android:id="@+id/imageViewClose"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/red" />
+
+        <!-- Login do Estudante -->
+        <TextView
+            android:id="@+id/studentLogin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#95a5a6"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/studentName"
+            app:layout_constraintStart_toStartOf="@id/studentName"
+            app:layout_constraintTop_toBottomOf="@id/studentName"
+            tools:text="ateca" />
+
+        <!-- Badge da Localização -->
+        <LinearLayout
+            android:id="@+id/locationBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/badge_location_background"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="4dp"
+            app:layout_constraintStart_toStartOf="@id/studentName"
+            app:layout_constraintTop_toBottomOf="@id/studentLogin">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_baseline_location_on_24"
+                app:tint="#27ae60" />
+
+            <TextView
+                android:id="@+id/locationText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="Cluster 1"
+                android:textColor="#27ae60"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Badge da Fiabilidade (Reliability) -->
+        <LinearLayout
+            android:id="@+id/reliabilityBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/badge_reliability_background"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="10dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="6dp"
+            app:layout_constraintStart_toStartOf="@id/studentName"
+            app:layout_constraintTop_toBottomOf="@id/locationBadge">
+
+            <View
+                android:id="@+id/reliabilityIndicator"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/indicator_reliability" />
+
+            <TextView
+                android:id="@+id/reliabilityText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recente • há 2 min"
+                android:textColor="#000000"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonNotify"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:backgroundTint="@android:color/holo_orange_light"
+            android:text="@string/notifyStudent"
+            android:textColor="@color/white"
+            android:textSize="8sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/locationBadge"
+            app:layout_constraintTop_toBottomOf="@+id/studentLogin" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonShare"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:backgroundTint="@android:color/holo_blue_dark"
+            android:text="@string/shareMyLocation"
+            android:textColor="@color/white"
+            android:textSize="8sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/reliabilityBadge"
+            app:layout_constraintTop_toBottomOf="@+id/buttonNotify" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

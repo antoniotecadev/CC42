@@ -47,6 +47,12 @@ public interface DaoApiUser {
             @Query("page[size]") int pageSize       // Adiciona o tamanho da página
     );
 
+    @GET("/v2/users/{user_login}")
+    Call<User> getUserByLogin(
+            @Header("Authorization") String accessToken,
+            @Path("user_login") String userLogin
+    );
+
     @POST("api/loginWithIntra42Code")
     Call<LoginResponse> loginWithIntra42Code(@Body Map<String, String> body);
 }
