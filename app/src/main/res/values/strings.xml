@@ -410,6 +410,8 @@
     <string name="updatedDaysAgo">
         Actualizado há %1$d dia(s)
     </string>
+    <string name="noLocation">📍 Sem Localização</string>
+    <string name="studentNoLocation">%1$s ainda não registou a sua localização.</string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>

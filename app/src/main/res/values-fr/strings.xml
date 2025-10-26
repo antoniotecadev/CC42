@@ -380,4 +380,6 @@
     <string name="updatedDaysAgo">
         Mis à jour il y a %1$d jour(s)
     </string>
+    <string name="noLocation">📍 Pas de localisation</string>
+    <string name="studentNoLocation">%1$s n\'a pas encore enregistré sa localisation.</string>
 </resources>

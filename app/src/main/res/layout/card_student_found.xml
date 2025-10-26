@@ -37,17 +37,19 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/imageViewClose"
             app:layout_constraintStart_toEndOf="@id/studentAvatar"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="António Teca" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/imageViewClose"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="#FD6634"
+            android:clickable="true"
+            android:focusable="true"
             android:src="@android:drawable/ic_menu_close_clear_cancel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/red" />
+            app:tint="#34495e" />
 
         <!-- Login do Estudante -->
         <TextView
@@ -59,8 +61,7 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@id/studentName"
             app:layout_constraintStart_toStartOf="@id/studentName"
-            app:layout_constraintTop_toBottomOf="@id/studentName"
-            tools:text="ateca" />
+            app:layout_constraintTop_toBottomOf="@id/studentName" />
 
         <!-- Badge da Localização -->
         <LinearLayout

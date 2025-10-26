@@ -110,6 +110,8 @@ public class ManualLocationFragment extends Fragment {
         Button buttonNotify = root.findViewById(R.id.buttonNotify);
         Button buttonShare = root.findViewById(R.id.buttonShare);
 
+        LinearLayout locationBadge = root.findViewById(R.id.locationBadge);
+
         View reliabilityIndicator = root.findViewById(R.id.reliabilityIndicator);
         LinearLayout reliabilityBadge = root.findViewById(R.id.reliabilityBadge);
         TextView reliabilityText = root.findViewById(R.id.reliabilityText);
@@ -183,6 +185,8 @@ public class ManualLocationFragment extends Fragment {
                             public void onError(Exception e) {
                                 searchProgressBar.setVisibility(View.GONE);
                                 searchButton.setVisibility(View.VISIBLE);
+                                locationBadge.setVisibility(View.GONE);
+                                reliabilityBadge.setVisibility(View.GONE);
                                 buttonShare.setVisibility(View.GONE);
                                 buttonNotify.setVisibility(View.GONE);
                                 cardView.setVisibility(View.VISIBLE);
@@ -195,6 +199,9 @@ public class ManualLocationFragment extends Fragment {
                                 searchButton.setVisibility(View.VISIBLE);
                                 buttonShare.setVisibility(userId.equals(uid) ? View.VISIBLE : View.GONE);
                                 if (location != null) {
+
+                                    locationBadge.setVisibility(View.VISIBLE);
+                                    reliabilityBadge.setVisibility(View.VISIBLE);
 
                                     locationText.setText(location.areaName);
                                     buttonShare.setVisibility(userId.equals(uid) || location.pushToken == null || location.pushToken.isEmpty() ? View.GONE : View.VISIBLE);
@@ -217,7 +224,10 @@ public class ManualLocationFragment extends Fragment {
                                 } else {
                                     buttonShare.setVisibility(View.GONE);
                                     buttonNotify.setVisibility(View.GONE);
+                                    locationBadge.setVisibility(View.GONE);
+                                    reliabilityBadge.setVisibility(View.GONE);
                                     searchInputLayout.setError(getString(R.string.locationNotFound));
+                                    Util.showAlertDialogBuild(getString(R.string.noLocation), getString(R.string.studentNoLocation, user.displayName), context, null);
                                 }
                                 cardView.setVisibility(View.VISIBLE);
                             }
