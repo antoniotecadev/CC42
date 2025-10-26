@@ -332,7 +332,7 @@
     <string name="error_generate_id_message">Erreur lors de la génération de l\'ID du message.</string>
     <string name="error_load_messages">Erreur lors du chargement des messages :</string>
     <string name="date_univalible">Date non disponible.</string>
-    <string name="needCheckinToRate" >🍽️ Vous devez être abonné(e) au repas pour noter et commenter.</string>
+    <string name="needCheckinToRate">🍽️ Vous devez être abonné(e) au repas pour noter et commenter.</string>
     <string name="ratingsCount">Évaluations</string>
     <string name="rateWithStars">Notez avec des étoiles</string>
     <string name="yourRatingAndComment">Votre Évaluation &amp; Commentaire</string>
@@ -362,4 +362,22 @@
     <string name="shareMyLocation">📍 Partager</string>
     <string name="enterValidLogin">Veuillez saisir un login valide.</string>
     <string name="errorSearching">Impossible de trouver l\'étudiant.</string>
+    <string name="locationNotFound">Localisation non trouvée</string>
+    <string name="veryReliable">Très Fiable</string>
+    <string name="updatedRecently">Mis à jour récemment</string>
+    <string name="reliable">Fiable</string>
+    <string name="uncertain">Incertain</string>
+    <string name="unreliable">Non Fiable</string>
+    <string name="reliability">Fiabilité :</string>
+    <string name="locationFound">📍 Localisation Trouvée</string>
+    <string name="studentAt">est à :</string>
+    <string name="updatedMinutesAgo">
+        Mis à jour il y a %1$d minute(s)
+    </string>
+    <string name="updatedHoursAgo">
+        Mis à jour il y a %1$d heure(s)
+    </string>
+    <string name="updatedDaysAgo">
+        Mis à jour il y a %1$d jour(s)
+    </string>
 </resources>

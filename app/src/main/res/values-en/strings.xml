@@ -322,7 +322,7 @@
     <string name="second_portion_already_subscribed">Already subscribed for second portion</string>
     <string name="second_portion_not_subscribe">Not subscribed for second portion</string>
     <string name="date_univalible">Date unavailable.</string>
-    <string name="needCheckinToRate" >🍽️ You need to be subscribed to the meal to rate and comment</string>
+    <string name="needCheckinToRate">🍽️ You need to be subscribed to the meal to rate and comment</string>
     <string name="ratingsCount">ratings</string>
     <string name="rateWithStars">Rate with stars</string>
     <string name="yourRatingAndComment">Your Rating &amp; Comment</string>
@@ -362,4 +362,22 @@
     <string name="shareMyLocation">📍 Share</string>
     <string name="enterValidLogin">Please enter a valid login.</string>
     <string name="errorSearching">Could not find the student.</string>
+    <string name="locationNotFound">Location not found</string>
+    <string name="veryReliable">Very Reliable</string>
+    <string name="updatedRecently">Updated recently</string>
+    <string name="reliable">Reliable</string>
+    <string name="uncertain">Uncertain</string>
+    <string name="unreliable">Unreliable</string>
+    <string name="reliability">Reliability:</string>
+    <string name="locationFound">📍 Location Found</string>
+    <string name="studentAt">is at:</string>
+    <string name="updatedMinutesAgo">
+        Updated %1$d minute(s) ago
+    </string>
+    <string name="updatedHoursAgo">
+        Updated %1$d hour(s) ago
+    </string>
+    <string name="updatedDaysAgo">
+        Updated %1$d day(s) ago
+    </string>
 </resources>

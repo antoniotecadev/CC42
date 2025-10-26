@@ -393,6 +393,23 @@
     <string name="enterValidLogin">Digite um user válido.</string>
     <string name="errorSearching">Não foi possível encontrar o estudante.</string>
     <string name="locationNotFound">Localização não encontrada</string>
+    <string name="veryReliable">Muito Confiável</string>
+    <string name="updatedRecently">Actualizado recentemente</string>
+    <string name="reliable">Confiável</string>
+    <string name="uncertain">Incerto</string>
+    <string name="unreliable">Não Confiável</string>
+    <string name="reliability">Confiabilidade:</string>
+    <string name="locationFound">📍 Localização Encontrada</string>
+    <string name="studentAt">está em:</string>
+    <string name="updatedMinutesAgo">
+        Actualizado há %1$d minuto(s)
+    </string>
+    <string name="updatedHoursAgo">
+        Actualizado há %1$d hora(s)
+    </string>
+    <string name="updatedDaysAgo">
+        Actualizado há %1$d dia(s)
+    </string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>

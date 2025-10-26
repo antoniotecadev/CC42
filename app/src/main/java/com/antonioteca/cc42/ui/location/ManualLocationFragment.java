@@ -1,11 +1,13 @@
 package com.antonioteca.cc42.ui.location;
 
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -17,6 +19,8 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Location;
+import com.antonioteca.cc42.model.ReliabilityCalculator;
+import com.antonioteca.cc42.model.ReliabilityResult;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.LocationSaveCallback;
 import com.antonioteca.cc42.repository.UserRepository;
@@ -32,6 +36,7 @@ import android.graphics.Color;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -101,10 +106,13 @@ public class ManualLocationFragment extends Fragment {
         TextView studentName = root.findViewById(R.id.studentName);
         TextView studentLogin = root.findViewById(R.id.studentLogin);
         TextView locationText = root.findViewById(R.id.locationText);
-        TextView reliabilityText = root.findViewById(R.id.reliabilityText);
 
         Button buttonNotify = root.findViewById(R.id.buttonNotify);
         Button buttonShare = root.findViewById(R.id.buttonShare);
+
+        View reliabilityIndicator = root.findViewById(R.id.reliabilityIndicator);
+        LinearLayout reliabilityBadge = root.findViewById(R.id.reliabilityBadge);
+        TextView reliabilityText = root.findViewById(R.id.reliabilityText);
 
         String colorCoalition = user.coalition.getColor();
         if (colorCoalition != null) {
@@ -161,7 +169,7 @@ public class ManualLocationFragment extends Fragment {
 
                 studentName.setText(user.displayName);
                 studentLogin.setText(user.login);
-                Util.setImageUserRegistered(context, urlImageUser == null ? urlImageUser : urlImageUser.trim(), studentAvatar);
+                Util.setImageUserRegistered(context, urlImageUser == null ? null : urlImageUser.trim(), studentAvatar);
 
                 userViewModel.getUserLocation(
                         uid,
@@ -187,10 +195,25 @@ public class ManualLocationFragment extends Fragment {
                                 searchButton.setVisibility(View.VISIBLE);
                                 buttonShare.setVisibility(userId.equals(uid) ? View.VISIBLE : View.GONE);
                                 if (location != null) {
+
                                     locationText.setText(location.areaName);
-                                    reliabilityText.setText(location.lastUpdated + "");
                                     buttonShare.setVisibility(userId.equals(uid) || location.pushToken == null || location.pushToken.isEmpty() ? View.GONE : View.VISIBLE);
                                     buttonNotify.setVisibility(userId.equals(uid) || location.pushToken == null || location.pushToken.isEmpty() ? View.GONE : View.VISIBLE);
+
+                                    ReliabilityResult reliability = ReliabilityCalculator.getReliability(context, location.lastUpdated);
+                                    String reliabilityMessage = location.areaName + "\n\n";
+                                    reliabilityMessage += getString(R.string.reliability) + " " + reliability.getLevel() + "\n";
+                                    reliabilityMessage += reliability.getMessage();
+
+                                    String reliabilityColor = reliability.getColor();
+                                    updateReliabilityIndicator(reliabilityColor + "20", reliabilityBadge);
+                                    updateReliabilityIndicator(reliabilityColor, reliabilityIndicator);
+                                    reliabilityText.setTextColor(Color.parseColor(reliabilityColor));
+
+                                    String message = reliability.getLevel() + "\n" + ReliabilityCalculator.getTimeAgo(context, location.lastUpdated);
+                                    reliabilityText.setText(message);
+
+                                    Util.showAlertDialogBuild(getString(R.string.locationFound), user.displayName + " " + getString(R.string.studentAt) + " " + reliabilityMessage, context, null);
                                 } else {
                                     buttonShare.setVisibility(View.GONE);
                                     buttonNotify.setVisibility(View.GONE);
@@ -240,6 +263,22 @@ public class ManualLocationFragment extends Fragment {
             }
         });
         return root;
+    }
+
+    public void updateReliabilityIndicator(String colorString, @NonNull View reliabilityIndicator) {
+        Drawable background = reliabilityIndicator.getBackground();
+
+        // Importante: Chame mutate() para garantir que a mudança de cor
+        // não afete outras instâncias deste drawable no seu app.
+        background.mutate();
+
+        try {
+            int color = Color.parseColor(colorString);
+            DrawableCompat.setTint(background, color);
+        } catch (IllegalArgumentException e) {
+            // Lida com o caso de uma string de cor inválida, se necessário
+            e.printStackTrace();
+        }
     }
 
     private void saveLocation(@NonNull Location location) throws NullPointerException {

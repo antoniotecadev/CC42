@@ -322,7 +322,7 @@
     <string name="second_portion_already_subscribed">Ya suscrito para la segunda porción</string>
     <string name="second_portion_not_subscribe">No está suscrito para la segunda porción</string>
     <string name="date_univalible">Fecha no disponible.</string>
-    <string name="needCheckinToRate" >🍽️ Necesitas estar suscrito/a a la comida para valorar y comentar.</string>
+    <string name="needCheckinToRate">🍽️ Necesitas estar suscrito/a a la comida para valorar y comentar.</string>
     <string name="ratingsCount">Calificaciones</string>
     <string name="rateWithStars">Califica con estrellas</string>
     <string name="yourRatingAndComment">Tu Calificación y Comentario</string>
@@ -362,4 +362,22 @@
     <string name="shareMyLocation">📍 Compartir</string>
     <string name="enterValidLogin">Por favor, introduce un usuario válido.</string>
     <string name="errorSearching">No se pudo encontrar al estudiante.</string>
+    <string name="locationNotFound">Ubicación no encontrada</string>
+    <string name="veryReliable">Muy Confiable</string>
+    <string name="updatedRecently">Actualizado recientemente</string>
+    <string name="reliable">Confiable</string>
+    <string name="uncertain">Incierto</string>
+    <string name="unreliable">No Confiable</string>
+    <string name="reliability">Confiabilidad:</string>
+    <string name="locationFound">📍 Ubicación Encontrada</string>
+    <string name="studentAt">está en:</string>
+    <string name="updatedMinutesAgo">
+        Actualizado hace %1$d minuto(s)
+    </string>
+    <string name="updatedHoursAgo">
+        Actualizado hace %1$d hora(s)
+    </string>
+    <string name="updatedDaysAgo">
+        Actualizado hace %1$d día(s)
+    </string>
 </resources>
