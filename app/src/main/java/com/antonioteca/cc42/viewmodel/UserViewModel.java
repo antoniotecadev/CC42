@@ -547,6 +547,42 @@ public class UserViewModel extends ViewModel {
         }
     }
 
+    public void getUserLocation(
+            @NonNull String userId,
+            @NonNull String campusId,
+            @NonNull String cursusId,
+            @NonNull LocationSaveCallback callback) {
+
+        try {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            String path = String.format("campus/%s/cursus/%s/user_locations/%s", campusId, cursusId, userId);
+            DatabaseReference userLocationRef = database.getReference(path);
+
+            userLocationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        Location location = snapshot.getValue(Location.class);
+                        callback.onComplete(location);
+                    } else {
+                        // O snapshot não existe, retornamos null como na função original
+                        callback.onComplete(null);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    // Ocorreu um erro ao buscar os dados
+                    Log.e(TAG, "Erro ao buscar localização:", error.toException());
+                    callback.onError(error.toException());
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Erro ao inicializar a operação do Firebase:", e);
+            callback.onError(e);
+        }
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();

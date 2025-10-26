@@ -23,6 +23,9 @@ public class Location {
     @Exclude
     public int color; // android color int (opcional, para debug/visual)
 
+    public Location() {
+    }
+
     public Location(String areaId, String areaName, String pushToken, long lastUpdated) {
         this.areaId = areaId;
         this.areaName = areaName;

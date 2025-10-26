@@ -14,18 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.antonioteca.cc42.R;
-import com.antonioteca.cc42.factory.EventViewModelFactory;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Location;
 import com.antonioteca.cc42.model.User;
-import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.network.LocationSaveCallback;
-import com.antonioteca.cc42.repository.EventRepository;
 import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.UserViewModel;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -34,7 +30,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import android.content.Context;
 import android.graphics.Color;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -57,6 +52,11 @@ public class ManualLocationFragment extends Fragment {
     private Context context;
     private User user;
 
+    private String userId;
+    private String campusId;
+    private String cursusId;
+    private String pushToken;
+
     public ManualLocationFragment() {
         // construtor vazio
     }
@@ -71,6 +71,11 @@ public class ManualLocationFragment extends Fragment {
         UserRepository userRepository = new UserRepository(context);
         UserViewModelFactory eventViewModelFactory = new UserViewModelFactory(userRepository);
         userViewModel = new ViewModelProvider(this, eventViewModelFactory).get(UserViewModel.class);
+
+        userId = String.valueOf(user.getUid());
+        campusId = String.valueOf(user.getCampusId());
+        cursusId = String.valueOf(user.getCursusId());
+        pushToken = String.valueOf(user.getPushToken());
     }
 
     @Override
@@ -95,6 +100,11 @@ public class ManualLocationFragment extends Fragment {
 
         TextView studentName = root.findViewById(R.id.studentName);
         TextView studentLogin = root.findViewById(R.id.studentLogin);
+        TextView locationText = root.findViewById(R.id.locationText);
+        TextView reliabilityText = root.findViewById(R.id.reliabilityText);
+
+        Button buttonNotify = root.findViewById(R.id.buttonNotify);
+        Button buttonShare = root.findViewById(R.id.buttonShare);
 
         String colorCoalition = user.coalition.getColor();
         if (colorCoalition != null) {
@@ -139,13 +149,59 @@ public class ManualLocationFragment extends Fragment {
 
 
         userViewModel.getUser().observe(getViewLifecycleOwner(), user -> {
-            searchProgressBar.setVisibility(View.GONE);
-            searchButton.setVisibility(View.VISIBLE);
             if (user != null) {
+
+                locationText.setText(null);
+                reliabilityText.setText(null);
+
+                String uid = String.valueOf(user.uid);
+                long campusId = user.campus.get(0).id;
+                int cursusId = user.isStaff ? 0 : user.projectsUsers.get(0).cursusIds.get(0);
+                String urlImageUser = user.getUrlImageUser();
+
                 studentName.setText(user.displayName);
                 studentLogin.setText(user.login);
-                Util.setImageUserRegistered(context, user.getUrlImageUser().trim(), studentAvatar);
-                cardView.setVisibility(View.VISIBLE);
+                Util.setImageUserRegistered(context, urlImageUser == null ? urlImageUser : urlImageUser.trim(), studentAvatar);
+
+                userViewModel.getUserLocation(
+                        uid,
+                        String.valueOf(campusId),
+                        String.valueOf(cursusId), new LocationSaveCallback() {
+                            @Override
+                            public void onSuccess() {
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                searchProgressBar.setVisibility(View.GONE);
+                                searchButton.setVisibility(View.VISIBLE);
+                                buttonShare.setVisibility(View.GONE);
+                                buttonNotify.setVisibility(View.GONE);
+                                cardView.setVisibility(View.VISIBLE);
+                                searchInputLayout.setError(e.getMessage());
+                            }
+
+                            @Override
+                            public void onComplete(Location location) {
+                                searchProgressBar.setVisibility(View.GONE);
+                                searchButton.setVisibility(View.VISIBLE);
+                                buttonShare.setVisibility(userId.equals(uid) ? View.VISIBLE : View.GONE);
+                                if (location != null) {
+                                    locationText.setText(location.areaName);
+                                    reliabilityText.setText(location.lastUpdated + "");
+                                    buttonShare.setVisibility(userId.equals(uid) || location.pushToken == null || location.pushToken.isEmpty() ? View.GONE : View.VISIBLE);
+                                    buttonNotify.setVisibility(userId.equals(uid) || location.pushToken == null || location.pushToken.isEmpty() ? View.GONE : View.VISIBLE);
+                                } else {
+                                    buttonShare.setVisibility(View.GONE);
+                                    buttonNotify.setVisibility(View.GONE);
+                                    searchInputLayout.setError(getString(R.string.locationNotFound));
+                                }
+                                cardView.setVisibility(View.VISIBLE);
+                            }
+                        });
+            } else {
+                searchProgressBar.setVisibility(View.GONE);
+                searchButton.setVisibility(View.VISIBLE);
             }
         });
 
@@ -188,11 +244,6 @@ public class ManualLocationFragment extends Fragment {
 
     private void saveLocation(@NonNull Location location) throws NullPointerException {
 
-        String userId = String.valueOf(user.getUid());
-        String campusId = String.valueOf(user.getCampusId());
-        String cursusId = String.valueOf(user.getCursusId());
-        String pushToken = String.valueOf(user.getPushToken());
-
         if (userId.equals("null")) {
             throw new NullPointerException("User ID not found in storage");
         } else if (campusId.equals("null")) {
@@ -223,6 +274,10 @@ public class ManualLocationFragment extends Fragment {
                     public void onError(Exception e) {
                         progressBar.setVisibility(View.GONE);
                         Util.showAlertDialogBuild("🔴 " + getString(R.string.err), getString(R.string.errorSavingLocation) + "\n" + e.getMessage(), context, null);
+                    }
+
+                    @Override
+                    public void onComplete(Location location) {
                     }
                 }
         );

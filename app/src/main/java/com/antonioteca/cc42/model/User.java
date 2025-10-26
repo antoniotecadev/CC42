@@ -42,7 +42,7 @@ public class User {
     public Coalition coalition;
 
     @SerializedName("staff?")
-    private boolean isStaff;
+    public boolean isStaff;
 
     @Expose(serialize = false, deserialize = false)
     public int ratingValue = 0;
@@ -226,14 +226,4 @@ public class User {
 
 class Image {
     public String link;
-}
-
-class Campus {
-    public int id;
-    public String name;
-}
-
-class ProjectUser {
-    @SerializedName("cursus_ids")
-    public List<Integer> cursusIds;
 }

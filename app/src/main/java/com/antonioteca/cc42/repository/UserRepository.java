@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.antonioteca.cc42.dao.daoapi.DaoApiUser;
 import com.antonioteca.cc42.dao.daoapi.PaginationLinks;
 import com.antonioteca.cc42.model.Coalition;
+import com.antonioteca.cc42.model.Cursu;
 import com.antonioteca.cc42.model.Subscription;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
@@ -209,6 +210,18 @@ public class UserRepository {
     }
 
     public void getUserByLogin(String userLogin, Callback<User> callback) {
+        if (token.isTokenExpired(token.getTokenExpirationTime())) {
+            token.getRefreshTokenUserSave(context, (success) -> {
+                if (success)
+                    extracted(userLogin, callback);
+                else
+                    callback.onResponse(null, Response.success(null));
+            });
+        } else
+            extracted(userLogin, callback);
+    }
+
+    private void extracted(String userLogin, Callback<User> callback) {
         String accessToken = "Bearer " + token.getAccessToken();
         Call<User> userCall = daoApiUser.getUserByLogin(accessToken, userLogin);
         userCall.enqueue(callback);
