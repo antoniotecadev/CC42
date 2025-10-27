@@ -88,6 +88,7 @@ public class Util {
         new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(message)
+                .setNegativeButton((R.string.ok), (dialogInterface, i) -> dialogInterface.dismiss())
                 .show();
     }
 
