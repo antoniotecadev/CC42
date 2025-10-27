@@ -84,6 +84,13 @@ public class Util {
         builder.show();
     }
 
+    public static void showAlertDialogBuildSimple(String title, String message, Context context) {
+        new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .show();
+    }
+
 //    public static void showAlertDialogSynchronized(Context context, Runnable runnableTryAgain) {
 //        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 //        builder.setTitle(R.string.warning);

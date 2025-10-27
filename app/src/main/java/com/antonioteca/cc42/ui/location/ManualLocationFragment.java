@@ -195,7 +195,7 @@ public class ManualLocationFragment extends Fragment {
                 return;
             }
             if (this.myCurrentLocation == null) {
-                Util.showAlertDialogBuild(getString(R.string.needToSetLocation), getString(R.string.needToSetLocationMessage), this.context, null);
+                Util.showAlertDialogBuildSimple(getString(R.string.needToSetLocation), getString(R.string.needToSetLocationMessage), this.context);
                 return;
             }
             String timeAgo = ReliabilityCalculator.getTimeAgo(this.context, this.myCurrentLocation.lastUpdated);
@@ -283,14 +283,14 @@ public class ManualLocationFragment extends Fragment {
                                     String message = reliability.getLevel() + "\n" + ReliabilityCalculator.getTimeAgo(context, location.lastUpdated);
                                     reliabilityText.setText(message);
 
-                                    Util.showAlertDialogBuild(getString(R.string.locationFound), user.displayName + " " + getString(R.string.studentAt) + "\n" + reliabilityMessage, context, null);
+                                    Util.showAlertDialogBuildSimple(getString(R.string.locationFound), user.displayName + " " + getString(R.string.studentAt) + "\n" + reliabilityMessage, context);
                                 } else {
                                     buttonShare.setVisibility(View.GONE);
                                     buttonNotify.setVisibility(View.GONE);
                                     locationBadge.setVisibility(View.GONE);
                                     reliabilityBadge.setVisibility(View.GONE);
                                     searchInputLayout.setError(getString(R.string.locationNotFound));
-                                    Util.showAlertDialogBuild(getString(R.string.noLocation), getString(R.string.studentNoLocation, user.displayName), context, null);
+                                    Util.showAlertDialogBuildSimple(getString(R.string.noLocation), getString(R.string.studentNoLocation, user.displayName), context);
                                 }
                                 cardView.setVisibility(View.VISIBLE);
                             }
@@ -323,7 +323,7 @@ public class ManualLocationFragment extends Fragment {
                                 saveLocation(location);
                             } catch (NullPointerException e) {
                                 progressBar.setVisibility(View.GONE);
-                                Util.showAlertDialogBuild("🔴 " + getString(R.string.err), e.getMessage(), context, null);
+                                Util.showAlertDialogBuildSimple("🔴 " + getString(R.string.err), e.getMessage(), context);
                             }
                         })
                         .show();
@@ -407,13 +407,13 @@ public class ManualLocationFragment extends Fragment {
                         String localSelected = getString(R.string.localSelected) + " " + location.areaName;
                         selectedLocationText.setText(localSelected);
                         myCurrentLocation = location;
-                        Util.showAlertDialogBuild("🟢 " + getString(R.string.sucess), getString(R.string.locationSavedSuccess), context, null);
+                        Util.showAlertDialogBuildSimple("🟢 " + getString(R.string.sucess), getString(R.string.locationSavedSuccess), context);
                     }
 
                     @Override
                     public void onError(Exception e) {
                         progressBar.setVisibility(View.GONE);
-                        Util.showAlertDialogBuild("🔴 " + getString(R.string.err), getString(R.string.errorSavingLocation) + "\n" + e.getMessage(), context, null);
+                        Util.showAlertDialogBuildSimple("🔴 " + getString(R.string.err), getString(R.string.errorSavingLocation) + "\n" + e.getMessage(), context);
                     }
 
                     @Override

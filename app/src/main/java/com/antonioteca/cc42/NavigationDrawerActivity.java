@@ -510,14 +510,14 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             String type = message.getData().get("type");
 
             if (type != null && type.equals("location_search")) {
-                Util.showAlertDialogBuild(title, body, NavigationDrawerActivity.context, null);
+                Util.showAlertDialogBuildSimple(title, body, NavigationDrawerActivity.context);
             } else if (type != null && type.equals("location_shared")) {
                 // Notificação de localização partilhada
                 String sharedBy = message.getData().get("sharedBy");
                 String location = message.getData().get("location");
                 String notificationTitle = title != null ? title : context.getString(R.string.sharedLocationWithYou, sharedBy);
                 String notificationBody = body != null ? body : context.getString(R.string.sharedLocationBody, sharedBy, location);
-                Util.showAlertDialogBuild(notificationTitle, notificationBody, NavigationDrawerActivity.context, null);
+                Util.showAlertDialogBuildSimple(notificationTitle, notificationBody, NavigationDrawerActivity.context);
             } else {
                 String id = message.getData().get("key0");
                 String createdBy = message.getData().get("key1");
