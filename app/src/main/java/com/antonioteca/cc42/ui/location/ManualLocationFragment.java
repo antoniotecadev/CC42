@@ -170,8 +170,27 @@ public class ManualLocationFragment extends Fragment {
             userViewModel.getUserByLogin(this.context, searchInputString);
         });
 
+        buttonNotify.setOnClickListener(v -> {
+            if (this.selectedStudentLocation == null || this.selectedStudentLocation.pushToken == null) {
+                Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.notifyStudentError), this.context, null);
+                return;
+            }
+
+            if (this.myCurrentLocation == null) {
+                Util.showAlertDialogBuild(getString(R.string.warning), getString(R.string.needToSetLocation), this.context, null);
+                return;
+            }
+
+            String title = getString(R.string.someoneIsLookingForYou);
+            String body = getString(R.string.locationPromptMessage, this.userLogin) + "\n" + getString(R.string.sharedLocationBody, this.userLogin, this.myCurrentLocation.areaName);
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("type", "location_search");
+            sendNotification(title, body, data);
+        });
+
         buttonShare.setOnClickListener(v -> {
-            if (this.selectedStudentLocation != null && this.selectedStudentLocation.pushToken == null) {
+            if (this.selectedStudentLocation == null || this.selectedStudentLocation.pushToken == null) {
                 Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.shareLocationError), this.context, null);
                 return;
             }
@@ -184,39 +203,15 @@ public class ManualLocationFragment extends Fragment {
                     .setTitle(getString(R.string.confirmShareLocation))
                     .setMessage(getString(R.string.confirmShareLocationMessage, this.myCurrentLocation.areaName, timeAgo))
                     .setPositiveButton(getString(R.string.sendLocation), (dialog, which) -> {
-                        this.progressBar.setVisibility(View.VISIBLE);
-
-                        String title = getString(R.string.sharedLocationWithYou, this.displayName == null ? getString(R.string.oneStudent) : this.displayName);
-                        String body = getString(R.string.sharedLocationBody, this.userLogin == null ? getString(R.string.oneStudent) : this.userLogin, this.myCurrentLocation.areaName);
+                        String title = getString(R.string.sharedLocationWithYou, this.displayName);
+                        String body = getString(R.string.sharedLocationBody, this.userLogin, this.myCurrentLocation.areaName);
 
                         Map<String, Object> data = new HashMap<>();
                         data.put("type", "location_shared");
                         data.put("sharedBy", this.displayName + " - " + this.userLogin);
                         data.put("location", this.myCurrentLocation.areaName);
 
-                        if (this.selectedStudentLocation.pushToken.startsWith("Expo")) {
-                            new NotificationSender().sendExpoNotificationToUser(
-                                    this.context,
-                                    this.progressBar,
-                                    this.selectedStudentDisplayName,
-                                    this.selectedStudentLocation.pushToken,
-                                    title,
-                                    body,
-                                    data,
-                                    this.urlImageUser
-                            );
-                        } else {
-                            Notification.sendFCMNotificationToUser(
-                                    this.context,
-                                    this.progressBar,
-                                    this.selectedStudentDisplayName,
-                                    this.selectedStudentLocation.pushToken,
-                                    title,
-                                    body,
-                                    data,
-                                    this.urlImageUser
-                            );
-                        }
+                        sendNotification(title, body, data);
                     })
                     .setNegativeButton(getString(R.string.updateFirst), (dialog, which) -> dialog.dismiss())
                     .setNeutralButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss())
@@ -341,6 +336,33 @@ public class ManualLocationFragment extends Fragment {
             }
         });
         return root;
+    }
+
+    private void sendNotification(String title, String body, Map<String, Object> data) {
+        this.progressBar.setVisibility(View.VISIBLE);
+        if (this.selectedStudentLocation.pushToken.startsWith("Expo")) {
+            new NotificationSender().sendExpoNotificationToUser(
+                    this.context,
+                    this.progressBar,
+                    this.selectedStudentDisplayName,
+                    this.selectedStudentLocation.pushToken,
+                    title,
+                    body,
+                    data,
+                    this.urlImageUser
+            );
+        } else {
+            Notification.sendFCMNotificationToUser(
+                    this.context,
+                    this.progressBar,
+                    this.selectedStudentDisplayName,
+                    this.selectedStudentLocation.pushToken,
+                    title,
+                    body,
+                    data,
+                    this.urlImageUser
+            );
+        }
     }
 
     public void updateReliabilityIndicator(String colorString, @NonNull View reliabilityIndicator) {

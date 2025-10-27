@@ -394,4 +394,7 @@
     <string name="shareLocationTitle">📍 Localisation Partagée</string>
     <string name="shareLocationSuccess">%1$s a été notifié(e) de votre localisation !</string>
     <string name="oneStudent">Un étudiant</string>
+    <string name="notifyStudentError">Erreur lors de l\'envoi de la notification</string>
+    <string name="someoneIsLookingForYou">📣 Quelqu\'un vous cherche !</string>
+    <string name="locationPromptMessage">%1$s vous cherche.</string>
 </resources>

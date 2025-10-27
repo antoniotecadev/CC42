@@ -424,6 +424,9 @@
     <string name="shareLocationTitle">📍 Localização Partilhada</string>
     <string name="shareLocationSuccess">%1$s foi notificado(a) da sua localização!</string>
     <string name="oneStudent">Um estudante</string>
+    <string name="notifyStudentError">Erro ao enviar notificação</string>
+    <string name="someoneIsLookingForYou">📣 Alguém está à sua procura!</string>
+    <string name="locationPromptMessage">%1$s está à tua procura.</string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>
