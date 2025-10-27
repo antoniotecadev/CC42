@@ -68,6 +68,7 @@ import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.ui.event.AttendanceListFragment;
 import com.antonioteca.cc42.ui.home.HomeFragmentDirections;
+import com.antonioteca.cc42.ui.location.LocationReminderManager;
 import com.antonioteca.cc42.ui.meal.SubscriptionListFragment;
 import com.antonioteca.cc42.ui.setting.ThemePreferences;
 import com.antonioteca.cc42.utility.AESUtil;
@@ -314,6 +315,9 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         asNotificationPermission();
         createNotificationChannel();
         setRequestPermissionLauncherNotification(context, REQUEST_CODE_POST_NOTIFICATIONS);
+
+        // Iniciar o serviço de agendamento de notificações locais para lembrar o estudante
+        LocationReminderManager.rescheduleIfNeeded(getApplicationContext());
     }
 
     private void scannedQrCode(@NonNull View view) {

@@ -399,4 +399,6 @@
     <string name="locationPromptMessage">%1$s te está buscando.</string>
     <string name="notifyStudentTitle">🔔 Notificación Enviada</string>
     <string name="notifyStudentSuccess">¡Se ha notificado a %1$s que le estás buscando!</string>
+    <string name="reminderTitle">📍 ¿Actualizar ubicación?</string>
+    <string name="reminderBody">Toca para actualizar dónde estás en el campus</string>
 </resources>

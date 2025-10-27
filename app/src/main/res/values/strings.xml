@@ -429,6 +429,8 @@
     <string name="locationPromptMessage">%1$s está à tua procura.</string>
     <string name="notifyStudentTitle">🔔 Notificação Enviada</string>
     <string name="notifyStudentSuccess">%1$s foi notificado que está a ser procurado!</string>
+    <string name="reminderTitle">📍 Actualizar Localização?</string>
+    <string name="reminderBody">Toque para actualizar onde você está no campus</string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>
