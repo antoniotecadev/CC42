@@ -1,5 +1,9 @@
 package com.antonioteca.cc42.network.NotificationFirebase;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.Map;
+
 public class FCMessage {
     private Message message;
 
@@ -11,11 +15,20 @@ public class FCMessage {
         private String topic;
         private String condition;
         private Notification notification;
-        private Data data;
+        @SerializedName("data")
+        private Object data;
+        @SerializedName("token")
+        private String pushToken;
 
         public Message(String topic, String condition, Notification notification, Data data) {
             this.topic = topic;
             this.condition = condition;
+            this.notification = notification;
+            this.data = data;
+        }
+
+        public Message(String pushToken, Notification notification, Map<String, Object> data) {
+            this.pushToken = pushToken;
             this.notification = notification;
             this.data = data;
         }

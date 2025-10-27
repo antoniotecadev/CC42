@@ -24,6 +24,7 @@ import com.antonioteca.cc42.model.ReliabilityResult;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.LocationSaveCallback;
 import com.antonioteca.cc42.network.NotificationExpo.NotificationSender;
+import com.antonioteca.cc42.network.NotificationFirebase.Notification;
 import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.UserViewModel;
@@ -184,21 +185,38 @@ public class ManualLocationFragment extends Fragment {
                     .setMessage(getString(R.string.confirmShareLocationMessage, this.myCurrentLocation.areaName, timeAgo))
                     .setPositiveButton(getString(R.string.sendLocation), (dialog, which) -> {
                         this.progressBar.setVisibility(View.VISIBLE);
-                        NotificationSender notificationSender = new NotificationSender();
+
+                        String title = getString(R.string.sharedLocationWithYou, this.displayName == null ? getString(R.string.oneStudent) : this.displayName);
+                        String body = getString(R.string.sharedLocationBody, this.userLogin == null ? getString(R.string.oneStudent) : this.userLogin, this.myCurrentLocation.areaName);
+
                         Map<String, Object> data = new HashMap<>();
                         data.put("type", "location_shared");
                         data.put("sharedBy", this.displayName + " - " + this.userLogin);
                         data.put("location", this.myCurrentLocation.areaName);
-                        notificationSender.sendExpoNotificationToUser(
-                                this.context,
-                                this.progressBar,
-                                this.selectedStudentDisplayName,
-                                this.selectedStudentLocation.pushToken,
-                                getString(R.string.sharedLocationWithYou, this.displayName == null ? "Um estudante" : this.displayName),
-                                getString(R.string.sharedLocationBody, this.userLogin == null ? "Um estudante" : this.userLogin, this.myCurrentLocation.areaName),
-                                data,
-                                this.urlImageUser
-                        );
+
+                        if (this.selectedStudentLocation.pushToken.startsWith("Expo")) {
+                            new NotificationSender().sendExpoNotificationToUser(
+                                    this.context,
+                                    this.progressBar,
+                                    this.selectedStudentDisplayName,
+                                    this.selectedStudentLocation.pushToken,
+                                    title,
+                                    body,
+                                    data,
+                                    this.urlImageUser
+                            );
+                        } else {
+                            Notification.sendFCMNotificationToUser(
+                                    this.context,
+                                    this.progressBar,
+                                    this.selectedStudentDisplayName,
+                                    this.selectedStudentLocation.pushToken,
+                                    title,
+                                    body,
+                                    data,
+                                    this.urlImageUser
+                            );
+                        }
                     })
                     .setNegativeButton(getString(R.string.updateFirst), (dialog, which) -> dialog.dismiss())
                     .setNeutralButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss())
@@ -247,7 +265,7 @@ public class ManualLocationFragment extends Fragment {
                                 selectedStudentLocation = location;
                                 searchProgressBar.setVisibility(View.GONE);
                                 searchButton.setVisibility(View.VISIBLE);
-                                buttonShare.setVisibility(userId.equals(uid) ? View.VISIBLE : View.GONE);
+
                                 if (location != null) {
 
                                     locationBadge.setVisibility(View.VISIBLE);

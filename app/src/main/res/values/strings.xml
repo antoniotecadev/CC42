@@ -423,6 +423,7 @@
     <string name="sharedLocationBody">%1$s está actualmente em: %2$s</string>
     <string name="shareLocationTitle">📍 Localização Partilhada</string>
     <string name="shareLocationSuccess">%1$s foi notificado(a) da sua localização!</string>
+    <string name="oneStudent">Um estudante</string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>

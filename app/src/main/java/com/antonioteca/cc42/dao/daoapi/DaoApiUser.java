@@ -4,6 +4,8 @@ import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.LoginResponse;
 import com.antonioteca.cc42.model.Subscription;
 import com.antonioteca.cc42.model.User;
+import com.antonioteca.cc42.network.NotificationFirebase.FCMessage;
+import com.antonioteca.cc42.network.NotificationFirebase.Notification;
 
 import java.util.List;
 import java.util.Map;
@@ -55,4 +57,7 @@ public interface DaoApiUser {
 
     @POST("api/loginWithIntra42Code")
     Call<LoginResponse> loginWithIntra42Code(@Body Map<String, String> body);
+
+    @POST("api/notifications")
+    Call<Void> sendFCMNotification(@Body FCMessage fcmMessage);
 }

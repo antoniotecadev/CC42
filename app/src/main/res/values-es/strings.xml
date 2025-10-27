@@ -393,4 +393,5 @@
     <string name="sharedLocationBody">%1$s está actualmente en: %2$s</string>
     <string name="shareLocationTitle">📍 Ubicación Compartida</string>
     <string name="shareLocationSuccess">¡%1$s ha sido notificado(a) de tu ubicación!</string>
+    <string name="oneStudent">Un estudiante</string>
 </resources>

@@ -2,12 +2,15 @@ package com.antonioteca.cc42.network.NotificationFirebase;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.dao.daoapi.DaoApiMeal;
+import com.antonioteca.cc42.dao.daoapi.DaoApiUser;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.Message;
 import com.antonioteca.cc42.network.HttpException;
@@ -89,6 +92,39 @@ public class Notification {
         else
             payload = new ExpoNotificationPayload(messageStaff.getTitle(), messageStaff.getMessage(), dataExtra, null);
         notificationSender.sendExpoNotificationToGroup(campusId, cursusId, payload);
+    }
+
+    public static void sendFCMNotificationToUser(Context context, ProgressBar progressBar, String selectedStudentDisplayName, String pushToken, String title, String body, Map<String, Object> data, String urlImageUser) {
+
+        FCMessage.Notification notification = new FCMessage.Notification(title, body, urlImageUser);
+        FCMessage.Message message = new FCMessage.Message(pushToken, notification, data);
+
+        FCMessage fcmMessage = new FCMessage(message);
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://check-cadet.vercel.app/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        DaoApiUser daoApiUser = retrofit.create(DaoApiUser.class);
+
+        daoApiUser.sendFCMNotification(fcmMessage).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                progressBar.setVisibility(View.GONE);
+                if (response.isSuccessful()) {
+                    Util.showAlertDialogBuild(context.getString(R.string.shareLocationTitle), context.getString(R.string.shareLocationSuccess, selectedStudentDisplayName), context, null);
+                } else {
+                    Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.shareLocationError) + ": " + response.code() + " - " + response.message(), context, null);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable throwable) {
+                progressBar.setVisibility(View.GONE);
+                Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.shareLocationError) + ": " + throwable.getMessage(), context, null);
+            }
+        });
     }
 
 //      QUANDO FOR PARA ENVIAR APARTIR DO CLIENTE - NÃO É SEGURO UTILIZAR - APENAS PARA TESTES

@@ -103,7 +103,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private String campusId;
     private String cursusId;
     private String urlImageUser;
-    private Context context;
+    private static Context context;
     private Bundle args;
     private MenuProvider menuProvider;
     private String colorCoalition;
@@ -507,18 +507,28 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         Intent intent = new Intent(context, NavigationDrawerActivity.class);
 
         if (!message.getData().isEmpty()) {
-            String id = message.getData().get("key0");
-            String createdBy = message.getData().get("key1");
-            String dataCreated = message.getData().get("key2");
-            String quantity = message.getData().get("key3");
-            String cursusId = message.getData().get("key4");
-            String description = message.getData().get("key6");
-            Meal meal = new Meal(id, title, body, description, Integer.parseInt(quantity != null ? quantity : "0"), imageUrl, 0, createdBy, dataCreated);
+            String type = message.getData().get("type");
+            if (type != null && type.equals("location_shared")) {
+                // Notificação de localização partilhada
+                String sharedBy = message.getData().get("sharedBy");
+                String location = message.getData().get("location");
+                String notificationTitle = title != null ? title : context.getString(R.string.sharedLocationWithYou, sharedBy);
+                String notificationBody = body != null ? body : context.getString(R.string.sharedLocationBody, sharedBy, location);
+                Util.showAlertDialogBuild(notificationTitle, notificationBody, NavigationDrawerActivity.context, null);
+            } else {
+                String id = message.getData().get("key0");
+                String createdBy = message.getData().get("key1");
+                String dataCreated = message.getData().get("key2");
+                String quantity = message.getData().get("key3");
+                String cursusId = message.getData().get("key4");
+                String description = message.getData().get("key6");
+                Meal meal = new Meal(id, title, body, description, Integer.parseInt(quantity != null ? quantity : "0"), imageUrl, 0, createdBy, dataCreated);
 
-            // Entrar em fragment específico e passar dados da refeição
-            intent.setAction("OPEN_FRAGMENT_ACTION_FOREGROUND");
-            intent.putExtra("cursusId", Integer.parseInt(cursusId != null ? cursusId : "0"));
-            intent.putExtra("detailsMeal", meal);
+                // Entrar em fragment específico e passar dados da refeição
+                intent.setAction("OPEN_FRAGMENT_ACTION_FOREGROUND");
+                intent.putExtra("cursusId", Integer.parseInt(cursusId != null ? cursusId : "0"));
+                intent.putExtra("detailsMeal", meal);
+            }
         }
 
         PendingIntent pendingIntent;
