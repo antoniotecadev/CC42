@@ -1,10 +1,15 @@
 package com.antonioteca.cc42.network.NotificationExpo;
 
+import android.content.Context;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 
+import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.dao.daoapi.ExpoPushServiceApi;
+import com.antonioteca.cc42.utility.Util;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -153,6 +158,26 @@ public class NotificationSender {
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable throwable) {
                 Log.e(TAG, "Erro ao enviar lote de notificações expo: " + throwable.getMessage(), throwable);
+            }
+        });
+    }
+
+    public void sendExpoNotificationToUser(Context context, ProgressBar progressBar, String selectedStudentDisplayName, String pushToken, String title, String body, Map<String, Object> data, String urlImageUser) {
+        expoPushServiceApi.sendPushNotification(new ExpoPushMessage(pushToken, title, body, data, urlImageUser)).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                progressBar.setVisibility(View.GONE);
+                if (response.isSuccessful()) {
+                    Util.showAlertDialogBuild(context.getString(R.string.shareLocationTitle), context.getString(R.string.shareLocationSuccess, selectedStudentDisplayName), context, null);
+                } else {
+                    Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.shareLocationError) + ": " + response.code() + " - " + response.message(), context, null);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable throwable) {
+                progressBar.setVisibility(View.GONE);
+                Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.shareLocationError) + ": " + throwable.getMessage(), context, null);
             }
         });
     }

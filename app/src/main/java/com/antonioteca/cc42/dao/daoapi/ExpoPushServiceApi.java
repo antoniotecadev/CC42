@@ -19,4 +19,7 @@ public interface ExpoPushServiceApi {
     })
     @POST("push/send")
     Call<Void> sendPushNotifications(@Body List<ExpoPushMessage> messages);
+
+    @POST("push/send")
+    Call<Void> sendPushNotification(@Body ExpoPushMessage message);
 }

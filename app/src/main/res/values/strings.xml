@@ -412,6 +412,17 @@
     </string>
     <string name="noLocation">📍 Sem Localização</string>
     <string name="studentNoLocation">%1$s ainda não registou a sua localização.</string>
+    <string name="shareLocationError">Erro ao partilhar localização</string>
+    <string name="needToSetLocation">⚠️ Marque Sua Localização</string>
+    <string name="needToSetLocationMessage">Para partilhar a sua localização, primeiro precisa marcá-la no mapa.</string>
+    <string name="confirmShareLocation">📍 Confirmar Partilha</string>
+    <string name="confirmShareLocationMessage">Deseja partilhar que está em:\n\n%1$s\n\n%2$s</string>
+    <string name="updateFirst">Actualizar Primeiro</string>
+    <string name="sendLocation">Enviar Localização</string>
+    <string name="sharedLocationWithYou">📍 %1$s partilhou a localização</string>
+    <string name="sharedLocationBody">%1$s está actualmente em: %2$s</string>
+    <string name="shareLocationTitle">📍 Localização Partilhada</string>
+    <string name="shareLocationSuccess">%1$s foi notificado(a) da sua localização!</string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>

@@ -382,4 +382,15 @@
     </string>
     <string name="noLocation">📍 Pas de localisation</string>
     <string name="studentNoLocation">%1$s n\'a pas encore enregistré sa localisation.</string>
+    <string name="shareLocationError">Erreur lors du partage de la localisation</string>
+    <string name="needToSetLocation">⚠️ Marquez votre localisation</string>
+    <string name="needToSetLocationMessage">Pour partager votre localisation, vous devez d\'abord la marquer sur la carte.</string>
+    <string name="confirmShareLocation">📍 Confirmer le Partage</string>
+    <string name="confirmShareLocationMessage">Voulez-vous partager que vous êtes à :\n\n%1$s\n\n%2$s</string>
+    <string name="updateFirst">Mettre à jour d\'abord</string>
+    <string name="sendLocation">Envoyer la Localisation</string>
+    <string name="sharedLocationWithYou">📍 %1$s a partagé sa localisation</string>
+    <string name="sharedLocationBody">%1$s est actuellement à : %2$s</string>
+    <string name="shareLocationTitle">📍 Localisation Partagée</string>
+    <string name="shareLocationSuccess">%1$s a été notifié(e) de votre localisation !</string>
 </resources>

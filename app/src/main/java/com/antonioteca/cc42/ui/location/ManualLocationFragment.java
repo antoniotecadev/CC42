@@ -23,6 +23,7 @@ import com.antonioteca.cc42.model.ReliabilityCalculator;
 import com.antonioteca.cc42.model.ReliabilityResult;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.LocationSaveCallback;
+import com.antonioteca.cc42.network.NotificationExpo.NotificationSender;
 import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.UserViewModel;
@@ -45,19 +46,27 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class ManualLocationFragment extends Fragment {
 
     private ProgressBar progressBar, searchProgressBar;
     private LocationsOverlayView overlay;
+    private String selectedStudentDisplayName;
+    private Location selectedStudentLocation;
     private TextView selectedLocationText;
     private UserViewModel userViewModel;
+    private Location myCurrentLocation;
     private Context context;
     private User user;
 
     private String userId;
+    private String userLogin;
+    private String displayName;
+    private String urlImageUser;
     private String campusId;
     private String cursusId;
     private String pushToken;
@@ -77,10 +86,13 @@ public class ManualLocationFragment extends Fragment {
         UserViewModelFactory eventViewModelFactory = new UserViewModelFactory(userRepository);
         userViewModel = new ViewModelProvider(this, eventViewModelFactory).get(UserViewModel.class);
 
-        userId = String.valueOf(user.getUid());
-        campusId = String.valueOf(user.getCampusId());
-        cursusId = String.valueOf(user.getCursusId());
-        pushToken = String.valueOf(user.getPushToken());
+        this.userId = String.valueOf(user.getUid());
+        this.userLogin = String.valueOf(user.getLogin());
+        this.displayName = String.valueOf(user.getDisplayName());
+        this.urlImageUser = String.valueOf(user.getImage());
+        this.campusId = String.valueOf(user.getCampusId());
+        this.cursusId = String.valueOf(user.getCursusId());
+        this.pushToken = String.valueOf(user.getPushToken());
     }
 
     @Override
@@ -91,8 +103,8 @@ public class ManualLocationFragment extends Fragment {
         selectedLocationText = root.findViewById(R.id.selectedLocationText);
         overlay = root.findViewById(R.id.locationsOverlay);
 
-        searchProgressBar = root.findViewById(R.id.searchProgressBar);
-        progressBar = root.findViewById(R.id.progressBar);
+        this.searchProgressBar = root.findViewById(R.id.searchProgressBar);
+        this.progressBar = root.findViewById(R.id.progressBar);
 
         ImageView imageViewClose = root.findViewById(R.id.imageViewClose);
         ImageView studentAvatar = root.findViewById(R.id.studentAvatar);
@@ -116,11 +128,11 @@ public class ManualLocationFragment extends Fragment {
         LinearLayout reliabilityBadge = root.findViewById(R.id.reliabilityBadge);
         TextView reliabilityText = root.findViewById(R.id.reliabilityText);
 
-        String colorCoalition = user.coalition.getColor();
+        String colorCoalition = this.user.coalition.getColor();
         if (colorCoalition != null) {
             ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
-            searchProgressBar.setIndeterminateTintList(colorStateList);
-            progressBar.setIndeterminateTintList(colorStateList);
+            this.searchProgressBar.setIndeterminateTintList(colorStateList);
+            this.progressBar.setIndeterminateTintList(colorStateList);
         }
 
         List<Location> schoolLocations = new ArrayList<>();
@@ -154,7 +166,43 @@ public class ManualLocationFragment extends Fragment {
             v.setVisibility(View.GONE);
             cardView.setVisibility(View.GONE);
             searchProgressBar.setVisibility(View.VISIBLE);
-            userViewModel.getUserByLogin(context, searchInputString);
+            userViewModel.getUserByLogin(this.context, searchInputString);
+        });
+
+        buttonShare.setOnClickListener(v -> {
+            if (this.selectedStudentLocation != null && this.selectedStudentLocation.pushToken == null) {
+                Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.shareLocationError), this.context, null);
+                return;
+            }
+            if (this.myCurrentLocation == null) {
+                Util.showAlertDialogBuild(getString(R.string.needToSetLocation), getString(R.string.needToSetLocationMessage), this.context, null);
+                return;
+            }
+            String timeAgo = ReliabilityCalculator.getTimeAgo(this.context, this.myCurrentLocation.lastUpdated);
+            new AlertDialog.Builder(this.context)
+                    .setTitle(getString(R.string.confirmShareLocation))
+                    .setMessage(getString(R.string.confirmShareLocationMessage, this.myCurrentLocation.areaName, timeAgo))
+                    .setPositiveButton(getString(R.string.sendLocation), (dialog, which) -> {
+                        this.progressBar.setVisibility(View.VISIBLE);
+                        NotificationSender notificationSender = new NotificationSender();
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("type", "location_shared");
+                        data.put("sharedBy", this.displayName + " - " + this.userLogin);
+                        data.put("location", this.myCurrentLocation.areaName);
+                        notificationSender.sendExpoNotificationToUser(
+                                this.context,
+                                this.progressBar,
+                                this.selectedStudentDisplayName,
+                                this.selectedStudentLocation.pushToken,
+                                getString(R.string.sharedLocationWithYou, this.displayName == null ? "Um estudante" : this.displayName),
+                                getString(R.string.sharedLocationBody, this.userLogin == null ? "Um estudante" : this.userLogin, this.myCurrentLocation.areaName),
+                                data,
+                                this.urlImageUser
+                        );
+                    })
+                    .setNegativeButton(getString(R.string.updateFirst), (dialog, which) -> dialog.dismiss())
+                    .setNeutralButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss())
+                    .show();
         });
 
 
@@ -168,10 +216,11 @@ public class ManualLocationFragment extends Fragment {
                 long campusId = user.campus.get(0).id;
                 int cursusId = user.isStaff ? 0 : user.projectsUsers.get(0).cursusIds.get(0);
                 String urlImageUser = user.getUrlImageUser();
+                this.selectedStudentDisplayName = user.displayName;
 
                 studentName.setText(user.displayName);
                 studentLogin.setText(user.login);
-                Util.setImageUserRegistered(context, urlImageUser == null ? null : urlImageUser.trim(), studentAvatar);
+                Util.setImageUserRegistered(this.context, urlImageUser == null ? null : urlImageUser.trim(), studentAvatar);
 
                 userViewModel.getUserLocation(
                         uid,
@@ -195,6 +244,7 @@ public class ManualLocationFragment extends Fragment {
 
                             @Override
                             public void onComplete(Location location) {
+                                selectedStudentLocation = location;
                                 searchProgressBar.setVisibility(View.GONE);
                                 searchButton.setVisibility(View.VISIBLE);
                                 buttonShare.setVisibility(userId.equals(uid) ? View.VISIBLE : View.GONE);
@@ -220,7 +270,7 @@ public class ManualLocationFragment extends Fragment {
                                     String message = reliability.getLevel() + "\n" + ReliabilityCalculator.getTimeAgo(context, location.lastUpdated);
                                     reliabilityText.setText(message);
 
-                                    Util.showAlertDialogBuild(getString(R.string.locationFound), user.displayName + " " + getString(R.string.studentAt) + " " + reliabilityMessage, context, null);
+                                    Util.showAlertDialogBuild(getString(R.string.locationFound), user.displayName + " " + getString(R.string.studentAt) + "\n" + reliabilityMessage, context, null);
                                 } else {
                                     buttonShare.setVisibility(View.GONE);
                                     buttonNotify.setVisibility(View.GONE);
@@ -233,13 +283,13 @@ public class ManualLocationFragment extends Fragment {
                             }
                         });
             } else {
-                searchProgressBar.setVisibility(View.GONE);
+                this.searchProgressBar.setVisibility(View.GONE);
                 searchButton.setVisibility(View.VISIBLE);
             }
         });
 
         userViewModel.getHttpSatus().observe(getViewLifecycleOwner(), httpStatus -> {
-            searchProgressBar.setVisibility(View.GONE);
+            this.searchProgressBar.setVisibility(View.GONE);
             searchButton.setVisibility(View.VISIBLE);
             if (httpStatus != null) {
                 searchInputLayout.setError(httpStatus.getCode() == 404 ? getString(R.string.errorSearching) : httpStatus.getDescription());
@@ -293,30 +343,31 @@ public class ManualLocationFragment extends Fragment {
 
     private void saveLocation(@NonNull Location location) throws NullPointerException {
 
-        if (userId.equals("null")) {
+        if (this.userId.equals("null")) {
             throw new NullPointerException("User ID not found in storage");
-        } else if (campusId.equals("null")) {
+        } else if (this.campusId.equals("null")) {
             throw new NullPointerException("Campus ID not found in storage");
-        } else if (cursusId.equals("null")) {
+        } else if (this.cursusId.equals("null")) {
             throw new NullPointerException("Cursus ID not found in storage");
-        } else if (pushToken.equals("null")) {
+        } else if (this.pushToken.equals("null")) {
             throw new NullPointerException("Push Token not found in storage");
         }
 
-        location.pushToken = pushToken;
+        location.pushToken = this.pushToken;
         location.lastUpdated = System.currentTimeMillis();
         userViewModel.saveUserLocation(
-                userId,
-                campusId,
-                cursusId,
+                this.userId,
+                this.campusId,
+                this.cursusId,
                 location,
                 new LocationSaveCallback() {
                     @Override
                     public void onSuccess() {
                         progressBar.setVisibility(View.GONE);
-                        Util.showAlertDialogBuild("🟢 " + getString(R.string.sucess), getString(R.string.locationSavedSuccess), context, null);
                         String localSelected = getString(R.string.localSelected) + " " + location.areaName;
                         selectedLocationText.setText(localSelected);
+                        myCurrentLocation = location;
+                        Util.showAlertDialogBuild("🟢 " + getString(R.string.sucess), getString(R.string.locationSavedSuccess), context, null);
                     }
 
                     @Override
@@ -342,7 +393,7 @@ public class ManualLocationFragment extends Fragment {
 
                     // Get new FCM registration token
                     String token = task.getResult();
-                    user.setPushToken(token);
+                    this.user.setPushToken(token);
                     // Log and toast
                     Log.d("FirebaseToken", token);
                 });
