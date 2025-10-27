@@ -109,13 +109,25 @@ public class Notification {
         DaoApiUser daoApiUser = retrofit.create(DaoApiUser.class);
 
         daoApiUser.sendFCMNotification(fcmMessage).enqueue(new Callback<>() {
+            String type, title, message, messageError;
+
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
-                    Util.showAlertDialogBuild(context.getString(R.string.shareLocationTitle), context.getString(R.string.shareLocationSuccess, selectedStudentDisplayName), context, null);
+                    type = (String) data.get("type");
+                    if (type != null && type.equals("location_search")) {
+                        title = context.getString(R.string.notifyStudentTitle);
+                        message = context.getString(R.string.notifyStudentSuccess, selectedStudentDisplayName);
+                        messageError = context.getString(R.string.notifyStudentError);
+                    } else {
+                        title = context.getString(R.string.shareLocationTitle);
+                        message = context.getString(R.string.shareLocationSuccess, selectedStudentDisplayName);
+                        messageError = context.getString(R.string.shareLocationError);
+                    }
+                    Util.showAlertDialogBuildSimple(title, message, context);
                 } else {
-                    Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.shareLocationError) + ": " + response.code() + " - " + response.message(), context, null);
+                    Util.showAlertDialogBuild(context.getString(R.string.err), messageError + ": " + response.code() + " - " + response.message(), context, null);
                 }
             }
 

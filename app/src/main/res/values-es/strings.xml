@@ -397,4 +397,6 @@
     <string name="notifyStudentError">Error al enviar la notificación</string>
     <string name="someoneIsLookingForYou">📣 ¡Alguien te está buscando!</string>
     <string name="locationPromptMessage">%1$s te está buscando.</string>
+    <string name="notifyStudentTitle">🔔 Notificación Enviada</string>
+    <string name="notifyStudentSuccess">¡Se ha notificado a %1$s que le estás buscando!</string>
 </resources>
