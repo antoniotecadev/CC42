@@ -132,7 +132,7 @@ public class HomeFragment extends Fragment {
         } else
             colorCoalition = String.format("#%06X", (0xFFFFFF) & ContextCompat.getColor(context, R.color.light_blue_900));
         CollapsingToolbarLayout collapsingToolbarLayout = binding.collapsingToolbarLayout;
-        collapsingToolbarLayout.setTitle(user.getLogin());
+        collapsingToolbarLayout.setTitle(userLogin);
         String imageUrlCoalition = user.coalition.getImageUrl();
         if (imageUrlCoalition != null) {
             Glide.with(this)
