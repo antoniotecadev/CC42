@@ -5,6 +5,7 @@
     android:id="@+id/manual_location_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#1D3247"
     android:orientation="vertical"
     tools:context=".ui.location.ManualLocationFragment">
 
@@ -34,15 +35,17 @@
             android:layout_marginHorizontal="12dp"
             android:layout_marginTop="12dp"
             android:hint="@string/searchPlaceholder"
+            android:textColorHint="@android:color/darker_gray"
             app:boxCornerRadiusBottomEnd="8dp"
             app:boxCornerRadiusBottomStart="8dp"
             app:boxCornerRadiusTopEnd="8dp"
             app:boxCornerRadiusTopStart="8dp"
-            app:boxStrokeColor="#34495e"
+            app:boxStrokeColor="@android:color/holo_blue_dark"
             app:boxStrokeWidth="2dp"
             app:endIconMode="clear_text"
-            app:endIconTint="#34495e"
+            app:endIconTint="@android:color/holo_blue_dark"
             app:endIconTintMode="multiply"
+            app:hintTextColor="@android:color/darker_gray"
             app:layout_constraintEnd_toStartOf="@+id/frameLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -54,7 +57,8 @@
                 android:autofillHints="username"
                 android:inputType="text"
                 android:maxLines="1"
-                android:textColor="@color/textColorPrimary"
+                android:textColor="@color/white"
+                android:textColorHint="@android:color/darker_gray"
                 android:textSize="16sp"
                 tools:ignore="VisualLintTextFieldSize,TextContrastCheck" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -80,7 +84,8 @@
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:backgroundTint="@android:color/holo_blue_dark"
-                android:src="@drawable/ic_baseline_search_24" />
+                android:src="@drawable/ic_baseline_search_24"
+                app:tint="@color/white" />
 
             <ProgressBar
                 android:id="@+id/searchProgressBar"
@@ -176,9 +181,9 @@
                 android:id="@+id/tipText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/darker_gray"
                 android:text="@string/tipText"
-                android:textAppearance="?attr/textAppearanceCaption" />
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:textColor="@android:color/darker_gray" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
