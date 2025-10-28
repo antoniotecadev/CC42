@@ -1,6 +1,7 @@
 package com.antonioteca.cc42.ui.location;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -81,6 +82,7 @@ public class LocationsOverlayView extends FrameLayout {
             btn.setTextSize(10f);
             btn.setGravity(Gravity.CENTER);
             btn.setPadding(2, 6, 2, 2);
+            btn.setTextColor(Color.WHITE);
             btn.setBackgroundColor(loc.color);
 //            btn.setBackgroundResource(R.drawable.location_button_background); // veja drawable abaixo
             btn.setAlpha(0.85f);
@@ -120,11 +122,16 @@ public class LocationsOverlayView extends FrameLayout {
 
     private void updateSelectionOutline() {
         for (View v : areaViews) {
+            AppCompatButton btn = (AppCompatButton) v;
             Location loc = (Location) v.getTag();
             if (loc != null && loc.areaId.equals(selectedLocationId)) {
                 // borda visível quando selecionado
-                v.setBackgroundResource(R.drawable.location_button_background_selected);
+                // v.setBackgroundResource(R.drawable.location_button_background_selected);
+                // Posiciona o ícone de check acima do texto
+                btn.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.baseline_check_circle_24, 0, 0);
             } else if (loc != null) {
+                // Remove o ícone se não estiver selecionado
+                btn.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                 v.setBackgroundColor(loc.color);
             }
         }
