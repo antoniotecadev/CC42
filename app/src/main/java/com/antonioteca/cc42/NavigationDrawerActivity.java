@@ -565,6 +565,16 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             intent.replaceExtras(new Bundle());
             intent.setAction(null);
             args.clear();
+        } else {
+            handleIntentManualLocation(intent);
+        }
+    }
+
+    private void handleIntentManualLocation(@NonNull Intent intent) {
+        String destination = intent.getStringExtra("destination_fragment");
+        if ("ManualLocationFragment".equals(destination)) {
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
+            navController.navigate(R.id.manualLocationFragment);
         }
     }
 

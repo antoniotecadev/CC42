@@ -2,7 +2,9 @@ package com.antonioteca.cc42.ui.location;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
@@ -10,6 +12,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.antonioteca.cc42.MainActivity;
+import com.antonioteca.cc42.NavigationDrawerActivity;
 import com.antonioteca.cc42.R;
 
 public class LocationReminderWorker extends Worker {
@@ -37,6 +41,22 @@ public class LocationReminderWorker extends Worker {
         Context context = getApplicationContext();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
+        // 1. Crie um Intent para abrir sua Activity principal
+        Intent intent = new Intent(context, NavigationDrawerActivity.class);
+        // Adicione um "extra" para que a MainActivity saiba qual fragmento abrir.
+        intent.putExtra("destination_fragment", "ManualLocationFragment");
+        // Flags para otimizar a navegação: se a app já estiver aberta, traz para frente.
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        // 2. Crie o PendingIntent que será disparado ao clicar na notificação
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                0, // requestCode - pode ser 0 se não precisar diferenciar intents
+                intent,
+                // Flag para garantir que o PendingIntent seja atualizado se os extras mudarem
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
         // Cria o canal de notificação (necessário para Android 8.0 Oreo e superior)
         NotificationChannel channel = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -55,7 +75,8 @@ public class LocationReminderWorker extends Worker {
                 .setContentTitle(context.getString(R.string.reminderTitle))
                 .setContentText(context.getString(R.string.reminderBody))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true); // A notificação desaparece ao ser tocada
+                .setAutoCancel(true) // A notificação desaparece ao ser tocada
+                .setContentIntent(pendingIntent); // Define a intenção
 
         // ID único para a notificação (para que uma substitua a outra na barra de status)
         int notificationId = 1000;
