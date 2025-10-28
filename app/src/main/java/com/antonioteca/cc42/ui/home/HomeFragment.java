@@ -129,8 +129,10 @@ public class HomeFragment extends Fragment {
             binding.progressBar.setIndeterminateTintList(colorStateList);
             binding.textViewCoalition.setTextColor(color);
             binding.textViewFullName.setTextColor(color);
-        } else
+            binding.buttonLoadEvents.setStrokeColor(colorStateList);
+        } else {
             colorCoalition = String.format("#%06X", (0xFFFFFF) & ContextCompat.getColor(context, R.color.light_blue_900));
+        }
         CollapsingToolbarLayout collapsingToolbarLayout = binding.collapsingToolbarLayout;
         collapsingToolbarLayout.setTitle(userLogin);
         String imageUrlCoalition = user.coalition.getImageUrl();

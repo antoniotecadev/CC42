@@ -96,7 +96,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonLoadEvents"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,6 +107,8 @@
                 android:backgroundTint="@color/light_black"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/light_blue_900"
                 tools:ignore="VisualLintButtonSize" />
 
             <androidx.recyclerview.widget.RecyclerView
