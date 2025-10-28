@@ -78,13 +78,13 @@ public class LocationsOverlayView extends FrameLayout {
             // criando um botão transparente com texto
             AppCompatButton btn = new AppCompatButton(getContext());
             btn.setAllCaps(false);
-            btn.setText(loc.areaName);
+            // Texto a bold, usando HTML.
+            btn.setText(android.text.Html.fromHtml("<b>" + loc.areaName + "</b>"));
             btn.setTextSize(10f);
             btn.setGravity(Gravity.CENTER);
             btn.setPadding(2, 6, 2, 2);
             btn.setTextColor(Color.WHITE);
             btn.setBackgroundColor(loc.color);
-//            btn.setBackgroundResource(R.drawable.location_button_background); // veja drawable abaixo
             btn.setAlpha(0.85f);
 
             // clique
