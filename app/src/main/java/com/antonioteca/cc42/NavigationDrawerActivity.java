@@ -377,6 +377,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         new User(context).clear();
         new Token(context).clear();
         FirebaseAuth.getInstance().signOut();
+        LocationReminderManager.cancelLocationReminders(getApplicationContext());
         redirectToLogin(context);
     }
 
