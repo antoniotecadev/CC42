@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Atalho 1: Ir para a Tela de Localização -->
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_location_on_24"
+        android:shortcutId="shortcut_location"
+        android:shortcutLongLabel="@string/location"
+        android:shortcutShortLabel="@string/location">
+
+        <!-- O Intent que será disparado ao clicar no atalho -->
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.antonioteca.cc42.NavigationDrawerActivity"
+            android:targetPackage="com.antonioteca.cc42">
+            <!-- Informação extra para identificar o destino -->
+            <extra
+                android:name="shortcut_destination"
+                android:value="location" />
+        </intent>
+
+        <!-- Você pode adicionar mais de um intent se precisar construir uma "back stack" (pilha de navegação) -->
+        <!-- Por exemplo, garantir que a MainActivity esteja abaixo da NavigationDrawerActivity -->
+
+    </shortcut>
+
+    <!-- Atalho 2: Ir para a Tela de (Refeições) -->
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_restaurant_24"
+        android:shortcutId="shortcut_meal"
+        android:shortcutLongLabel="@string/meals"
+        android:shortcutShortLabel="@string/meals">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.antonioteca.cc42.NavigationDrawerActivity"
+            android:targetPackage="com.antonioteca.cc42">
+            <extra
+                android:name="shortcut_destination"
+                android:value="meal" />
+        </intent>
+
+    </shortcut>
+
+    <!-- Atalho 3: Ir para a Tela de QR Code -->
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_qr_code_2_100"
+        android:shortcutId="shortcut_qrcode"
+        android:shortcutLongLabel="@string/qr_code"
+        android:shortcutShortLabel="@string/qr_code">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.antonioteca.cc42.NavigationDrawerActivity"
+            android:targetPackage="com.antonioteca.cc42">
+            <extra
+                android:name="shortcut_destination"
+                android:value="qrcode" />
+        </intent>
+
+    </shortcut>
+
+</shortcuts>

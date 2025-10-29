@@ -108,6 +108,11 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+
+            <!-- Registre o arquivo de atalhos -->
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
         <!--Para compartilhar arquivos de forma segura, o Android exige que você use um FileProvider-->
         <provider

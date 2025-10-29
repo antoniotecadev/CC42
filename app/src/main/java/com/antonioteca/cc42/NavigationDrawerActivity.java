@@ -51,6 +51,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -103,8 +104,11 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private String displayName;
     private String campusId;
     private String cursusId;
+    private boolean isStaff;
     private String urlImageUser;
     private static Context context;
+    private User user;
+    private Cursu cursu;
     private Bundle args;
     private MenuProvider menuProvider;
     private String colorCoalition;
@@ -112,6 +116,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
     private NavController navController;
+    private Map<Integer, String> cursusList;
 
     private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
@@ -141,11 +146,6 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        context = NavigationDrawerActivity.this;
-        User user = new User(context);
-        boolean isStaff = user.isStaff();
-        if (isStaff)
-            initCloudinary();
         // Aplicar o Tema ao Iniciar o App
         ThemePreferences themePreferences = new ThemePreferences(this);
         int themeMode = themePreferences.getThemeMode();
@@ -159,9 +159,23 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
-        handleNotificationIntent(getIntent());
 
         setSupportActionBar(binding.appBarNavigationDrawer.toolbar); // Replace ActionBa default
+
+        context = NavigationDrawerActivity.this;
+        user = new User(context);
+
+        cursu = new Cursu();
+        cursusList = new HashMap<>();
+
+        cursusList.put(66, "C-Piscine-Reloaded");
+        cursusList.put(21, "42Cursus");
+        cursusList.put(9, "C Piscine");
+        cursusList.put(3, "Discovery Piscine - Web Programming Essentials");
+
+        isStaff = user.isStaff();
+        if (isStaff)
+            initCloudinary();
 
         uid = String.valueOf(user.getUid());
         userLogin = user.getLogin();
@@ -237,12 +251,6 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             }
         });
 
-        Map<Integer, String> cursusList = new HashMap<>();
-        cursusList.put(66, "C-Piscine-Reloaded");
-        cursusList.put(21, "42Cursus");
-        cursusList.put(9, "C Piscine");
-        cursusList.put(3, "Discovery Piscine - Web Programming Essentials");
-
         navigationView.setNavigationItemSelectedListener(item -> {
             // Fecha o drawer
             drawer.closeDrawers();
@@ -251,7 +259,6 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     // Verifica se já não está no destino para evitar recriar o fragment
                     if (Objects.requireNonNull(navController.getCurrentDestination()).getId() != R.id.nav_cursu_list_meal) {
                         int cursuId = Integer.parseInt(cursusId);
-                        Cursu cursu = new Cursu();
                         cursu.setId(cursuId);
                         cursu.setName(cursusList.get(cursuId));
                         HomeFragmentDirections.ActionNavHomeToNavMeal actionNavHomeToNavMeal = HomeFragmentDirections.actionNavHomeToNavMeal(cursu);
@@ -318,6 +325,12 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
         // Iniciar o serviço de agendamento de notificações locais para lembrar o estudante
         LocationReminderManager.rescheduleIfNeeded(getApplicationContext());
+
+        Intent intent = getIntent();
+        // Handle shortcuts intent
+        handleIntentShortcuts(intent, binding.getRoot());
+        // Handle notification intent
+        handleNotificationIntent(intent);
     }
 
     private void scannedQrCode(@NonNull View view) {
@@ -570,11 +583,57 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         }
     }
 
-    private void handleIntentManualLocation(@NonNull Intent intent) {
+    private void handleIntentManualLocation(Intent intent) {
+        if (intent == null || intent.getExtras() == null)
+            return;
         String destination = intent.getStringExtra("destination_fragment");
         if ("ManualLocationFragment".equals(destination)) {
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
             navController.navigate(R.id.manualLocationFragment);
+        }
+    }
+
+    private void handleIntentShortcuts(Intent intent, View view) {
+        if (intent == null || intent.getExtras() == null)
+            return;
+        // Verifica se veio de um atalho
+        String shortcutDestination = intent.getStringExtra("shortcut_destination");
+        if (shortcutDestination != null) {
+            // O popUpTo garante que não vamos empilhar o mesmo fragmento várias vezes
+            NavOptions navOptions = new NavOptions.Builder()
+                    .setPopUpTo(navController.getGraph().getStartDestinationId(), false)
+                    .build();
+            switch (shortcutDestination) {
+                case "location" ->
+                        navigateTo(R.id.manualLocationFragment, null, navOptions); // Use o ID do fragmento de localização
+                case "meal" -> {
+                    if (!isStaff) {
+                        int cursuId = Integer.parseInt(cursusId);
+                        cursu.setId(cursuId);
+                        cursu.setName(cursusList.get(cursuId));
+                        HomeFragmentDirections.ActionNavHomeToNavMeal actionNavHomeToNavMeal = HomeFragmentDirections.actionNavHomeToNavMeal(cursu);
+                        navController.navigate(actionNavHomeToNavMeal);
+                    } else {
+                        navigateTo(R.id.nav_cursu_list_meal, null, navOptions); // Use o ID do fragmento da refeição
+                    }
+                }
+                case "qrcode" -> {
+                    if (!isStaff) {
+                        String content = "user" + user.getUid() + "#" + userLogin + "#" + displayName + "#" + user.getCursusId() + "#" + user.getCampusId() + "#" + urlImageUser;
+                        HomeFragmentDirections.ActionNavHomeToQrCodeFragment actionNavHomeToQrCodeFragment =
+                                HomeFragmentDirections.actionNavHomeToQrCodeFragment(content, userLogin, displayName, 0, 0);
+                        navController.navigate(actionNavHomeToQrCodeFragment, navOptions);
+                    }
+                }
+            }
+            intent.removeExtra("shortcut_destination"); // Limpa o extra
+        }
+    }
+
+    // Método auxiliar para evitar duplicação de código
+    private void navigateTo(int destinationId, Bundle args, NavOptions navOptions) {
+        if (navController != null) {
+            navController.navigate(destinationId, args, navOptions);
         }
     }
 
