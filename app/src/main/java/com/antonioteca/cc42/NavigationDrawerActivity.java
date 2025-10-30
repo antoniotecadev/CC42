@@ -146,191 +146,194 @@ public class NavigationDrawerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Aplicar o Tema ao Iniciar o App
-        ThemePreferences themePreferences = new ThemePreferences(this);
-        int themeMode = themePreferences.getThemeMode();
-        AppCompatDelegate.setDefaultNightMode(themeMode);
-        // Carregar o idioma salvo antes de chamar super.onCreate()
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String language = preferences.getString("language_preference", null);
-        setAppLanguage(language == null ? "pt-rAO" : language, getResources(), this, false);
-        super.onCreate(savedInstanceState);
-        ActivityNavigationDrawerBinding binding = ActivityNavigationDrawerBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
-
-        setSupportActionBar(binding.appBarNavigationDrawer.toolbar); // Replace ActionBa default
-
         context = NavigationDrawerActivity.this;
-        user = new User(context);
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            // Aplicar o Tema ao Iniciar o App
+            ThemePreferences themePreferences = new ThemePreferences(this);
+            int themeMode = themePreferences.getThemeMode();
+            AppCompatDelegate.setDefaultNightMode(themeMode);
+            // Carregar o idioma salvo antes de chamar super.onCreate()
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String language = preferences.getString("language_preference", null);
+            setAppLanguage(language == null ? "pt-rAO" : language, getResources(), this, false);
+            super.onCreate(savedInstanceState);
+            ActivityNavigationDrawerBinding binding = ActivityNavigationDrawerBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
 
-        cursu = new Cursu();
-        cursusList = new HashMap<>();
+            navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_navigation_drawer);
 
-        cursusList.put(66, "C-Piscine-Reloaded");
-        cursusList.put(21, "42Cursus");
-        cursusList.put(9, "C Piscine");
-        cursusList.put(3, "Discovery Piscine - Web Programming Essentials");
+            setSupportActionBar(binding.appBarNavigationDrawer.toolbar); // Replace ActionBa default
 
-        isStaff = user.isStaff();
-        if (isStaff)
-            initCloudinary();
+            user = new User(context);
 
-        uid = String.valueOf(user.getUid());
-        userLogin = user.getLogin();
-        displayName = user.getDisplayName();
-        campusId = String.valueOf(user.getCampusId());
-        urlImageUser = user.getImage();
+            cursu = new Cursu();
+            cursusList = new HashMap<>();
 
-        firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
-        sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
-        progressBar = binding.appBarNavigationDrawer.progressBar;
+            cursusList.put(66, "C-Piscine-Reloaded");
+            cursusList.put(21, "42Cursus");
+            cursusList.put(9, "C Piscine");
+            cursusList.put(3, "Discovery Piscine - Web Programming Essentials");
 
-        String topic = "/topics/meals_" + campusId + "_";
+            isStaff = user.isStaff();
+            if (isStaff)
+                initCloudinary();
 
-        if (isStaff)
-            topic += user.getCampusName();
-        else {
-            cursusId = String.valueOf(user.getCursusId());
-            topic += cursusId;
-        }
+            uid = String.valueOf(user.getUid());
+            userLogin = user.getLogin();
+            displayName = user.getDisplayName();
+            campusId = String.valueOf(user.getCampusId());
+            urlImageUser = user.getImage();
 
-        boolean isSubscribed = user.getSubscribedToTopicMealNotification();
-        if (!isSubscribed) {
-            FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnCompleteListener(task -> {
-                if (task.isSuccessful())
-                    user.setSubscribedToTopicMealNotification(true);
-                else {
-                    Exception e = task.getException();
-                    if (e != null)
-                        Util.showAlertDialogMessage(this, getLayoutInflater(), getString(R.string.err), "Topic: " + e.getMessage(), "#E53935", null, null);
+            firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
+            sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
+            progressBar = binding.appBarNavigationDrawer.progressBar;
+
+            String topic = "/topics/meals_" + campusId + "_";
+
+            if (isStaff)
+                topic += user.getCampusName();
+            else {
+                cursusId = String.valueOf(user.getCursusId());
+                topic += cursusId;
+            }
+
+            boolean isSubscribed = user.getSubscribedToTopicMealNotification();
+            if (!isSubscribed) {
+                FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnCompleteListener(task -> {
+                    if (task.isSuccessful())
+                        user.setSubscribedToTopicMealNotification(true);
+                    else {
+                        Exception e = task.getException();
+                        if (e != null)
+                            Util.showAlertDialogMessage(this, getLayoutInflater(), getString(R.string.err), "Topic: " + e.getMessage(), "#E53935", null, null);
+                    }
+                });
+            }
+
+            menuProvider = new MenuProvider() {
+                @Override
+                public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                    menuInflater.inflate(R.menu.menu_settings_general, menu);
+                    MenuItem menuItem = menu.findItem(R.id.sendMessageFragment);
+                    if (!isStaff)
+                        menuItem.setVisible(false);
+                }
+
+                @Override
+                public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                    Activity context = NavigationDrawerActivity.this;
+                    NavController navController = Navigation.findNavController(context, R.id.nav_host_fragment_content_navigation_drawer);
+                    if (menuItem.getItemId() == R.id.action_logout)
+                        logout(context);
+                    return NavigationUI.onNavDestinationSelected(menuItem, navController);
+                }
+            };
+
+            binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setOnClickListener(this::scannedQrCode);
+
+            DrawerLayout drawer = binding.drawerLayout;
+            NavigationView navigationView = binding.navView;
+            // Passing each menu ID as a set of Ids because each.
+            // menu should be considered as top level destinations.
+            mAppBarConfiguration = new AppBarConfiguration.Builder(
+                    R.id.nav_home, R.id.nav_cursu_list_meal)
+                    .setOpenableLayout(drawer)
+                    .build();
+
+            NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+            NavigationUI.setupWithNavController(navigationView, navController);
+            navController.addOnDestinationChangedListener((navCont, navDestination, bundle) -> {
+                if (navDestination.getId() == R.id.nav_home) {
+                    addMenuProvider(menuProvider, this);
+                    binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setVisibility(View.VISIBLE);
+                } else {
+                    removeMenuProvider(menuProvider);
+                    binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
                 }
             });
-        }
 
-        menuProvider = new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.menu_settings_general, menu);
-                MenuItem menuItem = menu.findItem(R.id.sendMessageFragment);
-                if (!isStaff)
-                    menuItem.setVisible(false);
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                Activity context = NavigationDrawerActivity.this;
-                NavController navController = Navigation.findNavController(context, R.id.nav_host_fragment_content_navigation_drawer);
-                if (menuItem.getItemId() == R.id.action_logout)
-                    logout(context);
-                return NavigationUI.onNavDestinationSelected(menuItem, navController);
-            }
-        };
-
-        binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setOnClickListener(this::scannedQrCode);
-
-        DrawerLayout drawer = binding.drawerLayout;
-        NavigationView navigationView = binding.navView;
-        // Passing each menu ID as a set of Ids because each.
-        // menu should be considered as top level destinations.
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_cursu_list_meal)
-                .setOpenableLayout(drawer)
-                .build();
-
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
-        navController.addOnDestinationChangedListener((navCont, navDestination, bundle) -> {
-            if (navDestination.getId() == R.id.nav_home) {
-                addMenuProvider(menuProvider, this);
-                binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setVisibility(View.VISIBLE);
-            } else {
-                removeMenuProvider(menuProvider);
-                binding.appBarNavigationDrawer.fabOpenCameraScannerQrCode.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        navigationView.setNavigationItemSelectedListener(item -> {
-            // Fecha o drawer
-            drawer.closeDrawers();
-            if (!isStaff) {
-                if (item.getItemId() == R.id.nav_cursu_list_meal) {
-                    // Verifica se já não está no destino para evitar recriar o fragment
-                    if (Objects.requireNonNull(navController.getCurrentDestination()).getId() != R.id.nav_cursu_list_meal) {
-                        int cursuId = Integer.parseInt(cursusId);
-                        cursu.setId(cursuId);
-                        cursu.setName(cursusList.get(cursuId));
-                        HomeFragmentDirections.ActionNavHomeToNavMeal actionNavHomeToNavMeal = HomeFragmentDirections.actionNavHomeToNavMeal(cursu);
-                        navController.navigate(actionNavHomeToNavMeal);
+            navigationView.setNavigationItemSelectedListener(item -> {
+                // Fecha o drawer
+                drawer.closeDrawers();
+                if (!isStaff) {
+                    if (item.getItemId() == R.id.nav_cursu_list_meal) {
+                        // Verifica se já não está no destino para evitar recriar o fragment
+                        if (Objects.requireNonNull(navController.getCurrentDestination()).getId() != R.id.nav_cursu_list_meal) {
+                            int cursuId = Integer.parseInt(cursusId);
+                            cursu.setId(cursuId);
+                            cursu.setName(cursusList.get(cursuId));
+                            HomeFragmentDirections.ActionNavHomeToNavMeal actionNavHomeToNavMeal = HomeFragmentDirections.actionNavHomeToNavMeal(cursu);
+                            navController.navigate(actionNavHomeToNavMeal);
+                        }
+                        return true;
                     }
-                    return true;
                 }
+                // Deixe o NavigationUI tratar outros itens, se houver
+                return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item);
+            });
+
+            // Obter o NavigationView
+            // Obter o header view dentro do NavigationView
+            View headerView = navigationView.getHeaderView(0);
+            user.coalition = new Coalition(this);
+
+            Toolbar toolbar = binding.appBarNavigationDrawer.toolbar;
+            colorCoalition = user.coalition.getColor();
+            setColorCoalition(toolbar, colorCoalition);
+
+            if (colorCoalition != null) {
+                ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
+                // fabOpenCameraScannerQrCode.setBackgroundTintList(colorStateList); // Opcional
+                progressBar.setIndeterminateTintList(colorStateList);
+                navigationView.setItemTextColor(colorStateList);
+                navigationView.setItemIconTintList(colorStateList);
             }
-            // Deixe o NavigationUI tratar outros itens, se houver
-            return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item);
-        });
 
-        // Obter o NavigationView
-        // Obter o header view dentro do NavigationView
-        View headerView = navigationView.getHeaderView(0);
-        user.coalition = new Coalition(this);
+            LinearLayout linearLayout = headerView.findViewById(R.id.linearLayoutNavHeaderNavigationDrawer);
+            String imageUrlCoalition = user.coalition.getImageUrl();
+            if (imageUrlCoalition != null) {
+                Glide.with(this)
+                        .load(imageUrlCoalition)
+                        .into(new CustomTarget<Drawable>() {
+                            @Override
+                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                linearLayout.setBackground(resource);
+                            }
 
-        Toolbar toolbar = binding.appBarNavigationDrawer.toolbar;
-        colorCoalition = user.coalition.getColor();
-        setColorCoalition(toolbar, colorCoalition);
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                                // Definir background placeholder caso a imagem não carregue
+                            }
+                        });
+            }
+            ImageView imageViewUser = headerView.findViewById(R.id.imageViewUser);
+            TextView textViewFullNameUser = headerView.findViewById(R.id.fullNameUser);
+            TextView textViewEmailUser = headerView.findViewById(R.id.emailUser);
+            textViewFullNameUser.setText(user.getDisplayName());
+            textViewEmailUser.setText(user.getEmail());
 
-        if (colorCoalition != null) {
-            ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor(colorCoalition));
-            // fabOpenCameraScannerQrCode.setBackgroundTintList(colorStateList); // Opcional
-            progressBar.setIndeterminateTintList(colorStateList);
-            navigationView.setItemTextColor(colorStateList);
-            navigationView.setItemIconTintList(colorStateList);
-        }
+            String imageUrl = user.getImage();
+            GlideApp.with(this)
+                    .load(imageUrl)
+                    .circleCrop() // Recorta a imagem para ser circular
+                    .placeholder(R.drawable.logo_42) // Imagem de substituição enquanto a imagem carrega
+                    .error(R.drawable.logo_42) // Imagem a ser mostrada caso ocorra um erro
+                    .into(imageViewUser);
 
-        LinearLayout linearLayout = headerView.findViewById(R.id.linearLayoutNavHeaderNavigationDrawer);
-        String imageUrlCoalition = user.coalition.getImageUrl();
-        if (imageUrlCoalition != null) {
-            Glide.with(this)
-                    .load(imageUrlCoalition)
-                    .into(new CustomTarget<Drawable>() {
-                        @Override
-                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                            linearLayout.setBackground(resource);
-                        }
+            asNotificationPermission();
+            createNotificationChannel();
+            setRequestPermissionLauncherNotification(context, REQUEST_CODE_POST_NOTIFICATIONS);
 
-                        @Override
-                        public void onLoadCleared(@Nullable Drawable placeholder) {
-                            // Definir background placeholder caso a imagem não carregue
-                        }
-                    });
-        }
-        ImageView imageViewUser = headerView.findViewById(R.id.imageViewUser);
-        TextView textViewFullNameUser = headerView.findViewById(R.id.fullNameUser);
-        TextView textViewEmailUser = headerView.findViewById(R.id.emailUser);
-        textViewFullNameUser.setText(user.getDisplayName());
-        textViewEmailUser.setText(user.getEmail());
+            // Iniciar o serviço de agendamento de notificações locais para lembrar o estudante
+            LocationReminderManager.rescheduleIfNeeded(getApplicationContext());
 
-        String imageUrl = user.getImage();
-        GlideApp.with(this)
-                .load(imageUrl)
-                .circleCrop() // Recorta a imagem para ser circular
-                .placeholder(R.drawable.logo_42) // Imagem de substituição enquanto a imagem carrega
-                .error(R.drawable.logo_42) // Imagem a ser mostrada caso ocorra um erro
-                .into(imageViewUser);
-
-        asNotificationPermission();
-        createNotificationChannel();
-        setRequestPermissionLauncherNotification(context, REQUEST_CODE_POST_NOTIFICATIONS);
-
-        // Iniciar o serviço de agendamento de notificações locais para lembrar o estudante
-        LocationReminderManager.rescheduleIfNeeded(getApplicationContext());
-
-        Intent intent = getIntent();
-        // Handle shortcuts intent
-        handleIntentShortcuts(intent, binding.getRoot());
-        // Handle notification intent
-        handleNotificationIntent(intent);
+            Intent intent = getIntent();
+            // Handle notification intent
+            handleNotificationIntent(intent);
+            // Handle shortcuts intent
+            handleIntentShortcuts(intent, binding.getRoot());
+        } else
+            redirectToLogin(context);
     }
 
     private void scannedQrCode(@NonNull View view) {
