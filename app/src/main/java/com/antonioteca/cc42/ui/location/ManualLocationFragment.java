@@ -10,7 +10,6 @@ import androidx.cardview.widget.CardView;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +29,6 @@ import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.UserViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.messaging.FirebaseMessaging;
-
 
 import android.content.Context;
 import android.graphics.Color;
@@ -79,7 +76,6 @@ public class ManualLocationFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getFirebaseMessageToken();
         context = requireContext();
         user = new User(context);
         user.coalition = new Coalition(context);
@@ -421,21 +417,5 @@ public class ManualLocationFragment extends Fragment {
                     }
                 }
         );
-    }
-
-    private void getFirebaseMessageToken() {
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Util.showAlertDialogBuild("FirebaseToken", "Fetching FCM registration token failed: " + task.getException(), context, null);
-                        return;
-                    }
-
-                    // Get new FCM registration token
-                    String token = task.getResult();
-                    this.user.setPushToken(token);
-                    // Log and toast
-                    Log.d("FirebaseToken", token);
-                });
     }
 }

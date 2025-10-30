@@ -201,7 +201,7 @@ public class User {
 
     public void setPushToken(String pushToken) {
         editor.putString("pushToken", pushToken);
-        commit();
+        editor.apply();
     }
 
     // equals e hashCode são cruciais para DiffUtil.areContentsTheSame

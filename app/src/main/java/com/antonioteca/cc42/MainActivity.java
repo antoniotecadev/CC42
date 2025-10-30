@@ -1,10 +1,12 @@
 package com.antonioteca.cc42;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,12 +21,14 @@ import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.LoginResponse;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.Token;
+import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.NetworkConstants;
 import com.antonioteca.cc42.repository.TokenRepository;
 import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.TokenViewModel;
 import com.antonioteca.cc42.viewmodel.UserViewModel;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -155,8 +159,10 @@ public class MainActivity extends AppCompatActivity {
             userViewModel.loginWithIntra42Code(code, NetworkConstants.SCHEME_HOST, this, new Callback<>() {
                 @Override
                 public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
-                    if (response.isSuccessful())
+                    if (response.isSuccessful()) {
+                        verifyAndAsyncFirebaseMessageToken();
                         redirectToHome();
+                    }
                 }
 
                 @Override
@@ -171,5 +177,30 @@ public class MainActivity extends AppCompatActivity {
                 Util.showAlertDialogBuild(getString(R.string.err), e.getMessage(), MainActivity.this, null);
             }
         }
+    }
+
+    private void verifyAndAsyncFirebaseMessageToken() {
+        Log.d("FirebaseToken", "verifyAndAsyncFirebaseMessageToken");
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    Context context = MainActivity.this;
+                    if (!task.isSuccessful()) {
+                        Util.showAlertDialogBuild("FirebaseToken", "Fetching FCM registration token failed: " + task.getException(), context, null);
+                        return;
+                    }
+
+                    User user = new User(context);
+
+                    // Get new FCM registration token
+                    String token = task.getResult();
+
+                    String tokenSaved = user.getPushToken();
+
+                    if (tokenSaved == null || !tokenSaved.equals(token)) {
+                        user.setPushToken(token);
+                        Log.d("FirebaseToken", "Token sincronizado manualmente: " + token);
+                    } else
+                        Log.d("FirebaseToken", "Token não sincronizado manualmente: " + token);
+                });
     }
 }

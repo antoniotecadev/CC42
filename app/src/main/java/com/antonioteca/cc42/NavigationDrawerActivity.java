@@ -377,6 +377,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         new User(context).clear();
         new Token(context).clear();
         FirebaseAuth.getInstance().signOut();
+        FirebaseMessaging.getInstance().deleteToken();
         LocationReminderManager.cancelLocationReminders(getApplicationContext());
         redirectToLogin(context);
     }
@@ -500,6 +501,8 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         @Override
         public void onNewToken(@NonNull String token) {
             super.onNewToken(token);
+            Log.d("FirebaseToken", "New token: " + token);
+            new User(getApplicationContext()).setPushToken(token);
         }
     }
 
@@ -528,14 +531,16 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             String type = message.getData().get("type");
 
             if (type != null && type.equals("location_search")) {
-                Util.showAlertDialogBuildSimple(title, body, NavigationDrawerActivity.context);
+                new android.os.Handler(android.os.Looper.getMainLooper()).post(() ->
+                        Util.showAlertDialogBuildSimple(title, body, NavigationDrawerActivity.context));
             } else if (type != null && type.equals("location_shared")) {
                 // Notificação de localização partilhada
                 String sharedBy = message.getData().get("sharedBy");
                 String location = message.getData().get("location");
                 String notificationTitle = title != null ? title : context.getString(R.string.sharedLocationWithYou, sharedBy);
                 String notificationBody = body != null ? body : context.getString(R.string.sharedLocationBody, sharedBy, location);
-                Util.showAlertDialogBuildSimple(notificationTitle, notificationBody, NavigationDrawerActivity.context);
+                new android.os.Handler(android.os.Looper.getMainLooper()).post(() ->
+                        Util.showAlertDialogBuildSimple(notificationTitle, notificationBody, NavigationDrawerActivity.context));
             } else {
                 String id = message.getData().get("key0");
                 String createdBy = message.getData().get("key1");
