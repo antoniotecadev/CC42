@@ -100,6 +100,7 @@ public class DetailsMealFragment extends Fragment {
         String mealId = meal.getId();
         int campusId = user.getCampusId();
         int cursusId = args.getCursusId();
+        String urlImageUser = user.getImage();
 
         String ratingCount = getString(R.string._0) + " " + getString(R.string.ratingsCount);
         binding.numberOfRatings.setText(ratingCount);
@@ -280,7 +281,7 @@ public class DetailsMealFragment extends Fragment {
             }
         });
 
-        binding.buttonSubscribeSecondPortion.setOnClickListener(v -> mealViewModel.subscribeSecondPortion(context, firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), String.valueOf(mealId), mealName, meal.getPathImage(), String.valueOf(userId), binding.buttonSubscribeSecondPortion, binding.progressBarMeal, true));
+        binding.buttonSubscribeSecondPortion.setOnClickListener(v -> mealViewModel.subscribeSecondPortion(context, firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), urlImageUser, String.valueOf(mealId), mealName, meal.getPathImage(), String.valueOf(userId), binding.buttonSubscribeSecondPortion, binding.progressBarMeal, true));
 
         MenuProvider menuProvider = new MenuProvider() {
             @Override
