@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
     private void handleNotificationIntent(Intent intent) { // Segundo plano
         if (intent != null && intent.getExtras() != null && token.getAccessToken() != null && !token.isTokenExpired(token.getTokenExpirationTime())) {
             String targetFragment = intent.getStringExtra("key5");
+            String destination = intent.getStringExtra("destination_fragment");
             if ("DetailsMealFragment".equals(targetFragment)) {
 
                 String body = intent.getStringExtra("body");
@@ -132,6 +133,11 @@ public class MainActivity extends AppCompatActivity {
                 i.setAction("OPEN_FRAGMENT_ACTION_BACKGROUND");
                 i.putExtra("cursusId", Integer.parseInt(cursusId));
                 i.putExtra("detailsMeal", meal);
+                startActivity(i);
+                finish();
+            } else if ("ManualLocationFragment".equals(destination)) {
+                Intent i = new Intent(this, NavigationDrawerActivity.class);
+                i.putExtra("destination_fragment", destination);
                 startActivity(i);
                 finish();
             }
