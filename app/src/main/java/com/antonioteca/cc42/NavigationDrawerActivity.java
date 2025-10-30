@@ -379,6 +379,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         FirebaseAuth.getInstance().signOut();
         FirebaseMessaging.getInstance().deleteToken();
         LocationReminderManager.cancelLocationReminders(getApplicationContext());
+        sharedViewModel.deleteUserLocation(uid, campusId, isStaff ? "0" : cursusId);
         redirectToLogin(context);
     }
 

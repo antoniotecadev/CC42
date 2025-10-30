@@ -1,6 +1,7 @@
 package com.antonioteca.cc42.viewmodel;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -205,5 +206,31 @@ public class SharedViewModel extends ViewModel {
                     progressBar.setVisibility(View.INVISIBLE);
                     Util.showAlertDialogMessage(context, LayoutInflater.from(context), context.getString(R.string.err), e.getMessage(), "#E53935", null, null);
                 });
+    }
+
+    private static final String TAG = "PushToken";
+
+    public void deleteUserLocation(
+            @NonNull String userId,
+            @NonNull String campusId,
+            @NonNull String cursusId) {
+
+        try {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            String path = String.format("campus/%s/cursus/%s/user_locations/%s", campusId, cursusId, userId);
+            DatabaseReference userLocationRef = database.getReference(path);
+
+            // Para eliminar os dados, basta chamar removeValue() na referência
+            userLocationRef.removeValue()
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "✅ Localização eliminada com sucesso!");
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "❌ Erro ao eliminar a localização:", e);
+                    });
+
+        } catch (Exception e) {
+            Log.e(TAG, "❌ Erro ao inicializar a operação de eliminação no Firebase:", e);
+        }
     }
 }
