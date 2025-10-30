@@ -352,7 +352,7 @@
     <string name="selectedLocation">📍 Ubicación seleccionada: Ninguna</string>
     <string name="tipText">💡 Consejo: mantén presionado durante 1s para ver quién está en esta área.</string>
     <string name="location">Ubicación</string>
-    <string name="localSelected">Ubicación seleccionada:</string>
+    <string name="localSelected">📍 Ubicación seleccionada:</string>
     <string name="confirmLocation">📍 Confirmar ubicación</string>
     <string name="youAreAt">Estás en:</string>
     <string name="locationSavedSuccess">Tu ubicación se ha guardado correctamente.</string>

@@ -174,7 +174,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/selectedLocation"
-                android:textAppearance="?attr/textAppearanceBody1"
+                android:textAppearance="?attr/textAppearanceCaption"
                 android:textColor="@color/white" />
 
             <TextView
