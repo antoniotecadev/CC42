@@ -35,9 +35,9 @@ find_library(log-lib log)
 #find_library(jnigraphics-lib jnigraphics)
 
 # Biblioteca principal cc42 (caso uses)
-add_library(cc42 SHARED
-        cc42.cpp
-)
+#add_library(cc42 SHARED
+#        cc42.cpp
+#)
 
 # Biblioteca para conversão YUV → Bitmap
 #add_library(yuv_utils SHARED
@@ -53,10 +53,10 @@ add_library(cc42 SHARED
 # build script, prebuilt third-party libraries, or Android system libraries.
 
 # Linka bibliotecas ao cc42 (se necessário)
-target_link_libraries(cc42
-        # List libraries link to the target library
-        android
-        log)
+#target_link_libraries(cc42
+#        # List libraries link to the target library
+#        android
+#        log)
 
 # Linka bibliotecas ao yuv_utils
 #target_link_libraries(yuv_utils

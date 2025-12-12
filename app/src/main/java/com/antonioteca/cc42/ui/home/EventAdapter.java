@@ -129,8 +129,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 } else {
                     eventList.addAll(eventListEnd);
                     showEventListEnd = true;
-                    notifyItemRangeInserted(startPosition, eventListEnd.size());
-                    notifyItemChanged(eventList.size());
+                    notifyDataSetChanged();
                 }
             });
         }
