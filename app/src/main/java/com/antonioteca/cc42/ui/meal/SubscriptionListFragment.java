@@ -468,7 +468,9 @@ public class SubscriptionListFragment extends Fragment {
                     subscriptionListAdapter.updateSubscriptionUser(userIds);
                     setNumberUserChip();
                 }
-            } else
+            } else if (binding.recyclerviewSubscriptionList.getAdapter() != null && binding.recyclerviewSubscriptionList.getAdapter().getItemCount() > 0)
+                setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
+            else
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
         });
 
