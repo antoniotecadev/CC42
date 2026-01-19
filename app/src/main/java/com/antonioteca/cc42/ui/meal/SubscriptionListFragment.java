@@ -461,6 +461,7 @@ public class SubscriptionListFragment extends Fragment {
         });
 
         userViewModel.getUsersSubscriptionLiveData().observe(getViewLifecycleOwner(), users -> {
+            var adapter = binding.recyclerviewSubscriptionList.getAdapter();
             if (!users.isEmpty() && users.get(0) != null) {
                 subscriptionListAdapter.updateUserList(users, context);
                 binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
@@ -468,7 +469,7 @@ public class SubscriptionListFragment extends Fragment {
                     subscriptionListAdapter.updateSubscriptionUser(userIds);
                     setNumberUserChip();
                 }
-            } else if (binding.recyclerviewSubscriptionList.getAdapter() != null && binding.recyclerviewSubscriptionList.getAdapter().getItemCount() > 0)
+            } else if (adapter != null && adapter.getItemCount() > 0)
                 setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);
             else
                 setupVisibility(binding, View.GONE, false, View.VISIBLE, View.GONE);
