@@ -35,9 +35,9 @@ find_library(log-lib log)
 #find_library(jnigraphics-lib jnigraphics)
 
 # Biblioteca principal cc42 (caso uses)
-#add_library(cc42 SHARED
-#        cc42.cpp
-#)
+add_library(cc42 SHARED
+        cc42.cpp
+)
 
 # Biblioteca para conversão YUV → Bitmap
 #add_library(yuv_utils SHARED
