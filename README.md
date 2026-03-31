@@ -1,4 +1,4 @@
-# Check Cadet - CC42
+# ✅ Check Cadet - CC42
 
 <div align="center">
 
@@ -12,9 +12,16 @@
 
 ---
 
-## Sobre o Projeto
+## 🗣️ Sobre o Projecto
 
 **Check Cadet** é uma aplicação Android nativa desenvolvida especificamente para a comunidade da Escola 42, proporcionando uma solução completa e digitalizada para gestão de presenças em eventos, subscrições de refeições e localização de estudantes no campus. Através de tecnologias modernas como leitura de **QR Code** e **NFC (Near Field Communication)**, a aplicação oferece uma experiência rápida, eficiente e segura para estudantes e staff.
+
+<div align="center">
+  <p><b>Confira a demonstração da aplicação:</b></p>
+  <a href="https://www.youtube.com/watch?v=8PB8V-YGRIk">
+    <img src="https://img.youtube.com/vi/8PB8V-YGRIk/maxresdefault.jpg" alt="Demonstração do E-commerce" style="width:100%; max-width:600px;">
+  </a>
+</div>
 
 ## Funcionalidades Principais
 
