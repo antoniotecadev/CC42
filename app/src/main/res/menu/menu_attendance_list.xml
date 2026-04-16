@@ -59,6 +59,12 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/action_filter_advanced"
+        android:title="Filtro avançado"
+        android:icon="@drawable/ic_baseline_search_24"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_list_print"
         android:icon="@drawable/ic_baseline_print_24"
         android:title="@string/list_print"

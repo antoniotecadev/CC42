@@ -371,9 +371,9 @@ public class UserViewModel extends ViewModel {
         });
     }*/
 
-    public void getUsersSubscription(int cursusId, @NonNull Loading l, Context context) {
+    public void getUsersSubscription(int cursusId, @NonNull Loading l, Context context, Boolean activeParam, String rangeParam) {
         l.isLoading = true;
-        userRepository.loadUserSubscriptionPaginated(cursusId, l, new Callback<>() {
+        userRepository.loadUserSubscriptionPaginated(cursusId, l,activeParam, rangeParam, new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<Subscription>> call, @NonNull Response<List<Subscription>> response) {
                 if (response.isSuccessful()) {

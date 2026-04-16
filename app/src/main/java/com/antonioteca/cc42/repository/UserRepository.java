@@ -14,6 +14,8 @@ import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.RetrofitClientApi;
 import com.antonioteca.cc42.utility.Loading;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -133,22 +135,22 @@ public class UserRepository {
         });
     }
 
-    public void loadUserSubscriptionPaginated(int cursusId, @NonNull Loading l, Callback<List<Subscription>> callback) {
+    public void loadUserSubscriptionPaginated(int cursusId, @NonNull Loading l, Boolean activeParam, String rangeParam, Callback<List<Subscription>> callback) {
         if (token.isTokenExpired(token.getTokenExpirationTime())) {
             token.getRefreshTokenUserSave(context, (success) -> {
                 if (success)
-                    extractedLoadUserSubscriptionPaginated(cursusId, l, callback);
+                    extractedLoadUserSubscriptionPaginated(cursusId, l, activeParam, rangeParam, callback);
                 else
                     callback.onResponse(null, Response.success(new ArrayList<>()));
             });
         } else
-            extractedLoadUserSubscriptionPaginated(cursusId, l, callback);
+            extractedLoadUserSubscriptionPaginated(cursusId, l, activeParam, rangeParam, callback);
     }
 
-    private void extractedLoadUserSubscriptionPaginated(int cursusId, @NonNull Loading l, Callback<List<Subscription>> callback) {
+    private void extractedLoadUserSubscriptionPaginated(int cursusId, @NonNull Loading l, Boolean activeParam, String rangeParam, Callback<List<Subscription>> callback) {
         String accessToken = "Bearer " + token.getAccessToken();
 
-        daoApiUser.getUsersSubscription(accessToken, cursusId, user.getCampusId(), true, l.currentPage, 60).enqueue(new Callback<>() {
+        daoApiUser.getUsersSubscription(accessToken, cursusId, user.getCampusId(), activeParam, rangeParam, l.currentPage, 60).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<Subscription>> call, @NonNull Response<List<Subscription>> response) {
 

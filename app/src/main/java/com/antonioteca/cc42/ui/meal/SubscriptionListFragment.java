@@ -20,6 +20,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -45,6 +47,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.dao.daofarebase.DaoSusbscriptionFirebase;
+import com.antonioteca.cc42.databinding.DialogFilterBinding;
 import com.antonioteca.cc42.databinding.FragmentSubscriptionListBinding;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Coalition;
@@ -74,6 +77,8 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import com.journeyapps.barcodescanner.camera.CameraSettings;
 
 import java.io.File;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -106,6 +111,9 @@ public class SubscriptionListFragment extends Fragment {
     private FragmentSubscriptionListBinding binding;
     private DecoratedBarcodeView decoratedBarcodeView;
     private SubscriptionListAdapter subscriptionListAdapter;
+
+    private String rangeParam = null;
+    private Boolean activeParam = true;
 
     private int numberMealReceived = 0;
     private int numberUserSubscription = 0;
@@ -457,7 +465,7 @@ public class SubscriptionListFragment extends Fragment {
             if (quantityReicevedObject instanceof Integer) {
                 this.numberMealReceived = (int) quantityReicevedObject;
             }
-            userViewModel.getUsersSubscription(cursusId, l, context);
+            userViewModel.getUsersSubscription(cursusId, l, context, activeParam, rangeParam);
         });
 
         userViewModel.getUsersSubscriptionLiveData().observe(getViewLifecycleOwner(), users -> {
@@ -511,7 +519,7 @@ public class SubscriptionListFragment extends Fragment {
                         l.currentPage = 1;
                         activeScrollListener();
                         subscriptionListAdapter.clean();
-                        userViewModel.getUsersSubscription(cursusId, l, context);
+                        userViewModel.getUsersSubscription(cursusId, l, context, activeParam, rangeParam);
                     });
             }
         });
@@ -530,7 +538,7 @@ public class SubscriptionListFragment extends Fragment {
                         l.currentPage = 1;
                         activeScrollListener();
                         subscriptionListAdapter.clean();
-                        userViewModel.getUsersSubscription(cursusId, l, context);
+                        userViewModel.getUsersSubscription(cursusId, l, context, activeParam, rangeParam);
                     });
             }
         });
@@ -584,6 +592,8 @@ public class SubscriptionListFragment extends Fragment {
                         subscriptionListAdapter.filterUsersSubscriptedSecondPortion(userIds);
                     } else
                         Toast.makeText(context, getString(R.string.msg_error_get_ids_user_local), Toast.LENGTH_LONG).show();
+                } else if (itemId == R.id.action_filter_advanced) {
+                    showFilterDialog();
                 } else if (itemId == R.id.action_list_print) {
                     boolean isExternalStorageManager = Util.launchPermissionDocument(
                             context,
@@ -615,6 +625,50 @@ public class SubscriptionListFragment extends Fragment {
             }
         };
         requireActivity().addMenuProvider(menuProvider, getViewLifecycleOwner());
+    }
+
+    private void showFilterDialog() {
+        // Inflar o layout customizado
+        DialogFilterBinding dialogFilterBinding = DialogFilterBinding.inflate(getLayoutInflater());
+        // Valor padrão de 15 dias sugerido no hint ou no texto
+        dialogFilterBinding.editDays.setText("15");
+
+        new AlertDialog.Builder(context)
+                .setTitle("Filtrar Subscritos")
+                .setView(dialogFilterBinding.getRoot())
+                .setPositiveButton("Consultar", (dialog, which) -> {
+
+                    // Traga apenas os registros que foram criados (ou seja, usuários que entraram no curso) entre 15 dias atrás
+
+                    String daysInput = dialogFilterBinding.editDays.getText().toString();
+                    boolean onlyActive = dialogFilterBinding.checkActive.isChecked();
+
+                    rangeParam = null;
+                    activeParam = null;
+
+                    // 1. Lógica do Intervalo de Dias
+                    if (!daysInput.isEmpty()) {
+                        int days = Integer.parseInt(daysInput);
+                        Instant startDate = Instant.now().minus(days, ChronoUnit.DAYS);
+                        rangeParam = startDate.toString() + "," + Instant.now().toString();
+                    }
+
+                    // 2. Lógica do Activo (Se não estiver marcado, mandamos null para a API ignorar o filtro)
+                    if (onlyActive) {
+                        activeParam = true;
+                    }
+
+                    // Chamada do seu método de carregamento (exemplo)
+//                    userViewModel.getUsersSubscription(cursusId, l, context, activeParam, rangeParam);
+                    subscriptionListAdapter.isFilterSecondPortion = false;
+                    setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
+                    l.currentPage = 1;
+                    activeScrollListener();
+                    subscriptionListAdapter.clean();
+                    userViewModel.getUserIdsSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
     private void printAndShareSubscriptionsList(List<User> userList, boolean isPrint, int title) {
@@ -671,7 +725,7 @@ public class SubscriptionListFragment extends Fragment {
         public void onLoadMore() {
             if (!l.isLoading && l.hasNextPage) {
 //                Toast.makeText(context, R.string.msg_loading_more_data, Toast.LENGTH_LONG).show();
-                userViewModel.getUsersSubscription(cursusId, l, context);
+                userViewModel.getUsersSubscription(cursusId, l, context, activeParam, rangeParam);
             } else {
 //                Toast.makeText(context, R.string.synchronization, Toast.LENGTH_LONG).show();
                 setupVisibility(binding, View.GONE, false, View.GONE, View.VISIBLE);

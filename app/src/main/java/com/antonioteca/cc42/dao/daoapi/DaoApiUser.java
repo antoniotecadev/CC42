@@ -44,7 +44,8 @@ public interface DaoApiUser {
             @Header("Authorization") String accessToken,
             @Query("filter[cursus_id]") int cursus_id,
             @Query("filter[campus_id]") int campus_id,
-            @Query("filter[active]") boolean active,
+            @Query("filter[active]") Boolean active,
+            @Query("range[created_at]") String createdAtRange,
             @Query("page[number]") int pageNumber,  // Adiciona o número da página
             @Query("page[size]") int pageSize       // Adiciona o tamanho da página
     );

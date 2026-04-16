@@ -579,6 +579,8 @@ public class AttendanceListFragment extends Fragment {
                 menuItemAbsents.setTitle(context.getString(R.string.text_absent));
                 MenuItem menuItemSusbcription = menu.findItem(R.id.action_list_subscripted_second_portion);
                 menuItemSusbcription.setVisible(false);
+                MenuItem menuItemFilterAdvanced = menu.findItem(R.id.action_filter_advanced);
+                menuItemFilterAdvanced.setVisible(false);
                 MenuItem menuItemAll = menu.findItem(R.id.action_three_list);
                 menuItemAll.setTitle(context.getString(R.string.all));
             }
