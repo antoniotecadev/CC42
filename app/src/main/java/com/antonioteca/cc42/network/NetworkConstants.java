@@ -11,8 +11,7 @@ package com.antonioteca.cc42.network;
 public class NetworkConstants {
 
     public static final String BASE_URL = "https://api.intra.42.fr";
-    public static final String UID = "u-s4t2ud-4ce9a69013fc7817425995ce488c2f0e9d4c968de61e0f7e51f4d5facc50cc27";
-
+    public static final String UID = "u-s4t2af-f32e84f2d11ddc8b7ae62b360c291de5744df913074ecc166ecdbbb56d70c8b1";
     public static String CODE = "code";
     public static String SCHEME_HOST = "cc42://checkcadet42";
     public static final int CAMERA_PERMISSION_CODE = 100;
