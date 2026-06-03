@@ -85,6 +85,7 @@ public class NFCUtils {
                     parent.removeView(radioGroupCheck.getRoot());
                 }
                 radioGroupCheck.radioGroupEventCheck.setVisibility(View.VISIBLE);
+                radioGroupPortion.checkBoxBlocked.setVisibility(View.VISIBLE);
                 // Itera sobre todos os RadioButtons dentro do RadioGroup
                 setColorText(context, radioGroupCheck, null, R.color.textColorPrimary);
                 dialogLayout.addView(radioGroupCheck.getRoot());
@@ -146,6 +147,8 @@ public class NFCUtils {
                             if (radioGroupCheck != null) {
                                 // 1. Remove a view do seu pai ACTUAL (o layout do diálogo)
                                 radioGroupCheck.radioGroupEventCheck.setVisibility(View.GONE);
+                                radioGroupPortion.checkBoxBlocked.setVisibility(View.GONE);
+
                                 setColorText(context, radioGroupCheck, null, R.color.white);
                                 dialogLayout.removeView(radioGroupCheck.getRoot());
                                 // 2. Agora sim, adiciona a view de volta ao seu pai ORIGINAL

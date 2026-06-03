@@ -146,7 +146,7 @@ public class SubscriptionListFragment extends Fragment {
                     String[] partsQrCode = resultQrCode.split("#", 6);
                     if (partsQrCode.length == 6) {
                         progressBarSubscription.setVisibility(View.VISIBLE);
-                        if (allBlockedUsersListId.contains(Long.valueOf(partsQrCode[0]))) {
+                        if (binding.radioGroupPortion.checkBoxBlocked.isChecked() && allBlockedUsersListId.contains(Long.valueOf(partsQrCode[0]))) {
                             progressBarSubscription.setVisibility(View.INVISIBLE);
                             Util.showAlertDialogMessage(context, layoutInflater, getString(R.string.blocked), getString(R.string.msg_user_blocked_subscription), "#E53935", partsQrCode[5], () -> decoratedBarcodeView.resume());
                             return;
@@ -190,7 +190,7 @@ public class SubscriptionListFragment extends Fragment {
                 String[] partsQrCode = resultQrCode.split("#", 6);
                 if (partsQrCode.length == 6) {
                     progressBarSubscription.setVisibility(View.VISIBLE);
-                    if (allBlockedUsersListId.contains(Long.valueOf(partsQrCode[0]))) {
+                    if (binding.radioGroupPortion.checkBoxBlocked.isChecked() && allBlockedUsersListId.contains(Long.valueOf(partsQrCode[0]))) {
                         progressBarSubscription.setVisibility(View.INVISIBLE);
                         Util.showAlertDialogMessage(context, layoutInflater, getString(R.string.blocked), getString(R.string.msg_user_blocked_subscription), "#E53935", partsQrCode[5], () -> decoratedBarcodeView.resume());
                         return;
@@ -789,6 +789,7 @@ public class SubscriptionListFragment extends Fragment {
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.VISIBLE);
         binding.layoutQuantity.liniearLayoutQuantity.setVisibility(View.VISIBLE);
         binding.radioGroupPortion.radioGroupMealPortion.setVisibility(View.VISIBLE);
+        binding.radioGroupPortion.checkBoxBlocked.setVisibility(View.VISIBLE);
     }
 
     @NonNull
@@ -813,6 +814,7 @@ public class SubscriptionListFragment extends Fragment {
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.VISIBLE);
         binding.layoutQuantity.liniearLayoutQuantity.setVisibility(View.GONE);
         binding.radioGroupPortion.radioGroupMealPortion.setVisibility(View.GONE);
+        binding.radioGroupPortion.checkBoxBlocked.setVisibility(View.GONE);
         binding.fabOpenReaderNFC.setVisibility(nfcAdapter != null ? View.VISIBLE : View.GONE);
     }
 
