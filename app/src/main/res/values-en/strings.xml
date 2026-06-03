@@ -401,4 +401,6 @@
     <string name="notifyStudentSuccess">%1$s has been notified that you are looking for them!</string>
     <string name="reminderTitle">📍 Update Location?</string>
     <string name="reminderBody">Tap to update where you are on campus</string>
+    <string name="msg_user_blocked_subscription">Blocked User! This student has administrative restrictions and is not allowed to subscribe to meals.</string>
+    <string name="blocked">Blocked</string>
 </resources>

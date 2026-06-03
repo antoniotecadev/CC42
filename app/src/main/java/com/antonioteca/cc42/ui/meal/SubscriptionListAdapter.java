@@ -51,13 +51,14 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         diffResult.dispatchUpdatesTo(this);
     }
 
-    public void updateSubscriptionUser(List<String> usersIdsSubscription) {
+    public void updateSubscriptionUser(List<String> usersIdsSubscription, Set<Long> allBlockedUsersListId) {
         Set<String> usersIdsSet = new HashSet<>(usersIdsSubscription);
         boolean subscribedFirstPortion;
         boolean subscribedSecondPortion;
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
             User currentUser = this.userList.get(i);
+            currentUser.isBlocked = allBlockedUsersListId.contains(currentUser.uid);
             subscribedFirstPortion = usersIdsSet.contains(String.valueOf(currentUser.uid));
             subscribedSecondPortion = usersIdsSet.contains("-" + currentUser.uid);
             if (currentUser.isSubscriptionFirstPortion() == null || currentUser.isSubscriptionFirstPortion() != subscribedFirstPortion) {
@@ -191,7 +192,11 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         int greenColor = ContextCompat.getColor(context, R.color.green);
         User user = userList.get(position);
         imageUrl = user.getUrlImageUser();
-        holder.binding.textViewLogin.setText(user.login);
+        if (user.isBlocked) {
+            holder.binding.textViewLogin.setTextColor(redColor);
+            holder.binding.textViewLogin.setText(user.login + " (" + context.getString(R.string.blocked) + ")");
+        } else
+            holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
 //        if (user.ratingValue > 0) Avaliação do usuario
 //            StarUtils.selectedRating(holder.binding.starRatingDone, user.ratingValue);

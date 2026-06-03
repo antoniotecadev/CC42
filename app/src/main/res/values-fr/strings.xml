@@ -401,4 +401,6 @@
     <string name="notifyStudentSuccess">%1$s a été notifié(e) que vous le/la cherchez !</string>
     <string name="reminderTitle">📍 Mettre à jour la localisation ?</string>
     <string name="reminderBody">Appuyez pour mettre à jour votre position sur le campus</string>
+    <string name="msg_user_blocked_subscription">Utilisateur Bloqué ! Cet étudiant fait l\'objet de restrictions administratives et n\'est pas autorisé à s\'inscrire aux repas.</string>
+    <string name="blocked">Bloqué</string>
 </resources>

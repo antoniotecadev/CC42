@@ -60,6 +60,9 @@ public class User {
     private Boolean subscriptionSecondPortion = null;
 
     @Expose(serialize = false, deserialize = false)
+    public boolean isBlocked;
+
+    @Expose(serialize = false, deserialize = false)
     private final SharedPreferences preferences;
     @Expose(serialize = false, deserialize = false)
     private final SharedPreferences.Editor editor;

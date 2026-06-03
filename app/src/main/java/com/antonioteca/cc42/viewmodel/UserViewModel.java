@@ -29,6 +29,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
@@ -36,9 +37,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import retrofit2.Call;
@@ -229,6 +232,61 @@ public class UserViewModel extends ViewModel {
 //            }
 //        });
 //    }
+
+    public void fetchAllBlockedUsers(FirebaseDatabase firebaseDatabase, String campusId, String cursusId, Set<Long> accumulatorId, String lastKey, Runnable onFinished) {
+        int pageSize = 20;
+        DatabaseReference ref = firebaseDatabase.getReference()
+                .child("campus").child(campusId)
+                .child("cursus").child(cursusId)
+                .child("blocked_users");
+
+        // Prepara a query: ordena por chave e limita a 20
+        Query query = ref.orderByKey().limitToFirst(pageSize);
+
+        // Se não for a primeira página, começa após a última chave recebida
+        if (lastKey != null) {
+            query = query.startAfter(lastKey);
+        }
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists() || snapshot.getChildrenCount() == 0) {
+                    // Não há mais dados, encerra a recursão
+                    onFinished.run();
+                    return;
+                }
+                String currentLastKey = null;
+                for (DataSnapshot child : snapshot.getChildren()) {
+//                    BlockedUser user = child.getValue(BlockedUser.class);
+//                    if (user != null) {
+//                        accumulator.add(user);
+//                    }
+                    String key = child.getKey();
+                    if (key != null) {
+                        accumulatorId.add(Long.valueOf(key));
+                        currentLastKey = key;
+                    }
+                }
+
+                // Se o Firebase retornou o número exato da página (20),
+                // existe a possibilidade de haver mais dados.
+                if (snapshot.getChildrenCount() == pageSize) {
+                    // Chama a função novamente para buscar os próximos 20
+                    fetchAllBlockedUsers(firebaseDatabase, cursusId, campusId, accumulatorId, currentLastKey, onFinished);
+                } else {
+                    // Se veio menos que 20, significa que era a última página
+                    onFinished.run();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Em caso de erro, você decide se para ou processa o que já tem
+                onFinished.run();
+            }
+        });
+    }
 
     public void getUsersEvent(long eventId, @NonNull Loading l, Context context) {
         l.isLoading = true;

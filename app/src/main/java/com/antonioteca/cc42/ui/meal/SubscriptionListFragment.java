@@ -20,8 +20,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -80,7 +78,9 @@ import java.io.File;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -107,6 +107,7 @@ public class SubscriptionListFragment extends Fragment {
     private LayoutInflater layoutInflater;
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
+    private Set<Long> allBlockedUsersListId;
     private ProgressBar progressBarSubscription;
     private FragmentSubscriptionListBinding binding;
     private DecoratedBarcodeView decoratedBarcodeView;
@@ -120,9 +121,6 @@ public class SubscriptionListFragment extends Fragment {
     private int numberUserUnsubscription = 0;
     private int numberUserSubscriptionSecondPortion = 0;
     private int numberUserNotSubscriptionSecondPortion = 0;
-
-    //    final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
-//    final long[] lastClickTime = {0};
     final boolean[] isFlashLightOn = {false};
 
     private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(
@@ -148,6 +146,11 @@ public class SubscriptionListFragment extends Fragment {
                     String[] partsQrCode = resultQrCode.split("#", 6);
                     if (partsQrCode.length == 6) {
                         progressBarSubscription.setVisibility(View.VISIBLE);
+                        if (allBlockedUsersListId.contains(Long.valueOf(partsQrCode[0]))) {
+                            progressBarSubscription.setVisibility(View.INVISIBLE);
+                            Util.showAlertDialogMessage(context, layoutInflater, getString(R.string.blocked), getString(R.string.msg_user_blocked_subscription), "#E53935", partsQrCode[5], () -> decoratedBarcodeView.resume());
+                            return;
+                        }
                         DaoSusbscriptionFirebase.subscription(
                                 firebaseDatabase,
                                 Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString()),
@@ -187,6 +190,11 @@ public class SubscriptionListFragment extends Fragment {
                 String[] partsQrCode = resultQrCode.split("#", 6);
                 if (partsQrCode.length == 6) {
                     progressBarSubscription.setVisibility(View.VISIBLE);
+                    if (allBlockedUsersListId.contains(Long.valueOf(partsQrCode[0]))) {
+                        progressBarSubscription.setVisibility(View.INVISIBLE);
+                        Util.showAlertDialogMessage(context, layoutInflater, getString(R.string.blocked), getString(R.string.msg_user_blocked_subscription), "#E53935", partsQrCode[5], () -> decoratedBarcodeView.resume());
+                        return;
+                    }
                     DaoSusbscriptionFirebase.subscription(
                             firebaseDatabase,
                             Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString()),
@@ -281,6 +289,7 @@ public class SubscriptionListFragment extends Fragment {
         activity = requireActivity();
         scanOptions = new ScanOptions();
         layoutInflater = getLayoutInflater();
+        allBlockedUsersListId = new HashSet<>();
         beepManager = new BeepManager(activity);
         colorCoalition = new Coalition(context).getColor();
         subscriptionListAdapter = new SubscriptionListAdapter();
@@ -418,14 +427,6 @@ public class SubscriptionListFragment extends Fragment {
             return true;
         });
 
-//        inflatedViewStub.setOnClickListener(v -> {
-//            long clickTime = System.currentTimeMillis();
-//            if (clickTime - lastClickTime[0] < DOUBLE_CLICK_TIME_DELTA) {
-//                closeCamera();
-//            }
-//            lastClickTime[0] = clickTime;
-//        });
-
         decoratedBarcodeView.setTorchListener(new DecoratedBarcodeView.TorchListener() {
             @Override
             public void onTorchOn() {
@@ -452,6 +453,10 @@ public class SubscriptionListFragment extends Fragment {
                 binding.layoutQuantity.textViewQuantityValue.setText(String.valueOf(currentQuantity + 1));
         });
 
+        userViewModel.fetchAllBlockedUsers(firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), allBlockedUsersListId, null, () -> {
+            // Este bloco só será executado quando TODOS os blocos de 20 forem baixado
+        });
+
         binding.progressBarSubscription.setVisibility(View.VISIBLE);
         userViewModel.getUserIdsSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
         userViewModel.getUserIdsAndQuantityList().observe(getViewLifecycleOwner(), userIdsAndQuantity -> {
@@ -474,7 +479,7 @@ public class SubscriptionListFragment extends Fragment {
                 subscriptionListAdapter.updateUserList(users, context);
                 binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
                 if (userIds != null && !userIds.isEmpty() && userIds.get(0) != null) {
-                    subscriptionListAdapter.updateSubscriptionUser(userIds);
+                    subscriptionListAdapter.updateSubscriptionUser(userIds, allBlockedUsersListId);
                     setNumberUserChip();
                 }
             } else if (adapter != null && adapter.getItemCount() > 0)
@@ -631,7 +636,7 @@ public class SubscriptionListFragment extends Fragment {
         // Inflar o layout customizado
         DialogFilterBinding dialogFilterBinding = DialogFilterBinding.inflate(getLayoutInflater());
         // Valor padrão de 15 dias sugerido no hint ou no texto
-        dialogFilterBinding.editDays.setText("15");
+        dialogFilterBinding.editDays.setText(R.string._15);
 
         new AlertDialog.Builder(context)
                 .setTitle("Filtrar Subscritos")

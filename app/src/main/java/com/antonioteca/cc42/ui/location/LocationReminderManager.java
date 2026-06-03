@@ -23,7 +23,7 @@ public class LocationReminderManager {
 
     private static final String TAG = "LocationReminderManager";
     public static final String LOCATION_REMINDER_WORK_TAG = "location-reminder-work";
-    private static final int[] REMINDER_HOURS = {8, 10, 12, 14, 16, 18, 20};
+    private static final int[] REMINDER_HOURS = {10 /* 10, 12, 14, 16, 18, 20 */ };
 
     /**
      * Agenda notificações diárias para lembrar de actualizar a localização.
