@@ -3,6 +3,7 @@ package com.antonioteca.cc42.ui.meal;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -32,10 +33,12 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -88,7 +91,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         ItemRecyclerviewMealListBinding binding = ItemRecyclerviewMealListBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new MealAdapterViewHolder(binding);
     }
-
+//    Gson gson = new Gson();
     @Override
     public void onBindViewHolder(@NonNull MealAdapterViewHolder holder, int position) {
         if (!loading.isLoading && (position == getItemCount() - 1) && isStaff) {
@@ -103,6 +106,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
 //            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
         Meal meal = mealList.get(position);
+//        Log.i("Meal", gson.toJson(meal));
         holder.binding.textViewName.setText(meal.getName());
         holder.binding.textViewDescription.setText(meal.getDescription());
         String textType = meal.getType() + " " + meal.getCreatedDate() + " " + meal.getQuantityNotReceived() + "/" + meal.getQuantityReceived();
@@ -276,7 +280,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         }
     }
 
-    public void updateMealList(List<Meal> newMealList, String lastKey) {
+    public void updateMealList(Deque<Meal> newMealList, String lastKey) {
         int previousSize = getItemCount();
         this.mealList.addAll(newMealList);
         this.lastKey = lastKey;

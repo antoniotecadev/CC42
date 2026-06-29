@@ -19,9 +19,6 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.model.Message;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
-import com.antonioteca.cc42.utility.CsvExporter;
-import com.antonioteca.cc42.utility.PdfSharer;
-import com.antonioteca.cc42.utility.PdfViewer;
 import com.antonioteca.cc42.utility.Util;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,7 +26,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

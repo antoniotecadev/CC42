@@ -243,8 +243,8 @@ public class MealListFragment extends Fragment {
         binding.recyclerViewMeal.setAdapter(mealAdapter);
 
         mealViewModel.getMealList(context, binding, mealsRef, null, userId, isStaff).observe(getViewLifecycleOwner(), meals -> {
-            if (!meals.isEmpty() && meals.get(0) != null) {
-                mealAdapter.updateMealList(meals, meals.get(meals.size() - 1).getId());
+            if (!meals.isEmpty() && meals.getFirst() != null) {
+                mealAdapter.updateMealList(meals, meals.getLast().getId());
                 mealViewModel.mealList.addAll(meals);
             } else
                 loading.isLoading = false;

@@ -18,10 +18,14 @@ public class UserViewModelFactory implements ViewModelProvider.Factory {
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (modelClass.isAssignableFrom(UserViewModel.class)) {
-            return (T) new UserViewModel(userRepository);
-        } else {
-            throw new IllegalArgumentException("Unknown ViewModel class");
+        try {
+            if (modelClass.isAssignableFrom(UserViewModel.class)) {
+                return modelClass.getConstructor(UserRepository.class).newInstance(userRepository);
+            } else {
+                throw new IllegalArgumentException("Unknown ViewModel class");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot create an instance of " + modelClass, e);
         }
     }
 }

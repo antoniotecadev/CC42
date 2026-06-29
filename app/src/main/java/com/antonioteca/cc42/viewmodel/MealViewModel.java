@@ -43,9 +43,10 @@ import com.google.firebase.database.annotations.Nullable;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +68,7 @@ public class MealViewModel extends ViewModel {
     private MutableLiveData<Meal> createdMealMutableLiveData;
     private MutableLiveData<Meal> updatedMealMutableLiveData;
     private MutableLiveData<EventObserver<Meal>> deleteMealMutableLiveData;
-    private MutableLiveData<List<Meal>> mealListMutableLiveData;
+    private MutableLiveData<Deque<Meal>> mealListMutableLiveData;
     private MutableLiveData<List<String>> pathImageMutableLiveData;
     private MutableLiveData<List<Object>> ratingValuesMutableLiveData;
 
@@ -107,14 +108,14 @@ public class MealViewModel extends ViewModel {
         return ratingValuesMutableLiveData;
     }
 
-    public LiveData<List<Meal>> getMealList(Context context, FragmentMealBinding binding, DatabaseReference mealsRef, String startAtKey, long userId, boolean isStaff) {
+    public LiveData<Deque<Meal>> getMealList(Context context, FragmentMealBinding binding, DatabaseReference mealsRef, String startAtKey, long userId, boolean isStaff) {
         if (mealListMutableLiveData == null) {
             mealListMutableLiveData = new MutableLiveData<>();
             binding.progressBarMeal.setVisibility(View.VISIBLE);
             loadMeals(context, binding, mealsRef, startAtKey, userId, isStaff);
         } else if (mealListMutableLiveData.getValue() != null && !this.mealList.isEmpty()) {
             mealListMutableLiveData.getValue().clear();
-            List<Meal> mealList = new ArrayList<>(this.mealList);
+            Deque<Meal> mealList = new ArrayDeque<>(this.mealList);
             this.mealList.clear();
             mealListMutableLiveData.postValue(mealList);
         }
@@ -139,7 +140,7 @@ public class MealViewModel extends ViewModel {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<Meal> mealList = new ArrayList<>();
+                Deque<Meal> mealList = new ArrayDeque<>();
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Meal meal = dataSnapshot.getValue(Meal.class);
@@ -158,9 +159,8 @@ public class MealViewModel extends ViewModel {
                         meal.setQuantityReceived(quantityReceived);
                         int quantity = meal.getQuantity() - meal.getQuantityReceived();
                         meal.setQuantityNotReceived(Math.max(quantity, 0));
-                        mealList.add(meal);
+                        mealList.push(meal);
                     }
-                    Collections.reverse(mealList);
                     MealsUtils.setupVisibility(binding, View.INVISIBLE, false, View.INVISIBLE, View.VISIBLE);
                 } else if (mealListMutableLiveData.getValue() == null) {
                     MealsUtils.setupVisibility(binding, View.INVISIBLE, false, View.VISIBLE, View.INVISIBLE);
@@ -182,7 +182,7 @@ public class MealViewModel extends ViewModel {
                         loadMeals(context, binding, mealsRef, startAtKey, userId, isStaff);
                     });
                 }
-                mealListMutableLiveData.setValue(new ArrayList<>());
+                mealListMutableLiveData.setValue(new ArrayDeque<>());
             }
         });
     }
@@ -756,7 +756,7 @@ public class MealViewModel extends ViewModel {
                     return Transaction.abort();
                 }
 
-                if (Boolean.TRUE.equals(hasSecondPortion) && quantitySecondPortion > 0) {
+                if (hasSecondPortion && quantitySecondPortion > 0) {
                     int newQuantity = quantitySecondPortion - 1;
                     // Decrementa a quantidade
                     secondPortion.child("quantitySecondPortion").setValue(newQuantity);
