@@ -25,7 +25,7 @@ public class RetrofitClientApi {
         if (retrofit == null) {
 
             // Configurar cache do OkHttp
-            int cacheSize = 10 * 1024 * 1024; // 10 MB
+            int cacheSize = 50 * 1024 * 1024; // 50 MB
             File cacheDir = new File(context.getCacheDir(), "http-cache");
             Cache cache = new Cache(cacheDir, cacheSize);
 
