@@ -178,6 +178,20 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         notifyDataSetChanged();
     }
 
+    public void filterTranscenders() {
+        List<User> filteredList = new ArrayList<>();
+        int itemCount = getItemCount();
+        for (int i = 0; i < itemCount; i++) {
+            User currentUser = this.userListFilter.get(i);
+            if (currentUser.grade.equals("Transcender")) {
+                filteredList.add(this.userList.get(i)); // this.userList e this.userListFilter sincronizados
+            }
+        }
+        this.userList.clear();
+        this.userList.addAll(filteredList);
+        notifyDataSetChanged();
+    }
+
 //    public String containsUser(long userId) {
 //        for (User user : getUserList()) {
 //            if (user.uid == userId) {

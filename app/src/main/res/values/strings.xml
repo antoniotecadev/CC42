@@ -437,6 +437,7 @@
     <string name="blocked">Restrito</string>
     <string name="check_blocked">Verificar bloqueados</string>
     <string name="check_subscription_second_portion">Verificar inscrições</string>
+    <string name="transcenders" translatable="false">Transcenders</string>
     <string-array name="cursus_list" translatable="false">
         <item>@string/Cursus42</item>
         <item>@string/CPiscine</item>

@@ -601,6 +601,8 @@ public class SubscriptionListFragment extends Fragment {
                         subscriptionListAdapter.filterUsersSubscriptedSecondPortion(userIds);
                     } else
                         Toast.makeText(context, getString(R.string.msg_error_get_ids_user_local), Toast.LENGTH_LONG).show();
+                }else if (itemId == R.id.action_list_transcenders) {
+                    subscriptionListAdapter.filterTranscenders();
                 } else if (itemId == R.id.action_filter_advanced) {
                     showFilterDialog();
                 } else if (itemId == R.id.action_list_print) {
