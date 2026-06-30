@@ -1,5 +1,7 @@
 package com.antonioteca.cc42.ui.meal;
 
+import static com.antonioteca.cc42.network.NetworkConstants.THIRTY_DAYS_MS;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.model.UserDiffCallback;
 import com.antonioteca.cc42.utility.Util;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -50,13 +53,31 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         diffResult.dispatchUpdatesTo(this);
     }
 
+    long hojeMs = System.currentTimeMillis();
+
+    private boolean isBlocked(String grade, String updated_at) {
+        boolean autoBlocked = false;
+        if ("Transcender".equals(grade) && updated_at != null) {
+            try {
+                // Instant.parse é muito rápido para o formato ISO 8601 (ex: 2024-05-20T14:44:42Z)
+                long dataTranscendenceMs = Instant.parse(updated_at).toEpochMilli();
+
+                if (hojeMs - dataTranscendenceMs > THIRTY_DAYS_MS) {
+                    autoBlocked = true;
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        return autoBlocked;
+    }
+
     public void updateSubscriptionUser(Set<String> usersIdsSubscription, Set<Long> allBlockedUsersListId) {
         boolean subscribedFirstPortion;
         boolean subscribedSecondPortion;
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
             User currentUser = this.userList.get(i);
-            currentUser.isBlocked = allBlockedUsersListId.contains(currentUser.uid);
+            currentUser.isBlocked = allBlockedUsersListId.contains(currentUser.uid) || isBlocked(currentUser.grade, currentUser.updated_at);
             subscribedFirstPortion = usersIdsSubscription.contains(String.valueOf(currentUser.uid));
             subscribedSecondPortion = usersIdsSubscription.contains("-" + currentUser.uid);
             if (currentUser.isSubscriptionFirstPortion() == null || currentUser.isSubscriptionFirstPortion() != subscribedFirstPortion) {
@@ -195,6 +216,7 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         } else
             holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
+        holder.binding.textViewGrade.setText(user.grade);
 //        if (user.ratingValue > 0) Avaliação do usuario
 //            StarUtils.selectedRating(holder.binding.starRatingDone, user.ratingValue);
 //        StarUtils.reduceStarSize(context, holder.binding.starRatingDone, 20, 20);

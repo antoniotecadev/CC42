@@ -40,7 +40,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -431,15 +430,18 @@ public class UserViewModel extends ViewModel {
 
     public void getUsersSubscription(int cursusId, @NonNull Loading l, Context context, Boolean activeParam, String rangeParam) {
         l.isLoading = true;
-        userRepository.loadUserSubscriptionPaginated(cursusId, l,activeParam, rangeParam, new Callback<>() {
+        userRepository.loadUserSubscriptionPaginated(cursusId, l, activeParam, rangeParam, new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<List<Subscription>> call, @NonNull Response<List<Subscription>> response) {
                 if (response.isSuccessful()) {
                     List<User> userList = new ArrayList<>();
                     if (response.body() != null) {
                         for (Subscription subscription : response.body()) {
-                            if (subscription.getUsers().getKind().equalsIgnoreCase("student"))
-                                userList.add(subscription.getUsers());
+                            User u = subscription.getUsers();
+                            if (u != null && u.getKind().equalsIgnoreCase("student")) {
+                                u.grade = subscription.grade;
+                                userList.add(u);
+                            }
                         }
                     }
                     userListMutableLiveData.postValue(userList);

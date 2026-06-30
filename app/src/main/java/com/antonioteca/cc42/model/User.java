@@ -21,7 +21,10 @@ public class User {
 
     @SerializedName("id")
     public Long uid;
-
+    
+    @Expose(serialize = false, deserialize = false)
+    public String grade;
+    public String updated_at;
     public String email;
     public String login;
 
@@ -66,6 +69,11 @@ public class User {
     private final SharedPreferences preferences;
     @Expose(serialize = false, deserialize = false)
     private final SharedPreferences.Editor editor;
+
+    public User() {
+        preferences = null;
+        editor = null;
+    }
 
     public User(@NonNull Context context) {
         preferences = context.getSharedPreferences("MyAppPrefsUser", MODE_PRIVATE);

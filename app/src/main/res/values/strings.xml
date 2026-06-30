@@ -434,7 +434,7 @@
     <string name="reminderBody">Toque para actualizar onde você está no campus</string>
     <string name="_15" translatable="false">15</string>
     <string name="msg_user_blocked_subscription">Utilizador Bloqueado! Este estudante possui restrições administrativas e não tem permissão para subscrever a refeições</string>
-    <string name="blocked">Bloqueado</string>
+    <string name="blocked">Restrito</string>
     <string name="check_blocked">Verificar bloqueados</string>
     <string name="check_subscription_second_portion">Verificar inscrições</string>
     <string-array name="cursus_list" translatable="false">

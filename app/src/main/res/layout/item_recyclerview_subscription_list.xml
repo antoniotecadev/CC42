@@ -45,8 +45,16 @@
                 android:layout_marginHorizontal="10dp"
                 android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/textViewGrade"
                 app:layout_constraintStart_toEndOf="@+id/imageViewUser"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textViewGrade"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/light_blue_600"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <!--        <LinearLayout-->

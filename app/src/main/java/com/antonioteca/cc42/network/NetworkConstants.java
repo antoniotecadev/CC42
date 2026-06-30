@@ -19,6 +19,9 @@ public class NetworkConstants {
     public static final int REQUEST_CODE_POST_NOTIFICATIONS = 1001;
     public static final int REQUEST_CODE_MEDIA_PERMISSIONS = 1002;
 
+    // 30 dias em milissegundos: 30L * 24 * 60 * 60 * 1000
+    public static final long THIRTY_DAYS_MS = 2592000000L;
+
     // Endpoints
     public static final String LOGIN_ENDPOINT = "/oauth/token";
     public static final String USER_INFO_ENDPOINT = "/v2/me";
