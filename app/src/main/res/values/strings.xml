@@ -339,6 +339,7 @@
     <string name="second_portion_subscribed">Inscrição feita</string>
     <string name="second_portion_already_received">Recebeu segunda via</string>
     <string name="second_portion_unavailable">Segunda via indisponível</string>
+    <string name="second_portion_available">Segunda via disponível</string>
     <string name="second_portion_finished">Segunda via terminou</string>
     <string name="error_subscribing_second_portion">Erro ao inscrever - se para segunda via</string>
     <string name="second_portion_already_subscribed">Já inscreveu - se para segunda via</string>

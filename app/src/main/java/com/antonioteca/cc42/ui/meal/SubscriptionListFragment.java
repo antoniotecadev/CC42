@@ -460,16 +460,8 @@ public class SubscriptionListFragment extends Fragment {
         binding.progressBarSubscription.setVisibility(View.VISIBLE);
         userViewModel.getUserIdsSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
         userViewModel.getUserIdsAndQuantityList().observe(getViewLifecycleOwner(), userIdsAndQuantity -> {
-            Object userIdsObject = userIdsAndQuantity.get(0);
-            Object quantityReicevedObject = userIdsAndQuantity.get(1);
-            if (userIdsObject instanceof List) {
-                @SuppressWarnings("unchecked")
-                Set<String> userIds = (Set<String>) userIdsObject;
-                this.userIds = userIds;
-            }
-            if (quantityReicevedObject instanceof Integer) {
-                this.numberMealReceived = (int) quantityReicevedObject;
-            }
+            this.userIds = (Set<String>) userIdsAndQuantity.get(0);
+            this.numberMealReceived = (int) userIdsAndQuantity.get(1);
             userViewModel.getUsersSubscription(cursusId, l, context, activeParam, rangeParam);
         });
 

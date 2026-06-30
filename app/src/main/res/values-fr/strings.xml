@@ -317,6 +317,7 @@
     <string name="second_portion_subscribed">Abonnement effectué</string>
     <string name="second_portion_already_received">Deuxième portion déjà reçue</string>
     <string name="second_portion_unavailable">Deuxième portion indisponible</string>
+    <string name="second_portion_available">Deuxième portion disponible</string>
     <string name="second_portion_finished">Deuxième portion terminée</string>
     <string name="error_subscribing_second_portion">Erreur lors de l\'abonnement à la deuxième portion</string>
     <string name="second_portion_already_subscribed">Déjà abonné à la deuxième portion</string>
