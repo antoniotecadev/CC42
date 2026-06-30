@@ -36,6 +36,7 @@ import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.repository.EventRepository;
+import com.antonioteca.cc42.utility.RateLimiter;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.EventViewModel;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
@@ -65,6 +66,7 @@ public class HomeFragment extends Fragment {
     private SharedViewModel sharedViewModel;
 
     // Constantes para SharedPreferences
+    private RateLimiter refreshRateLimiter;
     private static final String PREFS_NAME = "HomeFragmentPrefs";
     private static final String KEY_LAST_SEEN_MESSAGE_ID = "lastSeenMessageId";
     private static final String KEY_DONT_SHOW_AGAIN_UNTIL_NEW = "dontShowAgainUntilNew";
@@ -79,6 +81,7 @@ public class HomeFragment extends Fragment {
         sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         user = new User(context);
         user.coalition = new Coalition(context);
+        refreshRateLimiter = new RateLimiter(10000);
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -104,9 +107,16 @@ public class HomeFragment extends Fragment {
         binding.recyclerviewEventsList.setLayoutManager(new LinearLayoutManager(context));
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
-            setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
-            binding.buttonLoadEvents.setVisibility(View.GONE);
-            eventViewModel.getEvents(context);
+            boolean executed = refreshRateLimiter.executeWithLimit(() -> {
+                setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
+                binding.buttonLoadEvents.setVisibility(View.GONE);
+                eventViewModel.getEvents(context);
+            }, message -> {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            });
+            if (!executed) {
+                binding.swipeRefreshLayout.setRefreshing(false);
+            }
         });
 
         binding.fabGenerateQrCodeUser.setOnClickListener(v -> {

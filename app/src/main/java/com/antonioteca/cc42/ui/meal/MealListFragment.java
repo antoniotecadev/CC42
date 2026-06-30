@@ -1,8 +1,6 @@
 package com.antonioteca.cc42.ui.meal;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,17 +10,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -31,28 +24,19 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.antonioteca.cc42.R;
-import com.antonioteca.cc42.dao.daofarebase.DaoSusbscriptionFirebase;
 import com.antonioteca.cc42.databinding.FragmentMealBinding;
 import com.antonioteca.cc42.model.Coalition;
 import com.antonioteca.cc42.model.Cursu;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.FirebaseDataBaseInstance;
-import com.antonioteca.cc42.utility.AESUtil;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.MealsUtils;
-import com.antonioteca.cc42.utility.Util;
+import com.antonioteca.cc42.utility.RateLimiter;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.zxing.client.android.BeepManager;
-import com.journeyapps.barcodescanner.BarcodeCallback;
-import com.journeyapps.barcodescanner.BarcodeResult;
-import com.journeyapps.barcodescanner.DecoratedBarcodeView;
-import com.journeyapps.barcodescanner.ScanOptions;
-import com.journeyapps.barcodescanner.camera.CameraSettings;
 
 import java.util.List;
 
@@ -60,10 +44,10 @@ public class MealListFragment extends Fragment {
 
 
     private User user;
-//    private int cursusId;
+    //    private int cursusId;
     private Context context;
     private Loading loading;
-//    private Integer cameraId;
+    //    private Integer cameraId;
 //    private View inflatedViewStub;
 //    private BeepManager beepManager;
 //    private ScanOptions scanOptions;
@@ -99,6 +83,8 @@ public class MealListFragment extends Fragment {
 //        }
     }
 
+    private RateLimiter refreshRateLimiter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +95,7 @@ public class MealListFragment extends Fragment {
 //        scanOptions = new ScanOptions();
         user.coalition = new Coalition(context);
 //        beepManager = new BeepManager(activity);
+        refreshRateLimiter = new RateLimiter(10000);
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
         mealViewModel = new ViewModelProvider(this).get(MealViewModel.class);
         sharedViewModel = new ViewModelProvider(activity).get(SharedViewModel.class);
@@ -211,13 +198,20 @@ public class MealListFragment extends Fragment {
         binding.recyclerViewMeal.setLayoutManager(new LinearLayoutManager(context));
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
-            MealsUtils.setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
-            mealAdapter.idMealQrCode.clear();
-            mealAdapter.listMealQrCode.clear();
-            mealAdapter.mealList.clear();
-            mealViewModel.mealList.clear();
-            mealAdapter.notifyDataSetChanged();
-            mealViewModel.loadMeals(context, binding, mealsRef, null, userId, isStaff);
+            boolean executed = refreshRateLimiter.executeWithLimit(() -> {
+                MealsUtils.setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
+                mealAdapter.idMealQrCode.clear();
+                mealAdapter.listMealQrCode.clear();
+                mealAdapter.mealList.clear();
+                mealViewModel.mealList.clear();
+                mealAdapter.notifyDataSetChanged();
+                mealViewModel.loadMeals(context, binding, mealsRef, null, userId, isStaff);
+            }, message -> {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            });
+            if (!executed) {
+                binding.swipeRefreshLayout.setRefreshing(false);
+            }
         });
 
         String colorCoalition = user.coalition.getColor();

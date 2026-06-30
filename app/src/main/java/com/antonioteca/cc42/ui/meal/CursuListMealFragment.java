@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,6 +29,7 @@ import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.repository.CursuRepository;
+import com.antonioteca.cc42.utility.RateLimiter;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.CursuViewModel;
 
@@ -43,6 +45,7 @@ public class CursuListMealFragment extends Fragment {
     private String cursusIdStudentOrStaff;
     private CursuViewModel cursuViewModel;
     private FragmentCursuListMealBinding binding;
+    private RateLimiter refreshRateLimiter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,7 @@ public class CursuListMealFragment extends Fragment {
         cursusId = user.getCursusId();
         user.coalition = new Coalition(context);
         cursusIdStudentOrStaff = isStaff ? "21, 66, 9, 3" : String.valueOf(cursusId);
+        refreshRateLimiter = new RateLimiter(10000);
     }
 
     @Override
@@ -80,8 +84,15 @@ public class CursuListMealFragment extends Fragment {
         binding.recyclerviewCursuList.setLayoutManager(new LinearLayoutManager(context));
 
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
-            setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
-            cursuViewModel.getCursus(context, cursusIdStudentOrStaff);
+            boolean executed = refreshRateLimiter.executeWithLimit(() -> {
+                setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
+                cursuViewModel.getCursus(context, cursusIdStudentOrStaff);
+            }, message -> {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            });
+            if (!executed) {
+                binding.swipeRefreshLayout.setRefreshing(false);
+            }
         });
 
         final boolean[] isClick = {false};
