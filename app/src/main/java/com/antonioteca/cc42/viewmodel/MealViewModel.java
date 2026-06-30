@@ -157,6 +157,8 @@ public class MealViewModel extends ViewModel {
                             }
                         }
                         meal.setQuantityReceived(quantityReceived);
+                        DataSnapshot secondPortion = dataSnapshot.child("secondPortion");
+                        meal.hasSecondPortion = Boolean.TRUE.equals(secondPortion.child("hasSecondPortion").getValue(Boolean.class));
                         int quantity = meal.getQuantity() - meal.getQuantityReceived();
                         meal.setQuantityNotReceived(Math.max(quantity, 0));
                         mealList.push(meal);

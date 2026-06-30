@@ -1,9 +1,6 @@
 package com.antonioteca.cc42.ui.meal;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -30,21 +27,16 @@ import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.MealViewModel;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.Gson;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterViewHolder> {
     public final List<MealQrCode> listMealQrCode = new ArrayList<>();
@@ -91,7 +83,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
         ItemRecyclerviewMealListBinding binding = ItemRecyclerviewMealListBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new MealAdapterViewHolder(binding);
     }
-//    Gson gson = new Gson();
+
     @Override
     public void onBindViewHolder(@NonNull MealAdapterViewHolder holder, int position) {
         if (!loading.isLoading && (position == getItemCount() - 1) && isStaff) {
@@ -106,13 +98,17 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealAdapterVie
 //            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
         Meal meal = mealList.get(position);
-//        Log.i("Meal", gson.toJson(meal));
-        holder.binding.textViewName.setText(meal.getName());
+        int greenColor = ContextCompat.getColor(context, R.color.green);
+        String mealName = meal.getName();
+        if (meal.hasSecondPortion) {
+            holder.binding.textViewName.setBackgroundColor(greenColor);
+            holder.binding.textViewName.setText(mealName.concat(" (" + context.getString(R.string.second_portion) + ")"));
+        } else
+            holder.binding.textViewName.setText(mealName);
         holder.binding.textViewDescription.setText(meal.getDescription());
         String textType = meal.getType() + " " + meal.getCreatedDate() + " " + meal.getQuantityNotReceived() + "/" + meal.getQuantityReceived();
         holder.binding.textViewType.setText(textType);
         if (meal.isSubscribed()) {
-            int greenColor = ContextCompat.getColor(context, R.color.green);
             holder.binding.txtViewSubscription.setTextColor(greenColor);
             holder.binding.txtViewSubscription.setText(R.string.text_signed);
         } else
