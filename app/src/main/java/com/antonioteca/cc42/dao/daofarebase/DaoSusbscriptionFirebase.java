@@ -25,6 +25,7 @@ public class DaoSusbscriptionFirebase {
     public static void subscription(
             @NonNull FirebaseDatabase firebaseDatabase,
             Integer portionQuantity,
+            boolean checkSubscription,
             String portionSelected,
             String mealId,
             String userStaffId,
@@ -63,7 +64,7 @@ public class DaoSusbscriptionFirebase {
                             runnableResumeCamera.run();
                             Util.showAlertDialogBuild(context.getString(R.string.second_portion), null, context, () -> {
                                 progressBarSubscription.setVisibility(View.VISIBLE);
-                                DaoSusbscriptionFirebase.subscription(firebaseDatabase, portionQuantity, "-", mealId, userStaffId, userId, userLogin, displayName, cursusId, campusId, urlImageUser, context, layoutInflater, progressBarSubscription, sharedViewModel, runnableResumeCamera);
+                                DaoSusbscriptionFirebase.subscription(firebaseDatabase, portionQuantity, checkSubscription, "-", mealId, userStaffId, userId, userLogin, displayName, cursusId, campusId, urlImageUser, context, layoutInflater, progressBarSubscription, sharedViewModel, runnableResumeCamera);
                             });
                         } : runnableResumeCamera);
                     } else
@@ -71,10 +72,11 @@ public class DaoSusbscriptionFirebase {
                 } else {
                     if (firstPortion)
                         registerSubscription();
-                    else {
+                    else if (checkSubscription) {
                         progressBarSubscription.setVisibility(View.GONE);
                         Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.warning), displayName + "\n" + context.getString(R.string.second_portion_not_subscribe), "#E53935", urlImageUser, runnableResumeCamera);
-                    }
+                    } else
+                        registerSubscription();
                 }
             }
 

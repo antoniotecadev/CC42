@@ -442,6 +442,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     DaoSusbscriptionFirebase.subscription(
                             firebaseDatabase,
                             1,
+                            true,
                             null,
                             partsQrCode[0], /* id meal*/
                             partsQrCode[1], /* id user staff */

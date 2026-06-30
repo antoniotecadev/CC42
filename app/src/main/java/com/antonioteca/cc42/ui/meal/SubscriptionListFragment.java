@@ -151,9 +151,11 @@ public class SubscriptionListFragment extends Fragment {
                             Util.showAlertDialogMessage(context, layoutInflater, getString(R.string.blocked), getString(R.string.msg_user_blocked_subscription), "#E53935", partsQrCode[5], () -> decoratedBarcodeView.resume());
                             return;
                         }
+                        boolean checkSubscription = binding.radioGroupPortion.checkBoxSecondPortion.isChecked();
                         DaoSusbscriptionFirebase.subscription(
                                 firebaseDatabase,
                                 Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString()),
+                                checkSubscription,
                                 getPortionSelected(),
                                 String.valueOf(meal.getId()),
                                 null,
@@ -195,9 +197,11 @@ public class SubscriptionListFragment extends Fragment {
                         Util.showAlertDialogMessage(context, layoutInflater, getString(R.string.blocked), getString(R.string.msg_user_blocked_subscription), "#E53935", partsQrCode[5], () -> decoratedBarcodeView.resume());
                         return;
                     }
+                    boolean checkSubscription = binding.radioGroupPortion.checkBoxSecondPortion.isChecked();
                     DaoSusbscriptionFirebase.subscription(
                             firebaseDatabase,
                             Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString()),
+                            checkSubscription,
                             getPortionSelected(),
                             String.valueOf(meal.getId()),
                             null,
@@ -436,6 +440,14 @@ public class SubscriptionListFragment extends Fragment {
             @Override
             public void onTorchOff() {
                 Snackbar.make(requireView(), R.string.off_flashlight, Snackbar.LENGTH_LONG).show();
+            }
+        });
+
+        binding.radioGroupPortion.radioGroupMealPortion.setOnCheckedChangeListener((radioGroup, i) -> {
+            if (i == R.id.radioButtonFirstPortion) {
+                binding.radioGroupPortion.checkBoxSecondPortion.setVisibility(View.GONE);
+            } else {
+                binding.radioGroupPortion.checkBoxSecondPortion.setVisibility(View.VISIBLE);
             }
         });
 
@@ -781,7 +793,9 @@ public class SubscriptionListFragment extends Fragment {
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.VISIBLE);
         binding.layoutQuantity.liniearLayoutQuantity.setVisibility(View.VISIBLE);
         binding.radioGroupPortion.radioGroupMealPortion.setVisibility(View.VISIBLE);
-        binding.radioGroupPortion.checkBoxBlocked.setVisibility(View.VISIBLE);
+//        binding.radioGroupPortion.checkBoxBlocked.setVisibility(View.VISIBLE);
+        if (binding.radioGroupPortion.radioButtonSecondPortion.isChecked())
+            binding.radioGroupPortion.checkBoxSecondPortion.setVisibility(View.VISIBLE);
     }
 
     @NonNull
@@ -807,6 +821,7 @@ public class SubscriptionListFragment extends Fragment {
         binding.layoutQuantity.liniearLayoutQuantity.setVisibility(View.GONE);
         binding.radioGroupPortion.radioGroupMealPortion.setVisibility(View.GONE);
         binding.radioGroupPortion.checkBoxBlocked.setVisibility(View.GONE);
+        binding.radioGroupPortion.checkBoxSecondPortion.setVisibility(View.GONE);
         binding.fabOpenReaderNFC.setVisibility(nfcAdapter != null ? View.VISIBLE : View.GONE);
     }
 
