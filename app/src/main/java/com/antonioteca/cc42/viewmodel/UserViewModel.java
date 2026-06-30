@@ -468,7 +468,7 @@ public class UserViewModel extends ViewModel {
                 .child(mealId)
                 .child("subscriptions"); // Referência para os participantes do evento
 
-        List<String> userIdsSubscription = new ArrayList<>();
+        Set<String> userIdsSubscription = new HashSet<>();
         userIdsSubscription.add("-1");
         final Integer[] quantityReceived = {0};
         subscriptionsRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -483,7 +483,7 @@ public class UserViewModel extends ViewModel {
                         quantityReceived[0] += quantityReceivedUser;
                     }
                 }
-                userIdsAndQuantityListMutableLiveData.postValue(new ArrayList<>(Arrays.asList(userIdsSubscription, quantityReceived[0])));
+                userIdsAndQuantityListMutableLiveData.postValue(Arrays.asList(userIdsSubscription, quantityReceived[0]));
             }
 
             @Override

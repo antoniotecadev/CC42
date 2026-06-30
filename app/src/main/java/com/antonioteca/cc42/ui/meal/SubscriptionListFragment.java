@@ -259,7 +259,7 @@ public class SubscriptionListFragment extends Fragment {
     private final ActivityResultLauncher<String> requestPermissionLauncherSharer = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), this::activityResultContractsSharer);
 
-    private List<String> userIds;
+    private Set<String> userIds;
 
     private Toolbar toolbar;
     private AppCompatActivity activityApp;
@@ -464,7 +464,7 @@ public class SubscriptionListFragment extends Fragment {
             Object quantityReicevedObject = userIdsAndQuantity.get(1);
             if (userIdsObject instanceof List) {
                 @SuppressWarnings("unchecked")
-                List<String> userIds = (List<String>) userIdsObject;
+                Set<String> userIds = (Set<String>) userIdsObject;
                 this.userIds = userIds;
             }
             if (quantityReicevedObject instanceof Integer) {
@@ -478,7 +478,7 @@ public class SubscriptionListFragment extends Fragment {
             if (!users.isEmpty() && users.get(0) != null) {
                 subscriptionListAdapter.updateUserList(users, context);
                 binding.recyclerviewSubscriptionList.setAdapter(subscriptionListAdapter);
-                if (userIds != null && !userIds.isEmpty() && userIds.get(0) != null) {
+                if (userIds != null && !userIds.isEmpty()) {
                     subscriptionListAdapter.updateSubscriptionUser(userIds, allBlockedUsersListId);
                     setNumberUserChip();
                 }
@@ -593,7 +593,7 @@ public class SubscriptionListFragment extends Fragment {
                 else if (itemId == R.id.action_three_list)
                     subscriptionListAdapter.filterListStatus(null);
                 else if (itemId == R.id.action_list_subscripted_second_portion) {
-                    if (userIds != null && !userIds.isEmpty() && userIds.get(0) != null) {
+                    if (userIds != null && !userIds.isEmpty()) {
                         subscriptionListAdapter.filterUsersSubscriptedSecondPortion(userIds);
                     } else
                         Toast.makeText(context, getString(R.string.msg_error_get_ids_user_local), Toast.LENGTH_LONG).show();

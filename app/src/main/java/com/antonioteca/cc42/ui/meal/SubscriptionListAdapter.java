@@ -17,7 +17,6 @@ import com.antonioteca.cc42.utility.Util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -51,16 +50,15 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         diffResult.dispatchUpdatesTo(this);
     }
 
-    public void updateSubscriptionUser(List<String> usersIdsSubscription, Set<Long> allBlockedUsersListId) {
-        Set<String> usersIdsSet = new HashSet<>(usersIdsSubscription);
+    public void updateSubscriptionUser(Set<String> usersIdsSubscription, Set<Long> allBlockedUsersListId) {
         boolean subscribedFirstPortion;
         boolean subscribedSecondPortion;
         int count = getItemCount();
         for (int i = 0; i < count; i++) {
             User currentUser = this.userList.get(i);
             currentUser.isBlocked = allBlockedUsersListId.contains(currentUser.uid);
-            subscribedFirstPortion = usersIdsSet.contains(String.valueOf(currentUser.uid));
-            subscribedSecondPortion = usersIdsSet.contains("-" + currentUser.uid);
+            subscribedFirstPortion = usersIdsSubscription.contains(String.valueOf(currentUser.uid));
+            subscribedSecondPortion = usersIdsSubscription.contains("-" + currentUser.uid);
             if (currentUser.isSubscriptionFirstPortion() == null || currentUser.isSubscriptionFirstPortion() != subscribedFirstPortion) {
                 currentUser.setSubscriptionFirstPortion(subscribedFirstPortion);
                 this.userListFilter.get(i).setSubscriptionFirstPortion(subscribedFirstPortion);
@@ -144,13 +142,12 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         notifyDataSetChanged();
     }
 
-    public void filterUsersSubscriptedSecondPortion(List<String> usersIdsSubscription) {
+    public void filterUsersSubscriptedSecondPortion(Set<String> usersIdsSubscription) {
         List<User> filteredList = new ArrayList<>();
-        Set<String> usersIdsSet = new HashSet<>(usersIdsSubscription); // Converta para HashSet para pesquisa O(1)
         int itemCount = getItemCount();
         for (int i = 0; i < itemCount; i++) {
             User currentUser = this.userListFilter.get(i);
-            if (usersIdsSet.contains("-" + currentUser.uid)) {
+            if (usersIdsSubscription.contains("-" + currentUser.uid)) {
                 filteredList.add(this.userList.get(i)); // this.userList e this.userListFilter sincronizados
             }
         }
@@ -194,7 +191,7 @@ public class SubscriptionListAdapter extends RecyclerView.Adapter<SubscriptionLi
         imageUrl = user.getUrlImageUser();
         if (user.isBlocked) {
             holder.binding.textViewLogin.setTextColor(redColor);
-            holder.binding.textViewLogin.setText(user.login + " (" + context.getString(R.string.blocked) + ")");
+            holder.binding.textViewLogin.setText(user.login.concat(" (" + context.getString(R.string.blocked) + ")"));
         } else
             holder.binding.textViewLogin.setText(user.login);
         holder.binding.textViewName.setText(user.displayName);
