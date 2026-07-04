@@ -9,11 +9,13 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,16 +24,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.camera.core.Camera;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ExperimentalGetImage;
+import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageProxy;
+import androidx.camera.core.Preview;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.camera.core.resolutionselector.ResolutionStrategy;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -64,18 +78,18 @@ import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.antonioteca.cc42.viewmodel.UserViewModel;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.zxing.client.android.BeepManager;
-import com.journeyapps.barcodescanner.BarcodeCallback;
-import com.journeyapps.barcodescanner.BarcodeResult;
-import com.journeyapps.barcodescanner.DecoratedBarcodeView;
-import com.journeyapps.barcodescanner.ScanOptions;
-import com.journeyapps.barcodescanner.camera.CameraSettings;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.barcode.common.Barcode;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -93,12 +107,10 @@ public class AttendanceListFragment extends Fragment {
     private String eventKind;
     private String eventName;
     private String eventDate;
-    private Integer cameraId;
+    private Integer cameraId = 0; // 0 = Traseira, 1 = Frontal
     private Activity activity;
     private String colorCoalition;
     private View inflatedViewStub;
-    private BeepManager beepManager;
-    private ScanOptions scanOptions;
     private MenuProvider menuProvider;
     private UserViewModel userViewModel;
     private Map<String, Boolean> userIds;
@@ -106,15 +118,20 @@ public class AttendanceListFragment extends Fragment {
     private SharedViewModel sharedViewModel;
     private FirebaseDatabase firebaseDatabase;
     private FragmentAttendanceListBinding binding;
-    private DecoratedBarcodeView decoratedBarcodeView;
     private AttendanceListAdapter attendanceListAdapter;
+
+    // Componentes do CameraX e ML Kit
+    private PreviewView previewView;
+    private ProcessCameraProvider cameraProvider;
+    private Camera camera;
+    private BarcodeScanner barcodeScanner;
+    private ExecutorService cameraExecutor;
+    private boolean isProcessingBarcode = false;
 
     private int numberUserAbsent = 0;
     private int numberUserPresent = 0;
     private int numberUserPresentCheckOut = 0;
     private int numberUserAbsentCheckOut = 0;
-    final long DOUBLE_CLICK_TIME_DELTA = 300; // Tempo máximo entre cliques (em milisegundos)
-    final long[] lastClickTime = {0};
     final boolean[] isFlashLightOn = {false};
 
     private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(
@@ -126,74 +143,16 @@ public class AttendanceListFragment extends Fragment {
                     Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_camera_denied), context, null);
             });
 
-    private final BarcodeCallback callback = new BarcodeCallback() {
-        @Override
-        public void barcodeResult(@NonNull BarcodeResult barcodeResult) {
-            decoratedBarcodeView.pause();
-            beepManager.playBeepSoundAndVibrate();
-            if (barcodeResult.getText().isEmpty()) {
-                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
-            } else {
-                String result = AESUtil.decrypt(barcodeResult.getText());
-                if (result != null && result.startsWith("cc42user")) {
-                    String resultQrCode = result.replace("cc42user", "");
-                    String[] partsQrCode = resultQrCode.split("#", 6);
-                    if (partsQrCode.length == 6) {
-                        // String urlImageUser = attendanceListAdapter.containsUser(Long.parseLong(partsQrCode[0]));
-                        // if (urlImageUser != null) {
-                            /*if (true) {
-                                LocalAttendanceList user = new LocalAttendanceList();
-                                user.userId = Long.parseLong(partsQrCode[0]);
-                                user.displayName = partsQrCode[2];
-                                user.cursusId = Integer.parseInt(partsQrCode[3]);
-                                user.campusId = Integer.parseInt(partsQrCode[4]);
-                                user.eventId = eventId;
-                                userViewModel.addUserLocalAttendanceList(
-                                        user,
-                                        context,
-                                        layoutInflater,
-                                        sharedViewModel,
-                                        () -> decoratedBarcodeView.resume()
-                                );
-                            } else {*/
-                        // Armazenamento directo para nuvem
-                        binding.progressBarMarkAttendance.setVisibility(View.VISIBLE);
-                        DaoEventFirebase.markAttendance(
-                                firebaseDatabase,
-                                String.valueOf(eventId),
-                                null,
-                                user.getUid(),
-                                partsQrCode[0], /* userId */
-                                partsQrCode[2], /* displayName */
-                                partsQrCode[3], /* cursusId */
-                                partsQrCode[4], /* campusId */
-                                partsQrCode[5], /* urlImageUser */
-                                getCheckSelected(), /* checkin or checkout */
-                                context,
-                                layoutInflater,
-                                binding.progressBarMarkAttendance,
-                                sharedViewModel,
-                                () -> decoratedBarcodeView.resume()
-                        );
-                    } else
-                        Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
-                } else
-                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
-            }
-        }
-    };
-
     public void nfcResult(@NonNull String QRCode) {
-        beepManager.playBeepSoundAndVibrate();
+        playBeep();
         if (QRCode.isEmpty()) {
-            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null, () -> decoratedBarcodeView.resume());
+            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null, () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray));
         } else {
             String result = AESUtil.decrypt(QRCode);
             if (result != null && result.startsWith("cc42user")) {
                 String resultQrCode = result.replace("cc42user", "");
                 String[] partsQrCode = resultQrCode.split("#", 6);
                 if (partsQrCode.length == 6) {
-                    // Armazenamento directo para nuvem
                     binding.progressBarMarkAttendance.setVisibility(View.VISIBLE);
                     DaoEventFirebase.markAttendance(
                             firebaseDatabase,
@@ -283,9 +242,7 @@ public class AttendanceListFragment extends Fragment {
         context = requireContext();
         user = new User(context);
         activity = requireActivity();
-        scanOptions = new ScanOptions();
         layoutInflater = getLayoutInflater();
-        beepManager = new BeepManager(activity);
         colorCoalition = new Coalition(context).getColor();
         attendanceListAdapter = new AttendanceListAdapter();
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
@@ -294,11 +251,20 @@ public class AttendanceListFragment extends Fragment {
         UserViewModelFactory userViewModelFactory = new UserViewModelFactory(userRepository);
         userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
         nfcAdapter = NfcAdapter.getDefaultAdapter(context); // Obter o adaptador NFC padrão
+
+        cameraExecutor = Executors.newSingleThreadExecutor();
+
+        // Configura o scanner do ML Kit estritamente para QR Codes
+        BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+                .build();
+        barcodeScanner = BarcodeScanning.getClient(options);
+
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* habilitado por padrão */) {
             @Override
             public void handleOnBackPressed() {
 
-                if (inflatedViewStub != null && inflatedViewStub.getVisibility() == View.VISIBLE) {
+                if (previewView.isShown()) {
                     closeCamera();
                     return;
                 }
@@ -373,20 +339,10 @@ public class AttendanceListFragment extends Fragment {
             binding.swipeRefreshLayout.setRefreshing(false);
         });
 
-        scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
-        scanOptions.setPrompt(getString(R.string.align_camera_qr_code));
-        scanOptions.setOrientationLocked(false);
-        scanOptions.setCameraId(0);
-        scanOptions.setBeepEnabled(true);
-        scanOptions.setBarcodeImageEnabled(false); // Não capturar e retornar a imagem do código scaneado
-
+        // Infla e mapeia o PreviewView do CameraX vindo do ViewStub alterado
         inflatedViewStub = binding.viewStub.inflate();
         inflatedViewStub.setVisibility(View.GONE);
-
-        decoratedBarcodeView = inflatedViewStub.findViewById(R.id.decoratedBarcodeView);
-
-        decoratedBarcodeView.initializeFromIntent(scanOptions.createScanIntent(context));
-        decoratedBarcodeView.decodeContinuous(callback);
+        previewView = inflatedViewStub.findViewById(R.id.previewView);
 
         ProgressBar progressBarMarkAttendance = binding.progressBarMarkAttendance;
         if (colorCoalition != null) {
@@ -414,35 +370,14 @@ public class AttendanceListFragment extends Fragment {
         binding.fabOpenCameraScannerQrCodeFront.setOnClickListener(v -> openCameraScannerQrCodeEvent(1));
         binding.fabOpenCameraScannerQrCodeClose.setOnClickListener(v -> closeCamera());
 
+        // Lógica de activação dinâmica da Lanterna (Torch)
         inflatedViewStub.setOnLongClickListener(v -> {
-            if (isFlashLightOn[0]) {
-                isFlashLightOn[0] = false;
-                decoratedBarcodeView.setTorchOff();
-            } else {
-                isFlashLightOn[0] = true;
-                decoratedBarcodeView.setTorchOn();
+            if (camera != null && camera.getCameraInfo().hasFlashUnit()) {
+                isFlashLightOn[0] = !isFlashLightOn[0];
+                camera.getCameraControl().enableTorch(isFlashLightOn[0]);
+                Snackbar.make(requireView(), isFlashLightOn[0] ? R.string.on_flashlight : R.string.off_flashlight, Snackbar.LENGTH_SHORT).show();
             }
             return true;
-        });
-
-        inflatedViewStub.setOnClickListener(v -> {
-            long clickTime = System.currentTimeMillis();
-            if (clickTime - lastClickTime[0] < DOUBLE_CLICK_TIME_DELTA) {
-                closeCamera();
-            }
-            lastClickTime[0] = clickTime;
-        });
-
-        decoratedBarcodeView.setTorchListener(new DecoratedBarcodeView.TorchListener() {
-            @Override
-            public void onTorchOn() {
-                Snackbar.make(requireView(), R.string.on_flashlight, Snackbar.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onTorchOff() {
-                Snackbar.make(requireView(), R.string.off_flashlight, Snackbar.LENGTH_LONG).show();
-            }
         });
 
         progressBarMarkAttendance.setVisibility(View.VISIBLE);
@@ -746,7 +681,7 @@ public class AttendanceListFragment extends Fragment {
             this.cameraId = cameraId;
             activityResultLauncher.launch(Manifest.permission.CAMERA);
         } else {
-            if (decoratedBarcodeView.isShown())
+            if (previewView.isShown())
                 closeCamera();
             else
                 openCamera(cameraId);
@@ -754,34 +689,157 @@ public class AttendanceListFragment extends Fragment {
     }
 
     private void openCamera(int cameraId) {
+        this.cameraId = cameraId;
         toggleToolbarVisibity();
-        decoratedBarcodeView.pause();
-        decoratedBarcodeView.getBarcodeView().setCameraSettings(createCameraSettings(cameraId));
-        decoratedBarcodeView.resume();
+
         inflatedViewStub.setVisibility(View.VISIBLE);
         binding.fabOpenReaderNFC.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.VISIBLE);
         binding.radioGroupCheck.radioGroupEventCheck.setVisibility(View.VISIBLE);
+
+        isProcessingBarcode = false;
+        startCameraX(cameraId);
     }
 
-    @NonNull
-    private CameraSettings createCameraSettings(int cameraId) {
-        CameraSettings cameraSettings = new CameraSettings();
-        cameraSettings.setRequestedCameraId(cameraId);
-        return cameraSettings;
+    @OptIn(markerClass = ExperimentalGetImage.class)
+    private void startCameraX(int targetCameraId) {
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(context);
+        cameraProviderFuture.addListener(() -> {
+            try {
+                cameraProvider = cameraProviderFuture.get();
+                cameraProvider.unbindAll();
+
+                // Define preview de imagem na tela
+                Preview preview = new Preview.Builder().build();
+                preview.setSurfaceProvider(previewView.getSurfaceProvider());
+
+                // Configurações de resolução (se não houver 1280x720 ele escolhe a maos próxima)
+                ResolutionStrategy resolutionStrategy = new ResolutionStrategy(new Size(1280, 720),
+                        ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER
+                );
+
+                // Configura o seletor de resolução
+                ResolutionSelector resolutionSelector = new ResolutionSelector.Builder()
+                        .setResolutionStrategy(resolutionStrategy)
+                        .build();
+
+                // Configura o fluxo contínuo para análise de frames em tempo real
+                ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
+                        .setResolutionSelector(resolutionSelector)
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build();
+
+                // Instancia o analisador de código de barras
+                imageAnalysis.setAnalyzer(cameraExecutor, this::analyzeImageFrame);
+
+                CameraSelector cameraSelector = targetCameraId == 1 ?
+                        CameraSelector.DEFAULT_FRONT_CAMERA : CameraSelector.DEFAULT_BACK_CAMERA;
+
+                camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis);
+
+            } catch (ExecutionException | InterruptedException e) {
+                Toast.makeText(context, "Erro ao iniciar a câmera.", Toast.LENGTH_SHORT).show();
+            }
+        }, ContextCompat.getMainExecutor(context));
+    }
+
+    // Método que intercepta cada frame e processa via Google ML Kit
+    @androidx.camera.core.ExperimentalGetImage
+    private void analyzeImageFrame(@NonNull ImageProxy imageProxy) {
+        if (imageProxy.getImage() == null || isProcessingBarcode) {
+            imageProxy.close();
+            return;
+        }
+
+        com.google.mlkit.vision.common.InputImage inputImage =
+                com.google.mlkit.vision.common.InputImage.fromMediaImage(
+                        imageProxy.getImage(),
+                        imageProxy.getImageInfo().getRotationDegrees()
+                );
+
+        barcodeScanner.process(inputImage)
+                .addOnSuccessListener(barcodes -> {
+                    if (!barcodes.isEmpty() && !isProcessingBarcode) {
+                        Barcode barcode = barcodes.get(0);
+                        String rawValue = barcode.getRawValue();
+                        if (rawValue != null) {
+                            isProcessingBarcode = true; // Trava para evitar leituras duplicadas simultâneas
+                            activity.runOnUiThread(() -> processQrCodeResult(rawValue));
+                        }
+                    }
+                })
+                .addOnCompleteListener(task -> imageProxy.close());
+    }
+
+    private void processQrCodeResult(String qrCodeText) {
+        playBeep();
+        if (qrCodeText.isEmpty()) {
+            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> isProcessingBarcode = false);
+        } else {
+            String result = AESUtil.decrypt(qrCodeText);
+            if (result != null && result.startsWith("cc42user")) {
+                String resultQrCode = result.replace("cc42user", "");
+                String[] partsQrCode = resultQrCode.split("#", 6);
+                if (partsQrCode.length == 6) {
+                    binding.progressBarMarkAttendance.setVisibility(View.VISIBLE);
+                    DaoEventFirebase.markAttendance(
+                            firebaseDatabase,
+                            String.valueOf(eventId),
+                            null,
+                            user.getUid(),
+                            partsQrCode[0], /* userId */
+                            partsQrCode[2], /* displayName */
+                            partsQrCode[3], /* cursusId */
+                            partsQrCode[4], /* campusId */
+                            partsQrCode[5], /* urlImageUser */
+                            getCheckSelected(), /* checkin or checkout */
+                            context,
+                            layoutInflater,
+                            binding.progressBarMarkAttendance,
+                            sharedViewModel,
+                            () -> isProcessingBarcode = false
+                    );
+                } else
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> isProcessingBarcode = false);
+            } else
+                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> isProcessingBarcode = false);
+        }
+    }
+
+    private static MediaPlayer mediaPlayer;
+
+    private void playBeep() {
+        stopMedia();
+        mediaPlayer = MediaPlayer.create(context, R.raw.beep);
+        if (mediaPlayer != null) {
+            Util.startVibration(context);
+            mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(mp -> stopMedia());
+        }
+    }
+
+    private void stopMedia() {
+        if (mediaPlayer != null) {
+            try {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                }
+            } catch (IllegalStateException ignored) {
+            }
+            mediaPlayer.release(); // libera os recursos
+            mediaPlayer = null;
+        }
     }
 
     private void closeCamera() {
-        if (decoratedBarcodeView.isShown()) {
-            if (isFlashLightOn[0]) {
-                isFlashLightOn[0] = false;
-                decoratedBarcodeView.setTorchOff();
-            }
-            decoratedBarcodeView.pause();
-            toggleToolbarVisibity();
+        if (cameraProvider != null) {
+            cameraProvider.unbindAll();
         }
+        isFlashLightOn[0] = false;
+        toggleToolbarVisibity();
+
         inflatedViewStub.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.GONE);
         binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.VISIBLE);
@@ -859,20 +917,24 @@ public class AttendanceListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (decoratedBarcodeView.isShown())
-            decoratedBarcodeView.resume();
+        if (previewView.isShown()) {
+            startCameraX(this.cameraId);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        decoratedBarcodeView.pause();
+        if (cameraProvider != null) {
+            cameraProvider.unbindAll();
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        closeCamera();
+        stopMedia();
+        cameraExecutor.shutdown();
         binding = null;
         requireActivity().removeMenuProvider(menuProvider);
     }

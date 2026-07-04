@@ -9,11 +9,13 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,10 +31,21 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.camera.core.Camera;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ExperimentalGetImage;
+import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageProxy;
+import androidx.camera.core.Preview;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.camera.core.resolutionselector.ResolutionStrategy;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -66,13 +79,12 @@ import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.antonioteca.cc42.viewmodel.UserViewModel;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.zxing.client.android.BeepManager;
-import com.journeyapps.barcodescanner.BarcodeCallback;
-import com.journeyapps.barcodescanner.BarcodeResult;
-import com.journeyapps.barcodescanner.DecoratedBarcodeView;
-import com.journeyapps.barcodescanner.ScanOptions;
-import com.journeyapps.barcodescanner.camera.CameraSettings;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.barcode.common.Barcode;
 
 import java.io.File;
 import java.time.Instant;
@@ -81,6 +93,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -96,12 +109,10 @@ public class SubscriptionListFragment extends Fragment {
     private Context context;
     private Integer campusId;
     private Integer cursusId;
-    private Integer cameraId;
+    private Integer cameraId = 0; // 0 = Traseira, 1 = Frontal
     private Activity activity;
     private String colorCoalition;
     private View inflatedViewStub;
-    private BeepManager beepManager;
-    private ScanOptions scanOptions;
     private MenuProvider menuProvider;
     private UserViewModel userViewModel;
     private LayoutInflater layoutInflater;
@@ -110,8 +121,15 @@ public class SubscriptionListFragment extends Fragment {
     private Set<Long> allBlockedUsersListId;
     private ProgressBar progressBarSubscription;
     private FragmentSubscriptionListBinding binding;
-    private DecoratedBarcodeView decoratedBarcodeView;
     private SubscriptionListAdapter subscriptionListAdapter;
+
+    // Componentes do CameraX e ML Kit
+    private PreviewView previewView;
+    private ProcessCameraProvider cameraProvider;
+    private Camera camera;
+    private BarcodeScanner barcodeScanner;
+    private ExecutorService cameraExecutor;
+    private boolean isProcessingBarcode = false;
 
     private String rangeParam = null;
     private Boolean activeParam = true;
@@ -132,158 +150,6 @@ public class SubscriptionListFragment extends Fragment {
                     Util.showAlertDialogBuild(getString(R.string.err), getString(R.string.msg_permis_camera_denied), context, null);
             });
 
-    private final BarcodeCallback callback = new BarcodeCallback() {
-        @Override
-        public void barcodeResult(@NonNull BarcodeResult barcodeResult) {
-            decoratedBarcodeView.pause();
-            beepManager.playBeepSoundAndVibrate();
-            if (barcodeResult.getText().isEmpty()) {
-                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
-            } else {
-                String result = AESUtil.decrypt(barcodeResult.getText());
-                if (result != null && result.startsWith("cc42user")) {
-                    String resultQrCode = result.replace("cc42user", "");
-                    String[] partsQrCode = resultQrCode.split("#", 6);
-                    if (partsQrCode.length == 6) {
-                        progressBarSubscription.setVisibility(View.VISIBLE);
-                        if (binding.radioGroupPortion.checkBoxBlocked.isChecked() && allBlockedUsersListId.contains(Long.valueOf(partsQrCode[0]))) {
-                            progressBarSubscription.setVisibility(View.INVISIBLE);
-                            Util.showAlertDialogMessage(context, layoutInflater, getString(R.string.blocked), getString(R.string.msg_user_blocked_subscription), "#E53935", partsQrCode[5], () -> decoratedBarcodeView.resume());
-                            return;
-                        }
-                        boolean checkSubscription = binding.radioGroupPortion.checkBoxSecondPortion.isChecked();
-                        DaoSusbscriptionFirebase.subscription(
-                                firebaseDatabase,
-                                Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString()),
-                                checkSubscription,
-                                getPortionSelected(),
-                                String.valueOf(meal.getId()),
-                                null,
-                                partsQrCode[0], /* id */
-                                partsQrCode[1], /* login */
-                                partsQrCode[2], /* displayName */
-                                String.valueOf(cursusId),
-                                partsQrCode[4], /* campusId */
-                                partsQrCode[5], /* urlImageUser */
-                                context,
-                                layoutInflater,
-                                progressBarSubscription,
-                                sharedViewModel,
-                                () -> decoratedBarcodeView.resume()
-                        );
-                    } else
-                        Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
-                } else
-                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> decoratedBarcodeView.resume());
-            }
-        }
-    };
-
-    public void nfcResult(@NonNull String QRCode) {
-        beepManager.playBeepSoundAndVibrate();
-        if (QRCode.isEmpty()) {
-            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null,
-                    () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
-            );
-        } else {
-            String result = AESUtil.decrypt(QRCode);
-            if (result != null && result.startsWith("cc42user")) {
-                String resultQrCode = result.replace("cc42user", "");
-                String[] partsQrCode = resultQrCode.split("#", 6);
-                if (partsQrCode.length == 6) {
-                    progressBarSubscription.setVisibility(View.VISIBLE);
-                    if (binding.radioGroupPortion.checkBoxBlocked.isChecked() && allBlockedUsersListId.contains(Long.valueOf(partsQrCode[0]))) {
-                        progressBarSubscription.setVisibility(View.INVISIBLE);
-                        Util.showAlertDialogMessage(context, layoutInflater, getString(R.string.blocked), getString(R.string.msg_user_blocked_subscription), "#E53935", partsQrCode[5], () -> decoratedBarcodeView.resume());
-                        return;
-                    }
-                    boolean checkSubscription = binding.radioGroupPortion.checkBoxSecondPortion.isChecked();
-                    DaoSusbscriptionFirebase.subscription(
-                            firebaseDatabase,
-                            Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString()),
-                            checkSubscription,
-                            getPortionSelected(),
-                            String.valueOf(meal.getId()),
-                            null,
-                            partsQrCode[0], /* id */
-                            partsQrCode[1], /* login */
-                            partsQrCode[2], /* displayName */
-                            String.valueOf(cursusId),
-                            partsQrCode[4], /* campusId */
-                            partsQrCode[5], /* urlImageUser */
-                            context,
-                            layoutInflater,
-                            progressBarSubscription,
-                            sharedViewModel,
-                            () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
-
-                    );
-                } else
-                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null,
-                            () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
-                    );
-            } else
-                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null,
-                        () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
-                );
-        }
-    }
-
-    private void activityResultContractsViewer(@NonNull Boolean result) {
-        if (result) {
-            List<User> userList = subscriptionListAdapter.getUserList();
-            if (userList.isEmpty())
-                Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
-            else
-                printAndShareSubscriptionsList(userList, true, R.string.list_print);
-        } else
-            Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_print), context, null);
-    }
-
-    private void activityResultContractsSharer(@NonNull Boolean result) {
-        if (result) {
-            List<User> userList = subscriptionListAdapter.getUserList();
-            if (userList.isEmpty())
-                Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
-            else
-                printAndShareSubscriptionsList(userList, false, R.string.list_share);
-        } else
-            Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_share), context, null);
-    }
-
-    private final ActivityResultLauncher<Intent> requestIntentPermissionLauncherViewer = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(), result -> activityResultContractsViewer(result.getResultCode() == Activity.RESULT_OK));
-
-    private final ActivityResultLauncher<String> requestPermissionLauncherViewer = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(), this::activityResultContractsViewer);
-
-    private final ActivityResultLauncher<Intent> requestIntentPermissionLauncherSharer = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(), result -> activityResultContractsSharer(result.getResultCode() == Activity.RESULT_OK));
-
-    private final ActivityResultLauncher<String> requestPermissionLauncherSharer = registerForActivityResult(
-            new ActivityResultContracts.RequestPermission(), this::activityResultContractsSharer);
-
-    private Set<String> userIds;
-
-    private Toolbar toolbar;
-    private AppCompatActivity activityApp;
-
-    private void toggleToolbarVisibity() {
-        if (toolbar.getVisibility() == View.VISIBLE) {
-            Util.hideToolbar(toolbar);
-        } else {
-            Util.showToolbar(toolbar);
-        }
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (getActivity() != null) {
-            activityApp = (AppCompatActivity) getActivity();
-        }
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -291,10 +157,8 @@ public class SubscriptionListFragment extends Fragment {
         context = requireContext();
         user = new User(context);
         activity = requireActivity();
-        scanOptions = new ScanOptions();
         layoutInflater = getLayoutInflater();
         allBlockedUsersListId = new HashSet<>();
-        beepManager = new BeepManager(activity);
         colorCoalition = new Coalition(context).getColor();
         subscriptionListAdapter = new SubscriptionListAdapter();
         firebaseDatabase = FirebaseDataBaseInstance.getInstance().database;
@@ -302,19 +166,26 @@ public class SubscriptionListFragment extends Fragment {
         UserRepository userRepository = new UserRepository(context);
         UserViewModelFactory userViewModelFactory = new UserViewModelFactory(userRepository);
         userViewModel = new ViewModelProvider(this, userViewModelFactory).get(UserViewModel.class);
-        nfcAdapter = NfcAdapter.getDefaultAdapter(context); // Obter o adaptador NFC padrão
-        OnBackPressedCallback callback = new OnBackPressedCallback(true /* habilitado por padrão */) {
+        nfcAdapter = NfcAdapter.getDefaultAdapter(context);
+
+        cameraExecutor = Executors.newSingleThreadExecutor();
+
+        // Configura o scanner do ML Kit estritamente para QR Codes
+        BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+                .build();
+        barcodeScanner = BarcodeScanning.getClient(options);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-
-                if (inflatedViewStub != null && inflatedViewStub.getVisibility() == View.VISIBLE) {
+                if (previewView.isShown()) {
                     closeCamera();
                     return;
                 }
-
-                if (isEnabled()) { // Verifica se ainda está habilitado
-                    setEnabled(false); // Desabilita este callback para evitar um loop se chamado recursivamente
-                    requireActivity().getOnBackPressedDispatcher().onBackPressed(); // Propaga o evento
+                if (isEnabled()) {
+                    setEnabled(false);
+                    requireActivity().getOnBackPressedDispatcher().onBackPressed();
                 }
             }
         };
@@ -322,8 +193,7 @@ public class SubscriptionListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentSubscriptionListBinding.inflate(inflater, container, false);
         if (!user.isStaff()) {
             binding.fabOpenReaderNFC.setVisibility(View.GONE);
@@ -334,10 +204,7 @@ public class SubscriptionListFragment extends Fragment {
             if (!nfcAdapter.isEnabled())
                 Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.msg_nfc_not_enabled), context, null);
             else {
-                Object[] objects = NFCUtils.startNFC(
-                        nfcAdapter,
-                        activity
-                );
+                Object[] objects = NFCUtils.startNFC(nfcAdapter, activity);
                 nfcAdapter = (NfcAdapter) objects[0];
                 pendingIntent = (PendingIntent) objects[1];
                 intentFiltersArray = (IntentFilter[]) objects[2];
@@ -356,6 +223,7 @@ public class SubscriptionListFragment extends Fragment {
         meal = args.getMeal();
         campusId = user.getCampusId();
         cursusId = args.getCursusId();
+
         if (getActivity() != null) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             if (actionBar != null)
@@ -377,20 +245,10 @@ public class SubscriptionListFragment extends Fragment {
             binding.swipeRefreshLayout.setRefreshing(false);
         });
 
-        scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
-        scanOptions.setPrompt(getString(R.string.align_camera_qr_code));
-        scanOptions.setOrientationLocked(false);
-        scanOptions.setCameraId(0);
-        scanOptions.setBeepEnabled(true);
-        scanOptions.setBarcodeImageEnabled(false); // Não capturar e retornar a imagem do código scaneado
-
+        // Infla e mapeia o PreviewView do CameraX vindo do ViewStub alterado
         inflatedViewStub = binding.viewStub.inflate();
         inflatedViewStub.setVisibility(View.GONE);
-
-        decoratedBarcodeView = inflatedViewStub.findViewById(R.id.decoratedBarcodeView);
-
-        decoratedBarcodeView.initializeFromIntent(scanOptions.createScanIntent(context));
-        decoratedBarcodeView.decodeContinuous(callback);
+        previewView = inflatedViewStub.findViewById(R.id.previewView);
 
         progressBarSubscription = binding.progressBarSubscription;
         if (colorCoalition != null) {
@@ -405,42 +263,22 @@ public class SubscriptionListFragment extends Fragment {
         }
 
         binding.fabOpenReaderNFC.setOnClickListener(v -> NFCUtils.startReaderNFC(
-                nfcAdapter,
-                activity,
-                context,
-                pendingIntent,
-                intentFiltersArray,
-                techListsArray,
-                null,
-                binding.radioGroupPortion,
-                binding.layoutQuantity
+                nfcAdapter, activity, context, pendingIntent, intentFiltersArray, techListsArray,
+                null, binding.radioGroupPortion, binding.layoutQuantity
         ));
 
         binding.fabOpenCameraScannerQrCodeBack.setOnClickListener(v -> openCameraScannerQrCodeSubscriptio(0));
         binding.fabOpenCameraScannerQrCodeFront.setOnClickListener(v -> openCameraScannerQrCodeSubscriptio(1));
         binding.fabOpenCameraScannerQrCodeClose.setOnClickListener(v -> closeCamera());
 
+        // Lógica de activação dinâmica da Lanterna (Torch)
         inflatedViewStub.setOnLongClickListener(v -> {
-            if (isFlashLightOn[0]) {
-                isFlashLightOn[0] = false;
-                decoratedBarcodeView.setTorchOff();
-            } else {
-                isFlashLightOn[0] = true;
-                decoratedBarcodeView.setTorchOn();
+            if (camera != null && camera.getCameraInfo().hasFlashUnit()) {
+                isFlashLightOn[0] = !isFlashLightOn[0];
+                camera.getCameraControl().enableTorch(isFlashLightOn[0]);
+                Snackbar.make(requireView(), isFlashLightOn[0] ? R.string.on_flashlight : R.string.off_flashlight, Snackbar.LENGTH_SHORT).show();
             }
             return true;
-        });
-
-        decoratedBarcodeView.setTorchListener(new DecoratedBarcodeView.TorchListener() {
-            @Override
-            public void onTorchOn() {
-                Snackbar.make(requireView(), R.string.on_flashlight, Snackbar.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onTorchOff() {
-                Snackbar.make(requireView(), R.string.off_flashlight, Snackbar.LENGTH_LONG).show();
-            }
         });
 
         binding.radioGroupPortion.radioGroupMealPortion.setOnCheckedChangeListener((radioGroup, i) -> {
@@ -460,13 +298,11 @@ public class SubscriptionListFragment extends Fragment {
 
         binding.layoutQuantity.buttonIncrement.setOnClickListener(v -> {
             int currentQuantity = Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString());
-            // You might want to add a maximum limit here if needed
             if (currentQuantity < 9)
                 binding.layoutQuantity.textViewQuantityValue.setText(String.valueOf(currentQuantity + 1));
         });
 
         userViewModel.fetchAllBlockedUsers(firebaseDatabase, String.valueOf(campusId), String.valueOf(cursusId), allBlockedUsersListId, null, () -> {
-            // Este bloco só será executado quando TODOS os blocos de 20 forem baixado
         });
 
         binding.progressBarSubscription.setVisibility(View.VISIBLE);
@@ -514,6 +350,212 @@ public class SubscriptionListFragment extends Fragment {
             }
         });
 
+        // Os demais observers de erros e menus permanecem inalterados
+        setupMenuAndErrorObservers();
+    }
+
+    private void openCameraScannerQrCodeSubscriptio(int cameraId) {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+            this.cameraId = cameraId;
+            activityResultLauncher.launch(Manifest.permission.CAMERA);
+        } else {
+            if (previewView.isShown())
+                closeCamera();
+            else
+                openCamera(cameraId);
+        }
+    }
+
+    private void openCamera(int cameraId) {
+        this.cameraId = cameraId;
+        toggleToolbarVisibity();
+
+        inflatedViewStub.setVisibility(View.VISIBLE);
+        binding.fabOpenReaderNFC.setVisibility(View.GONE);
+        binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.GONE);
+        binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.GONE);
+        binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.VISIBLE);
+        binding.layoutQuantity.liniearLayoutQuantity.setVisibility(View.VISIBLE);
+        binding.radioGroupPortion.radioGroupMealPortion.setVisibility(View.VISIBLE);
+
+        if (binding.radioGroupPortion.radioButtonSecondPortion.isChecked())
+            binding.radioGroupPortion.checkBoxSecondPortion.setVisibility(View.VISIBLE);
+
+        isProcessingBarcode = false;
+        startCameraX(cameraId);
+    }
+
+    @OptIn(markerClass = ExperimentalGetImage.class)
+    private void startCameraX(int targetCameraId) {
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(context);
+        cameraProviderFuture.addListener(() -> {
+            try {
+                cameraProvider = cameraProviderFuture.get();
+                cameraProvider.unbindAll();
+
+                // Define preview de imagem na tela
+                Preview preview = new Preview.Builder().build();
+                preview.setSurfaceProvider(previewView.getSurfaceProvider());
+
+                // Configurações de resolução (se não houver 1280x720 ele escolhe a maos próxima)
+                ResolutionStrategy resolutionStrategy = new ResolutionStrategy(new Size(1280, 720),
+                        ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER
+                );
+
+                // Configura o seletor de resolução
+                ResolutionSelector resolutionSelector = new ResolutionSelector.Builder()
+                        .setResolutionStrategy(resolutionStrategy)
+                        .build();
+
+                // Configura o fluxo contínuo para análise de frames em tempo real
+                ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
+                        .setResolutionSelector(resolutionSelector)
+                        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                        .build();
+
+                // Instancia o analisador de código de barras
+                imageAnalysis.setAnalyzer(cameraExecutor, this::analyzeImageFrame);
+
+                CameraSelector cameraSelector = targetCameraId == 1 ?
+                        CameraSelector.DEFAULT_FRONT_CAMERA : CameraSelector.DEFAULT_BACK_CAMERA;
+
+                camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis);
+
+            } catch (ExecutionException | InterruptedException e) {
+                Toast.makeText(context, "Erro ao iniciar a câmera.", Toast.LENGTH_SHORT).show();
+            }
+        }, ContextCompat.getMainExecutor(context));
+    }
+
+    // Método que intercepta cada frame e processa via Google ML Kit
+    @androidx.camera.core.ExperimentalGetImage
+    private void analyzeImageFrame(@NonNull ImageProxy imageProxy) {
+        if (imageProxy.getImage() == null || isProcessingBarcode) {
+            imageProxy.close();
+            return;
+        }
+
+        com.google.mlkit.vision.common.InputImage inputImage =
+                com.google.mlkit.vision.common.InputImage.fromMediaImage(
+                        imageProxy.getImage(),
+                        imageProxy.getImageInfo().getRotationDegrees()
+                );
+
+        barcodeScanner.process(inputImage)
+                .addOnSuccessListener(barcodes -> {
+                    if (!barcodes.isEmpty() && !isProcessingBarcode) {
+                        Barcode barcode = barcodes.get(0);
+                        String rawValue = barcode.getRawValue();
+                        if (rawValue != null) {
+                            isProcessingBarcode = true; // Trava para evitar leituras duplicadas simultâneas
+                            activity.runOnUiThread(() -> processQrCodeResult(rawValue));
+                        }
+                    }
+                })
+                .addOnCompleteListener(task -> imageProxy.close());
+    }
+
+    private void processQrCodeResult(String qrCodeText) {
+        playBeep();
+        if (qrCodeText.isEmpty()) {
+            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> isProcessingBarcode = false);
+        } else {
+            String result = AESUtil.decrypt(qrCodeText);
+            if (result != null && result.startsWith("cc42user")) {
+                String resultQrCode = result.replace("cc42user", "");
+                String[] partsQrCode = resultQrCode.split("#", 6);
+                if (partsQrCode.length == 6) {
+                    progressBarSubscription.setVisibility(View.VISIBLE);
+                    if (binding.radioGroupPortion.checkBoxBlocked.isChecked() && allBlockedUsersListId.contains(Long.valueOf(partsQrCode[0]))) {
+                        progressBarSubscription.setVisibility(View.INVISIBLE);
+                        Util.showAlertDialogMessage(context, layoutInflater, getString(R.string.blocked), getString(R.string.msg_user_blocked_subscription), "#E53935", partsQrCode[5], () -> isProcessingBarcode = false);
+                        return;
+                    }
+                    boolean checkSubscription = binding.radioGroupPortion.checkBoxSecondPortion.isChecked();
+                    DaoSusbscriptionFirebase.subscription(
+                            firebaseDatabase,
+                            Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString()),
+                            checkSubscription,
+                            getPortionSelected(),
+                            String.valueOf(meal.getId()),
+                            null,
+                            partsQrCode[0], partsQrCode[1], partsQrCode[2],
+                            String.valueOf(cursusId), partsQrCode[4], partsQrCode[5],
+                            context, layoutInflater, progressBarSubscription, sharedViewModel,
+                            () -> isProcessingBarcode = false
+                    );
+                } else
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> isProcessingBarcode = false);
+            } else
+                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> isProcessingBarcode = false);
+        }
+    }
+
+    private static MediaPlayer mediaPlayer;
+
+    private void playBeep() {
+        stopMedia();
+        mediaPlayer = MediaPlayer.create(context, R.raw.beep);
+        if (mediaPlayer != null) {
+            Util.startVibration(context);
+            mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(mp -> stopMedia());
+        }
+    }
+
+    private void stopMedia() {
+        if (mediaPlayer != null) {
+            try {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                }
+            } catch (IllegalStateException ignored) {
+            }
+            mediaPlayer.release(); // libera os recursos
+            mediaPlayer = null;
+        }
+    }
+
+    private void closeCamera() {
+        if (cameraProvider != null) {
+            cameraProvider.unbindAll();
+        }
+        isFlashLightOn[0] = false;
+        toggleToolbarVisibity();
+
+        inflatedViewStub.setVisibility(View.GONE);
+        binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.GONE);
+        binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.VISIBLE);
+        binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.VISIBLE);
+        binding.layoutQuantity.liniearLayoutQuantity.setVisibility(View.GONE);
+        binding.radioGroupPortion.radioGroupMealPortion.setVisibility(View.GONE);
+        binding.radioGroupPortion.checkBoxBlocked.setVisibility(View.GONE);
+        binding.radioGroupPortion.checkBoxSecondPortion.setVisibility(View.GONE);
+        binding.fabOpenReaderNFC.setVisibility(nfcAdapter != null ? View.VISIBLE : View.GONE);
+    }
+
+    // Métodos utilitários de tratamento de erro e inicialização de layouts originais replicados abaixo...
+    private Set<String> userIds;
+    private Toolbar toolbar;
+    private AppCompatActivity activityApp;
+
+    private void toggleToolbarVisibity() {
+        if (toolbar.getVisibility() == View.VISIBLE) {
+            Util.hideToolbar(toolbar);
+        } else {
+            Util.showToolbar(toolbar);
+        }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (getActivity() != null) {
+            activityApp = (AppCompatActivity) getActivity();
+        }
+    }
+
+    private void setupMenuAndErrorObservers() {
         userViewModel.getHttpSatusEvent().observe(getViewLifecycleOwner(), event -> {
             if (event != null) {
                 desactiveScrollListener();
@@ -577,13 +619,9 @@ public class SubscriptionListFragment extends Fragment {
                         }
                     });
                 }
-
-                MenuItem menuItemSubscription = menu.findItem(R.id.action_one_list);
-                menuItemSubscription.setTitle(context.getString(R.string.with_signs));
-                MenuItem menuItemUnSubscription = menu.findItem(R.id.action_two_list);
-                menuItemUnSubscription.setTitle(context.getString(R.string.without_signs));
-                MenuItem menuItemAll = menu.findItem(R.id.action_three_list);
-                menuItemAll.setTitle(context.getString(R.string.all));
+                menu.findItem(R.id.action_one_list).setTitle(context.getString(R.string.with_signs));
+                menu.findItem(R.id.action_two_list).setTitle(context.getString(R.string.without_signs));
+                menu.findItem(R.id.action_three_list).setTitle(context.getString(R.string.all));
             }
 
             @Override
@@ -601,35 +639,21 @@ public class SubscriptionListFragment extends Fragment {
                         subscriptionListAdapter.filterUsersSubscriptedSecondPortion(userIds);
                     } else
                         Toast.makeText(context, getString(R.string.msg_error_get_ids_user_local), Toast.LENGTH_LONG).show();
-                }else if (itemId == R.id.action_list_transcenders) {
+                } else if (itemId == R.id.action_list_transcenders) {
                     subscriptionListAdapter.filterTranscenders();
                 } else if (itemId == R.id.action_filter_advanced) {
                     showFilterDialog();
-                } else if (itemId == R.id.action_list_print) {
-                    boolean isExternalStorageManager = Util.launchPermissionDocument(
-                            context,
-                            requestIntentPermissionLauncherViewer,
-                            requestPermissionLauncherViewer,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                    if (isExternalStorageManager) {
+                } else if (itemId == R.id.action_list_print || itemId == R.id.action_list_share) {
+                    boolean isShare = itemId == R.id.action_list_share;
+                    ActivityResultLauncher<String> launcher = isShare ? requestPermissionLauncherSharer : requestPermissionLauncherViewer;
+                    ActivityResultLauncher<Intent> intentLauncher = isShare ? requestIntentPermissionLauncherSharer : requestIntentPermissionLauncherViewer;
+                    boolean hasPerm = Util.launchPermissionDocument(context, intentLauncher, launcher, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    if (hasPerm) {
                         List<User> userList = subscriptionListAdapter.getUserList();
                         if (userList.isEmpty())
-                            Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
+                            Util.showAlertDialogBuild(getString(isShare ? R.string.list_share : R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
                         else
-                            printAndShareSubscriptionsList(userList, true, R.string.list_print);
-                    }
-                } else if (itemId == R.id.action_list_share) {
-                    boolean isExternalStorageManager = Util.launchPermissionDocument(
-                            context,
-                            requestIntentPermissionLauncherSharer,
-                            requestPermissionLauncherSharer,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                    if (isExternalStorageManager) {
-                        List<User> userList = subscriptionListAdapter.getUserList();
-                        if (userList.isEmpty())
-                            Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
-                        else
-                            printAndShareSubscriptionsList(userList, false, R.string.list_share);
+                            printAndShareSubscriptionsList(userList, !isShare, isShare ? R.string.list_share : R.string.list_print);
                     }
                 }
                 return NavigationUI.onNavDestinationSelected(menuItem, navController);
@@ -639,38 +663,22 @@ public class SubscriptionListFragment extends Fragment {
     }
 
     private void showFilterDialog() {
-        // Inflar o layout customizado
         DialogFilterBinding dialogFilterBinding = DialogFilterBinding.inflate(getLayoutInflater());
-        // Valor padrão de 15 dias sugerido no hint ou no texto
         dialogFilterBinding.editDays.setText(R.string._15);
-
         new AlertDialog.Builder(context)
                 .setTitle("Filtrar Subscritos")
                 .setView(dialogFilterBinding.getRoot())
                 .setPositiveButton("Consultar", (dialog, which) -> {
-
-                    // Traga apenas os registros que foram criados (ou seja, usuários que entraram no curso) entre 15 dias atrás
-
                     String daysInput = dialogFilterBinding.editDays.getText().toString();
                     boolean onlyActive = dialogFilterBinding.checkActive.isChecked();
-
                     rangeParam = null;
                     activeParam = null;
-
-                    // 1. Lógica do Intervalo de Dias
                     if (!daysInput.isEmpty()) {
                         int days = Integer.parseInt(daysInput);
                         Instant startDate = Instant.now().minus(days, ChronoUnit.DAYS);
                         rangeParam = startDate.toString() + "," + Instant.now().toString();
                     }
-
-                    // 2. Lógica do Activo (Se não estiver marcado, mandamos null para a API ignorar o filtro)
-                    if (onlyActive) {
-                        activeParam = true;
-                    }
-
-                    // Chamada do seu método de carregamento (exemplo)
-//                    userViewModel.getUsersSubscription(cursusId, l, context, activeParam, rangeParam);
+                    if (onlyActive) activeParam = true;
                     subscriptionListAdapter.isFilterSecondPortion = false;
                     setupVisibility(binding, View.VISIBLE, false, View.GONE, View.VISIBLE);
                     l.currentPage = 1;
@@ -686,10 +694,10 @@ public class SubscriptionListFragment extends Fragment {
         new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setItems(R.array.array_subscriptions_list_qr_code_options, (dialog, selected) -> {
-                    if (selected == 0) {
-                        binding.progressindicator.setVisibility(View.VISIBLE);
-                        ExecutorService executor = Executors.newSingleThreadExecutor();
-                        executor.execute(() -> {
+                    binding.progressindicator.setVisibility(View.VISIBLE);
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    executor.execute(() -> {
+                        if (selected == 0) {
                             File filePdf = PdfCreator.createPdfSubscriptionList(context, requireActivity(), meal, numberUserUnsubscription, numberUserSubscription, numberUserSubscriptionSecondPortion, numberUserNotSubscriptionSecondPortion, subscriptionListAdapter.getUserList(), binding.progressindicator, binding.textViewTotal);
                             if (filePdf != null) {
                                 if (isPrint)
@@ -698,16 +706,7 @@ public class SubscriptionListFragment extends Fragment {
                                     PdfSharer.sharePdf(context, filePdf, "application/pdf", context.getString(R.string.list_share));
                             } else
                                 activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
-                            requireActivity().runOnUiThread(() -> {
-                                binding.textViewTotal.setText("");
-                                binding.progressindicator.setProgress(0);
-                                binding.progressindicator.setVisibility(View.GONE);
-                            });
-                        });
-                    } else {
-                        binding.progressindicator.setVisibility(View.VISIBLE);
-                        ExecutorService executor = Executors.newSingleThreadExecutor();
-                        executor.execute(() -> {
+                        } else {
                             List<File> filePdf = PdfCreator.createMultiplePdfQrCodes(requireActivity(), userList, campusId, cursusId, binding.progressindicator, binding.textViewTotal);
                             if (!filePdf.isEmpty()) {
                                 File fileMergePdf = PdfCreator.mergePdfs(context, filePdf);
@@ -720,16 +719,41 @@ public class SubscriptionListFragment extends Fragment {
                                     activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
                             } else
                                 activity.runOnUiThread(() -> Util.showAlertDialogBuild(context.getString(R.string.err), context.getString(R.string.pdf_not_created), context, null));
-                            requireActivity().runOnUiThread(() -> {
-                                binding.textViewTotal.setText("");
-                                binding.progressindicator.setProgress(0);
-                                binding.progressindicator.setVisibility(View.GONE);
-                            });
+                        }
+                        requireActivity().runOnUiThread(() -> {
+                            binding.textViewTotal.setText("");
+                            binding.progressindicator.setProgress(0);
+                            binding.progressindicator.setVisibility(View.GONE);
                         });
-                    }
+                    });
                 }).setPositiveButton(R.string.close, (dialog, which) -> dialog.dismiss())
                 .show();
     }
+
+    private void activityResultContractsViewer(@NonNull Boolean result) {
+        if (result) {
+            List<User> userList = subscriptionListAdapter.getUserList();
+            if (userList.isEmpty())
+                Util.showAlertDialogBuild(getString(R.string.list_print), getString(R.string.msg_subscription_list_empty), context, null);
+            else printAndShareSubscriptionsList(userList, true, R.string.list_print);
+        } else
+            Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_print), context, null);
+    }
+
+    private void activityResultContractsSharer(@NonNull Boolean result) {
+        if (result) {
+            List<User> userList = subscriptionListAdapter.getUserList();
+            if (userList.isEmpty())
+                Util.showAlertDialogBuild(getString(R.string.list_share), getString(R.string.msg_subscription_list_empty), context, null);
+            else printAndShareSubscriptionsList(userList, false, R.string.list_share);
+        } else
+            Util.showAlertDialogBuild(getString(R.string.permission), getString(R.string.whithout_permission_cannot_share), context, null);
+    }
+
+    private final ActivityResultLauncher<Intent> requestIntentPermissionLauncherViewer = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> activityResultContractsViewer(result.getResultCode() == Activity.RESULT_OK));
+    private final ActivityResultLauncher<String> requestPermissionLauncherViewer = registerForActivityResult(new ActivityResultContracts.RequestPermission(), this::activityResultContractsViewer);
+    private final ActivityResultLauncher<Intent> requestIntentPermissionLauncherSharer = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> activityResultContractsSharer(result.getResultCode() == Activity.RESULT_OK));
+    private final ActivityResultLauncher<String> requestPermissionLauncherSharer = registerForActivityResult(new ActivityResultContracts.RequestPermission(), this::activityResultContractsSharer);
 
     RecyclerView.OnScrollListener onScrollListener = new EndlessScrollListener() {
         @Override
@@ -771,145 +795,92 @@ public class SubscriptionListFragment extends Fragment {
         binding.recyclerviewSubscriptionList.removeOnScrollListener(onScrollListener);
     }
 
-    private void openCameraScannerQrCodeSubscriptio(int cameraId) {
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-            this.cameraId = cameraId;
-            activityResultLauncher.launch(Manifest.permission.CAMERA);
-        } else {
-            if (decoratedBarcodeView.isShown())
-                closeCamera();
-            else
-                openCamera(cameraId);
-        }
-    }
-
-    private void openCamera(int cameraId) {
-        toggleToolbarVisibity();
-        decoratedBarcodeView.pause();
-        decoratedBarcodeView.getBarcodeView().setCameraSettings(createCameraSettings(cameraId));
-        decoratedBarcodeView.resume();
-        inflatedViewStub.setVisibility(View.VISIBLE);
-        binding.fabOpenReaderNFC.setVisibility(View.GONE);
-        binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.GONE);
-        binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.GONE);
-        binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.VISIBLE);
-        binding.layoutQuantity.liniearLayoutQuantity.setVisibility(View.VISIBLE);
-        binding.radioGroupPortion.radioGroupMealPortion.setVisibility(View.VISIBLE);
-//        binding.radioGroupPortion.checkBoxBlocked.setVisibility(View.VISIBLE);
-        if (binding.radioGroupPortion.radioButtonSecondPortion.isChecked())
-            binding.radioGroupPortion.checkBoxSecondPortion.setVisibility(View.VISIBLE);
-    }
-
-    @NonNull
-    private CameraSettings createCameraSettings(int cameraId) {
-        CameraSettings cameraSettings = new CameraSettings();
-        cameraSettings.setRequestedCameraId(cameraId);
-        return cameraSettings;
-    }
-
-    private void closeCamera() {
-        if (decoratedBarcodeView.isShown()) {
-            if (isFlashLightOn[0]) {
-                isFlashLightOn[0] = false;
-                decoratedBarcodeView.setTorchOff();
-            }
-            decoratedBarcodeView.pause();
-            toggleToolbarVisibity();
-        }
-        inflatedViewStub.setVisibility(View.GONE);
-        binding.fabOpenCameraScannerQrCodeClose.setVisibility(View.GONE);
-        binding.fabOpenCameraScannerQrCodeBack.setVisibility(View.VISIBLE);
-        binding.fabOpenCameraScannerQrCodeFront.setVisibility(View.VISIBLE);
-        binding.layoutQuantity.liniearLayoutQuantity.setVisibility(View.GONE);
-        binding.radioGroupPortion.radioGroupMealPortion.setVisibility(View.GONE);
-        binding.radioGroupPortion.checkBoxBlocked.setVisibility(View.GONE);
-        binding.radioGroupPortion.checkBoxSecondPortion.setVisibility(View.GONE);
-        binding.fabOpenReaderNFC.setVisibility(nfcAdapter != null ? View.VISIBLE : View.GONE);
-    }
-
-    private void setupVisibility(@NonNull FragmentSubscriptionListBinding binding, int viewP,
-                                 boolean refreshing, int viewT, int viewR) {
+    private void setupVisibility(@NonNull FragmentSubscriptionListBinding binding, int viewP, boolean refreshing, int viewT, int viewR) {
         binding.progressBarSubscription.setVisibility(viewP);
         binding.swipeRefreshLayout.setRefreshing(refreshing);
         binding.textViewEmptyData.setVisibility(viewT);
         binding.recyclerviewSubscriptionList.setVisibility(viewR);
     }
 
-    // Método para processar um Intent NFC recebido
+    public void nfcResult(@NonNull String QRCode) {
+        playBeep();
+        if (QRCode.isEmpty()) {
+            Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null, () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray));
+        } else {
+            String result = AESUtil.decrypt(QRCode);
+            if (result != null && result.startsWith("cc42user")) {
+                String resultQrCode = result.replace("cc42user", "");
+                String[] partsQrCode = resultQrCode.split("#", 6);
+                if (partsQrCode.length == 6) {
+                    progressBarSubscription.setVisibility(View.VISIBLE);
+                    if (binding.radioGroupPortion.checkBoxBlocked.isChecked() && allBlockedUsersListId.contains(Long.valueOf(partsQrCode[0]))) {
+                        progressBarSubscription.setVisibility(View.INVISIBLE);
+                        Util.showAlertDialogMessage(context, layoutInflater, getString(R.string.blocked), getString(R.string.msg_user_blocked_subscription), "#E53935", partsQrCode[5], () -> isProcessingBarcode = false);
+                        return;
+                    }
+                    boolean checkSubscription = binding.radioGroupPortion.checkBoxSecondPortion.isChecked();
+                    DaoSusbscriptionFirebase.subscription(
+                            firebaseDatabase, Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString()),
+                            checkSubscription, getPortionSelected(), String.valueOf(meal.getId()), null,
+                            partsQrCode[0], partsQrCode[1], partsQrCode[2], String.valueOf(cursusId), partsQrCode[4], partsQrCode[5],
+                            context, layoutInflater, progressBarSubscription, sharedViewModel,
+                            () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
+                    );
+                } else
+                    Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null, () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray));
+            } else
+                Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null, () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray));
+        }
+    }
+
     public void resolveIntent(@NonNull Intent intent) {
-        // Verifica se a ação do Intent corresponde a uma descoberta de tag NFC (NDEF, TECH ou TAG)
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()) ||
-                NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction()) ||
-                NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
-
-            // Obtém as mensagens NDEF brutas do Intent
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()) || NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction()) || NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-
-            // Verifica se existem mensagens NDEF
             if (rawMsgs != null) {
-                // Cria um StringBuilder para acumular o texto dos registros NDEF
                 StringBuilder resultado = new StringBuilder();
-
-                // Itera sobre cada mensagem NDEF bruta
                 for (Parcelable rawMsg : rawMsgs) {
-                    // Converte a mensagem bruta para um objeto NdefMessage
                     NdefMessage msg = (NdefMessage) rawMsg;
-                    // Itera sobre cada registro NDEF dentro da mensagem
                     for (NdefRecord record : msg.getRecords()) {
-                        // Verifica se o registro é do tipo TNF_WELL_KNOWN e se o tipo é RTD_TEXT (texto)
-                        if (record.getTnf() == NdefRecord.TNF_WELL_KNOWN &&
-                                Arrays.equals(record.getType(), NdefRecord.RTD_TEXT)) {
-
+                        if (record.getTnf() == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(record.getType(), NdefRecord.RTD_TEXT)) {
                             try {
-                                // Obtém o payload (dados) do registro
-                                final String texto = NFCUtils.getString(record);
-
-                                // Adiciona o texto extraído ao resultado, seguido por uma nova linha
-                                resultado.append(texto);
-
+                                resultado.append(NFCUtils.getString(record));
                             } catch (Exception e) {
-                                NFCUtils.showAlertDialogBuild(context.getString(R.string.err), getString(R.string.erro_process_text_pass), context, () ->
-                                        NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
-                                );
+                                NFCUtils.showAlertDialogBuild(context.getString(R.string.err), getString(R.string.erro_process_text_pass), context, () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray));
                                 return;
                             }
                         }
                     }
                 }
-
-                // Verifica se algum texto foi extraído
-                if (resultado.length() > 0) {
+                if (resultado.length() > 0)
                     nfcResult(resultado.toString().trim());
-                } else {
-                    NFCUtils.showAlertDialogBuild(getString(R.string.without_text), getString(R.string.not_found_text_pass), context, () ->
-                            NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
-                    );
-                }
-            } else {
-                NFCUtils.showAlertDialogBuild(getString(R.string.without_data), getString(R.string.without_message_NDEF), context, () ->
-                        NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray)
-                );
-            }
+                else
+                    NFCUtils.showAlertDialogBuild(getString(R.string.without_text), getString(R.string.not_found_text_pass), context, () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray));
+            } else
+                NFCUtils.showAlertDialogBuild(getString(R.string.without_data), getString(R.string.without_message_NDEF), context, () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray));
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (decoratedBarcodeView.isShown())
-            decoratedBarcodeView.resume();
+        if (previewView.isShown()) {
+            startCameraX(this.cameraId);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        decoratedBarcodeView.pause();
+        if (cameraProvider != null) {
+            cameraProvider.unbindAll();
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        closeCamera();
+        stopMedia();
+        cameraExecutor.shutdown();
         binding = null;
         requireActivity().removeMenuProvider(menuProvider);
     }

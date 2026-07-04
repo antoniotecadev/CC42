@@ -120,11 +120,7 @@ public class Util {
         Spanned result;
 
         // Verifica a versão do Android para usar o método correto de Html.fromHtml
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            result = Html.fromHtml(formattedText, Html.FROM_HTML_MODE_LEGACY);
-        } else {
-            result = Html.fromHtml(formattedText);
-        }
+        result = Html.fromHtml(formattedText, Html.FROM_HTML_MODE_LEGACY);
 
         // Define o texto formatado no TextView
         textView.setText(result);
@@ -315,10 +311,7 @@ public class Util {
     public static void startVibration(@NonNull Context context) {
         Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         if (vibrator != null)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
-            else
-                vibrator.vibrate(200);
+            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
     }
 
     private static void launchIntentPermission(boolean containsUri, Context context, ActivityResultLauncher<Intent> intentActivityResultLauncher) {
@@ -369,7 +362,7 @@ public class Util {
         Configuration config = resources.getConfiguration();
         config.setLocale(locale);
 
-        // Atualizar a configuração
+        // Actualizar a configuração
         resources.updateConfiguration(config, resources.getDisplayMetrics());
 
         // Salvar o idioma selecionado nas preferências (opcional)
