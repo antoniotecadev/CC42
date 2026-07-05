@@ -23,7 +23,6 @@ import com.antonioteca.cc42.repository.UserRepository;
 import com.antonioteca.cc42.utility.EventObserver;
 import com.antonioteca.cc42.utility.Loading;
 import com.antonioteca.cc42.utility.Util;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,14 +34,12 @@ import com.google.firebase.database.ValueEventListener;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -56,21 +53,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserViewModel extends ViewModel {
 
-    private CompositeDisposable compositeDisposable;
+    //    private CompositeDisposable compositeDisposable;
     private UserRepository userRepository;
 
     //    private MutableLiveData<List<User>> userList;
     private MutableLiveData<User> userMutableLiveData;
     private MutableLiveData<List<User>> userListMutableLiveData;
     private MutableLiveData<Map<String, Boolean>> userIdsMapListMutableLiveData;
-    private MutableLiveData<List<Object>> userIdsAndQuantityListMutableLiveData;
+    private MutableLiveData<Map.Entry<Set<String>, Integer>> userIdsAndQuantityListMutableLiveData;
     private MutableLiveData<HttpStatus> httpStatusMutableLiveData;
     private MutableLiveData<HttpException> httpExceptionMutableLiveData;
     private MutableLiveData<EventObserver<HttpStatus>> httpStatusMutableLiveDataEvent;
     private MutableLiveData<EventObserver<HttpException>> httpExceptionMutableLiveDataEvent;
 
     public UserViewModel(UserRepository userRepository) {
-        this.compositeDisposable = new CompositeDisposable();
+//        this.compositeDisposable = new CompositeDisposable();
         this.userRepository = userRepository;
     }
 
@@ -109,7 +106,7 @@ public class UserViewModel extends ViewModel {
         return userIdsMapListMutableLiveData;
     }
 
-    public LiveData<List<Object>> getUserIdsAndQuantityList() {
+    public LiveData<Map.Entry<Set<String>, Integer>> getUserIdsAndQuantityList() {
         if (userIdsAndQuantityListMutableLiveData == null)
             userIdsAndQuantityListMutableLiveData = new MutableLiveData<>();
         return userIdsAndQuantityListMutableLiveData;
@@ -485,14 +482,14 @@ public class UserViewModel extends ViewModel {
                         quantityReceived[0] += quantityReceivedUser;
                     }
                 }
-                userIdsAndQuantityListMutableLiveData.postValue(Arrays.asList(userIdsSubscription, quantityReceived[0]));
+                userIdsAndQuantityListMutableLiveData.postValue(Map.entry(userIdsSubscription, quantityReceived[0]));
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 String message = context.getString(R.string.msg_error_check_subscription) + ": " + error.toException();
                 Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.err), message, "#E53935", null, null);
-                userIdsAndQuantityListMutableLiveData.postValue(new ArrayList<>(Arrays.asList(userIdsSubscription, quantityReceived[0])));
+                userIdsAndQuantityListMutableLiveData.postValue(Map.entry(userIdsSubscription, quantityReceived[0]));
             }
         });
     }
@@ -590,19 +587,16 @@ public class UserViewModel extends ViewModel {
 
             userLocationRef.setValue(location)
                     .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "✅ Localização salva com sucesso!");
+                        Log.d(TAG, "Localização salva com sucesso!");
                         callback.onSuccess();
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e(TAG, "❌ Erro ao salvar localização:", e);
-                            callback.onError(e);
-                        }
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Erro ao salvar localização:", e);
+                        callback.onError(e);
                     });
 
         } catch (Exception e) {
-            Log.e(TAG, "❌ Erro ao inicializar a operação do Firebase:", e);
+            Log.e(TAG, "Erro ao inicializar a operação do Firebase:", e);
             callback.onError(e);
         }
     }
@@ -646,7 +640,7 @@ public class UserViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        if (compositeDisposable.isDisposed())
-            compositeDisposable.dispose();
+//        if (compositeDisposable.isDisposed())
+//            compositeDisposable.dispose();
     }
 }

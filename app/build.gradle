@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.antonioteca.cc42'
+    namespace = 'com.antonioteca.cc42'
     compileSdk 34 // Versão do Android a ser usada para compilar o aplicativo
 
     defaultConfig {
@@ -30,20 +30,21 @@ android {
 
     buildTypes {
         release {
-            shrinkResources true // Remoção de recursos não utilizados
+            shrinkResources = true // Remoção de recursos não utilizados
             minifyEnabled true // Minificação e obfuscação
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
         // (zxing-android-embedded) Activar desuring para usar APIs do Java 8+
-        coreLibraryDesugaringEnabled true
+        coreLibraryDesugaringEnabled = true
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
     buildFeatures {
-        viewBinding true
-        buildConfig = true // A classe BuildConfig é uma classe gerada automaticamente que contém informações relacionadas à construção do projeto, como se você está construindo uma versão de depuração (debug) ou de lançamento (release)
+        viewBinding = true
+        buildConfig = true
+        // A classe BuildConfig é uma classe gerada automaticamente que contém informações relacionadas à construção do projeto, como se você está construindo uma versão de depuração (debug) ou de lançamento (release)
     }
     packagingOptions {
         resources {

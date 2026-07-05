@@ -308,8 +308,8 @@ public class SubscriptionListFragment extends Fragment {
         binding.progressBarSubscription.setVisibility(View.VISIBLE);
         userViewModel.getUserIdsSubscriptionList(firebaseDatabase, String.valueOf(user.getCampusId()), String.valueOf(cursusId), String.valueOf(meal.getId()), context, layoutInflater);
         userViewModel.getUserIdsAndQuantityList().observe(getViewLifecycleOwner(), userIdsAndQuantity -> {
-            this.userIds = (Set<String>) userIdsAndQuantity.get(0);
-            this.numberMealReceived = (int) userIdsAndQuantity.get(1);
+            this.userIds = userIdsAndQuantity.getKey();
+            this.numberMealReceived = userIdsAndQuantity.getValue();
             userViewModel.getUsersSubscription(cursusId, l, context, activeParam, rangeParam);
         });
 
