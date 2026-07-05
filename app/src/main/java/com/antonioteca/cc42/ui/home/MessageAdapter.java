@@ -1,8 +1,5 @@
 package com.antonioteca.cc42.ui.home;
 
-import static com.antonioteca.cc42.utility.Util.setFormattedText;
-import static com.antonioteca.cc42.utility.Util.setMarkdownText;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

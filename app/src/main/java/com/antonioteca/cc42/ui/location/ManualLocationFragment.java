@@ -373,7 +373,6 @@ public class ManualLocationFragment extends Fragment {
             DrawableCompat.setTint(background, color);
         } catch (IllegalArgumentException e) {
             // Lida com o caso de uma string de cor inválida, se necessário
-            e.printStackTrace();
         }
     }
 

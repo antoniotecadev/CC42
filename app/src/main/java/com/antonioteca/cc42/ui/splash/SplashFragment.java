@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -22,7 +21,6 @@ import com.antonioteca.cc42.databinding.FragmentSplashBinding;
 import com.antonioteca.cc42.factory.TokenViewModelFactory;
 import com.antonioteca.cc42.factory.UserViewModelFactory;
 import com.antonioteca.cc42.model.Token;
-import com.antonioteca.cc42.network.HttpException;
 import com.antonioteca.cc42.network.HttpStatus;
 import com.antonioteca.cc42.repository.TokenRepository;
 import com.antonioteca.cc42.repository.UserRepository;
@@ -61,25 +59,19 @@ public class SplashFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentSplashBinding.inflate(inflater, container, false);
         // setColorCoalition(binding.splashFragment, new Coalition(context).getColor()); // cor de background
-        tokenViewModel.getHttpSatus().observe(getViewLifecycleOwner(), new Observer<HttpStatus>() {
-            @Override
-            public void onChanged(HttpStatus httpStatus) {
-                if (!isSplashActive) {
-                    if (httpStatus == HttpStatus.OK)
-                        redirectToHome();
-                    else
-                        redirectToLogin();
-                }
+        tokenViewModel.getHttpSatus().observe(getViewLifecycleOwner(), httpStatus -> {
+            if (!isSplashActive) {
+                if (httpStatus == HttpStatus.OK)
+                    redirectToHome();
+                else
+                    redirectToLogin();
             }
         });
 
-        tokenViewModel.getHttpException().observe(getViewLifecycleOwner(), new Observer<HttpException>() {
-            @Override
-            public void onChanged(HttpException httpException) {
-                if (!isSplashActive) {
-                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, null);
-                    redirectToLogin();
-                }
+        tokenViewModel.getHttpException().observe(getViewLifecycleOwner(), httpException -> {
+            if (!isSplashActive) {
+                Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, null);
+                redirectToLogin();
             }
         });
 //        QUANDO LOGAR NO CLIENTE
@@ -98,23 +90,17 @@ public class SplashFragment extends Fragment {
 //            }
 //        });
 
-        userViewModel.getHttpSatus().observe(getViewLifecycleOwner(), new Observer<HttpStatus>() {
-            @Override
-            public void onChanged(HttpStatus httpStatus) {
-                if (!isSplashActive) {
-                    Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, null);
-                    redirectToLogin();
-                }
+        userViewModel.getHttpSatus().observe(getViewLifecycleOwner(), httpStatus -> {
+            if (!isSplashActive) {
+                Util.showAlertDialogBuild(String.valueOf(httpStatus.getCode()), httpStatus.getDescription(), context, null);
+                redirectToLogin();
             }
         });
 
-        userViewModel.getHttpException().observe(getViewLifecycleOwner(), new Observer<HttpException>() {
-            @Override
-            public void onChanged(HttpException httpException) {
-                if (!isSplashActive) {
-                    Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, null);
-                    redirectToLogin();
-                }
+        userViewModel.getHttpException().observe(getViewLifecycleOwner(), httpException -> {
+            if (!isSplashActive) {
+                Util.showAlertDialogBuild(String.valueOf(httpException.getCode()), httpException.getDescription(), context, null);
+                redirectToLogin();
             }
         });
         // Inflate the layout for this fragment
@@ -126,8 +112,7 @@ public class SplashFragment extends Fragment {
             Intent intent = new Intent(context, NavigationDrawerActivity.class);
             startActivity(intent);
             requireActivity().finish();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
+        } catch (IllegalStateException ignored) {
         }
     }
 
@@ -135,8 +120,7 @@ public class SplashFragment extends Fragment {
         try {
             NavController navController = Navigation.findNavController(requireView());
             navController.navigate(R.id.action_splashFragment_to_loginFragment);
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
+        } catch (IllegalStateException ignored) {
         }
     }
 

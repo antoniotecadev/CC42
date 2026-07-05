@@ -6,16 +6,12 @@ import androidx.annotation.NonNull;
 
 import com.antonioteca.cc42.dao.daoapi.DaoApiUser;
 import com.antonioteca.cc42.dao.daoapi.PaginationLinks;
-import com.antonioteca.cc42.model.Coalition;
-import com.antonioteca.cc42.model.Cursu;
 import com.antonioteca.cc42.model.Subscription;
 import com.antonioteca.cc42.model.Token;
 import com.antonioteca.cc42.model.User;
 import com.antonioteca.cc42.network.RetrofitClientApi;
 import com.antonioteca.cc42.utility.Loading;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;

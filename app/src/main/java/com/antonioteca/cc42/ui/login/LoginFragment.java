@@ -2,7 +2,6 @@ package com.antonioteca.cc42.ui.login;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -62,10 +61,7 @@ public class LoginFragment extends Fragment {
             binding.videoViewQrCodePhoneGif.start(); // Iniciar o vídeoautomaticamente
         });
         String colorText = "<font color='#419259'><b>SIGN</b></font> <font color='#DFB50D'><b>IN</b></font>";
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            buttonSignIn.setText(Html.fromHtml(colorText, Html.FROM_HTML_MODE_LEGACY));
-        else
-            buttonSignIn.setText(Html.fromHtml(colorText));
+        buttonSignIn.setText(Html.fromHtml(colorText, Html.FROM_HTML_MODE_LEGACY));
         buttonSignIn.setOnClickListener(viewOnClick -> signIn());
     }
 

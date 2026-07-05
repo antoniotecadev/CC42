@@ -27,7 +27,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MessageListFragment extends Fragment {
@@ -122,7 +121,7 @@ public class MessageListFragment extends Fragment {
 
                 // Opcional: Ordenar as mensagens, por exemplo, pela mais recente primeiro
                 // Supondo que timestamps maiores são mais recentes
-                Collections.sort(messages, (m1, m2) -> {
+                messages.sort((m1, m2) -> {
                     if (m1.getTimestamp() == null && m2.getTimestamp() == null) return 0;
                     if (m1.getTimestamp() == null) return 1; // Coloca nulos no final
                     if (m2.getTimestamp() == null) return -1; // Coloca nulos no final

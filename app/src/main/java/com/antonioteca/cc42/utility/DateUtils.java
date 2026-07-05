@@ -1,6 +1,6 @@
 package com.antonioteca.cc42.utility;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,13 +14,12 @@ public class DateUtils {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
         try {
             return dateFormat.parse(dateString);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
         return null;
     }
 
-    @NonNull
+    @Nullable
     public static String formatDate(Date date) {
         try {
             SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());

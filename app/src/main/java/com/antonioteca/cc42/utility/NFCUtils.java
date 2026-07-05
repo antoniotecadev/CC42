@@ -112,10 +112,10 @@ public class NFCUtils {
                 liniearLayoutQuantityValue.setMargins(0, 0, 0, 0);
                 dialogQuantityBinding.liniearLayoutQuantityValue.setLayoutParams(liniearLayoutQuantityValue);
 
-                dialogQuantityBinding.textViewQuantity.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
-                dialogQuantityBinding.textViewQuantityValue.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
-                dialogQuantityBinding.buttonDecrement.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
-                dialogQuantityBinding.buttonIncrement.setTextColor(context.getResources().getColor(R.color.textColorPrimary));
+                dialogQuantityBinding.textViewQuantity.setTextColor(context.getResources().getColor(R.color.textColorPrimary, context.getTheme()));
+                dialogQuantityBinding.textViewQuantityValue.setTextColor(context.getResources().getColor(R.color.textColorPrimary, context.getTheme()));
+                dialogQuantityBinding.buttonDecrement.setTextColor(context.getResources().getColor(R.color.textColorPrimary, context.getTheme()));
+                dialogQuantityBinding.buttonIncrement.setTextColor(context.getResources().getColor(R.color.textColorPrimary, context.getTheme()));
                 dialogQuantityBinding.buttonDecrement.setOnClickListener(v -> {
                     int currentQuantity = Integer.parseInt(dialogQuantityBinding.textViewQuantityValue.getText().toString());
                     if (currentQuantity > 1) {
@@ -176,7 +176,7 @@ public class NFCUtils {
                 // Verifica se o filho é um RadioButton antes de fazer o cast
                 if (child instanceof RadioButton) {
                     // Define a cor do texto para cada RadioButton
-                    ((RadioButton) child).setTextColor(context.getResources().getColor(color));
+                    ((RadioButton) child).setTextColor(context.getResources().getColor(color, context.getTheme()));
                 }
             }
         } else {
@@ -185,7 +185,7 @@ public class NFCUtils {
                 // Verifica se o filho é um RadioButton antes de fazer o cast
                 if (child instanceof RadioButton) {
                     // Define a cor do texto para cada RadioButton
-                    ((RadioButton) child).setTextColor(context.getResources().getColor(color));
+                    ((RadioButton) child).setTextColor(context.getResources().getColor(color, context.getTheme()));
                 }
             }
         }

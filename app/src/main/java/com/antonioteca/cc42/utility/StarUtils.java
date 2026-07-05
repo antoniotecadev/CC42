@@ -132,7 +132,7 @@ public class StarUtils {
         fillStars(starRatingDone, (int) ratingValues.get(0), Double.valueOf(averageRating), loading, rating);
         if (ratingValueUser != null) {
             textViewRateWithStars.setText(type.equals("events") ? R.string.text_present : R.string.text_signed);
-            textViewRateWithStars.setTextColor(context.getResources().getColor(R.color.green));
+            textViewRateWithStars.setTextColor(context.getResources().getColor(R.color.green, context.getTheme()));
             fillStars(starRating,
                     ratingValueUser,
                     null,
@@ -145,7 +145,7 @@ public class StarUtils {
             starRating.star5.setClickable(false);
         } else {
             if (!userIsSubscribed) {
-                textViewRateWithStars.setTextColor(context.getResources().getColor(R.color.red));
+                textViewRateWithStars.setTextColor(context.getResources().getColor(R.color.red, context.getTheme()));
                 textViewRateWithStars.setText(type.equals("events") ? R.string.text_absent : R.string.text_unsigned);
             }
         }

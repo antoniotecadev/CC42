@@ -44,6 +44,7 @@ public class SectionedSpinnerAdapter extends ArrayAdapter<String> {
             }
             currentPosition++;
             List<String> items = sectionItems.get(section);
+            assert items != null;
             if (position < currentPosition + items.size()) { // caso contrário, retorna o item da seção.
                 return items.get(position - currentPosition);
             }
@@ -69,7 +70,7 @@ public class SectionedSpinnerAdapter extends ArrayAdapter<String> {
     }
 
     @Override
-    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+    public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
         View view = super.getDropDownView(position, convertView, parent);
         TextView textView = view.findViewById(android.R.id.text1);
         String item = getItem(position);

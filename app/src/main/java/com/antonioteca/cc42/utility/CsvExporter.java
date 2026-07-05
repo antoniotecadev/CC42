@@ -121,7 +121,7 @@ public class CsvExporter {
     // Helper para escapar vírgulas e aspas em strings para CSV
     private static String escapeCsvString(String data) {
         if (data == null) return "";
-        String escapedData = data.replaceAll("\"", "\"\"");
+        String escapedData = data.replace("\"", "\"\"");
         if (data.contains(",") || data.contains("\"") || data.contains("\n")) {
             escapedData = "\"" + escapedData + "\"";
         }

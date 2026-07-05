@@ -106,6 +106,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     private String cursusId;
     private boolean isStaff;
     private String urlImageUser;
+    @SuppressLint("StaticFieldLeak")
     private static Context context;
     private User user;
     private Cursu cursu;
@@ -331,7 +332,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             // Handle notification intent
             handleNotificationIntent(intent);
             // Handle shortcuts intent
-            handleIntentShortcuts(intent, binding.getRoot());
+            handleIntentShortcuts(intent);
         } else
             redirectToLogin(context);
     }
@@ -358,13 +359,11 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     );
 
     private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Meals Channel", NotificationManager.IMPORTANCE_HIGH);
-            channel.setDescription("Mensagem enviada quando uma refeição é criada.");
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Meals Channel", NotificationManager.IMPORTANCE_HIGH);
+        channel.setDescription("Mensagem enviada quando uma refeição é criada.");
 
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
     }
 
     private void logout(Context context) {
@@ -602,7 +601,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
         }
     }
 
-    private void handleIntentShortcuts(Intent intent, View view) {
+    private void handleIntentShortcuts(Intent intent) {
         if (intent == null || intent.getExtras() == null)
             return;
         // Verifica se veio de um atalho
@@ -614,7 +613,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                     .build();
             switch (shortcutDestination) {
                 case "location" ->
-                        navigateTo(R.id.manualLocationFragment, null, navOptions); // Use o ID do fragmento de localização
+                        navigateTo(R.id.manualLocationFragment, navOptions); // Use o ID do fragmento de localização
                 case "meal" -> {
                     if (!isStaff) {
                         int cursuId = Integer.parseInt(cursusId);
@@ -623,7 +622,7 @@ public class NavigationDrawerActivity extends AppCompatActivity {
                         HomeFragmentDirections.ActionNavHomeToNavMeal actionNavHomeToNavMeal = HomeFragmentDirections.actionNavHomeToNavMeal(cursu);
                         navController.navigate(actionNavHomeToNavMeal);
                     } else {
-                        navigateTo(R.id.nav_cursu_list_meal, null, navOptions); // Use o ID do fragmento da refeição
+                        navigateTo(R.id.nav_cursu_list_meal, navOptions); // Use o ID do fragmento da refeição
                     }
                 }
                 case "qrcode" -> {
@@ -640,9 +639,9 @@ public class NavigationDrawerActivity extends AppCompatActivity {
     }
 
     // Método auxiliar para evitar duplicação de código
-    private void navigateTo(int destinationId, Bundle args, NavOptions navOptions) {
+    private void navigateTo(int destinationId, NavOptions navOptions) {
         if (navController != null) {
-            navController.navigate(destinationId, args, navOptions);
+            navController.navigate(destinationId, null, navOptions);
         }
     }
 
@@ -678,21 +677,6 @@ public class NavigationDrawerActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e("NFC_TECH", "Erro ao tentar obter o fragmento atual do NavHostFragment: " + e.getMessage());
             }
-
-            // Opção 2: Se você adiciona o fragmento programaticamente com uma tag específica
-            /*
-            SubscriptionListFragment fragment = (SubscriptionListFragment) getSupportFragmentManager().findFragmentByTag("SUBSCRIPTION_LIST_FRAGMENT_TAG");
-            if (fragment != null && fragment.isVisible()) {
-
-             Log.d("ACTIVITY_NFC", "Passando intent para SubscriptionListFragment (via tag)");
-                fragment.resolveIntent(intent);
-            } else {
-                Log.d("ACTIVITY_NFC", "SubscriptionListFragment não encontrado ou não visível (via tag)");
-            }
-            */
-
-            // Opção 3: Se o fragmento está em um ViewPager2, você precisará obter o fragmento atual do adapter.
-
         }
     }
 

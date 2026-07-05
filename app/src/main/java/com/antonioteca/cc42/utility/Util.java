@@ -40,14 +40,14 @@ import androidx.preference.PreferenceManager;
 import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.databinding.ImageQrCodeBinding;
 import com.antonioteca.cc42.databinding.ModalLayoutEventMessageBinding;
-import com.antonioteca.cc42.model.MealQrCode;
+//import com.antonioteca.cc42.model.MealQrCode;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.util.HashMap;
-import java.util.List;
+//import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -190,35 +190,35 @@ public class Util {
 //        }
 //    }
 
-    public static void showModalQrCode(Context context, List<MealQrCode> listMealQrCode, int index) {
-        int size = listMealQrCode.size();
-        if (index >= size) {
-            showModalQrCode(context, listMealQrCode, 0);
-            return; // fim da lista
-        }
-
-        MealQrCode mealQrCode = listMealQrCode.get(index);
-
-        ImageQrCodeBinding binding = ImageQrCodeBinding.inflate(LayoutInflater.from(context));
-        binding.textViewTitle.setText(mealQrCode.mealName());
-        binding.textViewDescription.setText(mealQrCode.mealDescription());
-        binding.imageViewQrCode.setImageBitmap(mealQrCode.bitmapQrCode());
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setView(binding.getRoot());
-        builder.setCancelable(false);
-        AlertDialog dialog = builder.create();
-        if (size == 1)
-            binding.closeModalButton.setVisibility(View.GONE);
-        binding.closeModalButton.setText("<----->");
-        binding.closeModalButton.setOnClickListener(v -> {
-            dialog.dismiss();
-            showModalQrCode(context, listMealQrCode, index + 1); // chamar o próximo
-        });
-        binding.closeModalButtonSecond.setVisibility(View.VISIBLE);
-        binding.closeModalButtonSecond.setOnClickListener(v -> dialog.dismiss());
-        dialog.show();
-    }
+//    public static void showModalQrCode(Context context, List<MealQrCode> listMealQrCode, int index) {
+//        int size = listMealQrCode.size();
+//        if (index >= size) {
+//            showModalQrCode(context, listMealQrCode, 0);
+//            return; // fim da lista
+//        }
+//
+//        MealQrCode mealQrCode = listMealQrCode.get(index);
+//
+//        ImageQrCodeBinding binding = ImageQrCodeBinding.inflate(LayoutInflater.from(context));
+//        binding.textViewTitle.setText(mealQrCode.mealName());
+//        binding.textViewDescription.setText(mealQrCode.mealDescription());
+//        binding.imageViewQrCode.setImageBitmap(mealQrCode.bitmapQrCode());
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        builder.setView(binding.getRoot());
+//        builder.setCancelable(false);
+//        AlertDialog dialog = builder.create();
+//        if (size == 1)
+//            binding.closeModalButton.setVisibility(View.GONE);
+//        binding.closeModalButton.setText("<----->");
+//        binding.closeModalButton.setOnClickListener(v -> {
+//            dialog.dismiss();
+//            showModalQrCode(context, listMealQrCode, index + 1); // chamar o próximo
+//        });
+//        binding.closeModalButtonSecond.setVisibility(View.VISIBLE);
+//        binding.closeModalButtonSecond.setOnClickListener(v -> dialog.dismiss());
+//        dialog.show();
+//    }
 
     public static void showModalUserDetails(Context context, String title, String description, String urlImageUserRegisteredEvent, String textButtom, boolean isPresent) {
         ImageQrCodeBinding binding = ImageQrCodeBinding.inflate(LayoutInflater.from(context));
@@ -377,11 +377,11 @@ public class Util {
         // restartActivity(activity);
     }
 
-    public static void restartActivity(Activity activity) {
-        Intent intent = activity.getIntent();
-        activity.finish();
-        activity.startActivity(intent);
-    }
+//    public static void restartActivity(Activity activity) {
+//        Intent intent = activity.getIntent();
+//        activity.finish();
+//        activity.startActivity(intent);
+//    }
 
     public static void setWidthHeightImageView(Context context, int newWidth, int newHeight, ImageView imageView) {
         ViewGroup.LayoutParams params = imageView.getLayoutParams();

@@ -62,11 +62,11 @@ public class LocationReminderManager {
 
             // Nome único para cada trabalho, para evitar duplicatas
             String uniqueWorkName = "location_reminder_" + hour;
-            workManager.enqueueUniquePeriodicWork(uniqueWorkName, ExistingPeriodicWorkPolicy.REPLACE, reminderRequest);
+            workManager.enqueueUniquePeriodicWork(uniqueWorkName, ExistingPeriodicWorkPolicy.UPDATE, reminderRequest);
 
-            Log.d(TAG, "✅ Lembrete agendado para " + hour + ":00 (Trabalho: " + uniqueWorkName + ")");
+            Log.d(TAG, "Lembrete agendado para " + hour + ":00 (Trabalho: " + uniqueWorkName + ")");
         }
-        Log.d(TAG, "🎉 " + REMINDER_HOURS.length + " lembretes de localização agendados com sucesso!");
+        Log.d(TAG, REMINDER_HOURS.length + " lembretes de localização agendados com sucesso!");
     }
 
     /**

@@ -112,7 +112,7 @@ public class DetailsMealFragment extends Fragment {
                             if (ratingValues.isEmpty()) {
                                 if (!isSubscribed) {
                                     binding.textViewYourRatingAndComment.setVisibility(View.GONE);
-                                    binding.textViewRateWithStars.setTextColor(context.getResources().getColor(android.R.color.darker_gray));
+                                    binding.textViewRateWithStars.setTextColor(context.getResources().getColor(android.R.color.darker_gray, context.getTheme()));
                                     binding.textViewRateWithStars.setText(R.string.needCheckinToRate);
                                     binding.textViewRateWithStars.setTextSize(14);
                                 }

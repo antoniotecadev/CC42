@@ -62,15 +62,15 @@ public class CursuAdapter extends RecyclerView.Adapter<CursuAdapter.CursuViewHol
         return cursuList.size();
     }
 
-    public void moveTopCursuUser() {
-        for (Cursu cursu : cursuList) {
-            if (cursu.getId() == cursusIdUser && cursuList.indexOf(cursu) != 0) {
-                cursuList.add(0, cursu);
-                notifyItemMoved(cursuList.indexOf(cursu), 0);
-                break;
-            }
-        }
-    }
+//    public void moveTopCursuUser() {
+//        for (Cursu cursu : cursuList) {
+//            if (cursu.getId() == cursusIdUser && cursuList.indexOf(cursu) != 0) {
+//                cursuList.add(0, cursu);
+//                notifyItemMoved(cursuList.indexOf(cursu), 0);
+//                break;
+//            }
+//        }
+//    }
 
     public void filter(String text, boolean isNotsearchView) {
         this.cursuList.clear();

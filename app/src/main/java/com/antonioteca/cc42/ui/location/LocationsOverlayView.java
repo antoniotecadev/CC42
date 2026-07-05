@@ -2,6 +2,7 @@ package com.antonioteca.cc42.ui.location;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -79,7 +80,7 @@ public class LocationsOverlayView extends FrameLayout {
             AppCompatButton btn = new AppCompatButton(getContext());
             btn.setAllCaps(false);
             // Texto a bold, usando HTML.
-            btn.setText(android.text.Html.fromHtml("<b>" + loc.areaName + "</b>"));
+            btn.setText(Html.fromHtml("<b>" + loc.areaName + "</b>"));
             btn.setTextSize(10f);
             btn.setGravity(Gravity.CENTER);
             btn.setPadding(2, 6, 2, 2);

@@ -87,9 +87,7 @@ public class CursuListMealFragment extends Fragment {
             boolean executed = refreshRateLimiter.executeWithLimit(() -> {
                 setupVisibility(binding, View.INVISIBLE, true, View.INVISIBLE, View.VISIBLE);
                 cursuViewModel.getCursus(context, cursusIdStudentOrStaff);
-            }, message -> {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            });
+            }, message -> Toast.makeText(context, message, Toast.LENGTH_SHORT).show());
             if (!executed) {
                 binding.swipeRefreshLayout.setRefreshing(false);
             }
@@ -150,6 +148,7 @@ public class CursuListMealFragment extends Fragment {
                 menuInflater.inflate(R.menu.menu_cursu_list, menu);
                 MenuItem menuItem = menu.findItem(R.id.action_search);
                 SearchView searchView = (SearchView) menuItem.getActionView();
+                assert searchView != null;
                 searchView.setQueryHint(context.getString(R.string.cursu));
                 searchView.onActionViewExpanded();
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

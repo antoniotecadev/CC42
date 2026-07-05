@@ -222,15 +222,11 @@ public class SharedViewModel extends ViewModel {
 
             // Para eliminar os dados, basta chamar removeValue() na referência
             userLocationRef.removeValue()
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "✅ Localização eliminada com sucesso!");
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "❌ Erro ao eliminar a localização:", e);
-                    });
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Localização eliminada com sucesso!"))
+                    .addOnFailureListener(e -> Log.e(TAG, "Erro ao eliminar a localização:", e));
 
         } catch (Exception e) {
-            Log.e(TAG, "❌ Erro ao inicializar a operação de eliminação no Firebase:", e);
+            Log.e(TAG, "Erro ao inicializar a operação de eliminação no Firebase:", e);
         }
     }
 }

@@ -15,11 +15,9 @@ import com.antonioteca.cc42.R;
 import com.antonioteca.cc42.model.Meal;
 import com.antonioteca.cc42.model.User;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -28,7 +26,6 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.utils.PdfMerger;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
@@ -328,41 +325,41 @@ public class PdfCreator {
 //    }
 
     // Evento para aplicar marca d'água em todas as páginas
-    private static class ImageWatermarkEvent implements IEventHandler {
-
-        private final ImageData imageData;
-
-        public ImageWatermarkEvent(ImageData imageData) {
-            this.imageData = imageData;
-        }
-
-        @Override
-        public void handleEvent(com.itextpdf.kernel.events.Event event) {
-            PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
-            PdfPage page = documentEvent.getPage();
-            Rectangle pageSize = page.getPageSize();
-            PdfCanvas pdfCanvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), page.getDocument()); // desenhar antes do conteúdo principal
-
-            float offsetX = -100f; // Ajuste para mover à esquerda (negativo)
-            float offsetY = 0f; // Para deslocar na vertical
-            float imageWidth = pageSize.getWidth() / 2;
-            float imageHeight = pageSize.getHeight() / 2;
-
-            //Definir transparencia
-            pdfCanvas.saveState();
-            PdfExtGState extGState = new PdfExtGState();
-            extGState.setFillOpacity(0.15f);
-            pdfCanvas.setExtGState(extGState);
-
-            pdfCanvas.addImageFittedIntoRectangle(imageData,
-                    new Rectangle(
-                            ((pageSize.getHeight() - imageWidth) / 2) + offsetX, // Deslocar para esquerda
-                            ((pageSize.getHeight() - imageHeight) / 2) + offsetY,
-                            imageWidth, imageHeight),
-                    false);
-            pdfCanvas.restoreState();
-        }
-    }
+//    private static class ImageWatermarkEvent implements IEventHandler {
+//
+//        private final ImageData imageData;
+//
+//        public ImageWatermarkEvent(ImageData imageData) {
+//            this.imageData = imageData;
+//        }
+//
+//        @Override
+//        public void handleEvent(com.itextpdf.kernel.events.Event event) {
+//            PdfDocumentEvent documentEvent = (PdfDocumentEvent) event;
+//            PdfPage page = documentEvent.getPage();
+//            Rectangle pageSize = page.getPageSize();
+//            PdfCanvas pdfCanvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), page.getDocument()); // desenhar antes do conteúdo principal
+//
+//            float offsetX = -100f; // Ajuste para mover à esquerda (negativo)
+//            float offsetY = 0f; // Para deslocar na vertical
+//            float imageWidth = pageSize.getWidth() / 2;
+//            float imageHeight = pageSize.getHeight() / 2;
+//
+//            //Definir transparencia
+//            pdfCanvas.saveState();
+//            PdfExtGState extGState = new PdfExtGState();
+//            extGState.setFillOpacity(0.15f);
+//            pdfCanvas.setExtGState(extGState);
+//
+//            pdfCanvas.addImageFittedIntoRectangle(imageData,
+//                    new Rectangle(
+//                            ((pageSize.getHeight() - imageWidth) / 2) + offsetX, // Deslocar para esquerda
+//                            ((pageSize.getHeight() - imageHeight) / 2) + offsetY,
+//                            imageWidth, imageHeight),
+//                    false);
+//            pdfCanvas.restoreState();
+//        }
+//    }
 
     @NonNull
     public static List<File> createMultiplePdfQrCodes(FragmentActivity fragmentActivity, @NonNull List<User> userList, int campusId, int cursusId, CircularProgressIndicator progressBar, TextView textViewTotalPages) {
@@ -497,7 +494,7 @@ public class PdfCreator {
         if (folder == null)
             return null;
         File mergedFile = new File(folder, "qrcode_list.pdf");
-        PdfDocument pdfDocument = null;
+        PdfDocument pdfDocument;
         try {
             pdfDocument = new PdfDocument(new PdfWriter(mergedFile));
         } catch (FileNotFoundException e) {

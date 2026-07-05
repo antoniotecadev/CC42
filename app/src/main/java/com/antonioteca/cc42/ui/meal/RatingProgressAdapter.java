@@ -45,8 +45,9 @@ public class RatingProgressAdapter extends RecyclerView.Adapter<RatingProgressAd
 
         // Define o progresso da barra
         holder.binding.progressBar.setProgress(item.progress());
+        String ratingCountText = ratingCount + " - " + item.progress() + "%";
         // Define a porcentagem e numero de avaliação para cada estrela
-        holder.binding.textViewRatingCountPercentage.setText(ratingCount + " - " + item.progress() + "%");
+        holder.binding.textViewRatingCountPercentage.setText(ratingCountText);
     }
 
     @Override

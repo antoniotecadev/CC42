@@ -5,14 +5,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.antonioteca.cc42.MainActivity;
 import com.antonioteca.cc42.NavigationDrawerActivity;
 import com.antonioteca.cc42.R;
 
@@ -58,16 +56,14 @@ public class LocationReminderWorker extends Worker {
         );
 
         // Cria o canal de notificação (necessário para Android 8.0 Oreo e superior)
-        NotificationChannel channel = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            channel = new NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID,
-                    "Lembretes de Localização",
-                    NotificationManager.IMPORTANCE_DEFAULT // Sem som por padrão
-            );
-            channel.setDescription("Notificações para lembrar de actualizar a localização.");
-            notificationManager.createNotificationChannel(channel);
-        }
+        NotificationChannel channel;
+        channel = new NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                "Lembretes de Localização",
+                NotificationManager.IMPORTANCE_DEFAULT // Sem som por padrão
+        );
+        channel.setDescription("Notificações para lembrar de actualizar a localização.");
+        notificationManager.createNotificationChannel(channel);
 
         // Constrói a notificação
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)

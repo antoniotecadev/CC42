@@ -111,9 +111,7 @@ public class HomeFragment extends Fragment {
                 setupVisibility(binding, View.GONE, true, View.GONE, View.VISIBLE);
                 binding.buttonLoadEvents.setVisibility(View.GONE);
                 eventViewModel.getEvents(context);
-            }, message -> {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            });
+            }, message -> Toast.makeText(context, message, Toast.LENGTH_SHORT).show());
             if (!executed) {
                 binding.swipeRefreshLayout.setRefreshing(false);
             }

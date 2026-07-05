@@ -183,7 +183,7 @@ public class DetailsEventFragment extends Fragment {
                                     binding.anonymousCommentCheckBox.setVisibility(View.GONE);
                                 });
                     } else {
-                        binding.textViewRateWithStars.setTextColor(context.getResources().getColor(R.color.red));
+                        binding.textViewRateWithStars.setTextColor(context.getResources().getColor(R.color.red, context.getTheme()));
                         binding.textViewRateWithStars.setText(R.string.text_absent);
                     }
                 });
