@@ -455,7 +455,25 @@ public class SubscriptionListFragment extends Fragment {
                 .addOnCompleteListener(task -> imageProxy.close());
     }
 
-    private void processQrCodeResult(String qrCodeText) {
+    // Guarda o ID do último usuário que foi escaneado com sucesso
+    private static String lastScannedQrText = "";
+    // Guarda o timestamp (em milissegundos) da última leitura com sucesso
+    private static long lastScanTime = 0;
+    // Tempo em milissegundos para permitir ler o MESMO QR Code novamente (2000ms = 2 segundos)
+    private static final long SCAN_DEBOUNCE_DELAY = 2000;
+
+    private void processQrCodeResult(@NonNull String qrCodeText) {
+        // TRAVA DE DUPLICIDADE: Verifica se é o mesmo QR Code lido nos últimos 2 segundos
+        long currentTime = System.currentTimeMillis();
+        if (qrCodeText.equals(lastScannedQrText) && (currentTime - lastScanTime) < SCAN_DEBOUNCE_DELAY) {
+            // Ignora silenciosamente, libera a câmera para o próximo frame e sai do método
+            isProcessingBarcode = false;
+            return;
+        }
+        // Se for um QR Code diferente ou se passou o tempo, actualiza o histórico
+        lastScannedQrText = qrCodeText;
+        lastScanTime = currentTime;
+        // Só toca o Beep e processa se passou na validação acima
         playBeep();
         if (qrCodeText.isEmpty()) {
             Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.msg_qr_code_invalid), "#FDD835", null, () -> isProcessingBarcode = false);
@@ -803,6 +821,17 @@ public class SubscriptionListFragment extends Fragment {
     }
 
     public void nfcResult(@NonNull String QRCode) {
+        // TRAVA DE DUPLICIDADE: Verifica se é o mesmo QR Code lido nos últimos 3.5 segundos
+        long currentTime = System.currentTimeMillis();
+        if (QRCode.equals(lastScannedQrText) && (currentTime - lastScanTime) < SCAN_DEBOUNCE_DELAY) {
+            // Ignora silenciosamente, libera a câmera para o próximo frame e sai do método
+            isProcessingBarcode = false;
+            return;
+        }
+        // Se for um QR Code diferente ou se passou o tempo, actualiza o histórico
+        lastScannedQrText = QRCode;
+        lastScanTime = currentTime;
+        // Só toca o Beep e processa se passou na validação acima
         playBeep();
         if (QRCode.isEmpty()) {
             Util.showAlertDialogMessage(context, getLayoutInflater(), context.getString(R.string.warning), getString(R.string.not_found_text_pass), "#FDD835", null, () -> NFCUtils.startReaderNFC(nfcAdapter, activity, pendingIntent, intentFiltersArray, techListsArray));

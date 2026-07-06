@@ -8,6 +8,7 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 
 import com.antonioteca.cc42.R;
+import com.antonioteca.cc42.utility.CustomToastManager;
 import com.antonioteca.cc42.utility.Util;
 import com.antonioteca.cc42.viewmodel.SharedViewModel;
 import com.google.firebase.database.DataSnapshot;
@@ -99,7 +100,27 @@ public class DaoEventFirebase {
                                 sharedViewModel.setUserIdLiveData(Long.valueOf(userId));
                                 progressBarMarkAttendance.setVisibility(View.GONE);
                                 String message = displayName + "\n" + (eventAction ? context.getString(R.string.checkinSuccessful) : context.getString(R.string.checkoutSuccessful));
-                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", urlImageUser, runnableResumeCamera);
+//                                Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", urlImageUser, runnableResumeCamera);
+                                // Exibe a notificação rápida no topo direito.
+                                // Se clicada, ela roda o código interno que abre o AlertDialog completo com foto!
+                                CustomToastManager.showNotification(
+                                        context,
+                                        layoutInflater,
+                                        context.getString(R.string.sucess),
+                                        message,
+                                        urlImageUser,
+                                        () -> {
+                                            // Isso só roda SE o usuário clicar no Toast antes de sumir
+                                            Util.showAlertDialogMessage(context, layoutInflater, context.getString(R.string.sucess), message, "#4CAF50", urlImageUser, () -> {
+                                                // Não faz nada ao fechar o diálogo manual, a câmera já foi resumida
+                                            });
+                                        }
+                                );
+
+                                // Importante: Libera a câmera imediatamente sem prender a tela!
+                                if (runnableResumeCamera != null) {
+                                    runnableResumeCamera.run();
+                                }
                             })
                             .addOnFailureListener(e -> {
                                 progressBarMarkAttendance.setVisibility(View.GONE);
