@@ -137,7 +137,7 @@ public class SplashFragment extends Fragment {
                 tokenViewModel.getRefreshTokenUser(refreshToken, context);
             else
                 redirectToHome();
-        }, 5000);
+        }, 3000);
     }
 
     @Override
