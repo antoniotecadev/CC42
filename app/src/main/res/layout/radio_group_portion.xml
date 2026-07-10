@@ -27,8 +27,16 @@
             android:id="@+id/radioButtonSecondPortion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:text="@string/second_portion"
+            android:textColor="@color/white" />
+
+        <RadioButton
+            android:id="@+id/radioButtonBothPortions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/both_portions"
             android:textColor="@color/white" />
 
     </RadioGroup>

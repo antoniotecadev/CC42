@@ -282,10 +282,10 @@ public class SubscriptionListFragment extends Fragment {
         });
 
         binding.radioGroupPortion.radioGroupMealPortion.setOnCheckedChangeListener((radioGroup, i) -> {
-            if (i == R.id.radioButtonFirstPortion) {
-                binding.radioGroupPortion.checkBoxSecondPortion.setVisibility(View.GONE);
-            } else {
+            if (i == R.id.radioButtonSecondPortion) {
                 binding.radioGroupPortion.checkBoxSecondPortion.setVisibility(View.VISIBLE);
+            } else {
+                binding.radioGroupPortion.checkBoxSecondPortion.setVisibility(View.GONE);
             }
         });
 
@@ -333,19 +333,23 @@ public class SubscriptionListFragment extends Fragment {
                 Long userId = event.getContentIfNotHandled();
                 if (userId == null) return;
                 int quantity = Integer.parseInt(binding.layoutQuantity.textViewQuantityValue.getText().toString());
-                if (getPortionSelected() == null) {
+                String portion = getPortionSelected();
+                if (portion == null || "both".equals(portion)) {
                     subscriptionListAdapter.updateSubscriptionUserSingle(userId, true);
                     binding.chipSubscription.setText(String.valueOf(++numberUserSubscription));
                     binding.chipUnsubscription.setText(String.valueOf(Math.max(--numberUserUnsubscription, 0)));
-                } else {
+                }
+                if ("-".equals(portion) || "both".equals(portion)) {
                     subscriptionListAdapter.updateSubscriptionUserSingle(userId, false);
                     binding.chipNumberSubscribedSecondPortion.setText(String.valueOf(++numberUserSubscriptionSecondPortion));
                     numberUserNotSubscriptionSecondPortion = Math.max(--numberUserNotSubscriptionSecondPortion, 0);
                 }
-                numberMealReceived += quantity;
+
+                int totalQuantityToAdd = "both".equals(portion) ? quantity * 2 : quantity;
+                numberMealReceived += totalQuantityToAdd;
                 meal.setQuantityReceived(numberMealReceived);
                 binding.chipNumberMealReceived.setText(String.valueOf(numberMealReceived));
-                meal.setQuantityNotReceived(meal.getQuantityNotReceived() - quantity);
+                meal.setQuantityNotReceived(meal.getQuantityNotReceived() - totalQuantityToAdd);
                 binding.chipNumberMealNotReceived.setText(String.valueOf(Math.max(meal.getQuantityNotReceived(), 0)));
             }
         });
@@ -789,7 +793,10 @@ public class SubscriptionListFragment extends Fragment {
 
     @Nullable
     private String getPortionSelected() {
-        return binding.radioGroupPortion.radioGroupMealPortion.getCheckedRadioButtonId() == R.id.radioButtonFirstPortion ? null : "-";
+        int id = binding.radioGroupPortion.radioGroupMealPortion.getCheckedRadioButtonId();
+        if (id == R.id.radioButtonFirstPortion) return null;
+        if (id == R.id.radioButtonSecondPortion) return "-";
+        return "both";
     }
 
     private void setNumberUserChip() {
