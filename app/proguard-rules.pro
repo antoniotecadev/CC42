@@ -172,3 +172,15 @@
 # Please add these rules to your existing keep rules in order to suppress warnings.
 # This is generated automatically by the Android Gradle plugin.
 -dontwarn org.slf4j.impl.StaticLoggerBinder
+
+# Evitar que o R8 remova metadados das bibliotecas de ML
+-keepattributes *Annotation*, Signature, EnclosingMethod
+-dontwarn com.google.android.gms.**
+-keep class com.google.android.gms.internal.** { *; }
+-keep class com.google.mlkit.** { *; }
+
+# Forçar permanência das classes da CameraX
+-keep class androidx.camera.core.** { *; }
+-keep class androidx.camera.camera2.** { *; }
+-keep class androidx.camera.lifecycle.** { *; }
+-keep class androidx.camera.view.** { *; }
