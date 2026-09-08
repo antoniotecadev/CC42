@@ -1,8 +1,8 @@
-# ✅ Check Cadet - CC42
+# ✅ CheckCadete - CC42
 
 <div align="center">
 
-![Check Cadet Logo](https://img.shields.io/badge/Check%20Cadet-CC42-blue?style=for-the-badge)
+![CheckCadete Logo](https://img.shields.io/badge/Check%20Cadet-CC42-blue?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/platform-Android-green?style=for-the-badge&logo=android)
 ![License](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg?style=for-the-badge)
 
@@ -14,7 +14,7 @@
 
 ## 🗣️ Sobre o Projecto
 
-**Check Cadet** é uma aplicação Android nativa desenvolvida especificamente para a comunidade da Escola 42, proporcionando uma solução completa e digitalizada para gestão de presenças em eventos, subscrições de refeições e localização de estudantes no campus. Através de tecnologias modernas como leitura de **QR Code** e **NFC (Near Field Communication)**, a aplicação oferece uma experiência rápida, eficiente e segura para estudantes e staff.
+**CheckCadete** é uma aplicação Android nativa desenvolvida especificamente para a comunidade da Escola 42, proporcionando uma solução completa e digitalizada para gestão de presenças em eventos, subscrições de refeições e localização de estudantes no campus. Através de tecnologias modernas como leitura de **QR Code** e **NFC (Near Field Communication)**, a aplicação oferece uma experiência rápida, eficiente e segura para estudantes e staff.
 
 <div align="center">
   <p><b>Confira a demonstração da aplicação:</b></p>
@@ -231,7 +231,7 @@ android-cc/
 
 ## Licença
 
-Este projeto **Check Cadet - CC42** © 2024 está licenciado sob a licença [Creative Commons Atribuição-NãoComercial-SemDerivações 4.0 Internacional (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+Este projeto **CheckCadete - CC42** © 2024 está licenciado sob a licença [Creative Commons Atribuição-NãoComercial-SemDerivações 4.0 Internacional (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/).
 
 ![Licença CC BY-NC-ND 4.0](https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png)
 
@@ -246,6 +246,6 @@ Este projeto **Check Cadet - CC42** © 2024 está licenciado sob a licença [Cre
 
 **Desenvolvido especialmente para a comunidade 42 Luanda**
 
-*Check Cadet - Tornando a gestão acadêmica mais eficiente e digital*
+*CheckCadete - Tornando a gestão acadêmica mais eficiente e digital*
 
 </div>
