@@ -229,16 +229,18 @@ android-cc/
 - **Multilíngue**: Interface em 4 idiomas
 - **Acessível**: Design inclusivo e responsivo
 
-## Licença
+## 📄 Licença / Termos de Uso
 
-Este projeto **CheckCadete - CC42** © 2024 está licenciado sob a licença [Creative Commons Atribuição-NãoComercial-SemDerivações 4.0 Internacional (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+**Copyright © 2026 por António Teca. Todos os direitos reservados.**
 
-![Licença CC BY-NC-ND 4.0](https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png)
+Este projecto **CheckCadete - CC42** é estritamente proprietário e de propriedade exclusiva do autor.
 
-### Restrições:
-- ❌ **Uso Comercial Proibido**: Não pode ser usado para fins comerciais
-- ❌ **Sem Derivações**: Não pode criar obras derivadas
-- **Atribuição Obrigatória**: Deve dar crédito apropriado ao autor
+### 🚫 Restrições Absolutas:
+- ❌ **Uso Comercial e Não-Comercial Proibido**: Ninguém está autorizado a utilizar este software.
+- ❌ **Partilha e Redistribuição Proibidas**: É expressamente proibido copiar ou distribuir este código fora deste repositório.
+- ❌ **Sem Derivações**: Não é permitida a criação de obras derivadas, modificações ou adaptações.
+
+*Este repositório destina-se única e exclusivamente à exibição de portfólio pessoal.*
 
 ---
 
